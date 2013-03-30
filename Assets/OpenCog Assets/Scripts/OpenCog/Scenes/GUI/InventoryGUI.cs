@@ -14,7 +14,8 @@ public class InventoryGUI : MonoBehaviour {
 	void Awake () {
 		Map map = (Map) GameObject.FindObjectOfType( typeof(Map) );
 		blockSet = map.GetBlockSet();
-		builder = (Builder) GameObject.FindObjectOfType( typeof(Builder) );
+		GameObject player = GameObject.FindGameObjectWithTag( "Player" );
+		builder = (Builder) player.GetComponent<Builder>();
 	}
 	
 	void Update () {
