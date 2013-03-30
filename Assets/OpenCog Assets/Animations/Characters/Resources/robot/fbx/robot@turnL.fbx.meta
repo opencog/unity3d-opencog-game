@@ -77,6 +77,44 @@ ModelImporter:
     100142: r_Ring1J
     100144: l_arm_HOLDER
     100146: l_Ring1J
+    100148: A_leveler1J
+    100150: A_leveler1TipJ
+    100152: A_leveler2J
+    100154: A_leveler2TipJ
+    100156: A_levelerJ
+    100158: A_pumpJ
+    100160: B_leveler1J
+    100162: B_leveler1TipJ
+    100164: B_leveler2J
+    100166: B_leveler2TipJ
+    100168: B_levelerJ
+    100170: B_pumpJ
+    100172: cup1_CTRL
+    100174: cup1_CTRL_N
+    100176: cup2_CTRL
+    100178: cup2_CTRL_N
+    100180: cup3_CTRL
+    100182: cup3_CTRL_N
+    100184: driller1J
+    100186: driller2J
+    100188: drillJ
+    100190: grpForMatch1
+    100192: grpForMatch2
+    100194: null2
+    100196: suck1_J
+    100198: suck2_J
+    100200: suck3_J
+    100202: suck_handle_J
+    100204: suckCup1_J
+    100206: suckCup2_J
+    100208: suckCup3_J
+    100210: suckGun_CTRL_N
+    100212: suckGun_handle_CTRL
+    100214: wheel3_AJ
+    100216: wheel3_BJ
+    100218: wheel3_CTRL
+    100220: wheel3_CTRL_N
+    100222: wheel3J
     400000: r_BallJ
     400002: r_AnkleJ
     400004: r_KneeJ
@@ -151,6 +189,44 @@ ModelImporter:
     400142: r_Ring1J
     400144: l_arm_HOLDER
     400146: l_Ring1J
+    400148: A_leveler1J
+    400150: A_leveler1TipJ
+    400152: A_leveler2J
+    400154: A_leveler2TipJ
+    400156: A_levelerJ
+    400158: A_pumpJ
+    400160: B_leveler1J
+    400162: B_leveler1TipJ
+    400164: B_leveler2J
+    400166: B_leveler2TipJ
+    400168: B_levelerJ
+    400170: B_pumpJ
+    400172: cup1_CTRL
+    400174: cup1_CTRL_N
+    400176: cup2_CTRL
+    400178: cup2_CTRL_N
+    400180: cup3_CTRL
+    400182: cup3_CTRL_N
+    400184: driller1J
+    400186: driller2J
+    400188: drillJ
+    400190: grpForMatch1
+    400192: grpForMatch2
+    400194: null2
+    400196: suck1_J
+    400198: suck2_J
+    400200: suck3_J
+    400202: suck_handle_J
+    400204: suckCup1_J
+    400206: suckCup2_J
+    400208: suckCup3_J
+    400210: suckGun_CTRL_N
+    400212: suckGun_handle_CTRL
+    400214: wheel3_AJ
+    400216: wheel3_BJ
+    400218: wheel3_CTRL
+    400220: wheel3_CTRL_N
+    400222: wheel3J
     7400000: Take 001
     11100000: //RootNode
   materials:
@@ -172,10 +248,12 @@ ModelImporter:
     globalScale: .100000001
     meshCompression: 0
     addColliders: 0
+    importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
+    weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88

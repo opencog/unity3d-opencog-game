@@ -77,6 +77,31 @@ ModelImporter:
     100142: r_arm_HOLDER
     100144: r_RingTipJ
     100146: HeadJFK2NeckJ_switchG
+    100148: A_leveler1J
+    100150: A_leveler1TipJ
+    100152: A_leveler2J
+    100154: A_leveler2TipJ
+    100156: A_levelerJ
+    100158: A_pumpJ
+    100160: B_leveler1J
+    100162: B_leveler1TipJ
+    100164: B_leveler2J
+    100166: B_leveler2TipJ
+    100168: B_levelerJ
+    100170: B_pumpJ
+    100172: driller1J
+    100174: driller2J
+    100176: drillJ
+    100178: suck1_J
+    100180: suck2_J
+    100182: suck3_J
+    100184: suck_handle_J
+    100186: suckCup1_J
+    100188: suckCup2_J
+    100190: suckCup3_J
+    100192: wheel3_AJ
+    100194: wheel3_BJ
+    100196: wheel3J
     400000: r_AnkleJ
     400002: r_ToeJ
     400004: r_BallJ
@@ -151,6 +176,31 @@ ModelImporter:
     400142: r_arm_HOLDER
     400144: r_RingTipJ
     400146: HeadJFK2NeckJ_switchG
+    400148: A_leveler1J
+    400150: A_leveler1TipJ
+    400152: A_leveler2J
+    400154: A_leveler2TipJ
+    400156: A_levelerJ
+    400158: A_pumpJ
+    400160: B_leveler1J
+    400162: B_leveler1TipJ
+    400164: B_leveler2J
+    400166: B_leveler2TipJ
+    400168: B_levelerJ
+    400170: B_pumpJ
+    400172: driller1J
+    400174: driller2J
+    400176: drillJ
+    400178: suck1_J
+    400180: suck2_J
+    400182: suck3_J
+    400184: suck_handle_J
+    400186: suckCup1_J
+    400188: suckCup2_J
+    400190: suckCup3_J
+    400192: wheel3_AJ
+    400194: wheel3_BJ
+    400196: wheel3J
     7400000: Take 001
     11100000: //RootNode
   materials:
@@ -172,10 +222,12 @@ ModelImporter:
     globalScale: .100000001
     meshCompression: 0
     addColliders: 0
+    importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
+    weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88

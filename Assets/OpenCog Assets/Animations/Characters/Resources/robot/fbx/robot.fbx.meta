@@ -89,6 +89,44 @@ ModelImporter:
     100166: wheel1_CTRL_N
     100168: wheel1_CTRL
     100170: wheel2_CTRL_N
+    100172: A_leveler1J
+    100174: A_leveler1TipJ
+    100176: A_leveler2J
+    100178: A_leveler2TipJ
+    100180: A_levelerJ
+    100182: A_pumpJ
+    100184: B_leveler1J
+    100186: B_leveler1TipJ
+    100188: B_leveler2J
+    100190: B_leveler2TipJ
+    100192: B_levelerJ
+    100194: B_pumpJ
+    100196: drill_gear_GEO
+    100198: drill_head_GEO
+    100200: drill_parts_GEO
+    100202: driller1J
+    100204: driller2J
+    100206: drillG
+    100208: drillJ
+    100210: pCylinder14_GEO
+    100212: suck1_J
+    100214: suck2_J
+    100216: suck3_J
+    100218: suck_detect_J
+    100220: suck_handle_J
+    100222: suckCup1_J
+    100224: suckCup2_J
+    100226: suckCup3_J
+    100228: suckG
+    100230: suction_cup_GEO
+    100232: suction_machine_GEO
+    100234: wheel3_AJ
+    100236: wheel3_BJ
+    100238: wheel3J
+    100240: detector_GEO
+    100242: grpForMatch1
+    100244: grpForMatch2
+    100246: suckGun_CTRL_N
     400000: r_HipJ
     400002: r_KneeJ
     400004: l_AnkleJ
@@ -175,6 +213,44 @@ ModelImporter:
     400166: wheel1_CTRL_N
     400168: wheel1_CTRL
     400170: wheel2_CTRL_N
+    400172: A_leveler1J
+    400174: A_leveler1TipJ
+    400176: A_leveler2J
+    400178: A_leveler2TipJ
+    400180: A_levelerJ
+    400182: A_pumpJ
+    400184: B_leveler1J
+    400186: B_leveler1TipJ
+    400188: B_leveler2J
+    400190: B_leveler2TipJ
+    400192: B_levelerJ
+    400194: B_pumpJ
+    400196: drill_gear_GEO
+    400198: drill_head_GEO
+    400200: drill_parts_GEO
+    400202: driller1J
+    400204: driller2J
+    400206: drillG
+    400208: drillJ
+    400210: pCylinder14_GEO
+    400212: suck1_J
+    400214: suck2_J
+    400216: suck3_J
+    400218: suck_detect_J
+    400220: suck_handle_J
+    400222: suckCup1_J
+    400224: suckCup2_J
+    400226: suckCup3_J
+    400228: suckG
+    400230: suction_cup_GEO
+    400232: suction_machine_GEO
+    400234: wheel3_AJ
+    400236: wheel3_BJ
+    400238: wheel3J
+    400240: detector_GEO
+    400242: grpForMatch1
+    400244: grpForMatch2
+    400246: suckGun_CTRL_N
     4300000: TEST_pCylinder1
     4300002: TEST_pCylinder2
     4300004: TEST_pPipe1
@@ -253,6 +329,13 @@ ModelImporter:
     4300150: body_GEO
     4300152: frontWood_GEO
     4300154: backEngine_GEO
+    4300156: drill_gear_GEO
+    4300158: drill_head_GEO
+    4300160: drill_parts_GEO
+    4300162: suction_machine_GEO
+    4300164: suction_cup_GEO
+    4300166: pCylinder14_GEO
+    4300168: detector_GEO
     11100000: //RootNode
     13700000: backEngine_GEO
     13700002: l_hand_GEO
@@ -263,6 +346,13 @@ ModelImporter:
     13700012: r_hand_GEO
     13700014: frontWood_GEO
     13700016: body_GEO
+    13700018: drill_gear_GEO
+    13700020: drill_head_GEO
+    13700022: drill_parts_GEO
+    13700024: pCylinder14_GEO
+    13700026: suction_cup_GEO
+    13700028: suction_machine_GEO
+    13700030: detector_GEO
   materials:
     importMaterials: 1
     materialName: 2
@@ -297,7 +387,7 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     human: []
