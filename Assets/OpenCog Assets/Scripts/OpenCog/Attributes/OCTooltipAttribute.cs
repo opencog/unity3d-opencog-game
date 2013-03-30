@@ -15,26 +15,26 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using UnityEngine;
+using System;
 using System.Collections;
 using ProtoBuf;
 
 namespace OpenCog
 {
 
-namespace Automation
+namespace Attributes
 {
 
 /// <summary>
-/// The OpenCog Editor Automated Builder.  Auto-generates Editor subclass files
-/// for each scanned script in the project.  Won't overwrite existing custom
-/// inspectors (Editor subclasses).
+/// The OpenCog Tooltip Attribute.  Attributed properties and fields will
+/// display a custom tooltip when moused over in a custom inspector editor.
 /// </summary>
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[ExecuteInEditMode]
+[System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field)]
 #endregion
-public class OCAutomatedEditorBuilder : MonoBehaviour
+public class OCTooltipAttribute : Attribute
 {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -42,6 +42,11 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
   #region Private Member Data
 
   /////////////////////////////////////////////////////////////////////////////
+
+	/// <summary>
+	/// The tooltip string to be displayed.
+	/// </summary>
+	private string m_Tooltip;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +58,18 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
+	/// <summary>
+	/// Gets or sets the tooltip.
+	/// </summary>
+	/// <value>
+	/// The tooltip string.
+	/// </value>
+  public string Tooltip
+	{
+		get { return m_Tooltip; }
+		set { m_Tooltip = value; }
+	}
+
   /////////////////////////////////////////////////////////////////////////////
 
   #endregion
@@ -63,78 +80,17 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
-  /// <summary>
-  /// Called when the script instance is being loaded.
-  /// </summary>
-  void Awake()
-  {
-  }
-
-  /// <summary>
-  /// Use this for initialization
-  /// </summary>
-  void Start()
-  {
-  }
-
-  /// <summary>
-  /// Update is called once per frame.
-  /// </summary>
-  void Update()
-  {
-  }
-
-  /// <summary>
-  /// Called once per frame after all Update calls
-  /// </summary>
-  void LateUpdate()
-  {
-  }
-
-  /// <summary>
-  /// Raises the enable event when OCAutomatedEditorBuilder is loaded.
-  /// </summary>
-  void OnEnable()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnEnable"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
-
-  /// <summary>
-  /// Raises the disable event when OCAutomatedEditorBuilder goes out of scope.
-  /// </summary>
-  void OnDisable()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnDisable"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
-
-  /// <summary>
-  /// Raises the destroy event when OCAutomatedEditorBuilder is about to be destroyed.
-  /// </summary>
-  void OnDestroy()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnDestroy"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
+	/// <summary>
+	/// Initializes a new instance of the
+	/// <see cref="OpenCog.Attributes.OCTooltipAttribute"/> class.
+	/// </summary>
+	/// <param name='tooltip'>
+	/// Tooltip.
+	/// </param>
+  public 	OCTooltipAttribute(string tooltip)
+	{
+		this.Tooltip = tooltip;
+	}
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -152,9 +108,9 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
-}// class OCAutomatedEditorBuilder
+}// class OCInspectorTooltipAttribute
 
-}// namespace Automation
+}// namespace Attributes
 
 }// namespace OpenCog
 

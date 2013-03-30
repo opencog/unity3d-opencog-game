@@ -15,26 +15,27 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using UnityEngine;
+using System;
 using System.Collections;
 using ProtoBuf;
 
 namespace OpenCog
 {
 
-namespace Automation
+namespace Attributes
 {
 
 /// <summary>
-/// The OpenCog Editor Automated Builder.  Auto-generates Editor subclass files
-/// for each scanned script in the project.  Won't overwrite existing custom
-/// inspectors (Editor subclasses).
+/// The OpenCog Int Slider Attribute.  Attributed properties and fields will
+/// display in the custom inspector editor as a slider.  Min and max values
+/// are capped.
 /// </summary>
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[ExecuteInEditMode]
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 #endregion
-public class OCAutomatedEditorBuilder : MonoBehaviour
+public class OCIntSliderAttribute : Attribute
 {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -42,6 +43,16 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
   #region Private Member Data
 
   /////////////////////////////////////////////////////////////////////////////
+
+  /// <summary>
+	/// The minimum value cap.
+	/// </summary>
+	private int m_MinValue;
+
+	/// <summary>
+	/// The maximum value cap.
+	/// </summary>
+	private int m_MaxValue;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +64,30 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
+	/// <summary>
+	/// Gets or sets the minimum value.
+	/// </summary>
+	/// <value>
+	/// The minimum value.
+	/// </value>
+	public int MinValue
+	{
+		get { return m_MinValue; }
+		set { m_MinValue = value; }
+	}
+
+	/// <summary>
+	/// Gets or sets the maximum value.
+	/// </summary>
+	/// <value>
+	/// The maximum value.
+	/// </value>
+	public int MaxValue
+	{
+		get { return m_MaxValue; }
+		set { m_MaxValue = value; }
+	}
+
   /////////////////////////////////////////////////////////////////////////////
 
   #endregion
@@ -63,78 +98,21 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
-  /// <summary>
-  /// Called when the script instance is being loaded.
-  /// </summary>
-  void Awake()
-  {
-  }
-
-  /// <summary>
-  /// Use this for initialization
-  /// </summary>
-  void Start()
-  {
-  }
-
-  /// <summary>
-  /// Update is called once per frame.
-  /// </summary>
-  void Update()
-  {
-  }
-
-  /// <summary>
-  /// Called once per frame after all Update calls
-  /// </summary>
-  void LateUpdate()
-  {
-  }
-
-  /// <summary>
-  /// Raises the enable event when OCAutomatedEditorBuilder is loaded.
-  /// </summary>
-  void OnEnable()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnEnable"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
-
-  /// <summary>
-  /// Raises the disable event when OCAutomatedEditorBuilder goes out of scope.
-  /// </summary>
-  void OnDisable()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnDisable"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
-
-  /// <summary>
-  /// Raises the destroy event when OCAutomatedEditorBuilder is about to be destroyed.
-  /// </summary>
-  void OnDestroy()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnDestroy"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
+	/// <summary>
+	/// Initializes a new instance of the
+	/// <see cref="OpenCog.Attributes.OCIntSliderAttribute"/> class.
+	/// </summary>
+	/// <param name='minValue'>
+	/// Minimum value.
+	/// </param>
+	/// <param name='maxValue'>
+	/// Max value.
+	/// </param>
+	public OCIntSliderAttribute( int minValue, int maxValue )
+	{
+		this.MinValue = minValue;
+		this.MaxValue = maxValue;
+	}
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -152,9 +130,9 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
-}// class OCAutomatedEditorBuilder
+}// class OCIntSliderAttribute
 
-}// namespace Automation
+}// namespace Attributes
 
 }// namespace OpenCog
 

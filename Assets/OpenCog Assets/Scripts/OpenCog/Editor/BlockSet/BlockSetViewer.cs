@@ -3,6 +3,9 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Collections;
 
+namespace OpenCog
+{
+
 public class BlockSetViewer {
 	
 	private static string DRAG_AND_DROP = "drag block";
@@ -131,5 +134,7 @@ public class BlockSetViewer {
 			items[i] = list[i];
 		}
 	}
+	
+}
 	
 }

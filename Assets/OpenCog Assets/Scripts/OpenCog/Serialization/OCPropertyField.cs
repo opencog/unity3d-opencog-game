@@ -14,21 +14,20 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using UnityEngine;
-using UnityEditor;
-using ProtoBuf;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
-
-using OpenCog.AttributeExtensions;
-
+using System.Reflection;
+using OpenCog.Attributes;
+using ProtoBuf;
+using UnityEditor;
+using UnityEngine;
+using Enum = System.Enum;
+using Exception = System.Exception;
+using Object = UnityEngine.Object;
 using Type = System.Type;
 using TypeCode = System.TypeCode;
-using Exception = System.Exception;
-using Enum = System.Enum;
-using Object = UnityEngine.Object;
+
 
 namespace OpenCog
 {
@@ -485,14 +484,13 @@ public class OCPropertyField
      
 		//Gets the Property or Field for the enum
 		OCPropertyField enumPropertyField = null;
-		bool success =
-			GetPropertyOrField
-			(	out enumPropertyField
-			, enumCondition.EnumField
-			, Instance
-			, null
-			)
-		;
+
+		GetPropertyOrField
+		(	out enumPropertyField
+		, enumCondition.EnumField
+		, Instance
+		, null
+		);
      
 		if(enumPropertyField == null)
 		{
@@ -530,14 +528,13 @@ public class OCPropertyField
 
 		//Gets the Property or Field for the boolean
 		OCPropertyField boolPropertyField = null;
-		bool success =
-			OCPropertyField.GetPropertyOrField
-			(	out boolPropertyField
-			, boolCondition.BooleanField
-			, Instance
-			, null
-			)
-		;
+
+		OCPropertyField.GetPropertyOrField
+		(	out boolPropertyField
+		, boolCondition.BooleanField
+		, Instance
+		, null
+		);
 
 		if(boolPropertyField == null)
 		{
@@ -595,7 +592,7 @@ public class OCPropertyField
 
 		unityType = GetUnityTypeFromCSTypeObject(obj);
 
-		if(unityType == null)
+		if(unityType == SerializedPropertyType.Generic)
 		{
 			return false;
 		}
@@ -814,8 +811,8 @@ public class OCPropertyField
 
 		if(unityPropertyField != null)
 		{
-			List<OCPropertyField> candidatePropertyFields =
-				new List<OCPropertyField>();
+//			List<OCPropertyField> candidatePropertyFields =
+//				new List<OCPropertyField>();
 
 			while(unityPropertyField.NextVisible(true))
 			{
@@ -970,7 +967,7 @@ public class OCPropertyField
 
 		}
 
-		return SerializedPropertyType.Generic;
+//		return SerializedPropertyType.Generic;
 	}
 
 	/// <summary>

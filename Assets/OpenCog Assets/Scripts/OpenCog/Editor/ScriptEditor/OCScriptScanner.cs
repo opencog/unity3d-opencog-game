@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using OpenCog;
-using OpenCog.AttributeExtensions;
+using OpenCog.Attributes;
 
 /// <summary>
 /// The OpenCog Script Scanner.  Scans the project's non-editor scripts for use

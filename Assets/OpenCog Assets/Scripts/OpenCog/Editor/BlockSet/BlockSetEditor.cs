@@ -137,7 +137,7 @@ public class BlockSetEditor : Editor {
 		GUILayout.BeginVertical(GUI.skin.box); 
 		
 		int oldSelectedBlock = selectedBlock;
-		selectedBlock = BlockSetViewer.SelectionGrid(blockSet, selectedBlock, GUILayout.MinHeight(200), GUILayout.MaxHeight(300));
+		selectedBlock = OpenCog.BlockSetViewer.SelectionGrid(blockSet, selectedBlock, GUILayout.MinHeight(200), GUILayout.MaxHeight(300));
 		if(selectedBlock != oldSelectedBlock) GUIUtility.keyboardControl = 0;
 		
 		EditorGUILayout.Separator();

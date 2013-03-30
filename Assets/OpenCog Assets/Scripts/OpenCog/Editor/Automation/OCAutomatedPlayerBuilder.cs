@@ -21,7 +21,7 @@ using ProtoBuf;
 namespace OpenCog
 {
 
-namespace AutomationExtensions
+namespace Automation
 {
 
 /// <summary>
@@ -167,7 +167,7 @@ public class OCAutomatedPlayerBuilder : MonoBehaviour
 
 }// class OCAutomatedPlayerBuilder
 
-}// namespace AutomationExtensions
+}// namespace Automation
 
 }// namespace OpenCog
 

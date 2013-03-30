@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PolicySet name="OpenCog">
+  <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/plain" />
+  <VersionControlPolicy inheritsSet="Mono" />
+  <XmlFormattingPolicy inheritsSet="Mono" inheritsScope="application/xml" scope="application/xml" />
+  <CSharpFormattingPolicy inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp">
+    <IndentNamespaceBody>False</IndentNamespaceBody>
+    <AnonymousMethodBraceStyle>NextLine</AnonymousMethodBraceStyle>
+    <PropertyBraceStyle>NextLine</PropertyBraceStyle>
+    <PropertyGetBraceStyle>NextLine</PropertyGetBraceStyle>
+    <PropertySetBraceStyle>NextLine</PropertySetBraceStyle>
+    <EventBraceStyle>NextLine</EventBraceStyle>
+    <EventAddBraceStyle>NextLine</EventAddBraceStyle>
+    <EventRemoveBraceStyle>NextLineShifted2</EventRemoveBraceStyle>
+    <StatementBraceStyle>NextLine</StatementBraceStyle>
+    <IfElseBraceForcement>AddBraces</IfElseBraceForcement>
+    <ForBraceForcement>AddBraces</ForBraceForcement>
+    <WhileBraceForcement>AddBraces</WhileBraceForcement>
+    <PlaceElseOnNewLine>True</PlaceElseOnNewLine>
+    <PlaceElseIfOnNewLine>True</PlaceElseIfOnNewLine>
+    <PlaceCatchOnNewLine>True</PlaceCatchOnNewLine>
+    <PlaceFinallyOnNewLine>True</PlaceFinallyOnNewLine>
+    <PlaceWhileOnNewLine>True</PlaceWhileOnNewLine>
+    <PlaceArrayInitializersOnNewLine>AlwaysNewLine</PlaceArrayInitializersOnNewLine>
+    <BeforeMethodDeclarationParentheses>False</BeforeMethodDeclarationParentheses>
+    <BeforeMethodCallParentheses>False</BeforeMethodCallParentheses>
+    <BeforeConstructorDeclarationParentheses>False</BeforeConstructorDeclarationParentheses>
+    <BeforeIndexerDeclarationBracket>False</BeforeIndexerDeclarationBracket>
+    <BeforeDelegateDeclarationParentheses>False</BeforeDelegateDeclarationParentheses>
+    <AfterDelegateDeclarationParameterComma>True</AfterDelegateDeclarationParameterComma>
+    <NewParentheses>False</NewParentheses>
+    <IfParentheses>False</IfParentheses>
+    <WhileParentheses>False</WhileParentheses>
+    <ForParentheses>False</ForParentheses>
+    <ForeachParentheses>False</ForeachParentheses>
+    <CatchParentheses>False</CatchParentheses>
+    <SwitchParentheses>False</SwitchParentheses>
+    <LockParentheses>False</LockParentheses>
+    <UsingParentheses>False</UsingParentheses>
+    <SpacesBeforeBrackets>False</SpacesBeforeBrackets>
+    <BlankLinesBeforeUsings>1</BlankLinesBeforeUsings>
+    <BlankLinesBeforeFirstDeclaration>1</BlankLinesBeforeFirstDeclaration>
+    <BlankLinesBetweenFields>1</BlankLinesBetweenFields>
+    <BlankLinesBetweenEventFields>1</BlankLinesBetweenEventFields>
+  </CSharpFormattingPolicy>
+  <ChangeLogPolicy inheritsSet="Mono" />
+  <DotNetNamingPolicy>
+    <DirectoryNamespaceAssociation>Hierarchical</DirectoryNamespaceAssociation>
+    <ResourceNamePolicy>MSBuild</ResourceNamePolicy>
+  </DotNetNamingPolicy>
+  <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="application/xml" />
+  <TextStylePolicy inheritsSet="Mono" inheritsScope="text/plain" scope="text/x-csharp">
+    <TabWidth>2</TabWidth>
+    <RemoveTrailingWhitespace>True</RemoveTrailingWhitespace>
+  </TextStylePolicy>
+</PolicySet>

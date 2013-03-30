@@ -22,12 +22,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using OpenCog.SerializationExtensions;
-using OpenCog.AttributeExtensions;
+using OpenCog.Attributes;
 
 namespace OpenCog
 {
 
-namespace AutomationExtensions
+namespace Automation
 {
 
 /// <summary>
@@ -105,9 +105,13 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 	/// </summary>
 	public static void ScanAll()
 	{
-		//Get all of the scripts
-		m_Scripts = Resources.LoadAll("", typeof( MonoScript ) )
-			//Make this a collection of MonoBehaviours
+		//Get all of the asset paths
+		m_Scripts = AssetDatabase.GetAllAssetPaths()
+			//Make sure we're looking at a C# source file
+			.Where(p => p.EndsWith(".cs"))
+			//Create instances of the MonoScripts for each MonoBehavior
+			.Select(p => AssetDatabase.LoadAssetAtPath(p, typeof(MonoScript)) )
+			//Make this a collection of MonoScripts
       .Cast<MonoScript>()
 			//Make sure that they aren't system scripts
       .Where( c => c.hideFlags == 0 )
@@ -157,6 +161,7 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 		List<OCPropertyField> allPropertiesAndFields = new List<OCPropertyField>();
 
 		System.Type currentType = script.GetClass();
+//		UnityEngine.Object monoBehaviour = AssetDatabase.GetAllAssetPaths().Select(p => AssetDatabase.LoadAssetAtPath(p, currentType) ).FirstOrDefault();
 
 //		Debug.Log("Step 1");
 
@@ -170,16 +175,14 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 			{
 
 //				Debug.Log("Step 3");
-				bool success
-					= OCPropertyField
-					. GetAllPropertiesAndFields
-					(
-						ref allPropertiesAndFields
-					, null
-					, currentType
-					, null
-					)
-				;
+					OCPropertyField.
+						GetAllPropertiesAndFields
+						(
+							ref allPropertiesAndFields
+						, null
+						, currentType
+						, null
+						);
 			}
 		}
 
@@ -204,7 +207,7 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 
 }// class OCAutomatedScriptScanner
 
-}// namespace AutomationExtensions
+}// namespace Automation
 
 }// namespace OpenCog
 

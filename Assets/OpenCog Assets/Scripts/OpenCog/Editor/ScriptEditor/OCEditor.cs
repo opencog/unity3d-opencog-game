@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-using OpenCog.AttributeExtensions;
-using OpenCog.AutomationExtensions;
+using OpenCog.Attributes;
+using OpenCog.Automation;
 using OpenCog.SerializationExtensions;
 
 using Type = System.Type;
@@ -149,7 +149,7 @@ where OCType : MonoBehaviour
 		if(m_Instance != null)
 		{
 			Type exposePropertiesType =
-				typeof(OpenCog.AttributeExtensions.OCExposePropertiesAttribute);
+				typeof(OpenCog.Attributes.OCExposePropertiesAttribute);
 		
 			if(exposePropertiesType != null)
 				m_Attributes =
@@ -189,16 +189,14 @@ where OCType : MonoBehaviour
 				if(m_Instance != null) m_Type = m_Instance.GetType();
 	//			else if(unityPropertyField != null) currentType = unityPropertyField.propertyType;
 			}
-	
-			bool success =
-				OCPropertyField.GetAllPropertiesAndFields
-				(
-					ref m_AllPropertyFields
-				, m_Instance
-				, m_Type
-				, unityPropertyField
-				)
-			;
+
+			OCPropertyField.GetAllPropertiesAndFields
+			(
+				ref m_AllPropertyFields
+			, m_Instance
+			, m_Type
+			, unityPropertyField
+			);
 
 //			Debug.Log("Property Field Count: " + m_AllPropertyFields.Count);
 	
@@ -434,7 +432,7 @@ where OCType : MonoBehaviour
 			return;
 		}
 
-		List<OCPropertyField> allPropertyFieldsCopy = new List<OCPropertyField>(allPropertyFields);
+//		List<OCPropertyField> allPropertyFieldsCopy = new List<OCPropertyField>(allPropertyFields);
 
 		foreach(OCPropertyField propertyField in allPropertyFields)
 		{
@@ -660,6 +658,8 @@ where OCType : MonoBehaviour
 //
 //		OCExposePropertiesAttribute.Expose(m_ReadAndWriteProperties);
 //	}
+
+	//@TODO: Finish this function...
 
 	void SerializeAndHidePrivateDataMembers(System.Object obj)
 	{

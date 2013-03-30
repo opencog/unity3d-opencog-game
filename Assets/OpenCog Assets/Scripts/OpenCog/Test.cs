@@ -13,11 +13,11 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using UnityEngine;
-using System.Collections;
-using ProtoBuf;
-using OpenCog.AttributeExtensions;
 using System;
+using System.Collections;
+using OpenCog.Attributes;
+using ProtoBuf;
+using UnityEngine;
 
 namespace OpenCog
 {
@@ -87,7 +87,25 @@ public class Test : MonoBehaviour
 
 	#endregion
 
+	/////////////////////////////////////////////////////////////////////////////	
+
+	#region Constructors
+
 	/////////////////////////////////////////////////////////////////////////////
+		
+	/// <summary>
+	/// Initializes a new instance of the <see cref="OpenCog.Test"/> class.
+	/// Generally, intitialization should occur in the Start function.
+	/// </summary>
+	public Test()
+	{
+	}
+		
+	/////////////////////////////////////////////////////////////////////////////
+
+	#endregion
+
+	/////////////////////////////////////////////////////////////////////////////	
 
 	#region Public Member Functions
 
