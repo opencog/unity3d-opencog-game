@@ -1,16 +1,4 @@
-﻿<?xml version="1.0"?>
-<Template Originator="Lake Watkins" Language="C#" Created="1/30/2013" LastModified="1/30/2013">
-	
-    <TemplateConfiguration>
-        <_Name>GameObject Script</_Name>
-        <Icon>md-text-file-icon</Icon>
-        <_Category>OpenCog</_Category>
-        <LanguageName>C#</LanguageName>
-        <_Description>Creates MonoBehaviour script for Unity. Attach to GameObject.</_Description>
-    </TemplateConfiguration>
 
-    <TemplateFiles>
-        <File DefaultExtension=".cs" DefaultName="OCGameObjectScript" AddStandardHeader="True"><![CDATA[
 /// Unity3D OpenCog World Embodiment Program
 /// Copyright (C) 2013  Novamente			
 ///
@@ -37,8 +25,11 @@ using UnityEngine;
 namespace OpenCog
 {
 
+namespace Actions
+{
+
 /// <summary>
-/// The OpenCog ${Name}.
+/// The OpenCog OCIdleAction.
 /// </summary>
 #region Class Attributes
 
@@ -46,7 +37,7 @@ namespace OpenCog
 [OCExposeProperties]
 [Serializable]
 #endregion
-public class ${Name} : OCMonoBehaviour
+public class OCIdleAction : OCAction
 {
 
 	//---------------------------------------------------------------------------
@@ -54,8 +45,6 @@ public class ${Name} : OCMonoBehaviour
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
-	private int m_ExamplePrivateVar = 0;
 
 	//---------------------------------------------------------------------------
 
@@ -66,19 +55,6 @@ public class ${Name} : OCMonoBehaviour
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-	public int ExamplePublicVar
-	{
-		get
-		{
-			return m_ExamplePrivateVar;
-		}
-
-		set
-		{
-			m_ExamplePrivateVar = value;
-		}
-	}
 			
 	//---------------------------------------------------------------------------
 
@@ -89,14 +65,6 @@ public class ${Name} : OCMonoBehaviour
 	#region Constructors
 
 	//---------------------------------------------------------------------------
-		
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.${Name}"/> class.
-	/// Generally, intitialization should occur in the Start function.
-	/// </summary>
-	public ${Name}()
-	{
-	}			
 
 	//---------------------------------------------------------------------------
 
@@ -113,74 +81,27 @@ public class ${Name} : OCMonoBehaviour
 	/// </summary>
 	public void Awake()
 	{
+		HasAnimation = true;
+		Animation = new OCAnimation(gameObject, animation["idle"]);
+		Animation.AnimationState.wrapMode = WrapMode.Loop;
+		Animation.AnimationState.layer = -1;
+		Animation.OnStart = "IdleStart";
+		Animation.OnEnd = "IdleEnd";
 	}
 
-	/// <summary>
-	/// Use this for initialization
-	/// </summary>
-	public void Start()
+	public void Execute()
 	{
+		Animation.Play();
 	}
 
-	/// <summary>
-	/// Update is called once per frame.
-	/// </summary>
-	public void Update()
+	public void IdleStart()
 	{
+		Animation.Start();
 	}
 
-	/// <summary>
-	/// Called once per frame after all Update calls
-	/// </summary>
-	public void LateUpdate()
+	public void IdleEnd()
 	{
-	}
-
-	/// <summary>
-	/// Raises the enable event when ${Name} is loaded.
-	/// </summary>
-	public void OnEnable()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnEnable"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
-	/// <summary>
-	/// Raises the disable event when ${Name} goes out of
-	/// scope.
-	/// </summary>
-	public void OnDisable()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnDisable"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
-	/// <summary>
-	/// Raises the destroy event when ${Name} is about to be
-	/// destroyed.
-	/// </summary>
-	public void OnDestroy()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnDestroy"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
+		Animation.End();
 	}
 
 	//---------------------------------------------------------------------------
@@ -192,8 +113,6 @@ public class ${Name} : OCMonoBehaviour
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
-			
-	
 			
 	//---------------------------------------------------------------------------
 
@@ -211,15 +130,12 @@ public class ${Name} : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-}// class ${Name}
+}// class OCIdleAction
+
+}// namespace Actions
 
 }// namespace OpenCog
 
 
 
-]]>
-        </File>
-    </TemplateFiles>
 
-    <FileOptions/>
-</Template>

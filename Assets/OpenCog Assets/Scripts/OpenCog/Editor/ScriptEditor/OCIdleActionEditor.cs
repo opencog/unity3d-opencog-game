@@ -1,16 +1,4 @@
-﻿<?xml version="1.0"?>
-<Template Originator="Lake Watkins" Language="C#" Created="1/30/2013" LastModified="1/30/2013">
-	
-    <TemplateConfiguration>
-        <_Name>GameObject Script</_Name>
-        <Icon>md-text-file-icon</Icon>
-        <_Category>OpenCog</_Category>
-        <LanguageName>C#</LanguageName>
-        <_Description>Creates MonoBehaviour script for Unity. Attach to GameObject.</_Description>
-    </TemplateConfiguration>
 
-    <TemplateFiles>
-        <File DefaultExtension=".cs" DefaultName="OCGameObjectScript" AddStandardHeader="True"><![CDATA[
 /// Unity3D OpenCog World Embodiment Program
 /// Copyright (C) 2013  Novamente			
 ///
@@ -29,24 +17,19 @@
 
 using System;
 using System.Collections;
+using OpenCog.Actions;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
+using UnityEditor;
 
 namespace OpenCog
 {
 
-/// <summary>
-/// The OpenCog ${Name}.
-/// </summary>
-#region Class Attributes
-
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposeProperties]
-[Serializable]
-#endregion
-public class ${Name} : OCMonoBehaviour
+[ExecuteInEditMode]
+[CustomEditor(typeof(OCIdleAction))]
+public class OCIdleActionEditor : OCDefaultEditor
 {
 
 	//---------------------------------------------------------------------------
@@ -54,8 +37,6 @@ public class ${Name} : OCMonoBehaviour
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
-	private int m_ExamplePrivateVar = 0;
 
 	//---------------------------------------------------------------------------
 
@@ -67,18 +48,6 @@ public class ${Name} : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	public int ExamplePublicVar
-	{
-		get
-		{
-			return m_ExamplePrivateVar;
-		}
-
-		set
-		{
-			m_ExamplePrivateVar = value;
-		}
-	}
 			
 	//---------------------------------------------------------------------------
 
@@ -89,14 +58,6 @@ public class ${Name} : OCMonoBehaviour
 	#region Constructors
 
 	//---------------------------------------------------------------------------
-		
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.${Name}"/> class.
-	/// Generally, intitialization should occur in the Start function.
-	/// </summary>
-	public ${Name}()
-	{
-	}			
 
 	//---------------------------------------------------------------------------
 
@@ -107,81 +68,6 @@ public class ${Name} : OCMonoBehaviour
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
-
-	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-	public void Awake()
-	{
-	}
-
-	/// <summary>
-	/// Use this for initialization
-	/// </summary>
-	public void Start()
-	{
-	}
-
-	/// <summary>
-	/// Update is called once per frame.
-	/// </summary>
-	public void Update()
-	{
-	}
-
-	/// <summary>
-	/// Called once per frame after all Update calls
-	/// </summary>
-	public void LateUpdate()
-	{
-	}
-
-	/// <summary>
-	/// Raises the enable event when ${Name} is loaded.
-	/// </summary>
-	public void OnEnable()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnEnable"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
-	/// <summary>
-	/// Raises the disable event when ${Name} goes out of
-	/// scope.
-	/// </summary>
-	public void OnDisable()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnDisable"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
-	/// <summary>
-	/// Raises the destroy event when ${Name} is about to be
-	/// destroyed.
-	/// </summary>
-	public void OnDestroy()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnDestroy"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
 
 	//---------------------------------------------------------------------------
 
@@ -211,15 +97,6 @@ public class ${Name} : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-}// class ${Name}
+}// class OCActionEditor
 
 }// namespace OpenCog
-
-
-
-]]>
-        </File>
-    </TemplateFiles>
-
-    <FileOptions/>
-</Template>

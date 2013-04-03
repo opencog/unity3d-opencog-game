@@ -18,7 +18,9 @@
 using System;
 using System.Collections;
 using Behave.Runtime;
+using OpenCog.Actions;
 using OpenCog.Attributes;
+using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
 using Tree = Behave.Runtime.Tree;
@@ -36,7 +38,7 @@ namespace OpenCog
 [OCExposeProperties]
 [Serializable]
 #endregion
-public class OCRobotAgent : MonoBehaviour, IAgent
+public class OCRobotAgent : OCMonoBehaviour, IAgent
 {
 
 	//---------------------------------------------------------------------------
@@ -46,6 +48,8 @@ public class OCRobotAgent : MonoBehaviour, IAgent
 	//---------------------------------------------------------------------------
 
 	private Tree m_Tree;
+
+	private Hashtable m_IdleParams;
 
 	//---------------------------------------------------------------------------
 
@@ -101,21 +105,61 @@ public class OCRobotAgent : MonoBehaviour, IAgent
 				yield return new WaitForSeconds (1.0f / m_Tree.Frequency);
 				AIUpdate();
 			}
+
+
 	}
 
 	public BehaveResult	 Tick (Tree sender, bool init)
 	{
-			Debug.Log
-			(
-				"Got ticked by unhandled " + (BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID ) ? "action" : "decorator")
-			+ ( BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID )
-				? ((BLOpenCogCharacterBehaviours.ActionType)sender.ActiveID).ToString()
-				: ((BLOpenCogCharacterBehaviours.DecoratorType)sender.ActiveID).ToString()
-				)
-			);
+//			Debug.Log
+//			(
+//				"Got ticked by unhandled " + (BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID ) ? "action" : "decorator")
+//			+ ( BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID )
+//				? ((BLOpenCogCharacterBehaviours.ActionType)sender.ActiveID).ToString()
+//				: ((BLOpenCogCharacterBehaviours.DecoratorType)sender.ActiveID).ToString()
+//				)
+//			);
 
 			return BehaveResult.Success;
 	}
+
+//	public BehaveResult TickIdleAction(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data)
+//	{
+//			Debug.Log("In Robot Idle...");
+//
+//			return BehaveResult.Success;
+//	}
+
+	public BehaveResult IdleAction
+	{
+			// tick handler
+			get
+			{
+				if(animation.IsPlaying("idle"))
+				{
+					return BehaveResult.Running;
+				}
+
+				if(animation.isPlaying)
+				{
+					Debug.Log("In OCRobotAgent.IdleAction, Failure");
+					return BehaveResult.Failure;
+				}
+
+				OCIdleAction idleAction = gameObject.GetComponent<OCIdleAction>();
+				idleAction.Execute();
+
+				Debug.Log("In OCRobotAgent.IdleAction, Success");
+				return BehaveResult.Success;
+			}
+
+			// reset handler
+			set
+			{
+			}
+	}
+
+
 
 	public void	 Reset (Tree sender)
 	{
