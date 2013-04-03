@@ -40,6 +40,11 @@ public class TerrainGenerator {
 		ice = blockSet.GetBlock("Ice");
 	}
 	
+	public TerrainGenerator(Map map, string filename)
+	{
+		
+	}
+	
 	public IEnumerator Generate(int cx, int cz) {
 		terrainNoise.GenerateNoise(cx*Chunk.SIZE_X, cz*Chunk.SIZE_Z);
 		islandNoise.GenerateNoise(cx*Chunk.SIZE_X, cz*Chunk.SIZE_Z);

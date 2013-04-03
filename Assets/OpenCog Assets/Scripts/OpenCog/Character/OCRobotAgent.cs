@@ -18,7 +18,7 @@
 using System;
 using System.Collections;
 using Behave.Runtime;
-using OpenCog.AttributeExtensions;
+using OpenCog.Attribute;
 using ProtoBuf;
 using UnityEngine;
 using Tree = Behave.Runtime.Tree;
