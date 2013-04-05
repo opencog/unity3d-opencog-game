@@ -379,7 +379,17 @@ public class OCPropertyField
 			else
 			if(MemberInfo.MemberType == MemberTypes.Property)
 			{
-				return (MemberInfo as PropertyInfo).GetValue(Instance, null);
+				PropertyInfo info = (PropertyInfo)MemberInfo;
+				ParameterInfo[] parameters = info.GetIndexParameters();
+
+				if(parameters == null)
+				{
+					return info.GetValue(Instance, null);
+				}
+				else
+				{
+					return null;//info.GetValue(Instance, parameters);
+				}
 			}
 			else
 			{

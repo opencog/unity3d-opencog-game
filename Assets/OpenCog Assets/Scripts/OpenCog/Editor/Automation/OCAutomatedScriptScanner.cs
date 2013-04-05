@@ -186,7 +186,7 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 			}
 		}
 
-		return allPropertiesAndFields.ToDictionary( p => p.PublicName );
+		return allPropertiesAndFields.ToDictionary( p => p.PrivateName );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

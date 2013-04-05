@@ -27,6 +27,7 @@ using OpenCog.Automation;
 using OpenCog.SerializationExtensions;
 
 using Type = System.Type;
+using TypeCode = System.TypeCode;
 using Enum = System.Enum;
 
 namespace OpenCog
@@ -224,8 +225,10 @@ where OCType : MonoBehaviour
 							s => s.Script.name == sourceScript.name
 						)
 					;
-	
-					targetScript.Properties = m_AllPropertyFields.ToDictionary(p => p.PublicName);
+
+					if(m_AllPropertyFields == null)
+						Debug.Log("In OCEditor.OnInspectorGUI, no property fields!");
+					targetScript.Properties = m_AllPropertyFields.ToDictionary(p => p.PrivateName);
 				}
 			}
 	
@@ -249,6 +252,9 @@ where OCType : MonoBehaviour
 		foreach(OCPropertyField propertyField in allPropertiesAndFields)
 		{
 			//Debug.Log(propertyField.PublicName + ", " + propertyField.UnityType);
+
+			//if(propertyField.GetValue() == null)
+			//	continue;
 
 			EditorGUILayout.BeginHorizontal(emptyOptions);
 
@@ -373,42 +379,130 @@ where OCType : MonoBehaviour
 		}
 		else
 		{
-			switch(propertyField.UnityType)
+			if(propertyField.UnityPropertyField != null)
 			{
-			case SerializedPropertyType.Integer:
-				propertyField.SetValue(EditorGUILayout.IntField(content, (int)propertyField.GetValue(), emptyOptions));
-				break;
- 
-			case SerializedPropertyType.Float:
-				propertyField.SetValue(EditorGUILayout.FloatField(content, (float)propertyField.GetValue(), emptyOptions));
-				break;
- 
-			case SerializedPropertyType.Boolean:
-				propertyField.SetValue(EditorGUILayout.Toggle(content, (bool)propertyField.GetValue(), emptyOptions));
-				break;
- 
-			case SerializedPropertyType.String:
-				propertyField.SetValue(EditorGUILayout.TextField(content, (string)propertyField.GetValue(), emptyOptions));
-				break;
+				switch(propertyField.UnityType)
+				{
+				case SerializedPropertyType.Integer:
+					propertyField.SetValue(EditorGUILayout.IntField(content, (int)propertyField.GetValue(), emptyOptions));
+					break;
+		
+				case SerializedPropertyType.Float:
+					propertyField.SetValue(EditorGUILayout.FloatField(content, (float)propertyField.GetValue(), emptyOptions));
+					break;
 
-			case SerializedPropertyType.Vector2:
-				propertyField.SetValue(EditorGUILayout.Vector2Field(propertyField.PublicName, (Vector2)propertyField.GetValue(), emptyOptions));
-				break;
+				case SerializedPropertyType.Boolean:
+					propertyField.SetValue(EditorGUILayout.Toggle(content, (bool)propertyField.GetValue(), emptyOptions));
+					break;
 
-			case SerializedPropertyType.Vector3:
-				propertyField.SetValue(EditorGUILayout.Vector3Field(propertyField.PublicName, (Vector3)propertyField.GetValue(), emptyOptions));
-				break;
- 
- 
- 
-			case SerializedPropertyType.Enum:
-				propertyField.SetValue(EditorGUILayout.EnumPopup(content, (Enum)propertyField.GetValue(), emptyOptions));
-				break;
- 
-			default:
- 
-				break;
- 
+				case SerializedPropertyType.String:
+					propertyField.SetValue(EditorGUILayout.TextField(content, (string)propertyField.GetValue(), emptyOptions));
+					break;
+		
+				case SerializedPropertyType.Vector2:
+					propertyField.SetValue(EditorGUILayout.Vector2Field(propertyField.PublicName, (Vector2)propertyField.GetValue(), emptyOptions));
+					break;
+		
+				case SerializedPropertyType.Vector3:
+					propertyField.SetValue(EditorGUILayout.Vector3Field(propertyField.PublicName, (Vector3)propertyField.GetValue(), emptyOptions));
+					break;
+		
+				case SerializedPropertyType.Enum:
+					propertyField.SetValue(EditorGUILayout.EnumPopup(content, (Enum)propertyField.GetValue(), emptyOptions));
+					break;
+		
+				case SerializedPropertyType.Generic:
+				case SerializedPropertyType.ObjectReference:
+
+					if(propertyField.PublicName == "Animation")
+						Debug.Log("Drawing Animation: " + propertyField.CSType);
+
+					if(propertyField.CSType.IsSerializable)
+					{
+						List<OCPropertyField> nestedPropertiesAndFields = new List<OCPropertyField>();
+
+						OCPropertyField.GetAllPropertiesAndFields
+						(
+							ref nestedPropertiesAndFields
+						, propertyField.Instance
+						, propertyField.CSType
+						, propertyField.UnityPropertyField
+						);
+
+						Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
+
+						Debug.Log("In OCEditor.DrawFieldInInspector, nested Properties and Fields: " + nestedPropertiesAndFields.Select(p => p.PublicName).Aggregate((a, b) => a + ", " + b));
+
+						DrawSerializedProperties(nestedPropertiesAndFields);
+
+					}
+					break;
+		
+				default:
+		
+					break;
+
+				}
+			}
+			else if(propertyField.MemberInfo != null)
+			{
+				Debug.Log(propertyField.PublicName);
+				switch(Type.GetTypeCode(propertyField.CSType))
+				{
+					case TypeCode.Boolean:
+						propertyField.SetValue(EditorGUILayout.Toggle(content, (bool)propertyField.GetValue(), emptyOptions));
+						break;
+			
+					case TypeCode.Decimal:
+					case TypeCode.Double:
+					case TypeCode.Single:
+						propertyField.SetValue(EditorGUILayout.FloatField(content, (float)propertyField.GetValue(), emptyOptions));
+						break;
+			
+					case TypeCode.Int16:
+					case TypeCode.Int32:
+					case TypeCode.Int64:
+					case TypeCode.UInt16:
+					case TypeCode.UInt32:
+					case TypeCode.UInt64:
+						propertyField.SetValue(EditorGUILayout.IntField(content, (int)propertyField.GetValue(), emptyOptions));
+						break;
+			
+					case TypeCode.String:
+						propertyField.SetValue(EditorGUILayout.TextField(content, (string)propertyField.GetValue(), emptyOptions));
+						break;
+
+					case TypeCode.Object:
+
+						if(propertyField.CSType.IsSerializable && (propertyField.Instance != null || (propertyField.UnityPropertyField != null && propertyField.UnityPropertyField.objectReferenceValue != null)))
+						{
+							List<OCPropertyField> nestedPropertiesAndFields = new List<OCPropertyField>();
+		
+							OCPropertyField.GetAllPropertiesAndFields
+							(
+								ref nestedPropertiesAndFields
+							, propertyField.GetValue()
+							, propertyField.CSType
+							, propertyField.UnityPropertyField
+							);
+
+//							Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
+//
+//							Debug.Log("In OCEditor.DrawFieldInInspector, nested Properties and Fields: " + nestedPropertiesAndFields.Select(p => p.Instance != null ? p.Instance.ToString() : "Null").Aggregate((a, b) => a + ", " + b));
+
+							DrawSerializedProperties(nestedPropertiesAndFields);
+						}
+						else if(propertyField.CSType.IsSubclassOf(typeof(UnityEngine.Object)))
+						{
+							propertyField.SetValue(EditorGUILayout.ObjectField(content, (UnityEngine.Object)propertyField.GetValue(), propertyField.CSType, true, emptyOptions));
+						}
+						break;
+
+					default:
+						break;
+				}
+				if(propertyField.CSType.IsEnum)
+					propertyField.SetValue(EditorGUILayout.EnumPopup(content, (Enum)propertyField.GetValue(), emptyOptions));
 			}
 		}
 	}

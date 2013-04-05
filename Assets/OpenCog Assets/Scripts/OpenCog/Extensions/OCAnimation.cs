@@ -37,7 +37,7 @@ namespace Extensions
 [OCExposeProperties]
 [Serializable]
 #endregion
-public class OCAnimation
+public class OCAnimation : ScriptableObject
 {
 
 	//---------------------------------------------------------------------------
@@ -59,7 +59,7 @@ public class OCAnimation
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
 	/// </summary>
-	private Hashtable m_iTweenParams = new Hashtable();
+	private Hashtable m_iTweenParams = null;
 
 	/// <summary>
 	/// The length of the animation's cross fade.
@@ -127,7 +127,7 @@ public class OCAnimation
 	[OCTooltip("The time in seconds that the animation will take to complete.")]
 	public float Time
 	{
-		get{ return (float)m_iTweenParams[iT.MoveBy.time];}
+		get{ return ValueOrDefault<float>(iT.MoveBy.time);}
 		set{ m_iTweenParams[iT.MoveBy.time] = value;}
 	}
 
@@ -141,7 +141,7 @@ public class OCAnimation
 	[OCTooltip("The shape of the easing curve applied to the animation.")]
 	public string EaseType
 	{
-		get{ return (string)m_iTweenParams[iT.MoveBy.easetype];}
+		get{ return ValueOrDefault<string>(iT.MoveBy.easetype);}
 		set{ m_iTweenParams[iT.MoveBy.easetype] = value;}
 	}
 
@@ -154,9 +154,9 @@ public class OCAnimation
 	/// </value>
 	[	OCTooltip
 		("The time in seconds that the animation will wait before beginning.") ]
-	public uint Delay
+	public int Delay
 	{
-		get{ return (uint)m_iTweenParams[iT.MoveBy.delay];}
+		get{ return ValueOrDefault<int>(iT.MoveBy.delay);}
 		set{ m_iTweenParams[iT.MoveBy.delay] = value;}
 	}
 
@@ -171,7 +171,7 @@ public class OCAnimation
 		("The name of the function to call at the start of the animation.") ]
 	public string OnStart
 	{
-		get{ return (string)m_iTweenParams[iT.MoveBy.onstart];}
+		get{ return ValueOrDefault<string>(iT.MoveBy.onstart);}
 		set{ m_iTweenParams[iT.MoveBy.onstart] = value;}
 	}
 
@@ -186,7 +186,7 @@ public class OCAnimation
 		("The name of the function to call at the end of the animation.") ]
 	public string OnEnd
 	{
-		get{ return (string)m_iTweenParams[iT.MoveBy.oncomplete];}
+		get{ return ValueOrDefault<string>(iT.MoveBy.oncomplete);}
 		set{ m_iTweenParams[iT.MoveBy.oncomplete] = value;}
 	}
 
@@ -203,7 +203,7 @@ public class OCAnimation
 		("The distance to move by in the x-axis as part of the animation.") ]
 	public float MoveByX
 	{
-		get{ return (float)m_iTweenParams[iT.MoveBy.x];}
+		get{ return ValueOrDefault<float>(iT.MoveBy.x);}
 		set{ m_iTweenParams[iT.MoveBy.x] = value;}
 	}
 
@@ -218,7 +218,7 @@ public class OCAnimation
 		("The distance to move by in the y-axis as part of the animation.") ]
 	public float MoveByY
 	{
-		get{ return (float)m_iTweenParams[iT.MoveBy.y];}
+		get{ return ValueOrDefault<float>(iT.MoveBy.y);}
 		set{ m_iTweenParams[iT.MoveBy.y] = value;}
 	}
 
@@ -234,7 +234,7 @@ public class OCAnimation
 		("The distance to move by in the z-axis as part of the animation.") ]
 	public float MoveByZ
 	{
-		get{ return (float)m_iTweenParams[iT.MoveBy.z];}
+		get{ return ValueOrDefault<float>(iT.MoveBy.z);}
 		set{ m_iTweenParams[iT.MoveBy.z] = value;}
 	}
 
@@ -259,7 +259,7 @@ public class OCAnimation
 	public OCAnimation(GameObject target, AnimationState animationState)
 	{
 		m_Target = target;
-
+		m_iTweenParams = new Hashtable();
 		m_AnimationState = animationState;
 
 		Time = m_AnimationState.length / m_AnimationState.speed + 0.01f;
@@ -314,7 +314,13 @@ public class OCAnimation
 
 	//---------------------------------------------------------------------------
 			
-
+	private T ValueOrDefault<T>(string key)
+	{
+		if(m_iTweenParams.Contains(key))
+			return (T)m_iTweenParams[key];
+		else
+			return default(T);
+	}
 			
 	//---------------------------------------------------------------------------
 

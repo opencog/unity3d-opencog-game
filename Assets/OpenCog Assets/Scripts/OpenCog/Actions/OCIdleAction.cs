@@ -36,6 +36,7 @@ namespace Actions
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposeProperties]
 [Serializable]
+[ExecuteInEditMode]
 #endregion
 public class OCIdleAction : OCAction
 {
@@ -45,6 +46,7 @@ public class OCIdleAction : OCAction
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
+
 
 	//---------------------------------------------------------------------------
 
@@ -80,6 +82,16 @@ public class OCIdleAction : OCAction
 	/// Called when the script instance is being loaded.
 	/// </summary>
 	public void Awake()
+	{
+		HasAnimation = true;
+		Animation = new OCAnimation(gameObject, animation["idle"]);
+		Animation.AnimationState.wrapMode = WrapMode.Loop;
+		Animation.AnimationState.layer = -1;
+		Animation.OnStart = "IdleStart";
+		Animation.OnEnd = "IdleEnd";
+	}
+
+	public void Start()
 	{
 		HasAnimation = true;
 		Animation = new OCAnimation(gameObject, animation["idle"]);
