@@ -14,21 +14,20 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using UnityEditor;
-using UnityEngine;
-using ProtoBuf;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
-
+using System.Reflection;
 using OpenCog.Attributes;
 using OpenCog.Automation;
-using OpenCog.SerializationExtensions;
-
+using OpenCog.Serialization;
+using ProtoBuf;
+using UnityEditor;
+using UnityEngine;
+using Enum = System.Enum;
+using OCExposure = OCPropertyField.OCExposure;
 using Type = System.Type;
 using TypeCode = System.TypeCode;
-using Enum = System.Enum;
 
 namespace OpenCog
 {
@@ -74,7 +73,7 @@ where OCType : MonoBehaviour
 	/// </summary>
 	private OCType m_Instance;
 
-	private object[] m_Attributes;
+	private bool m_ShowProperties = false;
 
 	private List<OCPropertyField> m_AllPropertyFields = new List<OCPropertyField>();
 
@@ -92,8 +91,6 @@ where OCType : MonoBehaviour
 	/// Are we setup to repaint on changes to the project window?
 	/// </summary>
 	private static bool m_willRepaint = false;
-
-	private OCDefaultEditor m_Editor = null;
 
 	private Type m_Type = null;//typeof(OCType);
 
@@ -148,103 +145,82 @@ where OCType : MonoBehaviour
 	{
 		m_Instance = target as OCType;
 
-		if(m_Instance != null)
-		{
-			Type exposePropertiesType =
-				typeof(OpenCog.Attributes.OCExposePropertiesAttribute);
-		
-			if(exposePropertiesType != null)
-				m_Attributes =
-					m_Instance.GetType().GetCustomAttributes(exposePropertiesType, true);
-		}
-
-		if( !m_willRepaint )
-		{
-			EditorApplication.projectWindowChanged += () => {
-				Repaint();
-			};
-			m_willRepaint = true;
-		}
-
 		OCAutomatedScriptScanner.Init();
-
 	}
  
 	public override void OnInspectorGUI()
 	{
-		if(m_Editor != null)
-		{
-			m_Editor.OnInspectorGUI();
-		}
-		else if(m_Editor == null)
-		{
-			// Update the serializedObject - always do this in the beginning of
-			// OnInspectorGUI.
-			serializedObject.Update();
-	
-			EditorGUIUtility.LookLikeInspector();
-	
-			SerializedProperty unityPropertyField = serializedObject.GetIterator();
-	
-			if(m_Attributes != null && m_Attributes.Length > 0)
-			{
-				if(m_Instance != null) m_Type = m_Instance.GetType();
-	//			else if(unityPropertyField != null) currentType = unityPropertyField.propertyType;
-			}
+		// Update the serializedObject - always do this in the beginning of
+		// OnInspectorGUI.
+		serializedObject.Update();
 
-			OCPropertyField.GetAllPropertiesAndFields
-			(
-				ref m_AllPropertyFields
-			, m_Instance
-			, m_Type
-			, unityPropertyField
-			);
+		EditorGUIUtility.LookLikeInspector();
 
-//			Debug.Log("Property Field Count: " + m_AllPropertyFields.Count);
-	
-			//Debug.Log("In OCEditor.OnInspectorGUI, allPropertyFields: ");
-			DrawSerializedProperties(m_AllPropertyFields);
-	
-			OCPropertyField scriptPropertyField = m_AllPropertyFields.Find(p => p.PublicName == "Script");
-	
-			if(scriptPropertyField != null
-			&& scriptPropertyField != default(OCPropertyField))
-	//		&& scriptPropertyField.CSType == typeof(string))
-			{
-				// Tests if there is a missing script
-				MonoScript sourceScript = (MonoScript)scriptPropertyField.GetValue();
-				if(sourceScript == null)
-				{
-					m_Editor = null;
-					FindMissingScripts(ref m_AllPropertyFields);
-				}
-				else
-				{
-					OCScript targetScript =
-						OCAutomatedScriptScanner.Scripts.Find
-						(
-							s => s.Script.name == sourceScript.name
-						)
-					;
+		DrawInspector(target);
 
-					if(m_AllPropertyFields == null)
-						Debug.Log("In OCEditor.OnInspectorGUI, no property fields!");
-					targetScript.Properties = m_AllPropertyFields.ToDictionary(p => p.PrivateName);
-				}
-			}
-	
-			// Apply changes to the serializedProperty - always do this in the end of
-			// OnInspectorGUI.
-			serializedObject.ApplyModifiedProperties();
-			serializedObject.UpdateIfDirtyOrScript();
-	
-			m_AllPropertyFields.Clear();
-		}
+		// Apply changes to the serializedProperty - always do this in the end of
+		// OnInspectorGUI.
+		serializedObject.ApplyModifiedProperties();
+		serializedObject.UpdateIfDirtyOrScript();
+
+		m_AllPropertyFields.Clear();
+
+		//@TODO: vvv Is this needed given the repaint event in OnEnable?
+		if(GUI.changed)
+			EditorUtility.SetDirty(target);
 	}
+
+	public void DrawInspector<OCType>(OCType target)
+		where OCType : new()
+	{
+		if(target == null)
+		{
+			GUILayout.Label("Object is Null");
+			return;
+		}
+
+		Type exposePropertiesType =
+			typeof(OCExposePropertyFieldsAttribute);
+
+		OCExposure exposure = OCExposure.None;
+
+		if(exposePropertiesType != null)
+		{
+			object[] attributes =
+				target.GetType().GetCustomAttributes(exposePropertiesType, true);
+
+			if(attributes != null && attributes.Length > 0)
+				exposure = (attributes[0] as OCExposePropertyFieldsAttribute).Exposure;
+		}
+
+		SerializedProperty unityPropertyFieldIterator =
+			serializedObject.GetIterator();
+
+		List<OCPropertyField> allPropertyFields =
+		OCPropertyField.GetAllPropertiesAndFields
+		(
+			target
+		, unityPropertyFieldIterator
+		, exposure
+		);
+
+		DrawSerializedProperties(allPropertyFields);
+
+		allPropertyFields = FindMissingScripts(allPropertyFields);
+
+		OCPropertyField.SetAllPropertiesAndFields
+		(
+			target
+		, allPropertyFields
+		);
+
+	}
+
+
 
 	public void DrawSerializedProperties(List< OCPropertyField > allPropertiesAndFields)
 	{
-		GUIContent content = new GUIContent();
+		GUIContent label = new GUIContent();
 		GUILayoutOption[] emptyOptions = new GUILayoutOption[0];
 
 		EditorGUILayout.BeginVertical(emptyOptions);
@@ -275,15 +251,15 @@ where OCType : MonoBehaviour
 			if(allowedVisibleForBoolCondition && allowedVisibleForEnumCondition && drawMethod == null)
 			{
 
-				content.text = propertyField.PublicName;
+				label.text = propertyField.PublicName;
 
 				//Sets the tooltip if avaiable
 				if(tooltip != null)
 				{
-					content.tooltip = tooltip.Tooltip;
+					label.tooltip = tooltip.Description;
 				}
 
-				DrawFieldInInspector(propertyField, content, emptyOptions, floatSlider, intSlider);
+				DrawFieldInInspector(propertyField, label, emptyOptions, floatSlider, intSlider);
 
 			}
 			else
@@ -306,7 +282,7 @@ where OCType : MonoBehaviour
 				bool _error = false;
 				for(int i = 0; i < parametersInfo.Length; i++)
 				{
-					//Makes sure the parameter of the actual method is equal to the
+					//Makes sure the parameter of the actual method is equal to the given parameters
 					if(!Type.Equals(parametersInfo[i].ParameterType, drawMethod.Parameters[i].GetType()))
 					{
 						_error = true;
@@ -499,9 +475,9 @@ where OCType : MonoBehaviour
 							if(m_FoldedState[propertyField.PublicName])
 							{
 
-								EditorGUILayout.BeginVertical();
+								//EditorGUILayout.BeginVertical();
 								GUILayout.Space(15);
-								EditorGUILayout.BeginHorizontal();
+								//EditorGUILayout.BeginHorizontal();
 								GUILayout.Space(-25);
 //								Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
 //
@@ -509,8 +485,8 @@ where OCType : MonoBehaviour
 
 								DrawSerializedProperties(nestedPropertiesAndFields);
 
-								EditorGUILayout.EndHorizontal();
-								EditorGUILayout.EndVertical();
+								//EditorGUILayout.EndHorizontal();
+								//EditorGUILayout.EndVertical();
 
 							}
 						}
@@ -545,93 +521,104 @@ where OCType : MonoBehaviour
 
 	private void FindMissingScripts(ref List< OCPropertyField > allPropertyFields)
 	{
-		EditorPrefs.SetBool("Fix", GUILayout.Toggle(EditorPrefs.GetBool("Fix", true), "Fix broken scripts"));
-		if(!EditorPrefs.GetBool("Fix", true))
-		{
-			GUILayout.Label("*** SCRIPT MISSING ***");
-			return;
-		}
+		OCPropertyField scriptPropertyField =
+			m_AllPropertyFields.Find(p => p.PublicName == "Script");
 
-//		List<OCPropertyField> allPropertyFieldsCopy = new List<OCPropertyField>(allPropertyFields);
-
-		foreach(OCPropertyField propertyField in allPropertyFields)
+		if(scriptPropertyField != null
+		&& scriptPropertyField != default(OCPropertyField))
 		{
-			//Debug.Log("In OCEditor.FindMissingScripts(), property name: " + property.name);
-			if(propertyField.PublicName == "Script" && propertyField.MemberInfo == null)
+			// Tests if there is a missing script
+			MonoScript sourceScript = (MonoScript)scriptPropertyField.GetValue();
+			if(sourceScript == null)
 			{
-				//Debug.Log("In OCEditor.FindMissingScripts(), found script");
-				Component targetComponent = target as Component;
-				if(targetComponent != null && TryThisObject == targetComponent.gameObject)
+
+				EditorPrefs.SetBool("Fix", GUILayout.Toggle(EditorPrefs.GetBool("Fix", true), "Fix broken scripts"));
+				if(!EditorPrefs.GetBool("Fix", true))
 				{
-					//Debug.Log("In OCEditor.FindMissingScripts(), we have tried this script already");
-					HaveTried = true;
+					GUILayout.Label("*** SCRIPT MISSING ***");
+					return;
 				}
-
-				List< OCScript > candidates = OCAutomatedScriptScanner.Scripts.ToList();
-
-				foreach(OCPropertyField subPropertyField in allPropertyFields)
+		
+		//		List<OCPropertyField> allPropertyFieldsCopy = new List<OCPropertyField>(allPropertyFields);
+		
+				foreach(OCPropertyField propertyField in allPropertyFields)
 				{
-					//Debug.Log("SubPropertyField Name: " + subPropertyField.PublicName);
-
-					if(candidates.Count == 0)
+					//Debug.Log("In OCEditor.FindMissingScripts(), property name: " + property.name);
+					if(propertyField.PublicName == "Script" && propertyField.MemberInfo == null)
 					{
-						//Debug.Log("candidates = 0");
-						break;
-					}
-
-					if(subPropertyField.PublicName != "Script"
-					&& subPropertyField.PrivateName != propertyField.PrivateName)
-					{
-						//Debug.Log("Before selection: " + candidates.Count);
-						candidates = candidates.Where(c => c.Properties.ContainsKey(subPropertyField.PublicName)).ToList();
-						//Debug.Log("After  selection: " + candidates.Count); 
-					}
-				}
-
-				if(candidates.Count == 1)
-				{
-					propertyField.SetValue(candidates[0].Script);
-
-					serializedObject.ApplyModifiedProperties();
-					serializedObject.UpdateIfDirtyOrScript();
-
-				}
-				else
-				if(candidates.Count > 0)
-				{
-					foreach(OCScript candidate in candidates)
-					{
-						if(candidate != null && candidate.Script != null && GUILayout.Button("Use " + candidate.Script.name))
+						//Debug.Log("In OCEditor.FindMissingScripts(), found script");
+						Component targetComponent = target as Component;
+						if(targetComponent != null && TryThisObject == targetComponent.gameObject)
 						{
-							//Configure the script
-							propertyField.SetValue(candidate.Script);
-							m_Type = candidate.Script.GetClass();
-
-							//if(m_Instance != null) UnityEditor.EditorUtility.SetDirty(m_Instance);
-
+							//Debug.Log("In OCEditor.FindMissingScripts(), we have tried this script already");
+							HaveTried = true;
+						}
+		
+						List< OCScript > candidates = OCAutomatedScriptScanner.Scripts.ToList();
+		
+						foreach(OCPropertyField subPropertyField in allPropertyFields)
+						{
+							//Debug.Log("SubPropertyField Name: " + subPropertyField.PublicName);
+		
+							if(candidates.Count == 0)
+							{
+								//Debug.Log("candidates = 0");
+								break;
+							}
+		
+							if(subPropertyField.PublicName != "Script"
+							&& subPropertyField.PrivateName != propertyField.PrivateName)
+							{
+								//Debug.Log("Before selection: " + candidates.Count);
+								candidates = candidates.Where(c => c.Properties.ContainsKey(subPropertyField.PublicName)).ToList();
+								//Debug.Log("After  selection: " + candidates.Count); 
+							}
+						}
+		
+						if(candidates.Count == 1)
+						{
+							propertyField.SetValue(candidates[0].Script);
+		
 							serializedObject.ApplyModifiedProperties();
 							serializedObject.UpdateIfDirtyOrScript();
-
-							m_Editor = (OCDefaultEditor)Editor.CreateEditor(target);
-//							m_Editor.OnEnable();
-							m_Editor.m_AllPropertyFields = candidate.Properties.Values.ToList();
-							//m_Editor. .OnEnable();
-
-							//if(candidate.Script != null)
+		
+						}
+						else
+						if(candidates.Count > 0)
+						{
+							foreach(OCScript candidate in candidates)
 							{
-								//Debug.Log("Creating a new editor.");
-								//UnityEditor.EditorWindow.
+								if(candidate != null && candidate.Script != null && GUILayout.Button("Use " + candidate.Script.name))
+								{
+									//Configure the script
+									propertyField.SetValue(candidate.Script);
+									m_Type = candidate.Script.GetClass();
 
-								//EditorUtility.SetDirty(target);
-							}
-
+									//if(m_Instance != null) UnityEditor.EditorUtility.SetDirty(m_Instance);
+		
+									serializedObject.ApplyModifiedProperties();
+									serializedObject.UpdateIfDirtyOrScript();
+		
+									//m_Editor = (OCDefaultEditor)Editor.CreateEditor(target);
+									//m_Editor.OnEnable();
+									//m_Editor.m_AllPropertyFields = candidate.Properties.Values.ToList();
+									//m_Editor. .OnEnable();
+		
+									//if(candidate.Script != null)
+									{
+										//Debug.Log("Creating a new editor.");
+										//UnityEditor.EditorWindow.
+		
+										//EditorUtility.SetDirty(target);
+									}
+		
 //							System.Type type = default(Type);
 //
 //							Assembly []referencedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
 //							for(int i = 0; i < referencedAssemblies.Length; ++i)
 //							{
 //							  type = referencedAssemblies[i].GetType( "UnityEditor.InspectorWindow" );
-//							
+//
 //							  if( type != null )
 //							  {   // I want all the declared methods from the specific class.
 //							      //System.Reflection.MethodInfo []methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
@@ -682,87 +669,37 @@ where OCType : MonoBehaviour
 //							}
 
 //							inspector.Close();
-//							EditorApplication.ExecuteMenuItem("Window/Inspector");			
+//							EditorApplication.ExecuteMenuItem("Window/Inspector");
 //							inspector.Show();
-
-							return;
-    
+		
+									return;
+		    
+								}
+							}
 						}
+						else
+						{
+							GUILayout.Label("> No suitable scripts were found");
+						}
+						break;
 					}
 				}
-				else
-				{
-					GUILayout.Label("> No suitable scripts were found");
-				}
-				break;
+
+			}
+			else
+			{
+				OCScript targetScript =
+					OCAutomatedScriptScanner.Scripts.Find
+					(
+						s => s.Script.name == sourceScript.name
+					)
+				;
+
+				if(m_AllPropertyFields == null)
+					Debug.Log("In OCEditor.OnInspectorGUI, no property fields!");
+				targetScript.Properties = m_AllPropertyFields.ToDictionary(p => p.PrivateName);
 			}
 		}
-
-//		var iterator = this.serializedObject.GetIterator();
-//		var first = true;
-//		while(iterator.NextVisible(first))
-//		{
-//			first = false;
-//			if(iterator.name == "m_Script" && iterator.objectReferenceValue == null)
-//			{
-//				if((target as Component) != null && TryThisObject == (target as Component).gameObject)
-//				{
-//					HaveTried = true;
-//				}
-//
-//				//Make a copy of our script serialized property
-//				//for later
-//				var script = iterator.Copy();
-//
-//				//Get a copy of all of the scripts
-//				var candidates = OCAutomatedScriptScanner.Scripts.ToList();
-//
-//				//Step through the remaining properties
-//				//while we have anything that might match
-//				while(iterator.NextVisible(false) && candidates.Count>0)
-//				{
-//					//Set candidates to the subset that contain
-//					//the current property
-//					candidates = candidates.Where(c => c.Properties.ContainsKey(iterator.name)).ToList();
-//				}
-//				//If we have only 1 candidate remaining
-//				//then use it
-//				if(candidates.Count == 1)
-//				{
-//					//Set the script reference
-//					script.objectReferenceValue = candidates[0].Script;
-//    
-//					//Update the data stream
-//					serializedObject.ApplyModifiedProperties();
-//					serializedObject.UpdateIfDirtyOrScript();
-//
-//				}
-//        //If we have multiple matches then give
-//        //the user a choice
-//				else
-//				if(candidates.Count > 0)
-//				{
-//					foreach(var candidate in candidates)
-//					{
-//						if(candidate != null && candidate.Script != null && GUILayout.Button("Use " + candidate.Script.name))
-//						{
-//							//Configure the script
-//							script.objectReferenceValue = candidate.Script;
-//
-//							serializedObject.ApplyModifiedProperties();
-//							serializedObject.UpdateIfDirtyOrScript();
-//    
-//						}
-//					}
-//				}
-//        //Otherwise tell them we failed
-//				else
-//				{
-//					GUILayout.Label("> No suitable scripts were found");
-//				}
-//				break;
-//			}
-//		}
 	}
 
 //	private bool IsScriptMissing(OCPropertyField scriptPropertyField)
@@ -771,17 +708,9 @@ where OCType : MonoBehaviour
 //		return target.GetType() != typeof(OCType) || scriptPropertyField.GetValue() == null;
 //	}
 
-//	void DisplayInspectorGUI()
-//	{
-//		//base.OnInspectorGUI();
-//		DrawDefaultInspector();
-//
-//		OCExposePropertiesAttribute.Expose(m_ReadAndWriteProperties);
-//	}
-
 	//@TODO: Finish this function...
 
-	void SerializeAndHidePrivateDataMembers(System.Object obj)
+	private void SerializeAndHidePrivateDataMembers(System.Object obj)
 	{
 		if(obj == null)
 		{
@@ -806,9 +735,9 @@ where OCType : MonoBehaviour
 		}
 
 
-
-
 	}
+
+
 
 
 

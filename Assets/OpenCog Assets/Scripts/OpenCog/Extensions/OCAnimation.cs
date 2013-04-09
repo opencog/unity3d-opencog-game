@@ -34,7 +34,7 @@ namespace Extensions
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposeProperties]
+[OCExposePropertyFields]
 [Serializable]
 #endregion
 public class OCAnimation
@@ -65,6 +65,8 @@ public class OCAnimation
 	/// The length of the animation's cross fade.
 	/// </summary>
 	private float m_FadeLength = 0.0f;
+
+//	private bool m_Initialized = false;
 
 
 
@@ -116,6 +118,12 @@ public class OCAnimation
 		get{ return this.m_Target;}
 		set{ m_Target = value;}
 	}
+
+//	public bool IsInitialized
+//	{
+//		get { return m_Initialized;}
+//		set { m_Initialized = value;}
+//	}
 
 	/// <summary>
 	/// Gets or sets the time in seconds that the animation will take to
@@ -294,6 +302,9 @@ public class OCAnimation
 		Time = AnimationState_.length / AnimationState_.speed + 0.01f;
 		EaseType = "linear";//iTween.EaseType.linear;
 		Delay = 0;
+
+		//m_Initialized = true;
+		//DontDestroyOnLoad(this);
 	}
 
 	/// <summary>

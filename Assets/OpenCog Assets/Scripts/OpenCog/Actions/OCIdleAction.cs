@@ -34,7 +34,7 @@ namespace Actions
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposeProperties]
+[OCExposePropertyFields]
 [Serializable]
 [ExecuteInEditMode]
 #endregion
@@ -96,7 +96,9 @@ public class OCIdleAction : OCAction
 		Animation.AnimationState_.layer = -1;
 		Animation.OnStart = "IdleStart";
 		Animation.OnEnd = "IdleEnd";
-	} 
+
+		DontDestroyOnLoad(this);
+	}
 
 	public void Start()
 	{
@@ -108,12 +110,14 @@ public class OCIdleAction : OCAction
 		Animation.AnimationState_.layer = -1;
 		Animation.OnStart = "IdleStart";
 		Animation.OnEnd = "IdleEnd";
+
+		DontDestroyOnLoad(this);
 	}
 
 	public void OnEnable()
 	{
 		Debug.Log("In OCIdleAction.OnEnable()...");
-		//if(Animation == null)
+		//if(Animation == null)// || !Animation.IsInitialized)
 		{
 			Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 			Animation.Initialize(gameObject, animation["idle"]);

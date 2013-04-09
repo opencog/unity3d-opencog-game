@@ -46,7 +46,7 @@ public class OCTooltipAttribute : Attribute
 	/// <summary>
 	/// The tooltip string to be displayed.
 	/// </summary>
-	private string m_Tooltip;
+	private string m_Description;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -64,10 +64,10 @@ public class OCTooltipAttribute : Attribute
 	/// <value>
 	/// The tooltip string.
 	/// </value>
-  public string Tooltip
+  public string Description
 	{
-		get { return m_Tooltip; }
-		set { m_Tooltip = value; }
+		get { return m_Description; }
+		set { m_Description = value; }
 	}
 
   /////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ public class OCTooltipAttribute : Attribute
 	/// </param>
   public 	OCTooltipAttribute(string tooltip)
 	{
-		this.Tooltip = tooltip;
+		this.Description = tooltip;
 	}
 
   /////////////////////////////////////////////////////////////////////////////

@@ -32,7 +32,7 @@ using TypeCode = System.TypeCode;
 namespace OpenCog
 {
 
-namespace SerializationExtensions
+namespace Serialization
 {
 
 /// <summary>
@@ -1059,9 +1059,29 @@ public class OCPropertyField
 
 	/////////////////////////////////////////////////////////////////////////////
 
+	#region Other Members
+
+	/////////////////////////////////////////////////////////////////////////////
+
+	public enum OCExposure
+	{
+		None
+	, PublicFieldsOnly
+	, FieldsOnly
+	, PropertiesOnly
+	, PublicPropertiesOnly
+	, PropertiesAndFields
+	};
+
+	/////////////////////////////////////////////////////////////////////////////
+
+  #endregion
+
+	/////////////////////////////////////////////////////////////////////////////
+
 }// class OCPropertyField
 
-}// namespace SerializationExtensions
+}// namespace Serialization
 
 }// namespace OpenCog
 
