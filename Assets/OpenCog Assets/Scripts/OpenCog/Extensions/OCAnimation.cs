@@ -37,7 +37,7 @@ namespace Extensions
 [OCExposeProperties]
 [Serializable]
 #endregion
-public class OCAnimation : ScriptableObject
+public class OCAnimation
 {
 
 	//---------------------------------------------------------------------------
@@ -59,7 +59,7 @@ public class OCAnimation : ScriptableObject
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
 	/// </summary>
-	private Hashtable m_iTweenParams = null;
+	private Hashtable m_iTweenParams;
 
 	/// <summary>
 	/// The length of the animation's cross fade.
@@ -85,7 +85,7 @@ public class OCAnimation : ScriptableObject
 	/// The Unity animation state that we're wrapping.
 	/// </value>
 	[OCTooltip("The Unity animation state that we're wrapping.")]
-	public AnimationState AnimationState
+	public AnimationState AnimationState_
 	{
 		get{ return m_AnimationState;}
 		set{ m_AnimationState = value;}
@@ -253,18 +253,17 @@ public class OCAnimation : ScriptableObject
 	/// Initializes a new instance of the
 	/// <see cref="OpenCog.Extensions.OCAnimation"/> class.
 	/// </summary>
-	/// <param name='AnimationState'>
-	/// The animation state for this action.
-	/// </param>
-	public OCAnimation(GameObject target, AnimationState animationState)
-	{
-		m_Target = target;
-		m_iTweenParams = new Hashtable();
-		m_AnimationState = animationState;
 
-		Time = m_AnimationState.length / m_AnimationState.speed + 0.01f;
-		EaseType = "linear";//iTween.EaseType.linear;
-		Delay = 0;
+	public OCAnimation()
+	{
+	}
+
+	public OCAnimation(OCAnimation anim)
+	{
+		FadeLength = anim.FadeLength;
+		Target = anim.Target;
+		AnimationState_ = anim.AnimationState_;
+		m_iTweenParams = anim.m_iTweenParams;
 	}
 
 	//---------------------------------------------------------------------------
@@ -276,6 +275,26 @@ public class OCAnimation : ScriptableObject
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+
+	/// <summary>
+	/// Initialize the OpenCog Animation with the specified target and
+	/// animationState.
+	/// </summary>
+	/// <param name='target'>
+	/// The target object to animate.
+	/// </param>
+	/// <param name='animationState'>
+	/// The Unity animation state that corresponds to this OpenCog animation.
+	/// </param>
+	public void Initialize(GameObject target, AnimationState animationState)
+	{
+		Target = target;
+		AnimationState_ = animationState;
+		m_iTweenParams = new Hashtable();
+		Time = AnimationState_.length / AnimationState_.speed + 0.01f;
+		EaseType = "linear";//iTween.EaseType.linear;
+		Delay = 0;
+	}
 
 	/// <summary>
 	/// Play this animation.

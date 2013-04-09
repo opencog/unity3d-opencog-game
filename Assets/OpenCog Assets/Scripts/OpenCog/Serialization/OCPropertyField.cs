@@ -236,7 +236,7 @@ public class OCPropertyField
 		get
 		{
 			return
-				BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
+				BindingFlags.Instance | BindingFlags.Public;
 		}
 	}
 
@@ -388,7 +388,7 @@ public class OCPropertyField
 				}
 				else
 				{
-					return null;//info.GetValue(Instance, parameters);
+					return info.GetValue(Instance, parameters);
 				}
 			}
 			else

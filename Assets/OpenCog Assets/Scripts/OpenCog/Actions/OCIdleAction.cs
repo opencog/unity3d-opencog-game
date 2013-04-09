@@ -68,6 +68,11 @@ public class OCIdleAction : OCAction
 
 	//---------------------------------------------------------------------------
 
+	public OCIdleAction()
+	{
+
+	}
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -83,22 +88,40 @@ public class OCIdleAction : OCAction
 	/// </summary>
 	public void Awake()
 	{
+		Debug.Log("In OCIdleAction.Awake()...");
 		HasAnimation = true;
-		Animation = new OCAnimation(gameObject, animation["idle"]);
-		Animation.AnimationState.wrapMode = WrapMode.Loop;
-		Animation.AnimationState.layer = -1;
+		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
+		Animation.Initialize(gameObject, animation["idle"]);
+		Animation.AnimationState_.wrapMode = WrapMode.Loop;
+		Animation.AnimationState_.layer = -1;
+		Animation.OnStart = "IdleStart";
+		Animation.OnEnd = "IdleEnd";
+	} 
+
+	public void Start()
+	{
+		Debug.Log("In OCIdleAction.Start()...");
+		HasAnimation = true;
+		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
+		Animation.Initialize(gameObject, animation["idle"]);
+		Animation.AnimationState_.wrapMode = WrapMode.Loop;
+		Animation.AnimationState_.layer = -1;
 		Animation.OnStart = "IdleStart";
 		Animation.OnEnd = "IdleEnd";
 	}
 
-	public void Start()
+	public void OnEnable()
 	{
-		HasAnimation = true;
-		Animation = new OCAnimation(gameObject, animation["idle"]);
-		Animation.AnimationState.wrapMode = WrapMode.Loop;
-		Animation.AnimationState.layer = -1;
-		Animation.OnStart = "IdleStart";
-		Animation.OnEnd = "IdleEnd";
+		Debug.Log("In OCIdleAction.OnEnable()...");
+		//if(Animation == null)
+		{
+			Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
+			Animation.Initialize(gameObject, animation["idle"]);
+			Animation.AnimationState_.wrapMode = WrapMode.Loop;
+			Animation.AnimationState_.layer = -1;
+			Animation.OnStart = "IdleStart";
+			Animation.OnEnd = "IdleEnd";
+		}
 	}
 
 	public void Execute()
