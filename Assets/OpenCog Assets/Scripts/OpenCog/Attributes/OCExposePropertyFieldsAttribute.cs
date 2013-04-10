@@ -15,14 +15,15 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
+using OpenCog.Serialization;
 using ProtoBuf;
 using UnityEditor;
-using System.Collections.Generic;
-using OpenCog.SerializationExtensions;
+using UnityEngine;
+using OCExposure = OpenCog.Serialization.OCPropertyField.OCExposure;
 
 namespace OpenCog
 {
@@ -39,7 +40,7 @@ namespace Attributes
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [AttributeUsage( AttributeTargets.Class )]
 #endregion
-public class OCExposePropertiesAttribute : Attribute
+public class OCExposePropertyFieldsAttribute : Attribute
 {
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -47,6 +48,8 @@ public class OCExposePropertiesAttribute : Attribute
   #region Private Member Data
 
 	/////////////////////////////////////////////////////////////////////////////
+
+	private OCExposure m_Exposure;
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -58,6 +61,12 @@ public class OCExposePropertiesAttribute : Attribute
 
 	/////////////////////////////////////////////////////////////////////////////
 
+	public OCExposure Exposure
+	{
+		get{ return m_Exposure;}
+		set{ m_Exposure = value;}
+	}
+
 	/////////////////////////////////////////////////////////////////////////////
 
   #endregion
@@ -68,6 +77,12 @@ public class OCExposePropertiesAttribute : Attribute
 
 	/////////////////////////////////////////////////////////////////////////////
 
+	public OCExposePropertyFieldsAttribute
+		(OCExposure exposure = OCExposure.PropertiesAndFields)
+	{
+		m_Exposure = exposure;
+	}
+
 	/////////////////////////////////////////////////////////////////////////////
 
   #endregion
@@ -77,6 +92,18 @@ public class OCExposePropertiesAttribute : Attribute
   #region Private Member Functions
 
 	/////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////
+
+  #endregion
+
+	/////////////////////////////////////////////////////////////////////////////
+
+  #region Other Members
+
+	/////////////////////////////////////////////////////////////////////////////
+
+
 
 	/////////////////////////////////////////////////////////////////////////////
 

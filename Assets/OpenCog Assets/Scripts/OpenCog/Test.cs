@@ -27,7 +27,7 @@ namespace OpenCog
 /// </summary>
 #region Class Attributes
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposeProperties]
+[OCExposePropertyFields]
 [Serializable]
 #endregion
 public class Test : MonoBehaviour

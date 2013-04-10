@@ -29,16 +29,15 @@ namespace Actions
 {
 
 /// <summary>
-/// The OpenCog OCIdleAction.
+/// The OpenCog OCAction.
 /// </summary>
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
-[ExecuteInEditMode]
 #endregion
-public class OCIdleAction : OCAction
+public class OCAction : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -46,6 +45,16 @@ public class OCIdleAction : OCAction
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
+
+	/// <summary>
+	/// Indicates whether this action has an associated animation.
+	/// </summary>
+	private bool m_HasAnimation = false;
+
+	/// <summary>
+	/// The animation associated with this action, if any.
+	/// </summary>
+	private OCAnimation m_Animation = null;
 
 
 	//---------------------------------------------------------------------------
@@ -57,7 +66,34 @@ public class OCIdleAction : OCAction
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-			
+
+	/// <summary>
+	/// Gets or sets a value indicating whether this action has an associated
+	/// animation.
+	/// </summary>
+	/// <value>
+	/// <c>true</c> if this instance has an animation; otherwise, <c>false</c>.
+	/// </value>
+	public bool HasAnimation
+	{
+		get {return m_HasAnimation;}
+		set {m_HasAnimation = value;}
+	}
+
+	/// <summary>
+	/// Gets or sets the animation associated with this action.
+	/// </summary>
+	/// <value>
+	/// The animation.
+	/// </value>
+	[OCTooltip("The animation to play for this action.")]
+	[OCBoolPropertyToggle("HasAnimation", true)]
+	public OCAnimation Animation
+	{
+		get {return m_Animation;}
+		set {m_Animation = value;}
+	}
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -68,10 +104,6 @@ public class OCIdleAction : OCAction
 
 	//---------------------------------------------------------------------------
 
-	public OCIdleAction()
-	{
-
-	}
 
 	//---------------------------------------------------------------------------
 
@@ -83,65 +115,6 @@ public class OCIdleAction : OCAction
 
 	//---------------------------------------------------------------------------
 
-	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-	public void Awake()
-	{
-		Debug.Log("In OCIdleAction.Awake()...");
-		HasAnimation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.AnimationState_.wrapMode = WrapMode.Loop;
-		Animation.AnimationState_.layer = -1;
-		Animation.OnStart = "IdleStart";
-		Animation.OnEnd = "IdleEnd";
-
-		DontDestroyOnLoad(this);
-	}
-
-	public void Start()
-	{
-		Debug.Log("In OCIdleAction.Start()...");
-		HasAnimation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.AnimationState_.wrapMode = WrapMode.Loop;
-		Animation.AnimationState_.layer = -1;
-		Animation.OnStart = "IdleStart";
-		Animation.OnEnd = "IdleEnd";
-
-		DontDestroyOnLoad(this);
-	}
-
-	public void OnEnable()
-	{
-		Debug.Log("In OCIdleAction.OnEnable()...");
-		//if(Animation == null)// || !Animation.IsInitialized)
-		{
-			Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-			Animation.Initialize(gameObject, animation["idle"]);
-			Animation.AnimationState_.wrapMode = WrapMode.Loop;
-			Animation.AnimationState_.layer = -1;
-			Animation.OnStart = "IdleStart";
-			Animation.OnEnd = "IdleEnd";
-		}
-	}
-
-	public void Execute()
-	{
-		Animation.Play();
-	}
-
-	public void IdleStart()
-	{
-		Animation.Start();
-	}
-
-	public void IdleEnd()
-	{
-		Animation.End();
-	}
 
 	//---------------------------------------------------------------------------
 
@@ -152,6 +125,8 @@ public class OCIdleAction : OCAction
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
+			
+	
 			
 	//---------------------------------------------------------------------------
 
@@ -169,7 +144,7 @@ public class OCIdleAction : OCAction
 
 	//---------------------------------------------------------------------------
 
-}// class OCIdleAction
+}// class OCAction
 
 }// namespace Actions
 
