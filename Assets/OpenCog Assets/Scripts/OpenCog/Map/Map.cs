@@ -31,7 +31,7 @@ public class Map : MonoBehaviour {
 		LightComputer.RecomputeLightAtPosition(this, pos);
 	}
 	
-	private void SetDirty(Vector3i chunkPos) {
+	public void SetDirty(Vector3i chunkPos) {
 		Chunk chunk = GetChunk( chunkPos );
 		if(chunk != null) chunk.GetChunkRendererInstance().SetDirty();
 	}

@@ -18,12 +18,11 @@
 using System;
 using System.Collections;
 using Behave.Runtime;
-using OpenCog.Attribute;
+using OpenCog.Attributes;
 using ProtoBuf;
 using UnityEngine;
 using Tree = Behave.Runtime.Tree;
 using TreeType = BLOpenCogCharacterBehaviours.TreeType;
-using TreeTypeRobot = TreeType.CharacterBehaviours_RobotExploreBehaviour;
 
 namespace OpenCog
 {
@@ -92,7 +91,7 @@ public class OCRobotAgent : MonoBehaviour, IAgent
 	{
 			m_Tree =
 				BLOpenCogCharacterBehaviours.InstantiateTree
-				( TreeTypeRobot
+				( TreeType.CharacterBehaviours_RobotExploreBehaviour
 				, this
 				)
 			;
