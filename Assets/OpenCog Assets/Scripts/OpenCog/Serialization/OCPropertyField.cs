@@ -666,21 +666,22 @@ public class OCPropertyField
 	/// <param name='allPropertiesAndFields'>
 	/// If set to <c>true</c>, all the properties and fields.
 	/// </param>
-	public static bool GetAllPropertiesAndFields
-	(
-		ref List<OCPropertyField> allPropertyFields
-	, object obj = null
-	, Type type = null
+	public static List<OCPropertyField> GetAllPropertiesAndFields
+	( object obj = null
 	, SerializedProperty unityPropertyField = null
+	, OCExposure exposure = OCExposure.None
 	)
 	{
+		List<OCPropertyField> allPropertyFields = new List<OCPropertyField>();
+		Type type = obj.GetType();
+
 		if
 		(
 			 type == null
 		&& unityPropertyField == null
 		)
 		{
-			return false;
+			return null;
 		}
 
 		Stack<OCPropertyField> candidates = new Stack<OCPropertyField>();
@@ -761,11 +762,11 @@ public class OCPropertyField
 
 		if(allPropertyFields.Count > 0)
 		{
-			return true;
+			return allPropertyFields;
 		}
 		else
 		{
-			return false;
+			return null;
 		}
 	}
 

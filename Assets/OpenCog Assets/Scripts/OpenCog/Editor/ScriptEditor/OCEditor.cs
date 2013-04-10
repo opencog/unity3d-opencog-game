@@ -25,7 +25,7 @@ using ProtoBuf;
 using UnityEditor;
 using UnityEngine;
 using Enum = System.Enum;
-using OCExposure = OCPropertyField.OCExposure;
+using OCExposure = OpenCog.Serialization.OCPropertyField.OCExposure;
 using Type = System.Type;
 using TypeCode = System.TypeCode;
 
@@ -206,13 +206,13 @@ where OCType : MonoBehaviour
 
 		DrawSerializedProperties(allPropertyFields);
 
-		allPropertyFields = FindMissingScripts(allPropertyFields);
+		FindMissingScripts(ref allPropertyFields);
 
-		OCPropertyField.SetAllPropertiesAndFields
-		(
-			target
-		, allPropertyFields
-		);
+//		OCPropertyField.SetAllPropertiesAndFields
+//		(
+//			target
+//		, allPropertyFields
+//		);
 
 	}
 
@@ -223,7 +223,7 @@ where OCType : MonoBehaviour
 		GUIContent label = new GUIContent();
 		GUILayoutOption[] emptyOptions = new GUILayoutOption[0];
 
-		EditorGUILayout.BeginVertical(emptyOptions);
+		//EditorGUILayout.BeginVertical(emptyOptions);
 
 		//Loops through all visible fields
 		foreach(OCPropertyField propertyField in allPropertiesAndFields)
@@ -233,7 +233,7 @@ where OCType : MonoBehaviour
 			//if(propertyField.GetValue() == null)
 			//	continue;
 
-			EditorGUILayout.BeginHorizontal(emptyOptions);
+			//EditorGUILayout.BeginHorizontal(emptyOptions);
 
 			//Finds the bool Condition, enum Condition and tooltip if they exist (They are null otherwise).
 			OCBoolPropertyToggleAttribute boolCondition = propertyField.GetAttribute<OCBoolPropertyToggleAttribute>();
@@ -304,14 +304,14 @@ where OCType : MonoBehaviour
 				//Debug.Log("In OCEditor.DrawSerializedProperties, nothing to draw! " + allowedVisibleForBoolCondition + ", " + allowedVisibleForEnumCondition + ", " + drawMethod);
 			}
 
-			EditorGUILayout.EndHorizontal();
+			//EditorGUILayout.EndHorizontal();
 
 		}
 
-		EditorGUILayout.EndVertical();
+		//EditorGUILayout.EndVertical();
 	}
 
-	public void DrawFieldInInspector(OCPropertyField propertyField, GUIContent content, GUILayoutOption[] emptyOptions, OCFloatSliderAttribute floatSlider, OCIntSliderAttribute intSlider)
+	public void DrawFieldInInspector(OCPropertyField propertyField, GUIContent label, GUILayoutOption[] emptyOptions, OCFloatSliderAttribute floatSlider, OCIntSliderAttribute intSlider)
 	{
 		if(floatSlider != null)
 		{
@@ -327,7 +327,7 @@ where OCType : MonoBehaviour
 //				Debug.LogError("The '[FloatSliderInInspector(" + floatSlider.MinValue + " ," + floatSlider.MaxValue + ")]' failed. FloatSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with float. The attribute is attached to the field '" + propertyField.Name + "' in '" + m_Instance + "'.");
 //				return;
 //			}
-			propertyField.SetValue(EditorGUILayout.Slider(content, (float)propertyField.GetValue(), floatSlider.MinValue, floatSlider.MaxValue));
+			propertyField.SetValue(EditorGUILayout.Slider(label, (float)propertyField.GetValue(), floatSlider.MinValue, floatSlider.MaxValue));
 
 		}
 		else
@@ -345,13 +345,13 @@ where OCType : MonoBehaviour
 //				Debug.LogError("The '[IntSliderInInspector(" + intSlider.MinValue + " ," + intSlider.MaxValue + ")]' failed. IntSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with int. The attribute is attached to the field '" + propertyField.Name + "' in '" + m_Instance + "'.");
 //				return;
 //			}
-			propertyField.SetValue(EditorGUILayout.IntSlider(content, (int)propertyField.GetValue(), intSlider.MinValue, intSlider.MaxValue));
+			propertyField.SetValue(EditorGUILayout.IntSlider(label, (int)propertyField.GetValue(), intSlider.MinValue, intSlider.MaxValue));
 		}
 		else
 		if(propertyField.UnityPropertyField != null && propertyField.UnityPropertyField.editable)
 		{
 			// VVVV DRAWS THE STANDARD FIELD  VVVV
-			EditorGUILayout.PropertyField(propertyField.UnityPropertyField, content, true);
+			EditorGUILayout.PropertyField(propertyField.UnityPropertyField, label, true);
 			// ^^^^^  DRAWS THE STANDARD FIELD  ^^^^^
 		}
 		else
@@ -361,19 +361,19 @@ where OCType : MonoBehaviour
 				switch(propertyField.UnityType)
 				{
 				case SerializedPropertyType.Integer:
-					propertyField.SetValue(EditorGUILayout.IntField(content, (int)propertyField.GetValue(), emptyOptions));
+					propertyField.SetValue(EditorGUILayout.IntField(label, (int)propertyField.GetValue(), emptyOptions));
 					break;
 		
 				case SerializedPropertyType.Float:
-					propertyField.SetValue(EditorGUILayout.FloatField(content, (float)propertyField.GetValue(), emptyOptions));
+					propertyField.SetValue(EditorGUILayout.FloatField(label, (float)propertyField.GetValue(), emptyOptions));
 					break;
 
 				case SerializedPropertyType.Boolean:
-					propertyField.SetValue(EditorGUILayout.Toggle(content, (bool)propertyField.GetValue(), emptyOptions));
+					propertyField.SetValue(EditorGUILayout.Toggle(label, (bool)propertyField.GetValue(), emptyOptions));
 					break;
 
 				case SerializedPropertyType.String:
-					propertyField.SetValue(EditorGUILayout.TextField(content, (string)propertyField.GetValue(), emptyOptions));
+					propertyField.SetValue(EditorGUILayout.TextField(label, (string)propertyField.GetValue(), emptyOptions));
 					break;
 		
 				case SerializedPropertyType.Vector2:
@@ -385,7 +385,7 @@ where OCType : MonoBehaviour
 					break;
 		
 				case SerializedPropertyType.Enum:
-					propertyField.SetValue(EditorGUILayout.EnumPopup(content, (Enum)propertyField.GetValue(), emptyOptions));
+					propertyField.SetValue(EditorGUILayout.EnumPopup(label, (Enum)propertyField.GetValue(), emptyOptions));
 					break;
 		
 				case SerializedPropertyType.Generic:
@@ -398,12 +398,10 @@ where OCType : MonoBehaviour
 					{
 						List<OCPropertyField> nestedPropertiesAndFields = new List<OCPropertyField>();
 
-						OCPropertyField.GetAllPropertiesAndFields
-						(
-							ref nestedPropertiesAndFields
-						, propertyField.Instance
-						, propertyField.CSType
+						nestedPropertiesAndFields = OCPropertyField.GetAllPropertiesAndFields
+						( propertyField.Instance
 						, propertyField.UnityPropertyField
+						, OCExposure.PropertiesAndFields
 						);
 
 						Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
@@ -427,13 +425,13 @@ where OCType : MonoBehaviour
 				switch(Type.GetTypeCode(propertyField.CSType))
 				{
 					case TypeCode.Boolean:
-						propertyField.SetValue(EditorGUILayout.Toggle(content, (bool)propertyField.GetValue(), emptyOptions));
+						propertyField.SetValue(EditorGUILayout.Toggle(label, (bool)propertyField.GetValue(), emptyOptions));
 						break;
 			
 					case TypeCode.Decimal:
 					case TypeCode.Double:
 					case TypeCode.Single:
-						propertyField.SetValue(EditorGUILayout.FloatField(content, (float)propertyField.GetValue(), emptyOptions));
+						propertyField.SetValue(EditorGUILayout.FloatField(label, (float)propertyField.GetValue(), emptyOptions));
 						break;
 			
 					case TypeCode.Int16:
@@ -442,11 +440,11 @@ where OCType : MonoBehaviour
 					case TypeCode.UInt16:
 					case TypeCode.UInt32:
 					case TypeCode.UInt64:
-						propertyField.SetValue(EditorGUILayout.IntField(content, (int)propertyField.GetValue(), emptyOptions));
+						propertyField.SetValue(EditorGUILayout.IntField(label, (int)propertyField.GetValue(), emptyOptions));
 						break;
 			
 					case TypeCode.String:
-						propertyField.SetValue(EditorGUILayout.TextField(content, (string)propertyField.GetValue(), emptyOptions));
+						propertyField.SetValue(EditorGUILayout.TextField(label, (string)propertyField.GetValue(), emptyOptions));
 						break;
 
 					case TypeCode.Object:
@@ -457,18 +455,18 @@ where OCType : MonoBehaviour
 							//	DrawDefaultInspector();
 							List<OCPropertyField> nestedPropertiesAndFields = new List<OCPropertyField>();
 
-							OCPropertyField.GetAllPropertiesAndFields
-							(
-								ref nestedPropertiesAndFields
-							, propertyField.GetValue()
-							, propertyField.CSType
+							nestedPropertiesAndFields = OCPropertyField.GetAllPropertiesAndFields
+							( propertyField.GetValue()
 							, propertyField.UnityPropertyField
+							, OCExposure.PropertiesAndFields
 							);
 
-							GUILayout.Space(-14);
+							//EditorGUILayout.Separator();
+
+							//GUILayout.Space(-14);
 
 							if(m_FoldedState.ContainsKey(propertyField.PublicName))
-								m_FoldedState[propertyField.PublicName] = EditorGUILayout.Foldout(m_FoldedState[propertyField.PublicName], propertyField.PublicName);
+								m_FoldedState[propertyField.PublicName] = EditorGUILayout.Foldout(m_FoldedState[propertyField.PublicName], label);
 							else
 								m_FoldedState.Add(propertyField.PublicName, true);
 
@@ -476,14 +474,18 @@ where OCType : MonoBehaviour
 							{
 
 								//EditorGUILayout.BeginVertical();
-								GUILayout.Space(15);
+								//GUILayout.Space(15);
 								//EditorGUILayout.BeginHorizontal();
-								GUILayout.Space(-25);
+								//GUILayout.Space(-25);
 //								Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
 //
 //								Debug.Log("In OCEditor.DrawFieldInInspector, nested Properties and Fields: " + nestedPropertiesAndFields.Select(p => p.Instance != null ? p.Instance.ToString() : "Null").Aggregate((a, b) => a + ", " + b));
 
+								EditorGUI.indentLevel++;
+
 								DrawSerializedProperties(nestedPropertiesAndFields);
+
+								EditorGUI.indentLevel--;
 
 								//EditorGUILayout.EndHorizontal();
 								//EditorGUILayout.EndVertical();
@@ -492,11 +494,11 @@ where OCType : MonoBehaviour
 						}
 						else if(propertyField.CSType.IsSubclassOf(typeof(UnityEngine.Object)))
 						{
-							propertyField.SetValue(EditorGUILayout.ObjectField(content, (UnityEngine.Object)propertyField.GetValue(), propertyField.CSType, true, emptyOptions));
+							propertyField.SetValue(EditorGUILayout.ObjectField(label, (UnityEngine.Object)propertyField.GetValue(), propertyField.CSType, true, emptyOptions));
 						}
 						else if(propertyField.CSType.IsEnum)
 						{
-							propertyField.SetValue(EditorGUILayout.EnumPopup(content, (Enum)propertyField.GetValue(), emptyOptions));
+							propertyField.SetValue(EditorGUILayout.EnumPopup(label, (Enum)propertyField.GetValue(), emptyOptions));
 						}
 						break;
 
@@ -504,7 +506,7 @@ where OCType : MonoBehaviour
 						break;
 				}
 				if(propertyField.CSType.IsEnum)
-					propertyField.SetValue(EditorGUILayout.EnumPopup(content, (Enum)propertyField.GetValue(), emptyOptions));
+					propertyField.SetValue(EditorGUILayout.EnumPopup(label, (Enum)propertyField.GetValue(), emptyOptions));
 			}
 		}
 	}

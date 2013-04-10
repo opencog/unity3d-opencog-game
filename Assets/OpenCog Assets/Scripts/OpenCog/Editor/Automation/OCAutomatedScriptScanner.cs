@@ -21,7 +21,7 @@ using ProtoBuf;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using OpenCog.SerializationExtensions;
+using OpenCog.Serialization;
 using OpenCog.Attributes;
 
 namespace OpenCog
@@ -167,26 +167,27 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 
 		if(currentType.IsSubclassOf(typeof(MonoBehaviour)))
 		{
-//			Object[] objects = GameObject.FindObjectsOfTypeIncludingAssets(currentType);
+			Object[] objects = GameObject.FindObjectsOfTypeIncludingAssets(currentType);
 
 //			Debug.Log("Step 2");
 
-//			if(objects.Length != 0)
+			if(objects.Length != 0)
 			{
 
 //				Debug.Log("Step 3");
-					OCPropertyField.
-						GetAllPropertiesAndFields
-						(
-							ref allPropertiesAndFields
+					allPropertiesAndFields =
+						OCPropertyField.GetAllPropertiesAndFields
+						( objects[0]
 						, null
-						, currentType
-						, null
+						, OCPropertyField.OCExposure.PropertiesAndFields
 						);
 			}
 		}
 
-		return allPropertiesAndFields.ToDictionary( p => p.PrivateName );
+		if(allPropertiesAndFields != null)
+			return allPropertiesAndFields.ToDictionary( p => p.PrivateName );
+		else
+			return null;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
