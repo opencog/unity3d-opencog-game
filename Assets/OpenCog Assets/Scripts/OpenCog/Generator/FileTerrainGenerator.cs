@@ -88,7 +88,7 @@ public class FileTerrainGenerator
 											Block newBlock = blockSet.GetBlock(iBlockID);
 																					
 											_map.SetBlock (new BlockData(newBlock), blockPos);
-												
+											
 											Vector3i chunkPos = Chunk.ToChunkPosition(blockPos);
 				
 											_map.SetDirty (chunkPos);	
@@ -103,6 +103,31 @@ public class FileTerrainGenerator
 		} // End foreach( Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager )
 		
 		Debug.Log ("Loaded level: " + _fullMapPath + ".");
+		
+		_map.AddColliders ();
+		
+//		List3D<Chunk> chunkList = _map.GetChunks ();
+//		
+//		for (int minX = chunkList.GetMinX(); minX < chunkList.GetMaxX(); minX++)
+//		{
+//			for (int minY = chunkList.GetMinY(); minY < chunkList.GetMaxY(); minY++)
+//			{
+//				for (int minZ = chunkList.GetMinZ(); minZ < chunkList.GetMaxZ(); minZ++)
+//				{
+//					Vector3i chunkPos = new Vector3i(minX, minY, minZ);
+//					
+//					Chunk mapChunk = _map.GetChunk (chunkPos);
+//					
+//					Debug.Log ("LOL [" + minX + ", " + minY + ", " + minZ + "].");
+//				}	
+//			}	
+//		}
+//		
+//		foreach (Chunk loadedChunk in _map.Get
+//		{
+//			Vector3i loadedChunkPos = loadedChunk.GetPosition();
+//			Debug.Log ("MOG A CHUNK!!! [" + loadedChunkPos.x + ", " + loadedChunkPos.y + ", " + loadedChunkPos.z + "].");
+//		}
 
 	} // End public void LoadLevel()
 	
