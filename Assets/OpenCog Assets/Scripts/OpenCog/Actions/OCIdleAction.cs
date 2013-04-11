@@ -92,7 +92,7 @@ public class OCIdleAction : OCAction
 		HasAnimation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.AnimationState_.wrapMode = WrapMode.Loop;
+		Animation.AnimationState_.wrapMode = WrapMode.Once;
 		Animation.AnimationState_.layer = -1;
 		Animation.OnStart = "IdleStart";
 		Animation.OnEnd = "IdleEnd";
@@ -106,7 +106,7 @@ public class OCIdleAction : OCAction
 		HasAnimation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.AnimationState_.wrapMode = WrapMode.Loop;
+		Animation.AnimationState_.wrapMode = WrapMode.Once;
 		Animation.AnimationState_.layer = -1;
 		Animation.OnStart = "IdleStart";
 		Animation.OnEnd = "IdleEnd";
@@ -121,16 +121,31 @@ public class OCIdleAction : OCAction
 		{
 			Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 			Animation.Initialize(gameObject, animation["idle"]);
-			Animation.AnimationState_.wrapMode = WrapMode.Loop;
+			Animation.AnimationState_.wrapMode = WrapMode.Once;
 			Animation.AnimationState_.layer = -1;
 			Animation.OnStart = "IdleStart";
 			Animation.OnEnd = "IdleEnd";
 		}
 	}
 
-	public void Execute()
+	public override void Execute()
 	{
 		Animation.Play();
+	}
+
+	public override bool IsExecuting()
+	{
+		return Animation.IsPlaying;
+	}
+
+	public override void Terminate()
+	{
+		Animation.Stop();
+	}
+
+	public override bool ShouldTerminate()
+	{
+		return Animation.IsPlayingButNotThis;
 	}
 
 	public void IdleStart()

@@ -37,7 +37,7 @@ namespace Actions
 [OCExposePropertyFields]
 [Serializable]
 #endregion
-public class OCAction : OCMonoBehaviour
+public abstract class OCAction : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -115,6 +115,13 @@ public class OCAction : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
+	public abstract void Execute();
+
+	public abstract bool IsExecuting();
+
+	public abstract void Terminate();
+
+	public abstract bool ShouldTerminate();
 
 	//---------------------------------------------------------------------------
 

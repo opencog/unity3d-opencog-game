@@ -25,6 +25,7 @@ using ProtoBuf;
 using UnityEngine;
 using Tree = Behave.Runtime.Tree;
 using TreeType = BLOpenCogCharacterBehaviours.TreeType;
+using ContextType = BLOpenCogCharacterBehaviours.ContextType;
 
 namespace OpenCog
 {
@@ -103,7 +104,7 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 			while(Application.isPlaying && m_Tree != null)
 			{
 				yield return new WaitForSeconds (1.0f / m_Tree.Frequency);
-				AIUpdate();
+				m_Tree.Tick();
 			}
 
 
@@ -135,22 +136,9 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 			// tick handler
 			get
 			{
-				if(animation.IsPlaying("idle"))
-				{
-					return BehaveResult.Running;
-				}
-
-				if(animation.isPlaying)
-				{
-					Debug.Log("In OCRobotAgent.IdleAction, Failure");
-					return BehaveResult.Failure;
-				}
-
 				OCIdleAction idleAction = gameObject.GetComponent<OCIdleAction>();
-				idleAction.Execute();
 
-				Debug.Log("In OCRobotAgent.IdleAction, Success");
-				return BehaveResult.Success;
+				return DefaultActionTickHandler(idleAction);
 			}
 
 			// reset handler
@@ -179,10 +167,25 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
-			
-	private void AIUpdate()
+
+	private BehaveResult DefaultActionTickHandler(OCAction action)
 	{
-			m_Tree.Tick();
+		if(action.IsExecuting())
+		{
+			return BehaveResult.Running;
+		}
+
+		if(action.ShouldTerminate())
+		{
+			Debug.Log("In OCRobotAgent.DefaultActionTickHandler, Failure");
+			action.Terminate();
+			return BehaveResult.Failure;
+		}
+
+		action.Execute();
+
+		Debug.Log("In OCRobotAgent.ActionTickHandler, Success");
+		return BehaveResult.Success;
 	}
 			
 	//---------------------------------------------------------------------------

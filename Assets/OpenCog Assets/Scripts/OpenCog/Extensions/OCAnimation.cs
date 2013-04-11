@@ -315,6 +315,21 @@ public class OCAnimation
 		iTween.MoveBy(m_Target, m_iTweenParams);
 	}
 
+	public void Stop()
+	{
+		iTween.Stop(m_Target);
+	}
+
+	public bool IsPlaying
+	{
+		get { return m_Target.animation.IsPlaying(AnimationState_.name);}
+	}
+
+	public bool IsPlayingButNotThis
+	{
+		get { return m_Target.animation.isPlaying && !IsPlaying;}
+	}
+
 	/// <summary>
 	/// Call from the function which is the value of OnStart.
 	/// </summary>
