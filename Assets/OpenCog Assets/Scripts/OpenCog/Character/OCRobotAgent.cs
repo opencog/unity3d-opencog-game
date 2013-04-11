@@ -18,12 +18,14 @@
 using System;
 using System.Collections;
 using Behave.Runtime;
-using OpenCog.Attribute;
+using OpenCog.Actions;
+using OpenCog.Attributes;
+using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
 using Tree = Behave.Runtime.Tree;
 using TreeType = BLOpenCogCharacterBehaviours.TreeType;
-using TreeTypeRobot = TreeType.CharacterBehaviours_RobotExploreBehaviour;
+using ContextType = BLOpenCogCharacterBehaviours.ContextType;
 
 namespace OpenCog
 {
@@ -34,10 +36,10 @@ namespace OpenCog
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposeProperties]
+[OCExposePropertyFields]
 [Serializable]
 #endregion
-public class OCRobotAgent : MonoBehaviour, IAgent
+public class OCRobotAgent : OCMonoBehaviour, IAgent
 {
 
 	//---------------------------------------------------------------------------
@@ -47,6 +49,8 @@ public class OCRobotAgent : MonoBehaviour, IAgent
 	//---------------------------------------------------------------------------
 
 	private Tree m_Tree;
+
+	private Hashtable m_IdleParams;
 
 	//---------------------------------------------------------------------------
 
@@ -92,7 +96,7 @@ public class OCRobotAgent : MonoBehaviour, IAgent
 	{
 			m_Tree =
 				BLOpenCogCharacterBehaviours.InstantiateTree
-				( TreeTypeRobot
+				( TreeType.CharacterBehaviours_RobotExploreBehaviour
 				, this
 				)
 			;
@@ -100,23 +104,50 @@ public class OCRobotAgent : MonoBehaviour, IAgent
 			while(Application.isPlaying && m_Tree != null)
 			{
 				yield return new WaitForSeconds (1.0f / m_Tree.Frequency);
-				AIUpdate();
+				m_Tree.Tick();
 			}
+
+
 	}
 
 	public BehaveResult	 Tick (Tree sender, bool init)
 	{
-			Debug.Log
-			(
-				"Got ticked by unhandled " + (BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID ) ? "action" : "decorator")
-			+ ( BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID )
-				? ((BLOpenCogCharacterBehaviours.ActionType)sender.ActiveID).ToString()
-				: ((BLOpenCogCharacterBehaviours.DecoratorType)sender.ActiveID).ToString()
-				)
-			);
+//			Debug.Log
+//			(
+//				"Got ticked by unhandled " + (BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID ) ? "action" : "decorator")
+//			+ ( BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID )
+//				? ((BLOpenCogCharacterBehaviours.ActionType)sender.ActiveID).ToString()
+//				: ((BLOpenCogCharacterBehaviours.DecoratorType)sender.ActiveID).ToString()
+//				)
+//			);
 
 			return BehaveResult.Success;
 	}
+
+//	public BehaveResult TickIdleAction(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data)
+//	{
+//			Debug.Log("In Robot Idle...");
+//
+//			return BehaveResult.Success;
+//	}
+
+	public BehaveResult IdleAction
+	{
+			// tick handler
+			get
+			{
+				OCIdleAction idleAction = gameObject.GetComponent<OCIdleAction>();
+
+				return DefaultActionTickHandler(idleAction);
+			}
+
+			// reset handler
+			set
+			{
+			}
+	}
+
+
 
 	public void	 Reset (Tree sender)
 	{
@@ -136,10 +167,25 @@ public class OCRobotAgent : MonoBehaviour, IAgent
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
-			
-	private void AIUpdate()
+
+	private BehaveResult DefaultActionTickHandler(OCAction action)
 	{
-			m_Tree.Tick();
+		if(action.IsExecuting())
+		{
+			return BehaveResult.Running;
+		}
+
+		if(action.ShouldTerminate())
+		{
+			Debug.Log("In OCRobotAgent.DefaultActionTickHandler, Failure");
+			action.Terminate();
+			return BehaveResult.Failure;
+		}
+
+		action.Execute();
+
+		Debug.Log("In OCRobotAgent.ActionTickHandler, Success");
+		return BehaveResult.Success;
 	}
 			
 	//---------------------------------------------------------------------------

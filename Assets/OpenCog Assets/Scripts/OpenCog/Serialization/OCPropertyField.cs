@@ -32,7 +32,7 @@ using TypeCode = System.TypeCode;
 namespace OpenCog
 {
 
-namespace SerializationExtensions
+namespace Serialization
 {
 
 /// <summary>
@@ -236,7 +236,7 @@ public class OCPropertyField
 		get
 		{
 			return
-				BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
+				BindingFlags.Instance | BindingFlags.Public;
 		}
 	}
 
@@ -379,7 +379,17 @@ public class OCPropertyField
 			else
 			if(MemberInfo.MemberType == MemberTypes.Property)
 			{
-				return (MemberInfo as PropertyInfo).GetValue(Instance, null);
+				PropertyInfo info = (PropertyInfo)MemberInfo;
+				ParameterInfo[] parameters = info.GetIndexParameters();
+
+				if(parameters == null)
+				{
+					return info.GetValue(Instance, null);
+				}
+				else
+				{
+					return info.GetValue(Instance, parameters);
+				}
 			}
 			else
 			{
@@ -656,21 +666,22 @@ public class OCPropertyField
 	/// <param name='allPropertiesAndFields'>
 	/// If set to <c>true</c>, all the properties and fields.
 	/// </param>
-	public static bool GetAllPropertiesAndFields
-	(
-		ref List<OCPropertyField> allPropertyFields
-	, object obj = null
-	, Type type = null
+	public static List<OCPropertyField> GetAllPropertiesAndFields
+	( object obj = null
 	, SerializedProperty unityPropertyField = null
+	, OCExposure exposure = OCExposure.None
 	)
 	{
+		List<OCPropertyField> allPropertyFields = new List<OCPropertyField>();
+		Type type = obj.GetType();
+
 		if
 		(
 			 type == null
 		&& unityPropertyField == null
 		)
 		{
-			return false;
+			return null;
 		}
 
 		Stack<OCPropertyField> candidates = new Stack<OCPropertyField>();
@@ -751,11 +762,11 @@ public class OCPropertyField
 
 		if(allPropertyFields.Count > 0)
 		{
-			return true;
+			return allPropertyFields;
 		}
 		else
 		{
-			return false;
+			return null;
 		}
 	}
 
@@ -1049,9 +1060,29 @@ public class OCPropertyField
 
 	/////////////////////////////////////////////////////////////////////////////
 
+	#region Other Members
+
+	/////////////////////////////////////////////////////////////////////////////
+
+	public enum OCExposure
+	{
+		None
+	, PublicFieldsOnly
+	, FieldsOnly
+	, PropertiesOnly
+	, PublicPropertiesOnly
+	, PropertiesAndFields
+	};
+
+	/////////////////////////////////////////////////////////////////////////////
+
+  #endregion
+
+	/////////////////////////////////////////////////////////////////////////////
+
 }// class OCPropertyField
 
-}// namespace SerializationExtensions
+}// namespace Serialization
 
 }// namespace OpenCog
 

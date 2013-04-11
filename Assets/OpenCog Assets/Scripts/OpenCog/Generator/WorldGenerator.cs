@@ -14,19 +14,31 @@ public class WorldGenerator : MonoBehaviour {
 	private TreeGenerator[] treeGenerator;
 	private bool building = false;
 	
+	public string MapName;
 	
 	void Awake() {
 		map = GetComponent<Map>();
-		terrainGenerator = new TerrainGenerator(map);
 		
-		Block[] woodBlocks = map.GetBlockSet().GetBlocks("Wood");
-		Block[] leavesBlocks = map.GetBlockSet().GetBlocks("Leaves");
-		
-		treeGenerator = new TreeGenerator[ Math.Max(woodBlocks.Length, leavesBlocks.Length) ];
-		for(int i=0; i<treeGenerator.Length; i++) {
-			Block wood = woodBlocks[ i%woodBlocks.Length ];
-			Block leaves = leavesBlocks[ i%leavesBlocks.Length ];
-			treeGenerator[i] = new TreeGenerator(map, wood, leaves);
+		if (MapName != string.Empty)
+		{
+			Debug.Log ("In WorldGenerator, MapName != string.Empty");
+			FileTerrainGenerator fileTerrainGenerator = new FileTerrainGenerator(map, MapName);
+			
+			fileTerrainGenerator.LoadLevel();
+		}
+		else
+		{
+			terrainGenerator = new TerrainGenerator(map);
+			
+			Block[] woodBlocks = map.GetBlockSet().GetBlocks("Wood");
+			Block[] leavesBlocks = map.GetBlockSet().GetBlocks("Leaves");
+			
+			treeGenerator = new TreeGenerator[ Math.Max(woodBlocks.Length, leavesBlocks.Length) ];
+			for(int i=0; i<treeGenerator.Length; i++) {
+				Block wood = woodBlocks[ i%woodBlocks.Length ];
+				Block leaves = leavesBlocks[ i%leavesBlocks.Length ];
+				treeGenerator[i] = new TreeGenerator(map, wood, leaves);
+			}	
 		}
 	}
 	
@@ -35,37 +47,43 @@ public class WorldGenerator : MonoBehaviour {
 	}
 	
 	private IEnumerator Building() {
-		building = true;
-		Vector3 pos = Camera.mainCamera.transform.position;
-		Vector3i current = Chunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
-		Vector3i? column = columnMap.GetClosestEmptyColumn(current.x, current.z, 7);
-		
-		if(column.HasValue) {
-			int cx = column.Value.x;
-			int cz = column.Value.z;
-			columnMap.SetBuilt(cx, cz);
+		if (MapName == String.Empty)
+		{
+			building = true;
+			Vector3 pos = Camera.mainCamera.transform.position;
+			Vector3i current = Chunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
+			Vector3i? column = columnMap.GetClosestEmptyColumn(current.x, current.z, 7);
 			
-			yield return StartCoroutine( GenerateColumn(cx, cz) );
-			yield return null;
-			ChunkSunLightComputer.ComputeRays(map, cx, cz);
-			ChunkSunLightComputer.Scatter(map, columnMap, cx, cz);
-			terrainGenerator.GeneratePlants(cx, cz);
-			
-			yield return StartCoroutine( BuildColumn(cx, cz) );
+			if(column.HasValue) {
+				int cx = column.Value.x;
+				int cz = column.Value.z;
+				columnMap.SetBuilt(cx, cz);
+				
+				yield return StartCoroutine( GenerateColumn(cx, cz) );
+				yield return null;
+				ChunkSunLightComputer.ComputeRays(map, cx, cz);
+				ChunkSunLightComputer.Scatter(map, columnMap, cx, cz);
+				terrainGenerator.GeneratePlants(cx, cz);
+				
+				yield return StartCoroutine( BuildColumn(cx, cz) );
+			}
+			building = false;	
 		}
-		building = false;
 	}
 	
 	private IEnumerator GenerateColumn(int cx, int cz) {
-		yield return StartCoroutine( terrainGenerator.Generate(cx, cz) );
-		yield return null;
-		
-		if(treeGenerator.Length > 0) {
-			int x = cx * Chunk.SIZE_X + Chunk.SIZE_X/2;
-			int z = cz * Chunk.SIZE_Z + Chunk.SIZE_Z/2;
-			int y = map.GetMaxY(x, z)+1;
-			int index = UnityEngine.Random.Range( 0, treeGenerator.Length );
-			treeGenerator[index].Generate(x, y, z);
+		if (MapName == string.Empty)
+		{
+			yield return StartCoroutine( terrainGenerator.Generate(cx, cz) );
+			yield return null;
+			
+			if(treeGenerator.Length > 0) {
+				int x = cx * Chunk.SIZE_X + Chunk.SIZE_X/2;
+				int z = cz * Chunk.SIZE_Z + Chunk.SIZE_Z/2;
+				int y = map.GetMaxY(x, z)+1;
+				int index = UnityEngine.Random.Range( 0, treeGenerator.Length );
+				treeGenerator[index].Generate(x, y, z);
+			}
 		}
 	}
 	

@@ -6,15 +6,31 @@ public class CharacterCollider : MonoBehaviour {
 	public float height;
 	public float radius;
 	
+//	private float yCorrection = 0.50f;
+	
 	public Vector3 top {
 		get {
-			return Vector3.up*(height-radius);
+			Vector3 v3Top = Vector3.up*(height-radius);
+			
+//			v3Top.y -= yCorrection;
+			
+//			if (System.DateTime.Now.Millisecond.ToString ().EndsWith ("99"))
+//				Debug.Log ("v3Top [" + v3Top.x + ", " + v3Top.y + ", " + v3Top.z + "]");
+			
+			return v3Top;
 		}
 	}
 	
 	public Vector3 bottom {
 		get {
-			return Vector3.up*radius;
+			Vector3 v3Bottom = Vector3.up*radius;
+			
+//			v3Bottom.y -= yCorrection;
+			
+//			if (System.DateTime.Now.Millisecond.ToString ().EndsWith ("99"))
+//				Debug.Log ("v3Bottom [" + v3Bottom.x + ", " + v3Bottom.y + ", " + v3Bottom.z + "]");
+			
+			return v3Bottom;
 		}
 	}
 	

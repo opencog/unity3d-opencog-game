@@ -29,7 +29,8 @@
 
 using System;
 using System.Collections;
-using OpenCog.AttributeExtensions;
+using OpenCog.Attributes;
+using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
 
@@ -45,7 +46,7 @@ namespace OpenCog
 [OCExposeProperties]
 [Serializable]
 #endregion
-public class ${Name} : MonoBehaviour
+public class ${Name} : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
