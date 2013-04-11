@@ -88,21 +88,21 @@ public class OCIdleAction : OCAction
 	/// </summary>
 	public void Awake()
 	{
-		Debug.Log("In OCIdleAction.Awake()...");
-		HasAnimation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.AnimationState_.wrapMode = WrapMode.Once;
-		Animation.AnimationState_.layer = -1;
-		Animation.OnStart = "IdleStart";
-		Animation.OnEnd = "IdleEnd";
-
-		DontDestroyOnLoad(this);
+		Initialize();
 	}
 
 	public void Start()
 	{
-		Debug.Log("In OCIdleAction.Start()...");
+		Initialize();
+	}
+
+	public void OnEnable()
+	{
+		Initialize();
+	}
+
+	public void Initialize()
+	{
 		HasAnimation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 		Animation.Initialize(gameObject, animation["idle"]);
@@ -112,20 +112,6 @@ public class OCIdleAction : OCAction
 		Animation.OnEnd = "IdleEnd";
 
 		DontDestroyOnLoad(this);
-	}
-
-	public void OnEnable()
-	{
-		Debug.Log("In OCIdleAction.OnEnable()...");
-		//if(Animation == null)// || !Animation.IsInitialized)
-		{
-			Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-			Animation.Initialize(gameObject, animation["idle"]);
-			Animation.AnimationState_.wrapMode = WrapMode.Once;
-			Animation.AnimationState_.layer = -1;
-			Animation.OnStart = "IdleStart";
-			Animation.OnEnd = "IdleEnd";
-		}
 	}
 
 	public override void Execute()
