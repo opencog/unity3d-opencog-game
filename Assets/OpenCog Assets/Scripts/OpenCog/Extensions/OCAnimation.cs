@@ -54,7 +54,7 @@ public class OCAnimation
 	/// <summary>
 	/// The Unity animation state that we're wrapping.
 	/// </summary>
-	private AnimationState m_AnimationState = null;
+	private AnimationState m_State = null;
 
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
@@ -87,10 +87,10 @@ public class OCAnimation
 	/// The Unity animation state that we're wrapping.
 	/// </value>
 	[OCTooltip("The Unity animation state that we're wrapping.")]
-	public AnimationState AnimationState_
+	public AnimationState State
 	{
-		get{ return m_AnimationState;}
-		set{ m_AnimationState = value;}
+		get{ return m_State;}
+		set{ m_State = value;}
 	}
 
 	/// <summary>
@@ -270,7 +270,7 @@ public class OCAnimation
 	{
 		FadeLength = anim.FadeLength;
 		Target = anim.Target;
-		AnimationState_ = anim.AnimationState_;
+		State = anim.State;
 		m_iTweenParams = anim.m_iTweenParams;
 	}
 
@@ -297,9 +297,9 @@ public class OCAnimation
 	public void Initialize(GameObject target, AnimationState animationState)
 	{
 		Target = target;
-		AnimationState_ = animationState;
+		State = animationState;
 		m_iTweenParams = new Hashtable();
-		Time = AnimationState_.length / AnimationState_.speed + 0.01f;
+		Time = State.length / State.speed + 0.01f;
 		EaseType = "linear";//iTween.EaseType.linear;
 		Delay = 0;
 
@@ -322,7 +322,7 @@ public class OCAnimation
 
 	public bool IsPlaying
 	{
-		get { return m_Target.animation.IsPlaying(AnimationState_.name);}
+		get { return m_Target.animation.IsPlaying(State.name);}
 	}
 
 	public bool IsPlayingButNotThis
@@ -335,7 +335,7 @@ public class OCAnimation
 	/// </summary>
 	public void Start()
 	{
-		m_Target.animation.CrossFade(m_AnimationState.name, m_FadeLength);
+		m_Target.animation.CrossFade(m_State.name, m_FadeLength);
 	}
 
 	/// <summary>
@@ -343,7 +343,7 @@ public class OCAnimation
 	/// </summary>
 	public void End()
 	{
-		if(m_AnimationState.wrapMode != WrapMode.Loop)
+		if(m_State.wrapMode != WrapMode.Loop)
 		{
 			m_Target.animation.Stop();
 		}

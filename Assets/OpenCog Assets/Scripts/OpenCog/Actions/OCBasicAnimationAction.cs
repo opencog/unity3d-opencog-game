@@ -29,16 +29,15 @@ namespace Actions
 {
 
 /// <summary>
-/// The OpenCog OCIdleAction.
+/// The OpenCog OCBasicAnimationAction.
 /// </summary>
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
-[ExecuteInEditMode]
 #endregion
-public class OCIdleAction : OCBasicAnimationAction
+public abstract class OCBasicAnimationAction : OCAction
 {
 
 	//---------------------------------------------------------------------------
@@ -46,6 +45,7 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
+
 
 
 	//---------------------------------------------------------------------------
@@ -57,6 +57,8 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
+
+
 			
 	//---------------------------------------------------------------------------
 
@@ -67,6 +69,8 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Constructors
 
 	//---------------------------------------------------------------------------
+		
+
 
 	//---------------------------------------------------------------------------
 
@@ -78,25 +82,52 @@ public class OCIdleAction : OCBasicAnimationAction
 
 	//---------------------------------------------------------------------------
 
-	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
+	public abstract void Initialize();
 
-
-	public override void Initialize()
+	public void Awake()
 	{
-		HasAnimation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.layer = -1;
-		Animation.OnStart = "BasicAnimationStart";
-		Animation.OnEnd = "BasicAnimationEnd";
-
-		DontDestroyOnLoad(this);
+		Initialize();
 	}
 
+	public void Start()
+	{
+		Initialize();
+	}
 
+	public void OnEnable()
+	{
+		Initialize();
+	}
+
+	public override void Execute()
+	{
+		Animation.Play();
+	}
+
+	public override bool IsExecuting()
+	{
+		return Animation.IsPlaying;
+	}
+
+	public override void Terminate()
+	{
+		Animation.Stop();
+	}
+
+	public override bool ShouldTerminate()
+	{
+		return Animation.IsPlayingButNotThis;
+	}
+
+	public void BasicAnimationStart()
+	{
+		Animation.Start();
+	}
+
+	public void BasicAnimationEnd()
+	{
+		Animation.End();
+	}
 
 	//---------------------------------------------------------------------------
 
@@ -107,6 +138,8 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
+			
+	
 			
 	//---------------------------------------------------------------------------
 
@@ -124,7 +157,7 @@ public class OCIdleAction : OCBasicAnimationAction
 
 	//---------------------------------------------------------------------------
 
-}// class OCIdleAction
+}// class OCBasicAnimationAction
 
 }// namespace Actions
 

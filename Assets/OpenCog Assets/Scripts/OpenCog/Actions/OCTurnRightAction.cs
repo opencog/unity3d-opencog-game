@@ -38,7 +38,7 @@ namespace Actions
 [Serializable]
 [ExecuteInEditMode]
 #endregion
-public class OCIdleAction : OCBasicAnimationAction
+public class OCTurnRightAction : OCBasicAnimationAction
 {
 
 	//---------------------------------------------------------------------------
@@ -87,11 +87,14 @@ public class OCIdleAction : OCBasicAnimationAction
 	{
 		HasAnimation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
+		Animation.Initialize(gameObject, animation["turnR"]);
 		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.layer = -1;
+		Animation.State.speed = 2.0f;
+		Animation.State.layer = 1;
 		Animation.OnStart = "BasicAnimationStart";
 		Animation.OnEnd = "BasicAnimationEnd";
+
+		Animation.MoveByY = 0.25f; // 90 degrees
 
 		DontDestroyOnLoad(this);
 	}

@@ -136,9 +136,9 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 			// tick handler
 			get
 			{
-				OCIdleAction idleAction = gameObject.GetComponent<OCIdleAction>();
+				OCIdleAction action = gameObject.GetComponent<OCIdleAction>();
 
-				return DefaultActionTickHandler(idleAction);
+				return DefaultActionTickHandler(action);
 			}
 
 			// reset handler
@@ -147,7 +147,101 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 			}
 	}
 
+	public BehaveResult ClimbAction
+	{
+			// tick handler
+			get
+			{
+				OCClimbUpAction action = gameObject.GetComponent<OCClimbUpAction>();
 
+				return DefaultActionTickHandler(action);
+			}
+
+			// reset handler
+			set
+			{
+			}
+	}
+
+	public BehaveResult RunAction
+	{
+			// tick handler
+			get
+			{
+				OCRunForwardAction action = gameObject.GetComponent<OCRunForwardAction>();
+
+				return DefaultActionTickHandler(action);
+			}
+
+			// reset handler
+			set
+			{
+			}
+	}
+
+	public BehaveResult JumpAction
+	{
+			// tick handler
+			get
+			{
+				OCJumpUpAction action = gameObject.GetComponent<OCJumpUpAction>();
+
+				return DefaultActionTickHandler(action);
+			}
+
+			// reset handler
+			set
+			{
+			}
+	}
+
+	public BehaveResult TurnLeftAction
+	{
+			// tick handler
+			get
+			{
+				OCTurnLeftAction action = gameObject.GetComponent<OCTurnLeftAction>();
+
+				return DefaultActionTickHandler(action);
+			}
+
+			// reset handler
+			set
+			{
+			}
+	}
+
+	public BehaveResult TurnRightAction
+	{
+			// tick handler
+			get
+			{
+				OCTurnRightAction action = gameObject.GetComponent<OCTurnRightAction>();
+
+				return DefaultActionTickHandler(action);
+			}
+
+			// reset handler
+			set
+			{
+			}
+	}
+
+	public BehaveResult WalkAction
+	{
+			// tick handler
+			get
+			{
+				OCWalkForwardAction action = gameObject.GetComponent<OCWalkForwardAction>();
+
+				return DefaultActionTickHandler(action);
+			}
+
+			// reset handler
+			set
+			{
+			}
+	}
 
 	public void	 Reset (Tree sender)
 	{

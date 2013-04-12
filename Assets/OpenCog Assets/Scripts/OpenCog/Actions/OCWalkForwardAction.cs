@@ -29,7 +29,7 @@ namespace Actions
 {
 
 /// <summary>
-/// The OpenCog OCIdleAction.
+/// The OpenCog OCWalkAction.
 /// </summary>
 #region Class Attributes
 
@@ -38,7 +38,7 @@ namespace Actions
 [Serializable]
 [ExecuteInEditMode]
 #endregion
-public class OCIdleAction : OCBasicAnimationAction
+public class OCWalkForwardAction : OCBasicAnimationAction
 {
 
 	//---------------------------------------------------------------------------
@@ -46,6 +46,7 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
+
 
 
 	//---------------------------------------------------------------------------
@@ -57,6 +58,8 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
+
+
 			
 	//---------------------------------------------------------------------------
 
@@ -67,6 +70,7 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Constructors
 
 	//---------------------------------------------------------------------------
+		
 
 	//---------------------------------------------------------------------------
 
@@ -78,25 +82,20 @@ public class OCIdleAction : OCBasicAnimationAction
 
 	//---------------------------------------------------------------------------
 
-	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-
-
 	public override void Initialize()
 	{
 		HasAnimation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
+		Animation.Initialize(gameObject, animation["walk"]);
 		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.layer = -1;
+		Animation.State.speed = 2.0f;
+		Animation.State.layer = 0;
 		Animation.OnStart = "BasicAnimationStart";
 		Animation.OnEnd = "BasicAnimationEnd";
+		Animation.MoveByZ = 1;
 
 		DontDestroyOnLoad(this);
 	}
-
-
 
 	//---------------------------------------------------------------------------
 
@@ -107,6 +106,8 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
+			
+	
 			
 	//---------------------------------------------------------------------------
 
@@ -124,7 +125,7 @@ public class OCIdleAction : OCBasicAnimationAction
 
 	//---------------------------------------------------------------------------
 
-}// class OCIdleAction
+}// class OCWalkAction
 
 }// namespace Actions
 

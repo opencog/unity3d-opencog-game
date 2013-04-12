@@ -17,28 +17,19 @@
 
 using System;
 using System.Collections;
+using OpenCog.Actions;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
+using UnityEditor;
 
 namespace OpenCog
 {
 
-namespace Actions
-{
-
-/// <summary>
-/// The OpenCog OCIdleAction.
-/// </summary>
-#region Class Attributes
-
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposePropertyFields]
-[Serializable]
 [ExecuteInEditMode]
-#endregion
-public class OCIdleAction : OCBasicAnimationAction
+[CustomEditor(typeof(OCTurnLeftAction))]
+public class OCTurnLeftActionEditor : OCDefaultEditor
 {
 
 	//---------------------------------------------------------------------------
@@ -46,7 +37,6 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
 
 	//---------------------------------------------------------------------------
 
@@ -57,6 +47,7 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
+
 			
 	//---------------------------------------------------------------------------
 
@@ -78,26 +69,6 @@ public class OCIdleAction : OCBasicAnimationAction
 
 	//---------------------------------------------------------------------------
 
-	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-
-
-	public override void Initialize()
-	{
-		HasAnimation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.layer = -1;
-		Animation.OnStart = "BasicAnimationStart";
-		Animation.OnEnd = "BasicAnimationEnd";
-
-		DontDestroyOnLoad(this);
-	}
-
-
-
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -107,6 +78,8 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
+			
+	
 			
 	//---------------------------------------------------------------------------
 
@@ -124,12 +97,6 @@ public class OCIdleAction : OCBasicAnimationAction
 
 	//---------------------------------------------------------------------------
 
-}// class OCIdleAction
-
-}// namespace Actions
+}// class OCActionEditor
 
 }// namespace OpenCog
-
-
-
-

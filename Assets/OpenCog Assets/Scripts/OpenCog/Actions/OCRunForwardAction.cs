@@ -38,7 +38,7 @@ namespace Actions
 [Serializable]
 [ExecuteInEditMode]
 #endregion
-public class OCIdleAction : OCBasicAnimationAction
+public class OCRunForwardAction : OCBasicAnimationAction
 {
 
 	//---------------------------------------------------------------------------
@@ -87,11 +87,13 @@ public class OCIdleAction : OCBasicAnimationAction
 	{
 		HasAnimation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
+		Animation.Initialize(gameObject, animation["run"]);
 		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.layer = -1;
+		Animation.State.layer = 0;
+		Animation.State.speed = 1.0f;
 		Animation.OnStart = "BasicAnimationStart";
 		Animation.OnEnd = "BasicAnimationEnd";
+		Animation.MoveByZ = 3.0f;
 
 		DontDestroyOnLoad(this);
 	}
