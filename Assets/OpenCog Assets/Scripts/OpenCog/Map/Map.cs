@@ -72,9 +72,16 @@ public class Map : MonoBehaviour
 		}
 	}
 	
-	private void UpdateMeshColliderAfterBlockChange()
+	public void UpdateMeshColliderAfterBlockChange()
+	{
+		StartCoroutine (StartUpdateMeshColliderAfterBlockChange ());	
+	}
+	
+	IEnumerator StartUpdateMeshColliderAfterBlockChange()
 	{
 		Transform[] objects = GetComponentsInChildren<Transform> ();
+		
+		yield return null;
 		
 		for (int i = objects.Length -1 ; i >= 0; i--) {
 			if (objects [i].gameObject.renderer) {
