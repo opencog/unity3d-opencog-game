@@ -246,6 +246,52 @@ public class OCAnimation
 		set{ m_iTweenParams[iT.MoveBy.z] = value;}
 	}
 
+	/// <summary>
+	/// Gets or sets the distance to rotate by in the x-axis as part of the
+	/// animation.
+	/// </summary>
+	/// <value>
+	/// The rotation by x.
+	/// </value>
+	[ OCTooltip
+		("The distance to rotate by in the x-axis as part of the animation.") ]
+	public float RotateByX
+	{
+		get{ return ValueOrDefault<float>(iT.RotateBy.x);}
+		set{ m_iTweenParams[iT.RotateBy.x] = value;}
+	}
+
+	/// <summary>
+	/// Gets or sets the distance to rotate by in the y-axis as part of the
+	/// animation.
+	/// </summary>
+	/// <value>
+	/// The rotation by y.
+	/// </value>
+	[ OCTooltip
+		("The distance to rotate by in the y-axis as part of the animation.") ]
+	public float RotateByY
+	{
+		get{ return ValueOrDefault<float>(iT.RotateBy.y);}
+		set{ m_iTweenParams[iT.RotateBy.y] = value;}
+	}
+
+
+	/// <summary>
+	/// Gets or sets the distance to rotate by in the z-axis as part of the
+	/// animation.
+	/// </summary>
+	/// <value>
+	/// The rotation by z.
+	/// </value>
+	[ OCTooltip
+		("The distance to rotate by in the z-axis as part of the animation.") ]
+	public float RotateByZ
+	{
+		get{ return ValueOrDefault<float>(iT.RotateBy.z);}
+		set{ m_iTweenParams[iT.RotateBy.z] = value;}
+	}
+
 			
 	//---------------------------------------------------------------------------
 

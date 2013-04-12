@@ -271,14 +271,14 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 
 		if(action.ShouldTerminate())
 		{
-			Debug.Log("In OCRobotAgent.DefaultActionTickHandler, Failure");
+			Debug.Log("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType() + " Failure");
 			action.Terminate();
 			return BehaveResult.Failure;
 		}
 
 		action.Execute();
 
-		Debug.Log("In OCRobotAgent.ActionTickHandler, Success");
+		Debug.Log("In OCRobotAgent.ActionTickHandler, " + action.GetType() + " Success");
 		return BehaveResult.Success;
 	}
 			

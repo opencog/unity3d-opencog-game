@@ -93,8 +93,7 @@ public class OCTurnRightAction : OCBasicAnimationAction
 		Animation.State.layer = 1;
 		Animation.OnStart = "BasicAnimationStart";
 		Animation.OnEnd = "BasicAnimationEnd";
-
-		Animation.MoveByY = 0.25f; // 90 degrees
+		Animation.RotateByY = 0.25f; // 90 degrees
 
 		DontDestroyOnLoad(this);
 	}
