@@ -86,19 +86,28 @@ public class OCJumpUpAction : OCBasicAnimationAction
 	public override void Initialize()
 	{
 		HasAnimation = true;
+		IsTranslation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 		Animation.Initialize(gameObject, animation["jump"]);
+		Animation.Position = gameObject.transform.position;
 		Animation.State.wrapMode = WrapMode.Once;
 		Animation.State.speed	= 1.0f;
-		Animation.OnStart = "BasicAnimationStart";
-		Animation.OnEnd = "BasicAnimationEnd";
-
-		Animation.MoveByY = 4;
+		Animation.OnStart = "JumpUpStart";
+		Animation.OnEnd = "JumpUpEnd";
+		Animation.MoveByY = 4.0f;
 
 		DontDestroyOnLoad(this);
 	}
 
+	public void JumpUpStart()
+	{
+		BasicAnimationStart();
+	}
 
+	public void JumpUpEnd()
+	{
+		BasicAnimationEnd();
+	}
 
 	//---------------------------------------------------------------------------
 

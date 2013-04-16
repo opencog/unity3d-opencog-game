@@ -86,19 +86,30 @@ public class OCTurnLeftAction : OCBasicAnimationAction
 	public override void Initialize()
 	{
 		HasAnimation = true;
+		IsRotation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["turnL"]);
+		Animation.Initialize(gameObject, animation["turnL"]);// -90 degrees
+		Animation.Position = gameObject.transform.position;
 		Animation.State.wrapMode = WrapMode.Once;
 		Animation.State.speed = 2.0f;
 		Animation.State.layer = 1;
-		Animation.OnStart = "BasicAnimationStart";
-		Animation.OnEnd = "BasicAnimationEnd";
-		Animation.RotateByY = -0.25f; // -90 degrees
+		Animation.OnStart = "TurnLeftStart";
+		Animation.OnEnd = "TurnLeftEnd";
+
+		Animation.RotateByY = -0.25f;
 
 		DontDestroyOnLoad(this);
 	}
 
+	public void TurnLeftStart()
+	{
+		BasicAnimationStart();
+	}
 
+	public void TurnLeftEnd()
+	{
+		BasicAnimationEnd();
+	}
 
 	//---------------------------------------------------------------------------
 

@@ -85,16 +85,36 @@ public class OCWalkForwardAction : OCBasicAnimationAction
 	public override void Initialize()
 	{
 		HasAnimation = true;
+		IsTranslation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 		Animation.Initialize(gameObject, animation["walk"]);
+		Animation.Position = gameObject.transform.position;
 		Animation.State.wrapMode = WrapMode.Once;
 		Animation.State.speed = 2.0f;
 		Animation.State.layer = 0;
-		Animation.OnStart = "BasicAnimationStart";
-		Animation.OnEnd = "BasicAnimationEnd";
+		Animation.OnStart = "WalkForwardStart";
+		Animation.OnEnd = "WalkForwardEnd";
 		Animation.MoveByZ = 1;
 
 		DontDestroyOnLoad(this);
+	}
+
+//	public void Update()
+//	{
+//		if(IsExecuting())
+//		{
+//			gameObject.transform.Translate(0, 0, Animation.MoveByZ / Animation.Time * Time.deltaTime);
+//		}
+//	}
+
+	public void WalkForwardStart()
+	{
+		BasicAnimationStart();
+	}
+
+	public void WalkForwardEnd()
+	{
+		BasicAnimationEnd();
 	}
 
 	//---------------------------------------------------------------------------

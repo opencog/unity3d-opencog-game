@@ -64,7 +64,7 @@ public class OCAnimation
 	/// <summary>
 	/// The length of the animation's cross fade.
 	/// </summary>
-	private float m_FadeLength = 0.0f;
+	private float m_FadeLength = 0.5f;
 
 //	private bool m_Initialized = false;
 
@@ -292,6 +292,12 @@ public class OCAnimation
 		set{ m_iTweenParams[iT.RotateBy.z] = value;}
 	}
 
+	public Vector3 Position
+	{
+		get{ return ValueOrDefault<Vector3>("position");}
+		set{ m_iTweenParams["position"] = value;}
+	}
+
 			
 	//---------------------------------------------------------------------------
 
@@ -342,6 +348,7 @@ public class OCAnimation
 	/// </param>
 	public void Initialize(GameObject target, AnimationState animationState)
 	{
+
 		Target = target;
 		State = animationState;
 		m_iTweenParams = new Hashtable();
@@ -356,9 +363,14 @@ public class OCAnimation
 	/// <summary>
 	/// Play this animation.
 	/// </summary>
-	public void Play()
+	public void PlayAndTranslate()
 	{
 		iTween.MoveBy(m_Target, m_iTweenParams);
+	}
+
+	public void PlayAndRotate()
+	{
+		iTween.RotateBy(m_Target, m_iTweenParams);
 	}
 
 	public void Stop()

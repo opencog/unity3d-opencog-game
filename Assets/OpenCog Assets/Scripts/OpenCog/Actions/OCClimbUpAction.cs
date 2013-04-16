@@ -86,19 +86,29 @@ public class OCClimbUpAction : OCBasicAnimationAction
 	public override void Initialize()
 	{
 		HasAnimation = true;
+		IsTranslation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 		Animation.Initialize(gameObject, animation["climb"]);
+		Animation.Position = gameObject.transform.position;
 		Animation.State.wrapMode = WrapMode.Once;
 		Animation.State.speed = 2.0f;
-		Animation.OnStart = "BasicAnimationStart";
-		Animation.OnEnd = "BasicAnimationEnd";
+		Animation.OnStart = "ClimbUpStart";
+		Animation.OnEnd = "ClimbUpEnd";
 		Animation.MoveByY = 1;
 		Animation.MoveByZ = 1;
 
 		DontDestroyOnLoad(this);
 	}
 
+	public void ClimbUpStart()
+	{
+		BasicAnimationStart();
+	}
 
+	public void ClimbUpEnd()
+	{
+		BasicAnimationEnd();
+	}
 
 	//---------------------------------------------------------------------------
 

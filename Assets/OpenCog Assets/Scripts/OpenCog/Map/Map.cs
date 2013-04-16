@@ -87,12 +87,16 @@ public class Map : MonoBehaviour
 			if (objects [i].gameObject.renderer) {
 				MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
 				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
+
+				if(myCollider != null)
+				{
+
+					myCollider.sharedMesh = null;
 				
-				myCollider.sharedMesh = null;
+					myCollider.sharedMesh = myFilter.mesh;
 				
-				myCollider.sharedMesh = myFilter.mesh;
-				
-				Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());
+					Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());
+				}
 				
 //				myCollider.sharedMesh = myFilter.mesh;
 //				

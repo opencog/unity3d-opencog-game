@@ -86,14 +86,25 @@ public class OCIdleAction : OCBasicAnimationAction
 	public override void Initialize()
 	{
 		HasAnimation = true;
+		IsTranslation = true;
 		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
 		Animation.Initialize(gameObject, animation["idle"]);
 		Animation.State.wrapMode = WrapMode.Once;
 		Animation.State.layer = -1;
-		Animation.OnStart = "BasicAnimationStart";
-		Animation.OnEnd = "BasicAnimationEnd";
+		Animation.OnStart = "IdleStart";
+		Animation.OnEnd = "IdleEnd";
 
 		DontDestroyOnLoad(this);
+	}
+
+	public void IdleStart()
+	{
+		BasicAnimationStart();
+	}
+
+	public void IdleEnd()
+	{
+		BasicAnimationEnd();
 	}
 
 
@@ -107,7 +118,7 @@ public class OCIdleAction : OCBasicAnimationAction
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
-			
+
 	//---------------------------------------------------------------------------
 
 	#endregion
