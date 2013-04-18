@@ -20,7 +20,7 @@ using System.Collections;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
-using UnityEngine;
+using UnityEngine; 
 
 namespace OpenCog
 {
@@ -86,15 +86,15 @@ public class OCWalkForwardAction : OCBasicAnimationAction
 	{
 		HasAnimation = true;
 		IsTranslation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["walk"]);
-		Animation.Position = gameObject.transform.position;
-		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.speed = 2.0f;
-		Animation.State.layer = 0;
-		Animation.OnStart = "WalkForwardStart";
-		Animation.OnEnd = "WalkForwardEnd";
-		Animation.MoveByZ = 1;
+		AnimationEffect = new OCAnimationEffect();//ScriptableObject.CreateInstance<OCAnimation>();
+		AnimationEffect.Initialize(gameObject, animation["walk"]);
+		AnimationEffect.Position = gameObject.transform.position;
+		AnimationEffect.State.wrapMode = WrapMode.Once;
+		AnimationEffect.State.speed = 2.0f;
+		AnimationEffect.State.layer = 0;
+		AnimationEffect.OnStart = "WalkForwardStart";
+		AnimationEffect.OnEnd = "WalkForwardEnd";
+		AnimationEffect.MoveByZ = 1;
 
 		DontDestroyOnLoad(this);
 	}

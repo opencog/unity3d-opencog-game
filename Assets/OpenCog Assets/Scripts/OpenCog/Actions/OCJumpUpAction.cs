@@ -87,14 +87,14 @@ public class OCJumpUpAction : OCBasicAnimationAction
 	{
 		HasAnimation = true;
 		IsTranslation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["jump"]);
-		Animation.Position = gameObject.transform.position;
-		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.speed	= 1.0f;
-		Animation.OnStart = "JumpUpStart";
-		Animation.OnEnd = "JumpUpEnd";
-		Animation.MoveByY = 4.0f;
+		AnimationEffect = new OCAnimationEffect();//ScriptableObject.CreateInstance<OCAnimation>();
+		AnimationEffect.Initialize(gameObject, animation["jump"]);
+		AnimationEffect.Position = gameObject.transform.position;
+		AnimationEffect.State.wrapMode = WrapMode.Once;
+		AnimationEffect.State.speed	= 1.0f;
+		AnimationEffect.OnStart = "JumpUpStart";
+		AnimationEffect.OnEnd = "JumpUpEnd";
+		AnimationEffect.MoveByY = 4.0f;
 
 		DontDestroyOnLoad(this);
 	}

@@ -29,7 +29,7 @@ namespace Extensions
 {
 
 /// <summary>
-/// The OpenCog OCAnimation.
+/// The OpenCog Animation Effect.
 /// </summary>
 #region Class Attributes
 
@@ -37,7 +37,7 @@ namespace Extensions
 [OCExposePropertyFields]
 [Serializable]
 #endregion
-public class OCAnimation
+public class OCAnimationEffect
 {
 
 	//---------------------------------------------------------------------------
@@ -311,14 +311,14 @@ public class OCAnimation
 
 	/// <summary>
 	/// Initializes a new instance of the
-	/// <see cref="OpenCog.Extensions.OCAnimation"/> class.
+	/// <see cref="OpenCog.Extensions.OCAnimationEffect"/> class.
 	/// </summary>
 
-	public OCAnimation()
+	public OCAnimationEffect()
 	{
 	}
 
-	public OCAnimation(OCAnimation anim)
+	public OCAnimationEffect(OCAnimationEffect anim)
 	{
 		FadeLength = anim.FadeLength;
 		Target = anim.Target;

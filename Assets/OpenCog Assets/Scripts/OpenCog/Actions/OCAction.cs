@@ -25,11 +25,13 @@ using UnityEngine;
 namespace OpenCog
 {
 
-namespace Actions
+namespace Actions   
 {
 
 /// <summary>
-/// The OpenCog OCAction.
+/// The OpenCog Action.  Defines the actions that a character can execute.
+/// Supercedes the old ActionSummary, MetaAction, ActionResult, and
+/// AnimationSummary interfaces.
 /// </summary>
 #region Class Attributes
 
@@ -54,7 +56,7 @@ public abstract class OCAction : OCMonoBehaviour
 	/// <summary>
 	/// The animation associated with this action, if any.
 	/// </summary>
-	private OCAnimation m_Animation = null;
+	private OCAnimationEffect m_AnimationEffect = null;
 
 
 	//---------------------------------------------------------------------------
@@ -88,10 +90,10 @@ public abstract class OCAction : OCMonoBehaviour
 	/// </value>
 	[OCTooltip("The animation to play for this action.")]
 	[OCBoolPropertyToggle("HasAnimation", true)]
-	public OCAnimation Animation
+	public OCAnimationEffect AnimationEffect
 	{
-		get {return m_Animation;}
-		set {m_Animation = value;}
+		get {return m_AnimationEffect;}
+		set {m_AnimationEffect = value;}
 	}
 
 	//---------------------------------------------------------------------------

@@ -112,34 +112,34 @@ public abstract class OCBasicAnimationAction : OCAction
 	public override void Execute()
 	{
 		if(m_IsTranslation)
-			Animation.PlayAndTranslate();
+			AnimationEffect.PlayAndTranslate();
 		else if(m_IsRotation)
-			Animation.PlayAndRotate();
+			AnimationEffect.PlayAndRotate();
 	}
 
 	public override bool IsExecuting()
 	{
-		return Animation.IsPlaying;
+		return AnimationEffect.IsPlaying;
 	}
 
 	public override void Terminate()
 	{
-		Animation.Stop();
+		AnimationEffect.Stop();
 	}
 
 	public override bool ShouldTerminate()
 	{
-		return Animation.IsPlayingButNotThis;
+		return AnimationEffect.IsPlayingButNotThis;
 	}
 
 	public void BasicAnimationStart()
 	{
-		Animation.Start();
+		AnimationEffect.Start();
 	}
 
 	public void BasicAnimationEnd()
 	{
-		Animation.End();
+		AnimationEffect.End();
 	}
 
 	//---------------------------------------------------------------------------

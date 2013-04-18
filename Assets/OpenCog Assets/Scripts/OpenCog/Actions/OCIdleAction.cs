@@ -87,12 +87,12 @@ public class OCIdleAction : OCBasicAnimationAction
 	{
 		HasAnimation = true;
 		IsTranslation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.layer = -1;
-		Animation.OnStart = "IdleStart";
-		Animation.OnEnd = "IdleEnd";
+		AnimationEffect = new OCAnimationEffect();//ScriptableObject.CreateInstance<OCAnimation>();
+		AnimationEffect.Initialize(gameObject, animation["idle"]);
+		AnimationEffect.State.wrapMode = WrapMode.Once;
+		AnimationEffect.State.layer = -1;
+		AnimationEffect.OnStart = "IdleStart";
+		AnimationEffect.OnEnd = "IdleEnd";
 
 		DontDestroyOnLoad(this);
 	}

@@ -87,16 +87,16 @@ public class OCTurnRightAction : OCBasicAnimationAction
 	{
 		HasAnimation = true;
 		IsRotation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["turnR"]);// 90 degrees
-		Animation.Position = gameObject.transform.position;
-		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.speed = 2.0f;
-		Animation.State.layer = 1;
-		Animation.OnStart = "TurnRightStart";
-		Animation.OnEnd = "TurnRightEnd";
+		AnimationEffect = new OCAnimationEffect();//ScriptableObject.CreateInstance<OCAnimation>();
+		AnimationEffect.Initialize(gameObject, animation["turnR"]);// 90 degrees
+		AnimationEffect.Position = gameObject.transform.position;
+		AnimationEffect.State.wrapMode = WrapMode.Once;
+		AnimationEffect.State.speed = 2.0f;
+		AnimationEffect.State.layer = 1;
+		AnimationEffect.OnStart = "TurnRightStart";
+		AnimationEffect.OnEnd = "TurnRightEnd";
 
-		Animation.RotateByY = 0.25f;
+		AnimationEffect.RotateByY = 0.25f;
 
 		DontDestroyOnLoad(this);
 	}

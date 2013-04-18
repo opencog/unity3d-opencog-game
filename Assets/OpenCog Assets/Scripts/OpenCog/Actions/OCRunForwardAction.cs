@@ -87,18 +87,18 @@ public class OCRunForwardAction : OCBasicAnimationAction
 	{
 		HasAnimation = true;
 		IsTranslation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
+		AnimationEffect = new OCAnimationEffect();//ScriptableObject.CreateInstance<OCAnimation>();
 
-		Animation.Initialize(gameObject, animation["run"]);
-		Animation.Position = gameObject.transform.position;
-		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.layer = 0;
-		Animation.State.speed = 1.0f;
+		AnimationEffect.Initialize(gameObject, animation["run"]);
+		AnimationEffect.Position = gameObject.transform.position;
+		AnimationEffect.State.wrapMode = WrapMode.Once;
+		AnimationEffect.State.layer = 0;
+		AnimationEffect.State.speed = 1.0f;
 
-		Animation.MoveByZ = 3.0f;
+		AnimationEffect.MoveByZ = 3.0f;
 
-		Animation.OnStart = "RunForwardStart";
-		Animation.OnEnd = "RunForwardEnd";
+		AnimationEffect.OnStart = "RunForwardStart";
+		AnimationEffect.OnEnd = "RunForwardEnd";
 
 
 		DontDestroyOnLoad(this);

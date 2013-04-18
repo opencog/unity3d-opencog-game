@@ -87,15 +87,15 @@ public class OCClimbUpAction : OCBasicAnimationAction
 	{
 		HasAnimation = true;
 		IsTranslation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["climb"]);
-		Animation.Position = gameObject.transform.position;
-		Animation.State.wrapMode = WrapMode.Once;
-		Animation.State.speed = 2.0f;
-		Animation.OnStart = "ClimbUpStart";
-		Animation.OnEnd = "ClimbUpEnd";
-		Animation.MoveByY = 1;
-		Animation.MoveByZ = 1;
+		AnimationEffect = new OCAnimationEffect();//ScriptableObject.CreateInstance<OCAnimation>();
+		AnimationEffect.Initialize(gameObject, animation["climb"]);
+		AnimationEffect.Position = gameObject.transform.position;
+		AnimationEffect.State.wrapMode = WrapMode.Once;
+		AnimationEffect.State.speed = 2.0f;
+		AnimationEffect.OnStart = "ClimbUpStart";
+		AnimationEffect.OnEnd = "ClimbUpEnd";
+		AnimationEffect.MoveByY = 1;
+		AnimationEffect.MoveByZ = 1;
 
 		DontDestroyOnLoad(this);
 	}
