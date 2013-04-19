@@ -39,12 +39,7 @@ public class TerrainGenerator {
 		snow = blockSet.GetBlock("Snow");
 		ice = blockSet.GetBlock("Ice");
 	}
-	
-	public TerrainGenerator(Map map, string filename)
-	{
-		
-	}
-	
+
 	public IEnumerator Generate(int cx, int cz) {
 		terrainNoise.GenerateNoise(cx*Chunk.SIZE_X, cz*Chunk.SIZE_Z);
 		islandNoise.GenerateNoise(cx*Chunk.SIZE_X, cz*Chunk.SIZE_Z);
@@ -127,6 +122,8 @@ public class TerrainGenerator {
 		if( IsInRange(noise, 0,    0.2f) ) block = sand;
 		if( IsInRange(noise, 0.2f, 0.6f) ) block = dirt;
 		if( IsInRange(noise, 0.6f, 1f)   ) block = stone;
+		if (System.DateTime.Now.Millisecond.ToString().EndsWith ("9"))
+			Debug.Log ("About to create a block at [" + worldPos.x + ", " + worldPos.y + ", " + worldPos.z + "].");
 		if(block != null) map.SetBlock(block, worldPos);
 	}
 	

@@ -36,6 +36,11 @@ public class Chunk {
 	public void SetBlock(BlockData block, int x, int y, int z) {
 		blocks[z, y, x] = block;
 	}
+
+	public BlockData[,,] GetBlocks()
+	{
+		return blocks;
+	}
 	
 	public BlockData GetBlock(Vector3i pos) {
 		return GetBlock(pos.x, pos.y, pos.z);

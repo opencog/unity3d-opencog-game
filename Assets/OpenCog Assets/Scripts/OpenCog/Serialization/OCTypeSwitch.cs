@@ -23,7 +23,7 @@ using System;
 namespace OpenCog
 {
 
-namespace SerializationExtensions
+namespace Serialization
 {
 
 /// <summary>
@@ -178,7 +178,7 @@ public static class OCTypeSwitch
 
 }// class OCTypeSwitch
 
-}// namespace SerializationExtensions
+}// namespace Serialization
 
 }// namespace OpenCog
 

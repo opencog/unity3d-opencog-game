@@ -202,3 +202,9 @@ Assembly-UnityScript-vs.unityproj
 Assembly-UnityScript.pidb
 Assembly-UnityScript.unityProj
 
+#############
+## Signed Libraries
+#############
+
+#PostSharp
+*PostSharp*

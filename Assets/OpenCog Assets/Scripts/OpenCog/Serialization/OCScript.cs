@@ -24,7 +24,7 @@ using UnityEditor;
 namespace OpenCog
 {
 
-namespace SerializationExtensions
+namespace Serialization
 {
 
 /// <summary>
@@ -143,7 +143,7 @@ public class OCScript
 
 }// class OCScript
 
-}// namespace SerializationExtensions
+}// namespace Serialization
 
 }// namespace OpenCog
 
