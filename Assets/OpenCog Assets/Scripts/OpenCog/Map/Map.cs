@@ -12,6 +12,14 @@ public class Map : MonoBehaviour
 	private SunLightMap sunLightmap = new SunLightMap ();
 	private LightMap lightmap = new LightMap ();
 	
+	public enum PathDirection
+	{
+		Forward,
+		ForwardClimb,
+		ForwardJump,
+		ForwardDrop
+	};
+	
 	public void SetBlockAndRecompute (BlockData block, Vector3i pos)
 	{
 		SetBlock (block, pos);
@@ -38,7 +46,103 @@ public class Map : MonoBehaviour
 		SunLightComputer.RecomputeLightAtPosition (this, pos);
 		LightComputer.RecomputeLightAtPosition (this, pos);
 		
-		UpdateMeshColliderAfterBlockChange();
+		UpdateMeshColliderAfterBlockChange ();
+	}
+	
+//	private bool IsBlockOnChunkEdge (Vector3i blockPositionGlobal)
+//	{
+//		int chunkXDim = 16;
+//		int chunkZDim = 16;
+//		
+//		if ((blockPositionGlobal.x == 0) || ((blockPositionGlobal.x + 1) % chunkXDim == 0))
+//			return true;
+//		else if ((blockPositionGlobal.z == 0) || ((blockPositionGlobal.z + 1) % chunkZDim == 0))
+//			return true;
+//		else 
+//			return false;
+//		
+//	}
+	
+	public bool IsPathOpen (Transform characterTransform, float characterHeight, PathDirection intendedDirection)
+	{
+		bool bPathIsOpen = false;
+		
+		// Change tranform coords to worldBlockCoords
+		//Debug.Log ("vFeetPosition = [" + vFeetPosition.x + ", " + vFeetPosition.y + ", " + vFeetPosition.z + "]");
+		//Debug.Log ("vFeetForwardPosition = [" + vFeetForwardPosition.x + ", " + vFeetForwardPosition.y + ", " + vFeetForwardPosition.z + "]");
+		
+		Vector3 vFeet = new Vector3 (characterTransform.position.x, characterTransform.position.y, characterTransform.position.z);
+				
+		vFeet.y -= (characterHeight / 2);
+				
+		Vector3 vFeetForward = characterTransform.forward + vFeet;
+		
+		Vector3i viStandingOn = new Vector3i ();
+		viStandingOn.x = (int)vFeet.x;
+		viStandingOn.y = (int)vFeet.y;
+		viStandingOn.z = (int)vFeet.z;
+		Debug.Log ("Standing on world block: [" + viStandingOn.x + ", " + viStandingOn.y + ", " + viStandingOn.z + "]");
+		
+		Vector3i viStandingOnForward = new Vector3i ();
+		
+		viStandingOnForward.x = (int)vFeetForward.x;
+		viStandingOnForward.y = (int)vFeetForward.y;
+		viStandingOnForward.z = (int)vFeetForward.z;
+		
+		Debug.Log ("Forward of standing on world block: [" + viStandingOnForward.x + ", " + viStandingOnForward.y + ", " + viStandingOnForward.z + "]");
+				
+		Vector3i viLowerBody = new Vector3i (viStandingOn.x, viStandingOn.y, viStandingOn.z);
+		viLowerBody += new Vector3i (0, 1, 0);
+		Debug.Log ("Lower body inhabits world block: [" + viLowerBody.x + ", " + viLowerBody.y + ", " + viLowerBody.z + "]");
+		
+		Vector3i viUpperBody = new Vector3i (viLowerBody.x, viLowerBody.y, viLowerBody.z);
+		viUpperBody += new Vector3i (0, 1, 0);
+		Debug.Log ("Upper body inhabits world block: [" + viUpperBody.x + ", " + viUpperBody.y + ", " + viUpperBody.z + "]");
+		
+		// Prepare some block vectors to use later.
+		Vector3i viOneAboveHead = viUpperBody + Vector3i.up; // The block direct above the upper body
+		Vector3i viTwoAboveHead = viOneAboveHead + Vector3i.up; // The block two above the upper body
+		
+		Vector3i viForwardOneUnder = viStandingOnForward + Vector3i.down; // The block in front, one down
+		Vector3i viForwardKneeHigh = viStandingOnForward + Vector3i.up; // The block in front of the lower body
+		Vector3i viForwardChestHigh = viForwardKneeHigh + Vector3i.up; // The block in front of the upper body
+		Vector3i viForwardOneAboveHead = viForwardChestHigh + Vector3i.up; // The block one above the block in front of the upper body
+		Vector3i viForwardTwoAboveHead = viForwardOneAboveHead + Vector3i.up; // The block two above the block in front of the upper body
+		
+		Debug.Log ("Forward lower block is: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
+		Debug.Log ("Forward upper block is: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
+		
+		switch (intendedDirection) {
+		case PathDirection.Forward:
+			// Requires two clear blocks in front
+			if (GetBlock (viForwardKneeHigh).IsEmpty () && GetBlock (viForwardChestHigh).IsEmpty ())
+				bPathIsOpen = true;
+				break;
+		case PathDirection.ForwardClimb:
+			// Requires a solid block lower front
+			if (GetBlock (viForwardKneeHigh).IsSolid())
+				// And two empty blocks above that
+				if (GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneAboveHead).IsEmpty ())
+					bPathIsOpen = true;
+			break;
+		case PathDirection.ForwardDrop:
+			// Requires 3 empty block in front, chest high, knee high and 1 underground
+			if (GetBlock (viForwardKneeHigh).IsEmpty() && GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneUnder).IsEmpty ())
+				bPathIsOpen = true;
+			break;
+		case PathDirection.ForwardJump:
+			// Requires two empty blocks above, and two empty blocks in front of those
+			if (GetBlock (viOneAboveHead).IsEmpty () && GetBlock (viTwoAboveHead).IsEmpty () && GetBlock (viForwardOneAboveHead).IsEmpty () && GetBlock (viForwardTwoAboveHead).IsEmpty ())
+				bPathIsOpen = true;
+			break;
+		default:
+			Debug.Log ("Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
+			break;
+		}
+		
+		Debug.Log ("Test for PathDirection=" + intendedDirection.ToString () + " yields " + bPathIsOpen);
+		
+		return bPathIsOpen;
 	}
 	
 	public void SetDirty (Vector3i chunkPos)
@@ -48,15 +152,15 @@ public class Map : MonoBehaviour
 			chunk.GetChunkRendererInstance ().SetDirty ();
 	}
 	
-	public void AddCollidersSync()
+	public void AddCollidersSync ()
 	{
 		Transform[] objects = GetComponentsInChildren<Transform> ();
  
 		for (int i = 0; i < objects.Length; i++) {
 			if (objects [i].gameObject.renderer) {
-				Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
+				Debug.Log ("We found us a " + objects [i].gameObject.GetType ().ToString ());
 				
-				MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
+				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
 				MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
 				
 				myCollider.sharedMesh = null;
@@ -66,77 +170,70 @@ public class Map : MonoBehaviour
 				myCollider.enabled = true;
 				
 				Debug.Log ("i: " + objects [i].name);
-				Debug.Log ("Center: " + myCollider.bounds.center.ToString());
+				Debug.Log ("Center: " + myCollider.bounds.center.ToString ());
 				Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
 			}
 		}
 	}
 	
-	public void UpdateMeshColliderAfterBlockChange()
+	public void UpdateMeshColliderAfterBlockChange ()
 	{
 		StartCoroutine (StartUpdateMeshColliderAfterBlockChange ());	
 	}
 	
-	IEnumerator StartUpdateMeshColliderAfterBlockChange()
+	IEnumerator StartUpdateMeshColliderAfterBlockChange ()
 	{
 		Transform[] objects = GetComponentsInChildren<Transform> ();
 		
 		yield return null;
 		
-		for (int i = objects.Length -1 ; i >= 0; i--) {
+		for (int i = objects.Length -1; i >= 0; i--) {
 			if (objects [i].gameObject.renderer) {
-				MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
+				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
 				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
 
-				if(myCollider != null)
-				{
+				if (myCollider != null) {
 
 					myCollider.sharedMesh = null;
 				
 					myCollider.sharedMesh = myFilter.mesh;
 				
-					Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());
+					//Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());
 				}
 				
-//				myCollider.sharedMesh = myFilter.mesh;
-//				
-//				myCollider.enabled = true;
-//				
 //				Debug.Log ("i: " + objects [i].name);
 //				Debug.Log ("Center: " + myCollider.bounds.center.ToString());
 //				Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
 			}
 		}
 	}
-		
-		
 	
 	public void AddColliders ()
 	{
  
-		StartCoroutine (StartPrepare ());
+		StartCoroutine (StartAddColliders ());
 	}
  
-	IEnumerator StartPrepare ()
+	IEnumerator StartAddColliders ()
 	{
 		Transform[] objects = GetComponentsInChildren<Transform> ();
 		
 		yield return null;
  
-		for (int i = objects.Length -1 ; i >= 0; i--) {
+		for (int i = objects.Length -1; i >= 0; i--) {
 			if (objects [i].gameObject.renderer) {
-				Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
+				//Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
 				
-				MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
+				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
 				MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
 				
 				myCollider.sharedMesh = null;
 				
 				myCollider.sharedMesh = myFilter.mesh;
 				
-				Debug.Log ("i: " + objects [i].name);
-				Debug.Log ("Center: " + myCollider.bounds.center.ToString());
-				Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
+				//Debug.Log ("i: " + objects [i].name);
+				//Debug.Log ("Center: " + myCollider.bounds.center.ToString());
+				//Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
 				
 			}
 		}
