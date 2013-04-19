@@ -38,7 +38,7 @@ namespace Actions
 [Serializable]
 [ExecuteInEditMode]
 #endregion
-public class OCIdleAction : OCAction
+public class OCIdleAction : OCBasicAnimationAction
 {
 
 	//---------------------------------------------------------------------------
@@ -68,11 +68,6 @@ public class OCIdleAction : OCAction
 
 	//---------------------------------------------------------------------------
 
-	public OCIdleAction()
-	{
-
-	}
-
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -86,62 +81,33 @@ public class OCIdleAction : OCAction
 	/// <summary>
 	/// Called when the script instance is being loaded.
 	/// </summary>
-	public void Awake()
+
+
+	public override void Initialize()
 	{
-		Debug.Log("In OCIdleAction.Awake()...");
 		HasAnimation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.AnimationState_.wrapMode = WrapMode.Loop;
-		Animation.AnimationState_.layer = -1;
-		Animation.OnStart = "IdleStart";
-		Animation.OnEnd = "IdleEnd";
+		IsTranslation = true;
+		AnimationEffect = new OCAnimationEffect();//ScriptableObject.CreateInstance<OCAnimation>();
+		AnimationEffect.Initialize(gameObject, animation["idle"]);
+		AnimationEffect.State.wrapMode = WrapMode.Once;
+		AnimationEffect.State.layer = -1;
+		AnimationEffect.OnStart = "IdleStart";
+		AnimationEffect.OnEnd = "IdleEnd";
 
 		DontDestroyOnLoad(this);
-	}
-
-	public void Start()
-	{
-		Debug.Log("In OCIdleAction.Start()...");
-		HasAnimation = true;
-		Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-		Animation.Initialize(gameObject, animation["idle"]);
-		Animation.AnimationState_.wrapMode = WrapMode.Loop;
-		Animation.AnimationState_.layer = -1;
-		Animation.OnStart = "IdleStart";
-		Animation.OnEnd = "IdleEnd";
-
-		DontDestroyOnLoad(this);
-	}
-
-	public void OnEnable()
-	{
-		Debug.Log("In OCIdleAction.OnEnable()...");
-		//if(Animation == null)// || !Animation.IsInitialized)
-		{
-			Animation = new OCAnimation();//ScriptableObject.CreateInstance<OCAnimation>();
-			Animation.Initialize(gameObject, animation["idle"]);
-			Animation.AnimationState_.wrapMode = WrapMode.Loop;
-			Animation.AnimationState_.layer = -1;
-			Animation.OnStart = "IdleStart";
-			Animation.OnEnd = "IdleEnd";
-		}
-	}
-
-	public void Execute()
-	{
-		Animation.Play();
 	}
 
 	public void IdleStart()
 	{
-		Animation.Start();
+		BasicAnimationStart();
 	}
 
 	public void IdleEnd()
 	{
-		Animation.End();
+		BasicAnimationEnd();
 	}
+
+
 
 	//---------------------------------------------------------------------------
 
@@ -152,7 +118,7 @@ public class OCIdleAction : OCAction
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
-			
+
 	//---------------------------------------------------------------------------
 
 	#endregion

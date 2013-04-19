@@ -29,7 +29,7 @@ namespace Extensions
 {
 
 /// <summary>
-/// The OpenCog OCAnimation.
+/// The OpenCog Animation Effect.
 /// </summary>
 #region Class Attributes
 
@@ -37,7 +37,7 @@ namespace Extensions
 [OCExposePropertyFields]
 [Serializable]
 #endregion
-public class OCAnimation
+public class OCAnimationEffect
 {
 
 	//---------------------------------------------------------------------------
@@ -54,7 +54,7 @@ public class OCAnimation
 	/// <summary>
 	/// The Unity animation state that we're wrapping.
 	/// </summary>
-	private AnimationState m_AnimationState = null;
+	private AnimationState m_State = null;
 
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
@@ -64,7 +64,7 @@ public class OCAnimation
 	/// <summary>
 	/// The length of the animation's cross fade.
 	/// </summary>
-	private float m_FadeLength = 0.0f;
+	private float m_FadeLength = 0.5f;
 
 //	private bool m_Initialized = false;
 
@@ -87,10 +87,10 @@ public class OCAnimation
 	/// The Unity animation state that we're wrapping.
 	/// </value>
 	[OCTooltip("The Unity animation state that we're wrapping.")]
-	public AnimationState AnimationState_
+	public AnimationState State
 	{
-		get{ return m_AnimationState;}
-		set{ m_AnimationState = value;}
+		get{ return m_State;}
+		set{ m_State = value;}
 	}
 
 	/// <summary>
@@ -246,6 +246,58 @@ public class OCAnimation
 		set{ m_iTweenParams[iT.MoveBy.z] = value;}
 	}
 
+	/// <summary>
+	/// Gets or sets the distance to rotate by in the x-axis as part of the
+	/// animation.
+	/// </summary>
+	/// <value>
+	/// The rotation by x.
+	/// </value>
+	[ OCTooltip
+		("The distance to rotate by in the x-axis as part of the animation.") ]
+	public float RotateByX
+	{
+		get{ return ValueOrDefault<float>(iT.RotateBy.x);}
+		set{ m_iTweenParams[iT.RotateBy.x] = value;}
+	}
+
+	/// <summary>
+	/// Gets or sets the distance to rotate by in the y-axis as part of the
+	/// animation.
+	/// </summary>
+	/// <value>
+	/// The rotation by y.
+	/// </value>
+	[ OCTooltip
+		("The distance to rotate by in the y-axis as part of the animation.") ]
+	public float RotateByY
+	{
+		get{ return ValueOrDefault<float>(iT.RotateBy.y);}
+		set{ m_iTweenParams[iT.RotateBy.y] = value;}
+	}
+
+
+	/// <summary>
+	/// Gets or sets the distance to rotate by in the z-axis as part of the
+	/// animation.
+	/// </summary>
+	/// <value>
+	/// The rotation by z.
+	/// </value>
+	[ OCTooltip
+		("The distance to rotate by in the z-axis as part of the animation.") ]
+	public float RotateByZ
+	{
+		get{ return ValueOrDefault<float>(iT.RotateBy.z);}
+		set{ m_iTweenParams[iT.RotateBy.z] = value;}
+	}
+
+	public Vector3 Position
+	{
+		get{ return ValueOrDefault<Vector3>("position");}
+		set{ m_iTweenParams["position"] = value;}
+	}
+
 			
 	//---------------------------------------------------------------------------
 
@@ -259,18 +311,18 @@ public class OCAnimation
 
 	/// <summary>
 	/// Initializes a new instance of the
-	/// <see cref="OpenCog.Extensions.OCAnimation"/> class.
+	/// <see cref="OpenCog.Extensions.OCAnimationEffect"/> class.
 	/// </summary>
 
-	public OCAnimation()
+	public OCAnimationEffect()
 	{
 	}
 
-	public OCAnimation(OCAnimation anim)
+	public OCAnimationEffect(OCAnimationEffect anim)
 	{
 		FadeLength = anim.FadeLength;
 		Target = anim.Target;
-		AnimationState_ = anim.AnimationState_;
+		State = anim.State;
 		m_iTweenParams = anim.m_iTweenParams;
 	}
 
@@ -296,10 +348,11 @@ public class OCAnimation
 	/// </param>
 	public void Initialize(GameObject target, AnimationState animationState)
 	{
+
 		Target = target;
-		AnimationState_ = animationState;
+		State = animationState;
 		m_iTweenParams = new Hashtable();
-		Time = AnimationState_.length / AnimationState_.speed + 0.01f;
+		Time = State.length / State.speed + 0.01f;
 		EaseType = "linear";//iTween.EaseType.linear;
 		Delay = 0;
 
@@ -310,9 +363,29 @@ public class OCAnimation
 	/// <summary>
 	/// Play this animation.
 	/// </summary>
-	public void Play()
+	public void PlayAndTranslate()
 	{
 		iTween.MoveBy(m_Target, m_iTweenParams);
+	}
+
+	public void PlayAndRotate()
+	{
+		iTween.RotateBy(m_Target, m_iTweenParams);
+	}
+
+	public void Stop()
+	{
+		iTween.Stop(m_Target);
+	}
+
+	public bool IsPlaying
+	{
+		get { return m_Target.animation.IsPlaying(State.name);}
+	}
+
+	public bool IsPlayingButNotThis
+	{
+		get { return m_Target.animation.isPlaying && !IsPlaying;}
 	}
 
 	/// <summary>
@@ -320,7 +393,7 @@ public class OCAnimation
 	/// </summary>
 	public void Start()
 	{
-		m_Target.animation.CrossFade(m_AnimationState.name, m_FadeLength);
+		m_Target.animation.CrossFade(m_State.name, m_FadeLength);
 	}
 
 	/// <summary>
@@ -328,7 +401,7 @@ public class OCAnimation
 	/// </summary>
 	public void End()
 	{
-		if(m_AnimationState.wrapMode != WrapMode.Loop)
+		if(m_State.wrapMode != WrapMode.Loop)
 		{
 			m_Target.animation.Stop();
 		}

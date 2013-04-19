@@ -465,10 +465,18 @@ where OCType : MonoBehaviour
 
 							//GUILayout.Space(-14);
 
+
+
 							if(m_FoldedState.ContainsKey(propertyField.PublicName))
+							{
+								EditorGUI.indentLevel--;
 								m_FoldedState[propertyField.PublicName] = EditorGUILayout.Foldout(m_FoldedState[propertyField.PublicName], label);
+								EditorGUI.indentLevel++;
+							}
 							else
+							{
 								m_FoldedState.Add(propertyField.PublicName, true);
+							}
 
 							if(m_FoldedState[propertyField.PublicName])
 							{

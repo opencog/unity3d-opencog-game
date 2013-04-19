@@ -27,6 +27,15 @@ Trees:
 	Unknown
 
 Contexts:
+	CanIdleNoWaypoint
+	CanMoveToWaypoint
+	CanJumpToWaypoint
+	CanClimbToWaypoint
+	CanDestroyToWaypoint
+	CanMoveBlockToWaypoint
+	CanFlyToWaypoint
+	CanTransformToWaypoint
+	CanCreateToWaypoint
 	Unknown
 
 Branch priority groups:
