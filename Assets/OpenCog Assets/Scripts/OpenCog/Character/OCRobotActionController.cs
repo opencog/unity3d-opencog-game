@@ -51,6 +51,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			private Tree m_Tree;
 			private Hashtable m_IdleParams;
 			private Vector3i m_TargetBlockPos = Vector3i.zero;
+			private DateTime m_dtLastTNTSearchTime;
 
 			//---------------------------------------------------------------------------
 
@@ -482,29 +483,37 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					map.SetBlockAndRecompute (new BlockData (), TargetBlockPos);
 					TargetBlockPos = Vector3i.zero;
 				}
+				
+				if (m_dtLastTNTSearchTime == new DateTime())
+				{
+					m_dtLastTNTSearchTime = DateTime.Now;	
+				}
+				
+				if (DateTime.Now.Subtract (m_dtLastTNTSearchTime).Seconds > 1)
+				{
+					bool doesTNTExist = false;
 
-				bool doesTNTExist = false;
-
-				//distanceVec = new Vector3(1000,1000,1000);
-				for (int cx=chunks.GetMinX(); cx<chunks.GetMaxX(); ++cx) {
-					for (int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); ++cy) {
-						for (int cz=chunks.GetMinZ(); cz<chunks.GetMaxZ(); ++cz) {
-							Vector3i chunkPos = new Vector3i (cx, cy, cz);
-							Chunk chunk = chunks.SafeGet (chunkPos);
-							if (chunk != null) {
-								for (int z=0; z<Chunk.SIZE_Z; z++) {
-									for (int x=0; x<Chunk.SIZE_X; x++) {
-										for (int y=0; y<Chunk.SIZE_Y; y++) {
-											Vector3i localPos = new Vector3i (x, y, z);
-											BlockData blockData = chunk.GetBlock (localPos);
-											Vector3i candidatePos = Chunk.ToWorldPosition (chunk.GetPosition (), localPos);
-											Vector3 candidateVec = ((Vector3)candidatePos) - robotPos;
-											if (!blockData.IsEmpty () && blockData.block.GetName () == "TNT") {
-												doesTNTExist = true;
-												if (candidateVec.sqrMagnitude < distanceVec.sqrMagnitude) {
-													TargetBlockPos = candidatePos;
-													distanceVec = candidateVec;
-													Debug.Log ("We found some TNT nearby: " + TargetBlockPos + "!");
+					//distanceVec = new Vector3(1000,1000,1000);
+					for (int cx=chunks.GetMinX(); cx<chunks.GetMaxX(); ++cx) {
+						for (int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); ++cy) {
+							for (int cz=chunks.GetMinZ(); cz<chunks.GetMaxZ(); ++cz) {
+								Vector3i chunkPos = new Vector3i (cx, cy, cz);
+								Chunk chunk = chunks.SafeGet (chunkPos);
+								if (chunk != null) {
+									for (int z=0; z<Chunk.SIZE_Z; z++) {
+										for (int x=0; x<Chunk.SIZE_X; x++) {
+											for (int y=0; y<Chunk.SIZE_Y; y++) {
+												Vector3i localPos = new Vector3i (x, y, z);
+												BlockData blockData = chunk.GetBlock (localPos);
+												Vector3i candidatePos = Chunk.ToWorldPosition (chunk.GetPosition (), localPos);
+												Vector3 candidateVec = ((Vector3)candidatePos) - robotPos;
+												if (!blockData.IsEmpty () && blockData.block.GetName () == "TNT") {
+													doesTNTExist = true;
+													if (candidateVec.sqrMagnitude < distanceVec.sqrMagnitude) {
+														TargetBlockPos = candidatePos;
+														distanceVec = candidateVec;
+														Debug.Log ("We found some TNT nearby: " + TargetBlockPos + "!");
+													}
 												}
 											}
 										}
@@ -513,12 +522,16 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 							}
 						}
 					}
+	
+					if (TargetBlockPos != Vector3i.zero && (!doesTNTExist || map.GetBlock(TargetBlockPos).IsEmpty())) {
+						Debug.Log ("No more TNT... :(");
+						TargetBlockPos = Vector3i.zero;
+					}
+					
+					m_dtLastTNTSearchTime = DateTime.Now;
 				}
 
-				if (TargetBlockPos != Vector3i.zero && (!doesTNTExist || map.GetBlock(TargetBlockPos).IsEmpty())) {
-					Debug.Log ("No more TNT... :(");
-					TargetBlockPos = Vector3i.zero;
-				}
+				
 			}
 
 			public void	 Reset (Tree sender)
