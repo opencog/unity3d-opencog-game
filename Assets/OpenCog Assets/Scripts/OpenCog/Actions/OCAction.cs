@@ -25,7 +25,7 @@ using UnityEngine;
 namespace OpenCog
 {
 
-namespace Actions   
+namespace Actions
 {
 
 /// <summary>
