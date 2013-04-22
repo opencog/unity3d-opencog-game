@@ -195,11 +195,11 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 //					&& charController.isGrounded
 					) {
 						action.Execute ();
-						Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Success");
+						//Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Success");
 						return BehaveResult.Success;
 					}
 
-					Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Failure");
+					//Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Failure");
 					return BehaveResult.Failure;
 				}
 
