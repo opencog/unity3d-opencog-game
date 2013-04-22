@@ -212,7 +212,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
 
 					if (TargetBlockPos != Vector3i.zero
-					&& robotUpDistance >= 2.5f
+//					&& robotUpDistance >= 2.5f
 					&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardClimb)
 					&& charController.isGrounded) {
 						action.Execute ();
@@ -274,7 +274,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			public BehaveResult JumpAction {
 			// tick handler
 				get {
-					OCJumpUpAction action = gameObject.GetComponent<OCJumpUpAction> ();
+					OCJumpForwardAction action = gameObject.GetComponent<OCJumpForwardAction> ();
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
@@ -291,7 +291,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					if (TargetBlockPos != Vector3i.zero
 						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardJump)
-					&& robotUpDistance >= 2.5f
+//					&& robotUpDistance >= 2.5f
 					&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Success");
