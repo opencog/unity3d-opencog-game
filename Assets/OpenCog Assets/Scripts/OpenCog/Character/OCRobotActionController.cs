@@ -166,6 +166,47 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 //			return BehaveResult.Success;
 //	}
 
+			public BehaveResult FallAction {
+				get {
+					OCFallForwardAction action = gameObject.GetComponent<OCFallForwardAction> ();
+
+					BehaveResult ret = DefaultActionTickHandler (action);
+
+					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+
+					if (ret != BehaveResult.Success)
+						return ret;
+
+					CharacterController charController = gameObject.GetComponent<CharacterController> ();
+
+					Vector3 robotPos = gameObject.transform.position;
+					Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+					float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
+					float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
+					float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
+					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
+
+					if (TargetBlockPos != Vector3i.zero
+						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardDrop)
+//					&& robotForwardDistance <= 2.5f
+					&& robotForwardDistance >= 0.5f
+//					&& robotRightDistance < 0.5f
+//					&& robotLeftDistance < 0.5f
+//					&& charController.isGrounded
+					) {
+						action.Execute ();
+						Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Success");
+						return BehaveResult.Success;
+					}
+
+					Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Failure");
+					return BehaveResult.Failure;
+				}
+
+				set {
+				}
+			}
+
 			public BehaveResult IdleAction {
 			// tick handler
 				get {
@@ -217,11 +258,11 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardClimb)
 					&& charController.isGrounded) {
 						action.Execute ();
-						Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
+						//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
 						return BehaveResult.Success;
 					}
 
-					Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Failure");
+					//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Failure");
 					return BehaveResult.Failure;
 				}
 
@@ -259,11 +300,11 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					&& charController.isGrounded
 					) {
 						action.Execute ();
-						Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Success");
+						//Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Success");
 						return BehaveResult.Success;
 					}
 
-					Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Failure");
+					//Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Failure");
 					return BehaveResult.Failure;
 				}
 
@@ -297,11 +338,11 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					&& robotForwardDistance >= 0.0f
 					&& charController.isGrounded) {
 						action.Execute ();
-						Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Success");
+						//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Success");
 						return BehaveResult.Success;
 					}
 
-					Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Failure");
+					//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Failure");
 					return BehaveResult.Failure;
 				}
 
@@ -365,7 +406,6 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					if (TargetBlockPos != Vector3i.zero
 						&& robotRightDistance >= 0.5f
-						&& robotForwardDistance >= 0.5f
 						&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Success");
@@ -411,11 +451,11 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					&& charController.isGrounded
 					) {
 						action.Execute ();
-						Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Success");
+						//Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Success");
 						return BehaveResult.Success;
 					}
 
-					Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Failure");
+					//Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Failure");
 					return BehaveResult.Failure;
 				}
 
@@ -436,7 +476,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 				Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
 
 //		if(distanceVec.y < -1.0f + 0.5f && distanceVec.y > -1.0f - 0.5f)
-				if (distanceVec.sqrMagnitude < 1.75f) {
+				if (distanceVec.sqrMagnitude < 2.25f) {
 					Debug.Log ("We've arrived at our goal TNT block...");
 					map.SetBlockAndRecompute (new BlockData (), TargetBlockPos);
 					TargetBlockPos = Vector3i.zero;
@@ -445,9 +485,9 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 				bool doesTNTExist = false;
 
 				//distanceVec = new Vector3(1000,1000,1000);
-				for (int cx=0; cx<chunks.GetMaxX(); ++cx) {
-					for (int cy=0; cy<chunks.GetMaxY(); ++cy) {
-						for (int cz=0; cz<chunks.GetMaxZ(); ++cz) {
+				for (int cx=chunks.GetMinX(); cx<chunks.GetMaxX(); ++cx) {
+					for (int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); ++cy) {
+						for (int cz=chunks.GetMinZ(); cz<chunks.GetMaxZ(); ++cz) {
 							Vector3i chunkPos = new Vector3i (cx, cy, cz);
 							Chunk chunk = chunks.SafeGet (chunkPos);
 							if (chunk != null) {

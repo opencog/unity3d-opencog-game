@@ -249,7 +249,7 @@ public class Map : MonoBehaviour
 		yield return null;
  
 		for (int i = objects.Length -1; i >= 0; i--) {
-			if (objects [i].gameObject.renderer) {
+			if (objects[i] != null && objects [i].gameObject.renderer) {
 				//Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
 								
 				if (objects[i].gameObject.GetComponent<MeshCollider>() == null)

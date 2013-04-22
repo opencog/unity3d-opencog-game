@@ -29,7 +29,7 @@ namespace Actions
 {
 
 /// <summary>
-/// The OpenCog OCWalkForwardAction.
+/// The OpenCog OCFallForwardAction.
 /// </summary>
 #region Class Attributes
 
@@ -38,7 +38,7 @@ namespace Actions
 [Serializable]
 [ExecuteInEditMode]
 #endregion
-public class OCWalkForwardAction : OCBasicAnimationAction
+public class OCFallForwardAction : OCBasicAnimationAction
 {
 
 	//---------------------------------------------------------------------------
@@ -87,13 +87,13 @@ public class OCWalkForwardAction : OCBasicAnimationAction
 		HasAnimation = true;
 		IsTranslation = true;
 		AnimationEffect = new OCAnimationEffect();//ScriptableObject.CreateInstance<OCAnimation>();
-		AnimationEffect.Initialize(gameObject, animation["walk"]);
+		AnimationEffect.Initialize(gameObject, animation["jump"]);
 		AnimationEffect.Position = gameObject.transform.position;
 		AnimationEffect.State.wrapMode = WrapMode.Once;
 		AnimationEffect.State.speed = 2.0f;
 		AnimationEffect.State.layer = 0;
-		AnimationEffect.OnStart = "WalkForwardStart";
-		AnimationEffect.OnEnd = "WalkForwardEnd";
+		AnimationEffect.OnStart = "FallForwardStart";
+		AnimationEffect.OnEnd = "FallForwardEnd";
 		AnimationEffect.MoveByZ = 1;
 
 		DontDestroyOnLoad(this);
@@ -107,12 +107,12 @@ public class OCWalkForwardAction : OCBasicAnimationAction
 //		}
 //	}
 
-	public void WalkForwardStart()
+	public void FallForwardStart()
 	{
 		BasicAnimationStart();
 	}
 
-	public void WalkForwardEnd()
+	public void FallForwardEnd()
 	{
 		BasicAnimationEnd();
 	}
@@ -145,11 +145,15 @@ public class OCWalkForwardAction : OCBasicAnimationAction
 
 	//---------------------------------------------------------------------------
 
-}// class OCWalkForwardAction
+}// class OCFallForwardAction
 
 }// namespace Actions
 
 }// namespace OpenCog
+
+
+
+
 
 
 
