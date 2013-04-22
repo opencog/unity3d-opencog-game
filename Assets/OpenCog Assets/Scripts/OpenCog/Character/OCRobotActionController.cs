@@ -329,7 +329,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& ( robotLeftDistance >= 0.5f && robotForwardDistance >= robotLeftDistance || robotForwardDistance < 0.0f)
+						&& ( robotLeftDistance >= 0.5f || robotForwardDistance < 0.0f)
 						&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Success");
@@ -365,7 +365,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					if (TargetBlockPos != Vector3i.zero
 						&& robotRightDistance >= 0.5f
-						&& robotForwardDistance >= robotRightDistance
+						&& robotForwardDistance >= 0.5f
 						&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Success");
