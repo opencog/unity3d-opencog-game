@@ -14,7 +14,8 @@ public class Map : MonoBehaviour
 	
 	public enum PathDirection
 	{
-		Forward,
+		ForwardWalk,
+		ForwardRun,
 		ForwardClimb,
 		ForwardJump,
 		ForwardDrop
@@ -63,11 +64,22 @@ public class Map : MonoBehaviour
 //		
 //	}
 	
+	private Vector3i Vector3ToVector3i(Vector3 inputVector)
+	{
+		int iX, iY, iZ;
+		
+		iX = (int)Mathf.Round (inputVector.x);
+		iY = (int)Mathf.Round (inputVector.y);
+		iZ = (int)Mathf.Round (inputVector.z);
+		return new Vector3i(iX, iY, iZ);
+	}
+	
 	public bool IsPathOpen (Transform characterTransform, float characterHeight, PathDirection intendedDirection)
 	{
 		bool bPathIsOpen = false;
 		
-		// Change tranform coords to worldBlockCoords
+		Vector3i vCharForward = Vector3ToVector3i(characterTransform.forward);
+		
 		//Debug.Log ("vFeetPosition = [" + vFeetPosition.x + ", " + vFeetPosition.y + ", " + vFeetPosition.z + "]");
 		//Debug.Log ("vFeetForwardPosition = [" + vFeetForwardPosition.x + ", " + vFeetForwardPosition.y + ", " + vFeetForwardPosition.z + "]");
 		
@@ -77,13 +89,10 @@ public class Map : MonoBehaviour
 				
 		Vector3 vFeetForward = characterTransform.forward + vFeet;
 		
-		Vector3i viStandingOn = new Vector3i ();
-		viStandingOn.x = (int)vFeet.x;
-		viStandingOn.y = (int)vFeet.y;
-		viStandingOn.z = (int)vFeet.z;
+		Vector3i viStandingOn = Vector3ToVector3i(vFeet);
 		//Debug.Log ("Standing on world block: [" + viStandingOn.x + ", " + viStandingOn.y + ", " + viStandingOn.z + "]");
 		
-		Vector3i viStandingOnForward = new Vector3i ();
+		Vector3i viStandingOnForward = Vector3ToVector3i(vFeetForward);
 		
 		viStandingOnForward.x = (int)vFeetForward.x;
 		viStandingOnForward.y = (int)vFeetForward.y;
@@ -103,21 +112,39 @@ public class Map : MonoBehaviour
 		Vector3i viOneAboveHead = viUpperBody + Vector3i.up; // The block direct above the upper body
 		Vector3i viTwoAboveHead = viOneAboveHead + Vector3i.up; // The block two above the upper body
 		
-		Vector3i viForwardOneUnder = viStandingOnForward + Vector3i.down; // The block in front, one down
+		Vector3i viForwardOneUnder = viStandingOnForward; // The block in front, one down
 		Vector3i viForwardKneeHigh = viStandingOnForward + Vector3i.up; // The block in front of the lower body
 		Vector3i viForwardChestHigh = viForwardKneeHigh + Vector3i.up; // The block in front of the upper body
 		Vector3i viForwardOneAboveHead = viForwardChestHigh + Vector3i.up; // The block one above the block in front of the upper body
 		Vector3i viForwardTwoAboveHead = viForwardOneAboveHead + Vector3i.up; // The block two above the block in front of the upper body
 		
+		Vector3i viForwardTwoKneeHigh = viForwardKneeHigh + vCharForward; // The block in front of the lower body
+		Vector3i viForwardTwoChestHigh = viForwardChestHigh + vCharForward; // The block in front of the upper body
+		
+		Vector3i viForwardThreeKneeHigh = viForwardTwoKneeHigh + vCharForward; // The block in front of the lower body
+		Vector3i viForwardThreeChestHigh = viForwardTwoChestHigh + vCharForward; // The block in front of the upper body
+		
+		//Debug.Log ("Forward knee high: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
+		//Debug.Log ("Forward chest high: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
+		//Debug.Log ("Forward one under: [" + viForwardOneUnder.x + ", " + viForwardOneUnder.y + ", " + viForwardOneUnder.z + "]");
+		
+		
 		//Debug.Log ("Forward lower block is: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
 		//Debug.Log ("Forward upper block is: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
 		
 		switch (intendedDirection) {
-		case PathDirection.Forward:
+		case PathDirection.ForwardWalk:
 			// Requires two clear blocks in front
 			if (GetBlock (viForwardKneeHigh).IsEmpty () && GetBlock (viForwardChestHigh).IsEmpty ())
 				bPathIsOpen = true;
 				break;
+		case PathDirection.ForwardRun:
+			// Requires two clear blocks for the next 3 forwards
+			if (GetBlock (viForwardKneeHigh).IsEmpty() && GetBlock (viForwardChestHigh).IsEmpty())
+				if (GetBlock (viForwardTwoKneeHigh).IsEmpty() && GetBlock (viForwardTwoChestHigh).IsEmpty())
+					if (GetBlock (viForwardThreeKneeHigh).IsEmpty() && GetBlock (viForwardThreeChestHigh).IsEmpty())
+						bPathIsOpen = true;
+			break;
 		case PathDirection.ForwardClimb:
 			// Requires a solid block lower front
 			if (GetBlock (viForwardKneeHigh).IsSolid())

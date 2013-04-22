@@ -117,10 +117,12 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 				
 				float characterHeight = this.GetComponent<CharacterController>().height;
 				
-				map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.Forward);
-				map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardJump);
-				map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardClimb);
-				map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardDrop);
+				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardWalk);
+				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
+				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
+				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardJump);
+				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardClimb);
+				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardDrop);
 			}
 
 			public void Update ()
