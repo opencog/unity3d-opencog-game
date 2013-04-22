@@ -39,7 +39,7 @@ namespace OpenCog
 [OCExposePropertyFields]
 [Serializable]
 #endregion
-public class OCRobotAgent : OCMonoBehaviour, IAgent
+public class OCRobotActionController : OCMonoBehaviour, IAgent
 		{
 
 			//---------------------------------------------------------------------------
@@ -81,7 +81,7 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 			/// Initializes a new instance of the <see cref="OpenCog.OCRobotAgent"/> class.
 			/// Generally, intitialization should occur in the Start function.
 			/// </summary>
-			public OCRobotAgent ()
+			public OCRobotActionController ()
 			{
 			}			
 
@@ -109,21 +109,21 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 				}		
 			}
 			
-			private void TestProprioception()
-			{
-				Debug.Log ("RobotAgent's Transform is at position [" + this.transform.position.x + ", " + this.transform.position.y + ", " + this.transform.position.z + "]");
-		
-				Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
-				
-				float characterHeight = this.GetComponent<CharacterController>().height;
-				
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardWalk);
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardJump);
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardClimb);
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardDrop);
-			}
+//			private void TestProprioception()
+//			{
+//				Debug.Log ("RobotAgent's Transform is at position [" + this.transform.position.x + ", " + this.transform.position.y + ", " + this.transform.position.z + "]");
+//		
+//				Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+//				
+//				float characterHeight = this.GetComponent<CharacterController>().height;
+//				
+//				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardWalk);
+//				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
+//				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
+//				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardJump);
+//				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardClimb);
+//				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardDrop);
+//			}
 
 			public void Update ()
 			{
@@ -142,7 +142,7 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 //			Debug.Log("Animation State: " + playing);
 //		}
 				
-				this.TestProprioception ();
+//				this.TestProprioception ();
 			}
 
 			public BehaveResult	 Tick (Tree sender, bool init)
@@ -199,6 +199,8 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
+					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+
 					if (ret != BehaveResult.Success)
 						return ret;
 
@@ -211,7 +213,7 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 
 					if (TargetBlockPos != Vector3i.zero
 					&& robotUpDistance >= 2.5f
-					&& robotForwardDistance >= 0.5f
+					&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardClimb)
 					&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
@@ -234,6 +236,8 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
+					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+
 					if (ret != BehaveResult.Success)
 						return ret;
 
@@ -246,17 +250,19 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 					float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
-					if (robotForwardDistance > 2.5f
+					if (TargetBlockPos != Vector3i.zero
+						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardRun)
+//					&& robotForwardDistance > 2.5f
 //					&& robotRightDistance < 1.5f
 //					&& robotLeftDistance < 1.5f
 					&& charController.isGrounded
 					) {
 						action.Execute ();
-						Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Success");
+//						Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Success");
 						return BehaveResult.Success;
 					}
 
-					Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Failure");
+//					Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Failure");
 					return BehaveResult.Failure;
 				}
 
@@ -272,6 +278,8 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
+					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+
 					if (ret != BehaveResult.Success)
 						return ret;
 
@@ -282,6 +290,7 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 					float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
 
 					if (TargetBlockPos != Vector3i.zero
+						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardJump)
 					&& robotUpDistance >= 2.5f
 					&& charController.isGrounded) {
 						action.Execute ();
@@ -316,7 +325,9 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 					float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
-					if (TargetBlockPos != Vector3i.zero && robotLeftDistance >= 0.5f && charController.isGrounded) {
+					if (TargetBlockPos != Vector3i.zero
+						&& robotLeftDistance >= 0.5f
+						&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Success");
 						return BehaveResult.Success;
@@ -349,7 +360,9 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 					float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
-					if (TargetBlockPos != Vector3i.zero && robotRightDistance >= 0.5f && charController.isGrounded) {
+					if (TargetBlockPos != Vector3i.zero
+						&& robotRightDistance >= 0.5f
+						&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Success");
 						return BehaveResult.Success;
@@ -371,6 +384,8 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
+					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+
 					if (ret != BehaveResult.Success)
 						return ret;
 
@@ -384,8 +399,9 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-					&& robotForwardDistance <= 2.5f
-					&& robotForwardDistance >= 0.5f
+						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardWalk)
+//					&& robotForwardDistance <= 2.5f
+//					&& robotForwardDistance >= 0.5f
 //					&& robotRightDistance < 0.5f
 //					&& robotLeftDistance < 0.5f
 					&& charController.isGrounded
