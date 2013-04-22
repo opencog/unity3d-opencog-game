@@ -499,10 +499,13 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			{
 				Vector3 robotPos = gameObject.transform.position;
 				Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+				
+				if (action == null)
+					return BehaveResult.Failure;
 
 				if (action.ShouldTerminate ()) {
 					//action.Terminate();
-					Debug.Log ("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType () + " Failure");
+					//Debug.Log ("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType () + " Failure");
 					return BehaveResult.Failure;
 				}
 

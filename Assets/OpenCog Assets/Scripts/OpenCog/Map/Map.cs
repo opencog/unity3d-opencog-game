@@ -168,7 +168,7 @@ public class Map : MonoBehaviour
 			break;
 		}
 		
-		Debug.Log ("Test for PathDirection=" + intendedDirection.ToString () + " yields " + bPathIsOpen);
+		//Debug.Log ("Test for PathDirection=" + intendedDirection.ToString () + " yields " + bPathIsOpen);
 		
 		return bPathIsOpen;
 	}
@@ -251,18 +251,20 @@ public class Map : MonoBehaviour
 		for (int i = objects.Length -1; i >= 0; i--) {
 			if (objects [i].gameObject.renderer) {
 				//Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
-				
-				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
-				MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
-				
-				myCollider.sharedMesh = null;
-				
-				myCollider.sharedMesh = myFilter.mesh;
-				
-				//Debug.Log ("i: " + objects [i].name);
-				//Debug.Log ("Center: " + myCollider.bounds.center.ToString());
-				//Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
-				
+								
+				if (objects[i].gameObject.GetComponent<MeshCollider>() == null)
+				{
+					MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
+					MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
+					
+					myCollider.sharedMesh = null;
+					
+					myCollider.sharedMesh = myFilter.mesh;
+					
+					//Debug.Log ("i: " + objects [i].name);
+					//Debug.Log ("Center: " + myCollider.bounds.center.ToString());
+					//Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");	
+				}
 			}
 		}
 	}
