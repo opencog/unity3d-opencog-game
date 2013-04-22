@@ -13,6 +13,9 @@ public class WorldGenerator : MonoBehaviour {
 	private TerrainGenerator terrainGenerator;
 	private TreeGenerator[] treeGenerator;
 	private bool building = false;
+	private bool collidersUpToDate = false;
+	
+	private int worldGenerationRadius = 1;
 	
 	public string MapName;
 	
@@ -52,21 +55,36 @@ public class WorldGenerator : MonoBehaviour {
 			building = true;
 			Vector3 pos = Camera.mainCamera.transform.position;
 			Vector3i current = Chunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
-			Vector3i? column = columnMap.GetClosestEmptyColumn(current.x, current.z, 7);
+			Vector3i? column = columnMap.GetClosestEmptyColumn(current.x, current.z, worldGenerationRadius);
 			
-			if(column.HasValue) {
-				int cx = column.Value.x;
-				int cz = column.Value.z;
-				columnMap.SetBuilt(cx, cz);
+			if (column == null)
+			{
+				// No more columns to create...let's update the colliders
+				map.AddColliders ();
 				
-				yield return StartCoroutine( GenerateColumn(cx, cz) );
-				yield return null;
-				ChunkSunLightComputer.ComputeRays(map, cx, cz);
-				ChunkSunLightComputer.Scatter(map, columnMap, cx, cz);
-				terrainGenerator.GeneratePlants(cx, cz);
-				
-				yield return StartCoroutine( BuildColumn(cx, cz) );
+				collidersUpToDate = true;
 			}
+			else
+			{
+				if(column.HasValue) {
+					int cx = column.Value.x;
+					int cz = column.Value.z;
+					columnMap.SetBuilt(cx, cz);
+					
+					yield return StartCoroutine( GenerateColumn(cx, cz) );
+					yield return null;
+					ChunkSunLightComputer.ComputeRays(map, cx, cz);
+					ChunkSunLightComputer.Scatter(map, columnMap, cx, cz);
+					terrainGenerator.GeneratePlants(cx, cz);
+					
+					collidersUpToDate = false;
+					
+					yield return StartCoroutine( BuildColumn(cx, cz) );
+				}
+			}
+				
+				
+			
 			building = false;	
 		}
 	}

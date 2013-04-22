@@ -122,8 +122,6 @@ public class TerrainGenerator {
 		if( IsInRange(noise, 0,    0.2f) ) block = sand;
 		if( IsInRange(noise, 0.2f, 0.6f) ) block = dirt;
 		if( IsInRange(noise, 0.6f, 1f)   ) block = stone;
-		if (System.DateTime.Now.Millisecond.ToString().EndsWith ("9"))
-			Debug.Log ("About to create a block at [" + worldPos.x + ", " + worldPos.y + ", " + worldPos.z + "].");
 		if(block != null) map.SetBlock(block, worldPos);
 	}
 	

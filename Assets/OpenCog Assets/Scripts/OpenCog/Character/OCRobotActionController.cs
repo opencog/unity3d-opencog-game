@@ -503,6 +503,9 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			{
 				Vector3 robotPos = gameObject.transform.position;
 				Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+				
+				if (action == null)
+					return BehaveResult.Failure;
 
 				if (action.ShouldTerminate ()) {
 					//action.Terminate();
