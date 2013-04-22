@@ -99,7 +99,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			{
 				m_Tree =
 				BLOpenCogCharacterBehaviours.InstantiateTree
-				(TreeType.CharacterBehaviours_RobotExploreBehaviour
+				(TreeType.CharacterBehaviours_TrivialExploreBehaviour
 				, this
 				);
 
@@ -294,9 +294,9 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					if (TargetBlockPos != Vector3i.zero
 						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardRun)
-					&& robotForwardDistance > 2.5f
-					&& robotRightDistance < 1.5f
-					&& robotLeftDistance < 1.5f
+					&& robotForwardDistance > 3.5f
+//					&& robotRightDistance < 1.5f
+//					&& robotLeftDistance < 1.5f
 					&& charController.isGrounded
 					) {
 						action.Execute ();
@@ -444,8 +444,9 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					if (TargetBlockPos != Vector3i.zero
 						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardWalk)
-//					&& robotForwardDistance <= 2.5f
+					&& robotForwardDistance <= 3.5f
 					&& robotForwardDistance >= 0.5f
+					&& robotUpDistance <= 1.5f
 //					&& robotRightDistance < 0.5f
 //					&& robotLeftDistance < 0.5f
 					&& charController.isGrounded
