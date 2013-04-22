@@ -21,7 +21,7 @@ public class WorldGenerator : MonoBehaviour {
 		
 		if (MapName != string.Empty)
 		{
-			Debug.Log ("In WorldGenerator, MapName != string.Empty");
+			Debug.Log ("In WorldGenerator, MapName defined");
 			FileTerrainGenerator fileTerrainGenerator = new FileTerrainGenerator(map, MapName);
 			
 			fileTerrainGenerator.LoadLevel();
