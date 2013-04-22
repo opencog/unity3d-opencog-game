@@ -81,7 +81,7 @@ public class Map : MonoBehaviour
 		viStandingOn.x = (int)vFeet.x;
 		viStandingOn.y = (int)vFeet.y;
 		viStandingOn.z = (int)vFeet.z;
-		Debug.Log ("Standing on world block: [" + viStandingOn.x + ", " + viStandingOn.y + ", " + viStandingOn.z + "]");
+		//Debug.Log ("Standing on world block: [" + viStandingOn.x + ", " + viStandingOn.y + ", " + viStandingOn.z + "]");
 		
 		Vector3i viStandingOnForward = new Vector3i ();
 		
@@ -89,15 +89,15 @@ public class Map : MonoBehaviour
 		viStandingOnForward.y = (int)vFeetForward.y;
 		viStandingOnForward.z = (int)vFeetForward.z;
 		
-		Debug.Log ("Forward of standing on world block: [" + viStandingOnForward.x + ", " + viStandingOnForward.y + ", " + viStandingOnForward.z + "]");
+		//Debug.Log ("Forward of standing on world block: [" + viStandingOnForward.x + ", " + viStandingOnForward.y + ", " + viStandingOnForward.z + "]");
 				
 		Vector3i viLowerBody = new Vector3i (viStandingOn.x, viStandingOn.y, viStandingOn.z);
 		viLowerBody += new Vector3i (0, 1, 0);
-		Debug.Log ("Lower body inhabits world block: [" + viLowerBody.x + ", " + viLowerBody.y + ", " + viLowerBody.z + "]");
+		//Debug.Log ("Lower body inhabits world block: [" + viLowerBody.x + ", " + viLowerBody.y + ", " + viLowerBody.z + "]");
 		
 		Vector3i viUpperBody = new Vector3i (viLowerBody.x, viLowerBody.y, viLowerBody.z);
 		viUpperBody += new Vector3i (0, 1, 0);
-		Debug.Log ("Upper body inhabits world block: [" + viUpperBody.x + ", " + viUpperBody.y + ", " + viUpperBody.z + "]");
+		//Debug.Log ("Upper body inhabits world block: [" + viUpperBody.x + ", " + viUpperBody.y + ", " + viUpperBody.z + "]");
 		
 		// Prepare some block vectors to use later.
 		Vector3i viOneAboveHead = viUpperBody + Vector3i.up; // The block direct above the upper body
@@ -109,8 +109,8 @@ public class Map : MonoBehaviour
 		Vector3i viForwardOneAboveHead = viForwardChestHigh + Vector3i.up; // The block one above the block in front of the upper body
 		Vector3i viForwardTwoAboveHead = viForwardOneAboveHead + Vector3i.up; // The block two above the block in front of the upper body
 		
-		Debug.Log ("Forward lower block is: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
-		Debug.Log ("Forward upper block is: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
+		//Debug.Log ("Forward lower block is: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
+		//Debug.Log ("Forward upper block is: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
 		
 		switch (intendedDirection) {
 		case PathDirection.Forward:

@@ -79,7 +79,7 @@ public class FileTerrainGenerator
 												break;
 											case 9: // Water to water
 												iBlockID = 8;
-												Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
+												//Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
 												break;
 											default:
 												Debug.Log ("Unmapped BlockID: " + iBlockID);
