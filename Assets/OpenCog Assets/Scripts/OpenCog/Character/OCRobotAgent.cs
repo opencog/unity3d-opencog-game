@@ -111,15 +111,14 @@ public class OCRobotAgent : OCMonoBehaviour, IAgent
 			
 			private void TestProprioception()
 			{
-				Debug.Log ("RobotAgent's Transform is at position [" + this.transform.position.x + ", " + this.transform.position.y + ", " + this.transform.position.z + "]");
+				//Debug.Log ("RobotAgent's Transform is at position [" + this.transform.position.x + ", " + this.transform.position.y + ", " + this.transform.position.z + "]");
 		
 				Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
 				
 				float characterHeight = this.GetComponent<CharacterController>().height;
 				
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardWalk);
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
-				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
+				map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardWalk);
+				map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardRun);
 				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardJump);
 				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardClimb);
 				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardDrop);
