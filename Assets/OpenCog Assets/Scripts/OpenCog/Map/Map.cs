@@ -168,7 +168,7 @@ public class Map : MonoBehaviour
 			break;
 		}
 		
-		Debug.Log ("Test for PathDirection=" + intendedDirection.ToString () + " yields " + bPathIsOpen);
+		//Debug.Log ("Test for PathDirection=" + intendedDirection.ToString () + " yields " + bPathIsOpen);
 		
 		return bPathIsOpen;
 	}
