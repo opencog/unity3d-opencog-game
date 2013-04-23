@@ -94,7 +94,7 @@ public class OCClimbUpAction : OCBasicAnimationAction
 		AnimationEffect.State.speed = 2.0f;
 		AnimationEffect.OnStart = "ClimbUpStart";
 		AnimationEffect.OnEnd = "ClimbUpEnd";
-		AnimationEffect.MoveByY = 9.05f;
+		AnimationEffect.MoveByY = 12.05f;
 		AnimationEffect.MoveByZ = 1.0f;
 
 		DontDestroyOnLoad(this);

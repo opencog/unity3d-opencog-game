@@ -51,7 +51,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			private Tree m_Tree;
 			private Hashtable m_IdleParams;
 			private Vector3i m_TargetBlockPos = Vector3i.zero;
-			private DateTime m_dtLastTNTSearchTime;
+			private int m_searchForTNTCycle = 0;
 
 			//---------------------------------------------------------------------------
 
@@ -188,7 +188,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardDrop)
+						&& map.IsPathOpen (transform, charController.height, Map.PathDirection.ForwardDrop)
 //					&& robotForwardDistance <= 2.5f
 					&& robotForwardDistance >= 0.5f
 //					&& robotRightDistance < 0.5f
@@ -256,7 +256,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					if (TargetBlockPos != Vector3i.zero
 					//&& robotUpDistance >= 1.5f
 					&& robotForwardDistance >= 0.5f
-					&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardClimb)
+					&& map.IsPathOpen (transform, charController.height, Map.PathDirection.ForwardClimb)
 					&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
@@ -294,7 +294,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardRun)
+						&& map.IsPathOpen (transform, charController.height, Map.PathDirection.ForwardRun)
 					&& robotForwardDistance > 3.5f
 //					&& robotRightDistance < 1.5f
 //					&& robotLeftDistance < 1.5f
@@ -334,7 +334,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardJump)
+						&& map.IsPathOpen (transform, charController.height, Map.PathDirection.ForwardJump)
 					&& robotUpDistance >= 1.5f
 					&& robotForwardDistance >= 0.0f
 					&& charController.isGrounded) {
@@ -371,7 +371,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& ( robotLeftDistance >= 0.5f || robotForwardDistance < 0.0f)
+						&& (robotLeftDistance >= 0.5f || robotForwardDistance < 0.0f)
 						&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Success");
@@ -444,7 +444,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardWalk)
+						&& map.IsPathOpen (transform, charController.height, Map.PathDirection.ForwardWalk)
 					&& robotForwardDistance <= 3.5f
 					&& robotForwardDistance >= 0.5f
 					&& robotUpDistance <= 1.5f
@@ -465,9 +465,11 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 				set {
 				}
 			}
-
+			
 			public void UpdateAI ()
 			{
+				//StartCoroutine (StartUpdateAI ());	
+				
 				m_Tree.Tick ();
 
 				Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
@@ -477,63 +479,67 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 				Vector3 robotPos = gameObject.transform.position;
 				Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
 
-//		if(distanceVec.y < -1.0f + 0.5f && distanceVec.y > -1.0f - 0.5f)
+				//	if(distanceVec.y < -1.0f + 0.5f && distanceVec.y > -1.0f - 0.5f)
 				if (distanceVec.sqrMagnitude < 2.25f) {
-					Debug.Log ("We've arrived at our goal TNT block...");
-					map.SetBlockAndRecompute (new BlockData (), TargetBlockPos);
+					Debug.Log ("We've arrived at our goal TNT block at [" + TargetBlockPos.x + ", " + TargetBlockPos.y + ", " + TargetBlockPos.z + "]...says " + transform.gameObject.name);
+					map.ClearTNT (TargetBlockPos);
 					TargetBlockPos = Vector3i.zero;
 				}
 				
-				if (m_dtLastTNTSearchTime == new DateTime())
-				{
-					m_dtLastTNTSearchTime = DateTime.Now;	
+				if (TargetBlockPos != Vector3i.zero && !map.GetBlock (TargetBlockPos).IsEmpty ())
+				if (map.GetBlock (TargetBlockPos).block.GetName () != "TNT") { // It must have disappeared...
+					TargetBlockPos = Vector3i.zero;
+					Debug.Log ("Damnit someone took our target at [" + TargetBlockPos.x + ", " + TargetBlockPos.y + ", " + TargetBlockPos.z + "] exclaimed the " + transform.gameObject.name + ".");
 				}
+						
 				
-				if (DateTime.Now.Subtract (m_dtLastTNTSearchTime).Seconds > 1)
-				{
-					bool doesTNTExist = false;
-
-					//distanceVec = new Vector3(1000,1000,1000);
-					for (int cx=chunks.GetMinX(); cx<chunks.GetMaxX(); ++cx) {
-						for (int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); ++cy) {
-							for (int cz=chunks.GetMinZ(); cz<chunks.GetMaxZ(); ++cz) {
-								Vector3i chunkPos = new Vector3i (cx, cy, cz);
-								Chunk chunk = chunks.SafeGet (chunkPos);
-								if (chunk != null) {
-									for (int z=0; z<Chunk.SIZE_Z; z++) {
-										for (int x=0; x<Chunk.SIZE_X; x++) {
-											for (int y=0; y<Chunk.SIZE_Y; y++) {
-												Vector3i localPos = new Vector3i (x, y, z);
-												BlockData blockData = chunk.GetBlock (localPos);
-												Vector3i candidatePos = Chunk.ToWorldPosition (chunk.GetPosition (), localPos);
-												Vector3 candidateVec = ((Vector3)candidatePos) - robotPos;
-												if (!blockData.IsEmpty () && blockData.block.GetName () == "TNT") {
-													doesTNTExist = true;
-													if (candidateVec.sqrMagnitude < distanceVec.sqrMagnitude) {
-														TargetBlockPos = candidatePos;
-														distanceVec = candidateVec;
-														Debug.Log ("We found some TNT nearby: " + TargetBlockPos + "!");
-													}
-												}
-											}
+				bool doesTNTExist = false;
+				
+				if (m_searchForTNTCycle % 10 == 0) {
+					for (int iTNTIndex = 0; iTNTIndex < map.alTNT.Count; iTNTIndex++) {
+						Vector3i viTNTPosition = (Vector3i)map.alTNT [iTNTIndex];
+						
+						if (map.GetBlock (viTNTPosition).block != null) {
+							if (map.GetBlock (viTNTPosition).block.GetName () == "TNT") {
+								//Debug.Log ("Apparently alTNT index " + iTNTIndex + " contains some TNT!");
+								Vector3i targetBlockCandidate = new Vector3i (viTNTPosition.x, viTNTPosition.y, viTNTPosition.z);
+									
+								if (TargetBlockPos != Vector3i.zero) {
+									if (TargetBlockPos != targetBlockCandidate) {
+										//Debug.Log ("We already had a target, let's see if the new one is closer...");
+										// We'll take it if it's closer
+										float currentTargetDistance = Vector3.Distance ((Vector3)TargetBlockPos, robotPos);
+										float newTargetDistance = Vector3.Distance ((Vector3)targetBlockCandidate, robotPos);
+										
+										if (newTargetDistance < currentTargetDistance) {
+											Debug.Log ("This new TNT at [" + viTNTPosition.x + ", " + viTNTPosition.y + ", " + viTNTPosition.z + "] is even closerer said the " + transform.gameObject.name);
+											TargetBlockPos = new Vector3i (viTNTPosition.x, viTNTPosition.y, viTNTPosition.z);
 										}
 									}
-								}
+								} else {
+									// No current target, we'l take it
+									Debug.Log ("The " + transform.gameObject.name + " had no target yet, so it will take the one at [" + viTNTPosition.x + ", " + viTNTPosition.y + ", " + viTNTPosition.z + "].");
+									TargetBlockPos = new Vector3i (viTNTPosition.x, viTNTPosition.y, viTNTPosition.z);
+								}	
+								
+								doesTNTExist = true;	
 							}
+						} else {
+							Debug.Log ("map.GetBlock (viTNTPosition).block == null");
 						}
 					}
-	
-					if (TargetBlockPos != Vector3i.zero && (!doesTNTExist || map.GetBlock(TargetBlockPos).IsEmpty())) {
+					if (TargetBlockPos != Vector3i.zero && (!doesTNTExist || map.GetBlock (TargetBlockPos).IsEmpty ())) {
 						Debug.Log ("No more TNT... :(");
+						//map.ClearAllTNT();
 						TargetBlockPos = Vector3i.zero;
 					}
 					
-					m_dtLastTNTSearchTime = DateTime.Now;
+					//Debug.Log ("map.alTNT.Count = " + map.alTNT.Count);
 				}
-
 				
+				m_searchForTNTCycle += 1;
 			}
-
+			
 			public void	 Reset (Tree sender)
 			{
 			}

@@ -11,6 +11,7 @@ public class Map : MonoBehaviour
 	private List3D<Chunk> chunks = new List3D<Chunk> ();
 	private SunLightMap sunLightmap = new SunLightMap ();
 	private LightMap lightmap = new LightMap ();
+	public ArrayList alTNT = new ArrayList ();
 	
 	public enum PathDirection
 	{
@@ -20,6 +21,45 @@ public class Map : MonoBehaviour
 		ForwardJump,
 		ForwardDrop
 	};
+	
+	public void ClearAllTNT()
+	{
+		Debug.Log("Clearing all TNT!");
+			
+		for (int alTNTIndex = 0; alTNTIndex < alTNT.Count; alTNTIndex++)
+		{
+			Vector3i viTNTPosition = (Vector3i)alTNT[alTNTIndex];
+			
+			SetBlockAndRecompute(new BlockData(), viTNTPosition);
+		}
+		
+		alTNT = new ArrayList();
+	}
+	
+	public void ClearTNT(Vector3i viTNTToClearPosition)
+	{
+		int iTNTToRemoveIndex = -1;
+		
+		for (int alTNTIndex = 0; alTNTIndex < alTNT.Count; alTNTIndex++)
+		{
+			Vector3i viTNTPosition = (Vector3i)alTNT[alTNTIndex];
+			
+			if (viTNTPosition == viTNTToClearPosition)
+			{
+				iTNTToRemoveIndex = alTNTIndex;
+				break;
+			}
+		}
+		
+		if (iTNTToRemoveIndex > -1)
+		{
+			alTNT.RemoveAt(iTNTToRemoveIndex);
+			//Debug.Log ("Removed TNT at index " + iTNTToRemoveIndex);
+		}
+		
+		Debug.Log ("Clearing block at position [" + viTNTToClearPosition.x + ", " + viTNTToClearPosition.y + ", " + viTNTToClearPosition.z + "]");
+		SetBlockAndRecompute(new BlockData(), viTNTToClearPosition);
+	}
 	
 	public void SetBlockAndRecompute (BlockData block, Vector3i pos)
 	{
@@ -64,21 +104,21 @@ public class Map : MonoBehaviour
 //		
 //	}
 	
-	private Vector3i Vector3ToVector3i(Vector3 inputVector)
+	private Vector3i Vector3ToVector3i (Vector3 inputVector)
 	{
 		int iX, iY, iZ;
 		
 		iX = (int)Mathf.Round (inputVector.x);
 		iY = (int)Mathf.Round (inputVector.y);
 		iZ = (int)Mathf.Round (inputVector.z);
-		return new Vector3i(iX, iY, iZ);
+		return new Vector3i (iX, iY, iZ);
 	}
 	
 	public bool IsPathOpen (Transform characterTransform, float characterHeight, PathDirection intendedDirection)
 	{
 		bool bPathIsOpen = false;
 		
-		Vector3i vCharForward = Vector3ToVector3i(characterTransform.forward);
+		Vector3i vCharForward = Vector3ToVector3i (characterTransform.forward);
 		
 		//Debug.Log ("vFeetPosition = [" + vFeetPosition.x + ", " + vFeetPosition.y + ", " + vFeetPosition.z + "]");
 		//Debug.Log ("vFeetForwardPosition = [" + vFeetForwardPosition.x + ", " + vFeetForwardPosition.y + ", " + vFeetForwardPosition.z + "]");
@@ -89,10 +129,10 @@ public class Map : MonoBehaviour
 				
 		Vector3 vFeetForward = characterTransform.forward + vFeet;
 		
-		Vector3i viStandingOn = Vector3ToVector3i(vFeet);
+		Vector3i viStandingOn = Vector3ToVector3i (vFeet);
 		//Debug.Log ("Standing on world block: [" + viStandingOn.x + ", " + viStandingOn.y + ", " + viStandingOn.z + "]");
 		
-		Vector3i viStandingOnForward = Vector3ToVector3i(vFeetForward);
+		Vector3i viStandingOnForward = Vector3ToVector3i (vFeetForward);
 		//Debug.Log ("Forward of standing on world block: [" + viStandingOnForward.x + ", " + viStandingOnForward.y + ", " + viStandingOnForward.z + "]");
 				
 		Vector3i viLowerBody = new Vector3i (viStandingOn.x, viStandingOn.y, viStandingOn.z);
@@ -135,27 +175,27 @@ public class Map : MonoBehaviour
 			// Requires two clear blocks in front
 			if (GetBlock (viForwardKneeHigh).IsEmpty () && GetBlock (viForwardChestHigh).IsEmpty ())
 				// And one block under in front
-				if (GetBlock (viForwardOneUnder).IsSolid ())
-					bPathIsOpen = true;	
-				break;
+			if (GetBlock (viForwardOneUnder).IsSolid ())
+				bPathIsOpen = true;	
+			break;
 		case PathDirection.ForwardRun:
 			// Requires two clear blocks for the next 3 forwards
-			if (GetBlock (viForwardKneeHigh).IsEmpty() && GetBlock (viForwardChestHigh).IsEmpty())
-				if (GetBlock (viTwoForwardKneeHigh).IsEmpty() && GetBlock (viTwoForwardChestHigh).IsEmpty())
-					if (GetBlock (viThreeForwardKneeHigh).IsEmpty() && GetBlock (viThreeForwardChestHigh).IsEmpty())
-						if (GetBlock (viForwardOneUnder).IsSolid () && GetBlock (viTwoForwardOneUnder).IsSolid () && GetBlock (viThreeForwardOneUnder).IsSolid ())
-							bPathIsOpen = true;
+			if (GetBlock (viForwardKneeHigh).IsEmpty () && GetBlock (viForwardChestHigh).IsEmpty ())
+			if (GetBlock (viTwoForwardKneeHigh).IsEmpty () && GetBlock (viTwoForwardChestHigh).IsEmpty ())
+			if (GetBlock (viThreeForwardKneeHigh).IsEmpty () && GetBlock (viThreeForwardChestHigh).IsEmpty ())
+			if (GetBlock (viForwardOneUnder).IsSolid () && GetBlock (viTwoForwardOneUnder).IsSolid () && GetBlock (viThreeForwardOneUnder).IsSolid ())
+				bPathIsOpen = true;
 			break;
 		case PathDirection.ForwardClimb:
 			// Requires a solid block lower front
-			if (GetBlock (viForwardKneeHigh).IsSolid())
+			if (GetBlock (viForwardKneeHigh).IsSolid ())
 				// And two empty blocks above that
-				if (GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneAboveHead).IsEmpty ())
-					bPathIsOpen = true;
+			if (GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneAboveHead).IsEmpty ())
+				bPathIsOpen = true;
 			break;
 		case PathDirection.ForwardDrop:
 			// Requires 3 empty block in front, chest high, knee high and 1 underground
-			if (GetBlock (viForwardKneeHigh).IsEmpty() && GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneUnder).IsEmpty ())
+			if (GetBlock (viForwardKneeHigh).IsEmpty () && GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneUnder).IsEmpty ())
 				bPathIsOpen = true;
 			break;
 		case PathDirection.ForwardJump:
@@ -220,7 +260,7 @@ public class Map : MonoBehaviour
 				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
 				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
 
-				if (myCollider != null) {
+				if (myCollider != null && myFilter != null) {
 
 					myCollider.sharedMesh = null;
 				
@@ -249,11 +289,10 @@ public class Map : MonoBehaviour
 		yield return null;
  
 		for (int i = objects.Length -1; i >= 0; i--) {
-			if (objects[i] != null && objects [i].gameObject.renderer) {
+			if (objects [i] != null && objects [i].gameObject.renderer) {
 				//Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
 								
-				if (objects[i].gameObject.GetComponent<MeshCollider>() == null)
-				{
+				if (objects [i].gameObject.GetComponent<MeshCollider> () == null) {
 					MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
 					MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
 					
@@ -289,6 +328,14 @@ public class Map : MonoBehaviour
 		Chunk chunk = GetChunkInstance (Chunk.ToChunkPosition (x, y, z));
 		if (chunk != null)
 			chunk.SetBlock (block, Chunk.ToLocalPosition (x, y, z));
+		
+		if (block.IsEmpty() == false) {
+			if (block.block.GetName () == "TNT") {
+				//Debug.Log ("Made some TNT!!");
+		
+				alTNT.Add (new Vector3i (x, y, z));
+			}	
+		}
 	}
 	
 	public BlockData GetBlock (Vector3i pos)
