@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using OpenCog.Aspects;
 
 [AddComponentMenu("VoxelEngine/Map")]
 public class Map : MonoBehaviour
@@ -20,7 +21,8 @@ public class Map : MonoBehaviour
 		ForwardJump,
 		ForwardDrop
 	};
-	
+
+	[OCLogAspect]
 	public void SetBlockAndRecompute (BlockData block, Vector3i pos)
 	{
 		SetBlock (block, pos);

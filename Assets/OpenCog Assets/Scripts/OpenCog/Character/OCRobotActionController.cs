@@ -18,13 +18,14 @@ using System;
 using System.Collections;
 using Behave.Runtime;
 using OpenCog.Actions;
+using OpenCog.Aspects;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
+using ContextType = BLOpenCogCharacterBehaviours.ContextType;
 using Tree = Behave.Runtime.Tree;
 using TreeType = BLOpenCogCharacterBehaviours.TreeType;
-using ContextType = BLOpenCogCharacterBehaviours.ContextType;
 
 namespace OpenCog
 {
@@ -466,6 +467,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 				}
 			}
 
+			
 			public void UpdateAI ()
 			{
 				m_Tree.Tick ();
