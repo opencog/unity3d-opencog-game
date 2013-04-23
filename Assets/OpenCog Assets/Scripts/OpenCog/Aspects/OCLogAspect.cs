@@ -87,16 +87,16 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	public override void OnEntry(MethodExecutionArgs args)
 	{
-		Console.WriteLine(Environment.NewLine);
+		Debug.Log(Environment.NewLine);
 
-		Console.WriteLine("Entering [ {0} ] ...", args.Method);
+		Debug.Log(string.Format("Entering [ {0} ] ...", args.Method));
 
 		base.OnEntry(args);
 	}
 
 	public override void OnExit(MethodExecutionArgs args)
 	{
-		Console.WriteLine("Leaving [ {0} ] ...", args.Method);
+		Debug.Log(string.Format("Leaving [ {0} ] ...", args.Method));
 
 		base.OnExit(args);
 	}
