@@ -21,24 +21,20 @@ using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
-using PostSharp.Aspects;
-using PostSharp.Extensibility;
 
 namespace OpenCog
 {
 
-namespace Aspects
-{
-
 /// <summary>
-/// The OpenCog Log Aspect.
+/// The OpenCog OCSingletonScriptableObject.
 /// </summary>
 #region Class Attributes
 
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[OCExposePropertyFields]
 [Serializable]
-//[MulticastAttributeUsage(MulticastTargets.Method, Inheritance = MulticastInheritance.Multicast)]
 #endregion
-public class OCLogAspect : OnMethodBoundaryAspect
+public class OCSingletonScriptableObject<T> : OCScriptableObject
 {
 
 	//---------------------------------------------------------------------------
@@ -47,6 +43,7 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	//---------------------------------------------------------------------------
 
+	private int m_ExamplePrivateVar = 0;
 
 	//---------------------------------------------------------------------------
 
@@ -58,7 +55,18 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	//---------------------------------------------------------------------------
 
+	public int ExamplePublicVar
+	{
+		get
+		{
+			return m_ExamplePrivateVar;
+		}
 
+		set
+		{
+			m_ExamplePrivateVar = value;
+		}
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -71,13 +79,12 @@ public class OCLogAspect : OnMethodBoundaryAspect
 	//---------------------------------------------------------------------------
 		
 	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.OCLogAspect"/> class.
+	/// Initializes a new instance of the <see cref="OpenCog.OCSingletonScriptableObject"/> class.
 	/// Generally, intitialization should occur in the Start function.
 	/// </summary>
-	public OCLogAspect()
+	public OCSingletonScriptableObject()
 	{
-		Debug.Log("Constructing OpenCog.Aspects.OCLogAspect...");
-	}
+	}			
 
 	//---------------------------------------------------------------------------
 
@@ -89,20 +96,79 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	//---------------------------------------------------------------------------
 
-	public override void OnEntry(MethodExecutionArgs args)
+	/// <summary>
+	/// Called when the script instance is being loaded.
+	/// </summary>
+	public void Awake()
 	{
-		Debug.Log(Environment.NewLine);
-
-		Debug.Log(string.Format("Entering [ {0} ] ...", args.Method));
-
-		base.OnEntry(args);
 	}
 
-	public override void OnExit(MethodExecutionArgs args)
+	/// <summary>
+	/// Use this for initialization
+	/// </summary>
+	public void Start()
 	{
-		Debug.Log(string.Format("Leaving [ {0} ] ...", args.Method));
+	}
 
-		base.OnExit(args);
+	/// <summary>
+	/// Update is called once per frame.
+	/// </summary>
+	public void Update()
+	{
+	}
+
+	/// <summary>
+	/// Called once per frame after all Update calls
+	/// </summary>
+	public void LateUpdate()
+	{
+	}
+
+	/// <summary>
+	/// Raises the enable event when OCSingletonScriptableObject is loaded.
+	/// </summary>
+	public void OnEnable()
+	{
+		Debug.Log
+		(
+			string.Format
+			(
+				"In {0}.OnEnable"
+			, gameObject.name + "\\" + GetType().Name
+			)
+		);
+	}
+
+	/// <summary>
+	/// Raises the disable event when OCSingletonScriptableObject goes out of
+	/// scope.
+	/// </summary>
+	public void OnDisable()
+	{
+		Debug.Log
+		(
+			string.Format
+			(
+				"In {0}.OnDisable"
+			, gameObject.name + "\\" + GetType().Name
+			)
+		);
+	}
+
+	/// <summary>
+	/// Raises the destroy event when OCSingletonScriptableObject is about to be
+	/// destroyed.
+	/// </summary>
+	public void OnDestroy()
+	{
+		Debug.Log
+		(
+			string.Format
+			(
+				"In {0}.OnDestroy"
+			, gameObject.name + "\\" + GetType().Name
+			)
+		);
 	}
 
 	//---------------------------------------------------------------------------
@@ -133,9 +199,7 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	//---------------------------------------------------------------------------
 
-}// class OCLogAspect
-
-}// namespace Aspects
+}// class OCSingletonScriptableObject
 
 }// namespace OpenCog
 

@@ -107,6 +107,18 @@ public static class OCTypeSwitch
 			}
 		}
 	}
+			
+	public static void Do<T>(params CaseInfo[] cases)
+	{
+		foreach(var entry in cases)
+		{
+			if(entry.IsDefault || entry.Target.IsAssignableFrom(typeof(T)))
+			{
+				entry.Action(source);
+				break;
+			}
+		}
+	}
 
 	/// <summary>
 	/// An idiomatic way to represent cases without parameters.

@@ -21,24 +21,20 @@ using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
-using PostSharp.Aspects;
-using PostSharp.Extensibility;
 
 namespace OpenCog
 {
 
-namespace Aspects
-{
-
 /// <summary>
-/// The OpenCog Log Aspect.
+/// The OpenCog OCScriptableObject.
 /// </summary>
 #region Class Attributes
 
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[OCExposeProperties]
 [Serializable]
-//[MulticastAttributeUsage(MulticastTargets.Method, Inheritance = MulticastInheritance.Multicast)]
 #endregion
-public class OCLogAspect : OnMethodBoundaryAspect
+public class OCScriptableObject : ScriptableObject
 {
 
 	//---------------------------------------------------------------------------
@@ -46,7 +42,6 @@ public class OCLogAspect : OnMethodBoundaryAspect
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
 
 	//---------------------------------------------------------------------------
 
@@ -57,28 +52,7 @@ public class OCLogAspect : OnMethodBoundaryAspect
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-
 			
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------	
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
-		
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.OCLogAspect"/> class.
-	/// Generally, intitialization should occur in the Start function.
-	/// </summary>
-	public OCLogAspect()
-	{
-		Debug.Log("Constructing OpenCog.Aspects.OCLogAspect...");
-	}
-
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -88,22 +62,6 @@ public class OCLogAspect : OnMethodBoundaryAspect
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
-
-	public override void OnEntry(MethodExecutionArgs args)
-	{
-		Debug.Log(Environment.NewLine);
-
-		Debug.Log(string.Format("Entering [ {0} ] ...", args.Method));
-
-		base.OnEntry(args);
-	}
-
-	public override void OnExit(MethodExecutionArgs args)
-	{
-		Debug.Log(string.Format("Leaving [ {0} ] ...", args.Method));
-
-		base.OnExit(args);
-	}
 
 	//---------------------------------------------------------------------------
 
@@ -123,7 +81,7 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	//---------------------------------------------------------------------------
 
-	#region Member Classes
+	#region Other Members
 
 	//---------------------------------------------------------------------------		
 
@@ -133,9 +91,7 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	//---------------------------------------------------------------------------
 
-}// class OCLogAspect
-
-}// namespace Aspects
+}// class OCScriptableObject
 
 }// namespace OpenCog
 

@@ -18,7 +18,7 @@ using System;
 using System.Collections;
 using Behave.Runtime;
 using OpenCog.Actions;
-using OpenCog.Aspects;
+//using OpenCog.Aspects;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;

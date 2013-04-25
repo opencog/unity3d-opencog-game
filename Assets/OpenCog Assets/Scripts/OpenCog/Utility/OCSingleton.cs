@@ -21,24 +21,19 @@ using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
-using PostSharp.Aspects;
-using PostSharp.Extensibility;
+using OpenCog.Serialization;
 
-namespace OpenCog
-{
-
-namespace Aspects
+namespace OpenCog.Utility
 {
 
 /// <summary>
-/// The OpenCog Log Aspect.
+/// The OpenCog Singleton.  Any class which inherits from this
 /// </summary>
 #region Class Attributes
 
-[Serializable]
-//[MulticastAttributeUsage(MulticastTargets.Method, Inheritance = MulticastInheritance.Multicast)]
 #endregion
-public class OCLogAspect : OnMethodBoundaryAspect
+public class OCSingleton<T, B> : B
+	where T : B // where this singleton's type T derives from base class B
 {
 
 	//---------------------------------------------------------------------------
@@ -46,8 +41,12 @@ public class OCLogAspect : OnMethodBoundaryAspect
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
-
+		
+	/// <summary>
+	/// The singleton instance.
+	/// </summary>
+	protected static T m_Instance = null;
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -57,28 +56,30 @@ public class OCLogAspect : OnMethodBoundaryAspect
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-
-			
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------	
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
 		
 	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.OCLogAspect"/> class.
-	/// Generally, intitialization should occur in the Start function.
+	/// Gets the singleton instance.
 	/// </summary>
-	public OCLogAspect()
+	/// <value>
+	/// The instance of this singleton.
+	/// </value>
+	public static T Instance
 	{
-		Debug.Log("Constructing OpenCog.Aspects.OCLogAspect...");
+		get
+		{
+			if(m_Instance == null && !Instantiate())
+			{
+				Debug.LogError
+				( "In OCSingleton.Instance, an instance of singleton " 
+				+ typeof(T) 
+				+ " does not exist and could not be instantiated."
+				);
+			}
+				
+			return m_Instance;
+		}
 	}
-
+			
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -88,22 +89,6 @@ public class OCLogAspect : OnMethodBoundaryAspect
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
-
-	public override void OnEntry(MethodExecutionArgs args)
-	{
-		Debug.Log(Environment.NewLine);
-
-		Debug.Log(string.Format("Entering [ {0} ] ...", args.Method));
-
-		base.OnEntry(args);
-	}
-
-	public override void OnExit(MethodExecutionArgs args)
-	{
-		Debug.Log(string.Format("Leaving [ {0} ] ...", args.Method));
-
-		base.OnExit(args);
-	}
 
 	//---------------------------------------------------------------------------
 
@@ -115,8 +100,48 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	//---------------------------------------------------------------------------
 			
-	
+	/// <summary>
+	/// Instantiate this singleton instance.
+	/// </summary>
+	private static bool Instantiate()
+	{
+		//Assert that we're not already instantiated
+		if(m_Instance != null)
+		{
+			throw new 
+				OCException("In OCSingleton.Instantiate, we're already instantiated!");
+		}
 			
+		//Switch based on the type of B, the base class
+		OCTypeSwitch.Do<B>
+		( 
+			OCTypeSwitch.Case<Component>
+			(
+				() => 
+				{
+					GameObject gameObject = 
+						new GameObject(typeof(T).ToString(), typeof(T));
+					m_Instance = gameObject.GetComponent<T>();
+				}
+			)
+		, OCTypeSwitch.Case<ScriptableObject>
+			(
+				() => ScriptableObject.CreateInstance<T>()
+			)
+		, OCTypeSwitch.Case<Object>
+			(
+				() => m_Instance = (T)FindObjectOfType(typeof(T))
+			)
+		, OCTypeSwitch.Default
+			(
+				() => {}
+			)
+		);
+			
+		return m_Instance != null;
+	}
+					
+					
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -133,11 +158,9 @@ public class OCLogAspect : OnMethodBoundaryAspect
 
 	//---------------------------------------------------------------------------
 
-}// class OCLogAspect
+}// class OCSingleton
 
-}// namespace Aspects
-
-}// namespace OpenCog
+}// namespace OpenCog.Utility
 
 
 
