@@ -90,15 +90,14 @@ public class OCException : Exception
 	{
 	}
 	
-//	public OCException (string message)
-//	{
-//		base.
-//	}
-//		
-//	public OCException (string message, Exception innerException)	
-//	{
-//		
-//	}
+	public OCException (string message) : base(message)
+	{
+	}
+		
+	public OCException (string message, Exception innerException)	
+	: base(message, innerException)
+	{
+	}
 		
 	//---------------------------------------------------------------------------
 

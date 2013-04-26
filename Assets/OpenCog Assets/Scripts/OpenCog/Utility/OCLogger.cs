@@ -16,25 +16,32 @@
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #region Namespaces
-using System;
+
 using System.Collections;
+using System.Diagnostics;
+using System.Reflection;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
-using ProtoBuf;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
+using Enum = System.Enum;
+using ImplicitFields = ProtoBuf.ImplicitFields;
+using ProtoContract = ProtoBuf.ProtoContractAttribute;
+using Serializable = System.SerializableAttribute;
+
 #endregion
 
 namespace OpenCog
 {
 
 /// <summary>
-/// The OpenCog OCLogger.
+/// The OpenCog Logger.  Allows for logging at various levels of detail,
+/// based on the configuration level.
 /// </summary>
 #region Class Attributes
 
 
 #endregion
-public class OCLogger : OCSingleton< OCLogger, OCScriptableObject >
+public class OCLogger : OCSingletonScriptableObject< OCLogger >
 {
 
 	//---------------------------------------------------------------------------
@@ -42,9 +49,17 @@ public class OCLogger : OCSingleton< OCLogger, OCScriptableObject >
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
+		
+	/// <summary>
+	/// The current log level.  If a message is logged with a level less than the
+	/// current log level, it will be displayed in the Unity Console output 
+	/// window.
+	/// </summary>
 	private LogLevel m_CurrentLevel;
 	
+	/// <summary>
+	/// Is the logger enabled?
+	/// </summary>
 	private bool m_IsLogEnabled;
 
 	//---------------------------------------------------------------------------
@@ -56,7 +71,32 @@ public class OCLogger : OCSingleton< OCLogger, OCScriptableObject >
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
+		
+	/// <summary>
+	/// Gets or sets the current log level.  If a message is logged with a level 
+	/// less than the current log level, it will be displayed in the Unity 
+	/// Console output window.
+	/// </summary>
+	/// <value>
+	/// The current log level.
+	/// </value>
+	static public LogLevel CurrentLevel
+	{
+		get{ return Instance.m_CurrentLevel;}
+		set{ Instance.m_CurrentLevel = value;}
+	}
+	
+	/// <summary>
+	/// Gets or sets a value indicating whether the logger is enabled.
+	/// </summary>
+	/// <value>
+	/// <c>true</c> if this instance is log enabled; otherwise, <c>false</c>.
+	/// </value>
+	static public bool IsLogEnabled
+	{
+		get{ return Instance.m_IsLogEnabled;}
+		set{ Instance.m_IsLogEnabled = value;}
+	}		
 
 			
 	//---------------------------------------------------------------------------
@@ -70,7 +110,7 @@ public class OCLogger : OCSingleton< OCLogger, OCScriptableObject >
 	//---------------------------------------------------------------------------
 		
 	/// <summary>
-	/// Raises the enable event when OCLogger is loaded.
+	/// Raises the enable event when OCLogger is loaded.  Initialized here.
 	/// </summary>
 	public void OnEnable()
 	{
@@ -80,108 +120,73 @@ public class OCLogger : OCSingleton< OCLogger, OCScriptableObject >
 			logLevel = (LogLevel)
 				Enum.Parse(typeof(LogLevel), OCConfig.Instance.get("LOG_LEVEL"));
 		}
-		catch(ArgumentException ae)
+		catch(OCException e)
 		{
 			Debug.LogError
-				("In OCLogger.OnEnable: Failed to construct [" + ae.Message + "]");
+				("In OCLogger.OnEnable: Failed to construct [" + e.Message + "]");
 		}
-		SetLevel(logLevel);
+		CurrentLevel = logLevel;
 			
-		if(logLevel > LogLevel.NONE)
-		{
-			isEnabled = true;
-		}
-		else
-		{
-			isEnabled = false;
-		}
+		IsLogEnabled = logLevel > LogLevel.NONE;
 	}
 		
-	public void Error(System.Object logInfoObj)
+	/// <summary>
+	/// Logs an Error with the specified message, usually a string.
+	/// </summary>
+	/// <param name='message'>
+	/// Log info object, usually a string.
+	/// </param>
+	static public void Error(System.Object message)
 	{
-		Log(LogLevel.ERROR, logInfoObj, true);
+		Instance.Log(LogLevel.ERROR, message, true);
 	}
 		
-	public void Warn(System.Object logInfoObj)
+	/// <summary>
+	/// Logs a Warning with the specified message, usually a string.
+	/// </summary>
+	/// <param name='message'>
+	/// Log info object, usually a string.
+	/// </param>
+	static public void Warn(System.Object message)
 	{
-		Log(LogLevel.WARN, logInfoObj);
+		Instance.Log(LogLevel.WARN, message);
 	}
 		
-	public void Info(System.Object logInfoObj)
+	/// <summary>
+	/// Logs some Info with the specified message, usually a string.
+	/// </summary>
+	/// <param name='message'>
+	/// Log info object, usually a string.
+	/// </param>
+	static public void Info(System.Object message)
 	{
-		Log(LogLevel.INFO, logInfoObj);
-			
+		Instance.Log(LogLevel.INFO, message);
 	}
 		
-	/** Avoid using Debug as the function name. */
-	public void Debugging(System.Object logInfoObj)
-    {
-		Log(Level.DEBUG, logInfoObj, true);	
+	/// <summary>
+	/// Logs some Debugging info with the specified message, usually a string.
+	/// Avoid using Debug as the function name.
+	/// </summary>
+	/// <param name='message'>
+	/// Log info object, usually a string.
+	/// </param>
+	static public void Debugging(System.Object message)
+	{
+		Instance.Log(LogLevel.DEBUG, message, true);	
 	}
 	
-	public void Fine(System.Object logInfoObj)
-    {
-		Log(Level.FINE, logInfoObj);
-	}		
-		
-public void Log(Level level, System.Object logInfoObj, bool showTrace=false)
-    {
-		if (!m_IsLogEnabled) 
-			return;
-
-        string logToPrint;
-
-        if (showTrace)
-        {
-            StackTrace trace = new StackTrace();
-            StackFrame frame = null;
-            MethodBase method = null;
-
-            frame = trace.GetFrame(2);
-            method = frame.GetMethod();
-
-            string callingMethod = method.ReflectedType.Name + "::" + method.Name;
-            logToPrint = "[" + level.ToString() + "] " +
-                                callingMethod + ": " + logInfoObj.ToString();
-        }
-        else
-        {
-            logToPrint = "[" + level.ToString() + "] " + logInfoObj.ToString();
-        }
-		if (level <= m_CurrentLevel) {
-			/** 
-			 * Use unity api for writing information to 
-			 * unity editor console. 
-			 */
-			switch (level) {
-			case Level.FINE:
-			case Level.DEBUG:
-			case Level.INFO:
-				{
-					UnityEngine.Debug.Log(logToPrint);
-					break;
-				}	
-			case Level.WARN:
-				{
-					UnityEngine.Debug.LogWarning(logToPrint);
-					break;
-				}
-			case Level.ERROR:
-				{
-					UnityEngine.Debug.LogError(logToPrint);
-					break;
-				}
-			}
-		}
-	}		
-		
-	public void SetLevel(Level level) {
-		m_CurrentLevel = level;
+	/// <summary>
+	/// Logs some Finely-detailed info with the specified message, 
+	/// usually a string.
+	/// </summary>
+	/// <param name='message'>
+	/// Log info object, usually a string.
+	/// </param>
+	static public void Fine(System.Object message)
+	{
+		Instance.Log(LogLevel.FINE, message);
 	}
-	
-	public bool isEnabled() {
-		return m_IsLogEnabled;
-	}		
+		
 
 	//---------------------------------------------------------------------------
 
@@ -193,7 +198,72 @@ public void Log(Level level, System.Object logInfoObj, bool showTrace=false)
 
 	//---------------------------------------------------------------------------
 			
-	
+	/// <summary>
+	/// Log at the specified level, message and showTrace.
+	/// </summary>
+	/// <param name='level'>
+	/// Log Level.
+	/// </param>
+	/// <param name='message'>
+	/// Log info object, usually a string.
+	/// </param>
+	/// <param name='showTrace'>
+	/// Show trace.
+	/// </param>
+	private void Log(LogLevel level, System.Object message, bool showTrace=false)
+	{
+		if(!m_IsLogEnabled)
+		{
+			return;
+		}
+
+		string logToPrint;
+
+		if(showTrace)
+		{
+			StackTrace trace = new StackTrace();
+			StackFrame frame = null;
+			MethodBase method = null;
+
+			frame = trace.GetFrame(2);
+			method = frame.GetMethod();
+
+			string callingMethod = method.ReflectedType.Name + "::" + method.Name;
+			logToPrint = "[" + level.ToString() + "] " +
+                                callingMethod + ": " + message.ToString();
+		}
+		else
+		{
+			logToPrint = "[" + level.ToString() + "] " + message.ToString();
+		}
+		if(level <= m_CurrentLevel)
+		{
+			/** 
+			 * Use unity api for writing information to 
+			 * unity editor console. 
+			 */
+			switch(level)
+			{
+			case LogLevel.FINE:
+			case LogLevel.DEBUG:
+			case LogLevel.INFO:
+				{
+					UnityEngine.Debug.Log(logToPrint);
+					break;
+				}	
+			case LogLevel.WARN:
+				{
+					UnityEngine.Debug.LogWarning(logToPrint);
+					break;
+				}
+			case LogLevel.ERROR:
+				{
+					UnityEngine.Debug.LogError(logToPrint);
+					break;
+				}
+			}
+		}
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -207,8 +277,7 @@ public void Log(Level level, System.Object logInfoObj, bool showTrace=false)
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="OpenCog.OCLogger"/> 
-	/// class.  Generally, intitialization should occur in the Start or Awake 
-	/// function, not here.
+	/// class.  Intitialization occurs in the OnEnable function, not here.
 	/// </summary>
 	public OCLogger()
 	{
@@ -217,7 +286,15 @@ public void Log(Level level, System.Object logInfoObj, bool showTrace=false)
 	/// <summary>
 	/// Enumerator of the log level.
 	/// </summary>
-	public enum LogLevel {NONE, ERROR, WARN, INFO, DEBUG, FINE};	
+	public enum LogLevel
+	{
+		NONE,
+		ERROR,
+		WARN,
+		INFO,
+		DEBUG,
+		FINE
+	};	
 
 	//---------------------------------------------------------------------------
 

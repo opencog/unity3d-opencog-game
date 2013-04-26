@@ -15,27 +15,26 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#region Namespaces
 using System;
 using System.Collections;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
-#endregion
+using OpenCog.Serialization;
 
-namespace OpenCog
+namespace OpenCog.Utility
 {
 
 /// <summary>
-/// The OpenCog Test2.
+/// The OpenCog Singleton for MonoBehaviours.  Any class which inherits 
+/// from this will be a singleton, monobehaviour.
 /// </summary>
 #region Class Attributes
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposePropertyFields]
-[Serializable]
+
 #endregion
-public class Test2 : OCMonoBehaviour
+public class OCSingletonMonoBehaviour<T> : MonoBehaviour
+	where T : MonoBehaviour 
 {
 
 	//---------------------------------------------------------------------------
@@ -43,9 +42,12 @@ public class Test2 : OCMonoBehaviour
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
-	private int m_ExamplePrivateVar = 0;
-
+		
+	/// <summary>
+	/// The singleton instance.
+	/// </summary>
+	protected static T m_Instance = null;
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -55,12 +57,28 @@ public class Test2 : OCMonoBehaviour
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-	public int ExamplePublicVar
+		
+	/// <summary>
+	/// Gets the singleton instance.
+	/// </summary>
+	/// <value>
+	/// The instance of this singleton.
+	/// </value>
+	public static T Instance
 	{
-		get{ return m_ExamplePrivateVar; }
-
-		set{ m_ExamplePrivateVar = value; }
+		get
+		{
+			if(m_Instance == null && !Instantiate())
+			{
+				Debug.LogError
+				( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " 
+				+ typeof(T) 
+				+ " does not exist and could not be instantiated."
+				);
+			}
+				
+			return m_Instance;
+		}
 	}
 			
 	//---------------------------------------------------------------------------
@@ -73,81 +91,6 @@ public class Test2 : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-	public void Awake()
-	{
-	}
-
-	/// <summary>
-	/// Use this for initialization
-	/// </summary>
-	public void Start()
-	{
-	}
-
-	/// <summary>
-	/// Update is called once per frame.
-	/// </summary>
-	public void Update()
-	{
-	}
-
-	/// <summary>
-	/// Called once per frame after all Update calls
-	/// </summary>
-	public void LateUpdate()
-	{
-	}
-
-	/// <summary>
-	/// Raises the enable event when Test2 is loaded.
-	/// </summary>
-	public void OnEnable()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnEnable"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
-	/// <summary>
-	/// Raises the disable event when Test2 goes out of
-	/// scope.
-	/// </summary>
-	public void OnDisable()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnDisable"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
-	/// <summary>
-	/// Raises the destroy event when Test2 is about to be
-	/// destroyed.
-	/// </summary>
-	public void OnDestroy()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnDestroy"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -158,36 +101,54 @@ public class Test2 : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 			
-	
+	/// <summary>
+	/// Instantiate this singleton instance.
+	/// </summary>
+	private static bool Instantiate()
+	{
+		//Assert that we're not already instantiated
+		if(m_Instance != null)
+		{
+			throw new 
+				OCException("In OCSingletonMonoBehaviour.Instantiate, we're already " +
+					"instantiated!");
+		}
 			
+		//Find one in the scene if we've added a prefab for it.
+		m_Instance = (T)FindObjectOfType(typeof(T));
+			
+		//Otherwise create a new object for our monobehaviour singleton.
+		if(m_Instance == null)
+		{
+			GameObject gameObject = 
+				new GameObject(typeof(T).ToString(), typeof(T));
+				
+			m_Instance = gameObject.GetComponent<T>();				
+		}
+			
+		return m_Instance != null;
+	}
+					
+					
 	//---------------------------------------------------------------------------
 
 	#endregion
 
 	//---------------------------------------------------------------------------
 
-	#region Other Members
+	#region Member Classes
 
 	//---------------------------------------------------------------------------		
 
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.Test2"/>
-	/// class.  Generally, intitialization should occur in the Start or Awake
-	/// functions, not here.
-	/// </summary>
-	public Test2()
-	{
-	}
-
 	//---------------------------------------------------------------------------
 
 	#endregion
 
 	//---------------------------------------------------------------------------
 
-}// class Test2
+}// class OCSingletonMonoBehaviour
 
-}// namespace OpenCog
+}// namespace OpenCog.Utility
 
 
 

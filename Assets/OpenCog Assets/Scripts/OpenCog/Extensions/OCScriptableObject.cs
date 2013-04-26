@@ -31,7 +31,7 @@ namespace OpenCog
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposeProperties]
+[OCExposePropertyFields]
 [Serializable]
 #endregion
 public class OCScriptableObject : ScriptableObject

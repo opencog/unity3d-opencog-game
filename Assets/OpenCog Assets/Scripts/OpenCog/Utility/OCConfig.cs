@@ -17,8 +17,11 @@
 
 using System;
 using System.Collections;
+using System.IO;
+using System.Net;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
+using OpenCog.Utility;
 using ProtoBuf;
 using UnityEngine;
 
@@ -31,10 +34,10 @@ namespace OpenCog
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposeProperties]
+[OCExposePropertyFields]
 [Serializable]
 #endregion
-public class OCConfig : OCSingleton< OCConfig, OCScriptableObject >
+public class OCConfig : OCSingletonScriptableObject< OCConfig >
 {
 
 	//---------------------------------------------------------------------------
@@ -72,78 +75,78 @@ public class OCConfig : OCSingleton< OCConfig, OCScriptableObject >
 	/// </summary>
 	public void OnEnable()
 	{
-		table["GENERATE_TICK_MESSAGE"] = "true";
+		m_settings["GENERATE_TICK_MESSAGE"] = "true";
 
 		// Proxy config
-		table["MY_ID"] = "PROXY";
-		table["MY_IP"] = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
-		table["MY_PORT"] = "16315";
+		m_settings["MY_ID"] = "PROXY";
+		m_settings["MY_IP"] = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+		m_settings["MY_PORT"] = "16315";
 		
 		// Router config
-		table["ROUTER_ID"] = "ROUTER";
-		table["ROUTER_IP"] = "192.168.1.48";
-		table["ROUTER_PORT"] = "16312";
+		m_settings["ROUTER_ID"] = "ROUTER";
+		m_settings["ROUTER_IP"] = "192.168.1.48";
+		m_settings["ROUTER_PORT"] = "16312";
 		
 		// Spawner config
-		table["SPAWNER_ID"] = "SPAWNER";
+		m_settings["SPAWNER_ID"] = "SPAWNER";
 		
 		// Unread messages management
-		table["UNREAD_MESSAGES_CHECK_INTERVAL"] = "10";
-		table["UNREAD_MESSAGES_RETRIEVAL_LIMIT"] = "1";
-		table["NO_ACK_MESSAGES"] = "true";
+		m_settings["UNREAD_MESSAGES_CHECK_INTERVAL"] = "10";
+		m_settings["UNREAD_MESSAGES_RETRIEVAL_LIMIT"] = "1";
+		m_settings["NO_ACK_MESSAGES"] = "true";
 		
 		// Time for sleeping in server loop
-		table["SERVER_LOOP_SLEEP_TIME"] = "100";
+		m_settings["SERVER_LOOP_SLEEP_TIME"] = "100";
 		
 		// Time interval for sending perception (map-info, physiological) messages in milliseconds
-		table["MESSAGE_SENDING_INTERVAL"] = "100";
+		m_settings["MESSAGE_SENDING_INTERVAL"] = "100";
 		// Interval between time ticks (in milliseconds)
-		table["TICK_INTERVAL"] = "500";
+		m_settings["TICK_INTERVAL"] = "500";
 		
 		// Number of simulated milliseconds per tick 
 		// (Default value == TICK_INTERVAL) => (simulated time == real time)
 		// For accelerating the simulated time (useful for automated tests), 
 		// this value must/may be increased. 
-		table["MILLISECONDS_PER_TICK"] = "500";
+		m_settings["MILLISECONDS_PER_TICK"] = "500";
 		
 		// Parameters for controlling Physiological feelings:
 		// 480 = 60/3 * 24 means the eat action is expected to happen once per 3 minute 
 		// when the virtual pet does nothing else
-		table["EAT_STOPS_PER_DAY"] = "480";
-		table["DRINK_STOPS_PER_DAY"] = "480";
-		table["PEE_STOPS_PER_DAY"] = "480";
-		table["POO_STOPS_PER_DAY"] = "480";
-		table["MAX_ACTION_NUM"] = "50";  // Maximum number of actions the avatar can do without eating
-		table["EAT_ENERGY_INCREASE"] = "0.55";
-		//		table["AT_HOME_DISTANCE"] = "3.8";  // Avatar is at home, if the distance between avatar and home is smalled than this value
-		//		table["FITNESS_INCREASE_AT_HOME"] = "0.008333"; // Equals 1/(60/0.5), need 60 seconds at most to increase to 1
-		table["FITNESS_DECREASE_OUTSIDE_HOME"] = "0.005556";  // Equals 1/(60*1.5/0.5), need 1.5 minutes at most to decrease to 0
-		table["POO_INCREASE"] = "0.05";
-		table["DRINK_THIRST_DECREASE"] = "0.15";
-		table["DRINK_PEE_INCREASE"] = "0.05";	
-		table["INIT_ENERGY"] = "1.0"; 
-		table["INIT_FITNESS"] = "0.80"; 
+		m_settings["EAT_STOPS_PER_DAY"] = "480";
+		m_settings["DRINK_STOPS_PER_DAY"] = "480";
+		m_settings["PEE_STOPS_PER_DAY"] = "480";
+		m_settings["POO_STOPS_PER_DAY"] = "480";
+		m_settings["MAX_ACTION_NUM"] = "50";  // Maximum number of actions the avatar can do without eating
+		m_settings["EAT_ENERGY_INCREASE"] = "0.55";
+		//		m_settings["AT_HOME_DISTANCE"] = "3.8";  // Avatar is at home, if the distance between avatar and home is smalled than this value
+		//		m_settings["FITNESS_INCREASE_AT_HOME"] = "0.008333"; // Equals 1/(60/0.5), need 60 seconds at most to increase to 1
+		m_settings["FITNESS_DECREASE_OUTSIDE_HOME"] = "0.005556";  // Equals 1/(60*1.5/0.5), need 1.5 minutes at most to decrease to 0
+		m_settings["POO_INCREASE"] = "0.05";
+		m_settings["DRINK_THIRST_DECREASE"] = "0.15";
+		m_settings["DRINK_PEE_INCREASE"] = "0.05";	
+		m_settings["INIT_ENERGY"] = "1.0"; 
+		m_settings["INIT_FITNESS"] = "0.80"; 
 		
 		// Interval between messages sending (in milliseconds)
-		table["MESSAGE_SENDING_INTERVAL"] = "100";
+		m_settings["MESSAGE_SENDING_INTERVAL"] = "100";
 		
 		// Map min/max position
-		table["GLOBAL_POSITION_X"] = "500";	//"-165000";
-		table["GLOBAL_POSITION_Y"] = "500";	//"-270000";
-		table["AVATAR_VISION_RADIUS"] = "200";	//"64000";
+		m_settings["GLOBAL_POSITION_X"] = "500";	//"-165000";
+		m_settings["GLOBAL_POSITION_Y"] = "500";	//"-270000";
+		m_settings["AVATAR_VISION_RADIUS"] = "200";	//"64000";
 		
 		// Golden standard generation
-		table["GENERATE_GOLD_STANDARD"] = "true";
+		m_settings["GENERATE_GOLD_STANDARD"] = "true";
 		// filename where golden standard message will be recorded 
-		table["GOLD_STANDARD_FILENAME"] = "GoldStandards.txt";
+		m_settings["GOLD_STANDARD_FILENAME"] = "GoldStandards.txt";
 		
-		table["AVATAR_STORAGE_URL"] = ""; // Default is Jack's appearance
+		m_settings["AVATAR_STORAGE_URL"] = ""; // Default is Jack's appearance
 		
 		// There are six levels: NONE, ERROR, WARN, INFO, DEBUG, FINE.
-		table["LOG_LEVEL"] = "DEBUG";
+		m_settings["LOG_LEVEL"] = "DEBUG";
 		
 		// OpenCog properties persistence data file
-		table["OCPROPERTY_DATA_FILE"] = ".\\oc_properties.dat";			
+		m_settings["OCPROPERTY_DATA_FILE"] = ".\\oc_properties.dat";			
 	}
 		
 	/// <summary>
@@ -151,10 +154,10 @@ public class OCConfig : OCSingleton< OCConfig, OCScriptableObject >
 	/// Parameters which are not mentioned in the file will keep their default value.
 	/// Parameters which do not have default values are discarded.
 	/// </summary>
-	/// <param name='filename'>
-	/// Filename.
+	/// <param name='fileName'>
+	/// The config file's name.
 	/// </param>
-	public void LoadFromFile(string filename)
+	public void LoadFromFile(string fileName)
 	{
 		StreamReader reader = new StreamReader(fileName);
     char[] separator = {'=',' '};
@@ -173,10 +176,10 @@ public class OCConfig : OCSingleton< OCConfig, OCScriptableObject >
               if (Debug.isDebugBuild)
                     Debug.LogError("Invalid format at line " + linenumber +": '" + line + "'");
           }
-          if (table.ContainsKey(tokens[0])) 
+          if (m_settings.ContainsKey(tokens[0])) 
           {
               //if (Debug.isDebugBuild) Debug.Log(tokens[0] + "=" + tokens[1]);
-              table[tokens[0]] = tokens[1];
+              m_settings[tokens[0]] = tokens[1];
           }
           else
           {
@@ -200,8 +203,8 @@ public class OCConfig : OCSingleton< OCConfig, OCScriptableObject >
 	/// </param>
 	public string get(string paramName, string DEFAULT="")
 	{
-	    if (table.ContainsKey(paramName)) {
-	        return (string) table[paramName];
+	    if (m_settings.ContainsKey(paramName)) {
+	        return (string) m_settings[paramName];
 	    } else {
 	        return DEFAULT;
 	    }
@@ -209,8 +212,8 @@ public class OCConfig : OCSingleton< OCConfig, OCScriptableObject >
 	
 	public long getLong(string paramName, long DEFAULT=0)
 	{
-	    if (table.ContainsKey(paramName)) {
-	        return long.Parse((string)table[paramName]);
+	    if (m_settings.ContainsKey(paramName)) {
+	        return long.Parse((string)m_settings[paramName]);
 	    } else {
 	        return DEFAULT;
 	    }
@@ -218,8 +221,8 @@ public class OCConfig : OCSingleton< OCConfig, OCScriptableObject >
 	
 	public int getInt(string paramName, int DEFAULT=0)
 	{
-	    if (table.ContainsKey(paramName)) {
-	        return int.Parse((string)table[paramName]);
+	    if (m_settings.ContainsKey(paramName)) {
+	        return int.Parse((string)m_settings[paramName]);
 	    } else {
 	        return DEFAULT;
 	    }
@@ -227,8 +230,8 @@ public class OCConfig : OCSingleton< OCConfig, OCScriptableObject >
 	
 	public float getFloat(string paramName, long DEFAULT=0)
 	{
-	    if (table.ContainsKey(paramName)) {
-	        return float.Parse((string)table[paramName]);
+	    if (m_settings.ContainsKey(paramName)) {
+	        return float.Parse((string)m_settings[paramName]);
 	    } else {
 	        return DEFAULT;
 	    }

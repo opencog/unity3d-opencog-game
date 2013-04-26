@@ -92,6 +92,9 @@ public class OCLogAspect : OnMethodBoundaryAspect
 	public override void OnEntry(MethodExecutionArgs args)
 	{
 		Debug.Log(Environment.NewLine);
+		if(args != null)
+		{
+		}
 
 		Debug.Log(string.Format("Entering [ {0} ] ...", args.Method));
 

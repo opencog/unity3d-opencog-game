@@ -108,8 +108,15 @@ public static class OCTypeSwitch
 		}
 	}
 			
+	/// <summary>
+	/// Do the switch between the specified cases without a source object.
+	/// </summary>
+	/// <param name='cases'>
+	/// The cases of our switch statement, encapsulated in CaseInfos.
+	/// </param>
 	public static void Do<T>(params CaseInfo[] cases)
 	{
+		var source = default(T);
 		foreach(var entry in cases)
 		{
 			if(entry.IsDefault || entry.Target.IsAssignableFrom(typeof(T)))

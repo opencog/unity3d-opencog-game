@@ -17,7 +17,8 @@
 	</Dependencies>	
     	
 	<Extension path = "/MonoDevelop/Ide/FileTemplates">
-        <FileTemplate id = "UnityCSharpMonoBehavior" file = "UnityCSharpMonoBehavior.xft.xml"/>
+        <FileTemplate id = "UnityCSharpDefaultMonoBehavior" file = "UnityCSharpDefaultMonoBehavior.xft.xml"/>
+		<FileTemplate id = "UnityCSharpDefaultMonoBehaviorLite" file = "UnityCSharpDefaultMonoBehaviorLite.xft.xml"/>
  	</Extension>
 	
 </Addin>

@@ -26,15 +26,14 @@ namespace OpenCog
 {
 
 /// <summary>
-/// The OpenCog OCSingletonScriptableObject.
+/// The OpenCog Singleton for Scriptable Objects.  Any class which inherits 
+/// from this will be a singleton, scriptable object.
 /// </summary>
 #region Class Attributes
 
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposePropertyFields]
-[Serializable]
 #endregion
-public class OCSingletonScriptableObject<T> : OCScriptableObject
+public class OCSingletonScriptableObject<T> : ScriptableObject
+	where T : ScriptableObject 
 {
 
 	//---------------------------------------------------------------------------
@@ -42,9 +41,12 @@ public class OCSingletonScriptableObject<T> : OCScriptableObject
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
-	private int m_ExamplePrivateVar = 0;
-
+		
+	/// <summary>
+	/// The singleton instance.
+	/// </summary>
+	protected static T m_Instance = null;
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -54,38 +56,30 @@ public class OCSingletonScriptableObject<T> : OCScriptableObject
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-	public int ExamplePublicVar
+		
+	/// <summary>
+	/// Gets the singleton instance.
+	/// </summary>
+	/// <value>
+	/// The instance of this singleton.
+	/// </value>
+	public static T Instance
 	{
 		get
 		{
-			return m_ExamplePrivateVar;
-		}
-
-		set
-		{
-			m_ExamplePrivateVar = value;
+			if(m_Instance == null && !Instantiate())
+			{
+				Debug.LogError
+				( "In OCSingletonScriptableObject.Instance, an instance of singleton " 
+				+ typeof(T) 
+				+ " does not exist and could not be instantiated."
+				);
+			}
+				
+			return m_Instance;
 		}
 	}
 			
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------	
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
-		
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.OCSingletonScriptableObject"/> class.
-	/// Generally, intitialization should occur in the Start function.
-	/// </summary>
-	public OCSingletonScriptableObject()
-	{
-	}			
-
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -95,81 +89,6 @@ public class OCSingletonScriptableObject<T> : OCScriptableObject
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
-
-	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-	public void Awake()
-	{
-	}
-
-	/// <summary>
-	/// Use this for initialization
-	/// </summary>
-	public void Start()
-	{
-	}
-
-	/// <summary>
-	/// Update is called once per frame.
-	/// </summary>
-	public void Update()
-	{
-	}
-
-	/// <summary>
-	/// Called once per frame after all Update calls
-	/// </summary>
-	public void LateUpdate()
-	{
-	}
-
-	/// <summary>
-	/// Raises the enable event when OCSingletonScriptableObject is loaded.
-	/// </summary>
-	public void OnEnable()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnEnable"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
-	/// <summary>
-	/// Raises the disable event when OCSingletonScriptableObject goes out of
-	/// scope.
-	/// </summary>
-	public void OnDisable()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnDisable"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
-
-	/// <summary>
-	/// Raises the destroy event when OCSingletonScriptableObject is about to be
-	/// destroyed.
-	/// </summary>
-	public void OnDestroy()
-	{
-		Debug.Log
-		(
-			string.Format
-			(
-				"In {0}.OnDestroy"
-			, gameObject.name + "\\" + GetType().Name
-			)
-		);
-	}
 
 	//---------------------------------------------------------------------------
 
@@ -181,8 +100,30 @@ public class OCSingletonScriptableObject<T> : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 			
-	
+	/// <summary>
+	/// Instantiate this singleton instance.
+	/// </summary>
+	private static bool Instantiate()
+	{
+		//Assert that we're not already instantiated
+		if(m_Instance != null)
+		{
+			throw new 
+				OCException("In OCSingletonScriptableObject.Instantiate, " +
+					"we're already instantiated!");
+		}
 			
+		m_Instance = (T)FindObjectOfType(typeof(T));
+			
+		if(m_Instance == null)
+		{
+			m_Instance = ScriptableObject.CreateInstance<T>();
+		}
+					
+		return m_Instance != null;
+	}
+					
+					
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -201,7 +142,7 @@ public class OCSingletonScriptableObject<T> : OCScriptableObject
 
 }// class OCSingletonScriptableObject
 
-}// namespace OpenCog
+}// namespace OpenCog.Utility
 
 
 
