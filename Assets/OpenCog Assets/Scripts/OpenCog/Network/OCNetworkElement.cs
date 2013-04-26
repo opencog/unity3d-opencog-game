@@ -1,16 +1,4 @@
-﻿<?xml version="1.0"?>
-<Template Originator="Lake Watkins" Language="C#" Created="1/30/2013" LastModified="4/26/2013">
-	
-    <TemplateConfiguration>
-        <_Name>Default GameObject Script</_Name>
-        <Icon>md-text-file-icon</Icon>
-        <_Category>OpenCog</_Category>
-        <LanguageName>C#</LanguageName>
-        <_Description>Creates a default MonoBehaviour script for Unity. Attach to GameObject.</_Description>
-    </TemplateConfiguration>
 
-    <TemplateFiles>
-        <File DefaultExtension=".cs" DefaultName="OCGameObjectScriptLite" AddStandardHeader="True"><![CDATA[
 /// Unity3D OpenCog World Embodiment Program
 /// Copyright (C) 2013  Novamente			
 ///
@@ -30,6 +18,7 @@
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
+using System.Net;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
@@ -41,11 +30,11 @@ using Serializable = System.SerializableAttribute;
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Network
 {
 
 /// <summary>
-/// The OpenCog ${Name}.
+/// The OpenCog Network Element.  
 /// </summary>
 #region Class Attributes
 
@@ -54,7 +43,7 @@ namespace OpenCog
 [Serializable]
 	
 #endregion
-public class ${Name} : OCMonoBehaviour
+public class OCNetworkElement : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -63,12 +52,23 @@ public class ${Name} : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	/// <summary>
-	/// An example variable.  Don't fall into the trap of making all variables
-	/// public (I know Unity encourages you to do this).  Instead, make use of
-	/// public properties whenever possible.
-	/// </summary>
-	private int m_ExampleVar;
+	private static readonly int m_CONNECTION_TIMEOUT = 10;
+	private static readonly string m_WHITESPACE = " ";
+	private static readonly string m_NEWLINE = "\n";
+	private static readonly string m_FAILED_MESSAGE = "FAILED";
+	private static readonly string m_OK_MESSAGE = "OK";
+	
+	// Settings of this network element instance.
+	private string m_ID;
+	private IPAddress m_IP;
+	private int m_Port;
+		
+	// Settings of router.
+	private string m_RouterID;
+	private IPAddress m_RouterIP;
+	private int m_RouterPort;
+		
+	
 
 	//---------------------------------------------------------------------------
 
@@ -80,21 +80,15 @@ public class ${Name} : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	/// <summary>
-	/// Gets or sets the example variable.  Includes attribute examples.
-	/// </summary>
-	/// <value>
-	/// The example variable.
-	/// </value>
-	[OCTooltip("I'm an example tooltip!")]
-	//creates a tooltip popup in the editor
-	[OCIntSlider(0, 100)]//creates a integer slider from 0 to 100 in the editor
-	public int ExampleVar
+	public static int CONNECTIONTIMEOUT 
 	{
-		get{ return m_ExampleVar; }
-
-		set{ m_ExampleVar = value; }
-	}
+		get { return m_CONNECTION_TIMEOUT;}
+	}	
+		
+	public static string WHITESPACE 
+	{
+		get { return m_WHITESPACE;}
+	}			
 			
 	//---------------------------------------------------------------------------
 
@@ -142,7 +136,7 @@ public class ${Name} : OCMonoBehaviour
 	}
 
 	/// <summary>
-	/// Raises the enable event when ${Name} is loaded.
+	/// Raises the enable event when OCNetworkElement is loaded.
 	/// </summary>
 	public void OnEnable()
 	{
@@ -150,7 +144,7 @@ public class ${Name} : OCMonoBehaviour
 	}
 
 	/// <summary>
-	/// Raises the disable event when ${Name} goes out of scope.
+	/// Raises the disable event when OCNetworkElement goes out of scope.
 	/// </summary>
 	public void OnDisable()
 	{
@@ -158,7 +152,7 @@ public class ${Name} : OCMonoBehaviour
 	}
 
 	/// <summary>
-	/// Raises the destroy event when ${Name} is about to be destroyed.
+	/// Raises the destroy event when OCNetworkElement is about to be destroyed.
 	/// </summary>
 	public void OnDestroy()
 	{
@@ -181,7 +175,6 @@ public class ${Name} : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
-		ExampleVar = 0;
 	}
 	
 	/// <summary>
@@ -202,11 +195,12 @@ public class ${Name} : OCMonoBehaviour
 	//---------------------------------------------------------------------------		
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.${Name}"/> class.  
-	/// Generally, intitialization should occur in the Start or Awake
+	/// Initializes a new instance of the 
+	/// <see cref="OpenCog.Network.OCNetworkElement"/> class.  Generally, 
+	/// intitialization should occur in the Start or Awake
 	/// functions, not here.
 	/// </summary>
-	public ${Name}()
+	public OCNetworkElement()
 	{
 	}
 
@@ -216,15 +210,10 @@ public class ${Name} : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-}// class ${Name}
+}// class OCNetworkElement
 
-}// namespace OpenCog
+}// namespace OpenCog.Network
 
 
 
-]]>
-        </File>
-    </TemplateFiles>
 
-    <FileOptions/>
-</Template>

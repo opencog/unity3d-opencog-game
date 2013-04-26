@@ -2,11 +2,11 @@
 <Template Originator="Lake Watkins" Language="C#" Created="4/26/2013" LastModified="4/26/2013">
 	
     <TemplateConfiguration>
-        <_Name>Default GameObject Script</_Name>
+        <_Name>Default GameObject Script, Lite</_Name>
         <Icon>md-text-file-icon</Icon>
         <_Category>OpenCog</_Category>
         <LanguageName>C#</LanguageName>
-        <_Description>Creates a default MonoBehaviour script for Unity. Attach to GameObject.</_Description>
+        <_Description>Creates a default MonoBehaviour script for Unity without all the example implementations and annotations. Attach to GameObject.</_Description>
     </TemplateConfiguration>
 
     <TemplateFiles>

@@ -1,16 +1,4 @@
-﻿<?xml version="1.0"?>
-<Template Originator="Lake Watkins" Language="C#" Created="1/30/2013" LastModified="4/26/2013">
-	
-    <TemplateConfiguration>
-        <_Name>Default GameObject Script</_Name>
-        <Icon>md-text-file-icon</Icon>
-        <_Category>OpenCog</_Category>
-        <LanguageName>C#</LanguageName>
-        <_Description>Creates a default MonoBehaviour script for Unity. Attach to GameObject.</_Description>
-    </TemplateConfiguration>
 
-    <TemplateFiles>
-        <File DefaultExtension=".cs" DefaultName="OCGameObjectScriptLite" AddStandardHeader="True"><![CDATA[
 /// Unity3D OpenCog World Embodiment Program
 /// Copyright (C) 2013  Novamente			
 ///
@@ -30,6 +18,7 @@
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
+using System.Net.Sockets;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
@@ -41,11 +30,11 @@ using Serializable = System.SerializableAttribute;
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Network
 {
 
 /// <summary>
-/// The OpenCog ${Name}.
+/// The OpenCog OCServerListener.
 /// </summary>
 #region Class Attributes
 
@@ -54,7 +43,7 @@ namespace OpenCog
 [Serializable]
 	
 #endregion
-public class ${Name} : OCMonoBehaviour
+public class OCServerListener : OCScriptableObject
 {
 
 	//---------------------------------------------------------------------------
@@ -62,14 +51,11 @@ public class ${Name} : OCMonoBehaviour
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-		
-	/// <summary>
-	/// An example variable.  Don't fall into the trap of making all variables
-	/// public (I know Unity encourages you to do this).  Instead, make use of
-	/// public properties whenever possible.
-	/// </summary>
-	private int m_ExampleVar;
-
+	
+	private bool m_ShouldStop;
+	private TcpListener m_Listener;
+	private OCNetworkElement m_NetworkElement;
+			
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -80,21 +66,7 @@ public class ${Name} : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	/// <summary>
-	/// Gets or sets the example variable.  Includes attribute examples.
-	/// </summary>
-	/// <value>
-	/// The example variable.
-	/// </value>
-	[OCTooltip("I'm an example tooltip!")]
-	//creates a tooltip popup in the editor
-	[OCIntSlider(0, 100)]//creates a integer slider from 0 to 100 in the editor
-	public int ExampleVar
-	{
-		get{ return m_ExampleVar; }
 
-		set{ m_ExampleVar = value; }
-	}
 			
 	//---------------------------------------------------------------------------
 
@@ -107,63 +79,69 @@ public class ${Name} : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 
 	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-	public void Awake()
-	{
-		Initialize();
-		OCLogger.Fine(gameObject.name + " is awake.");
-	}
-
-	/// <summary>
-	/// Use this for initialization
-	/// </summary>
-	public void Start()
-	{
-		OCLogger.Fine(gameObject.name + " is started.");
-	}
-
-	/// <summary>
-	/// Update is called once per frame.
-	/// </summary>
-	public void Update()
-	{
-		OCLogger.Fine(gameObject.name + " is updated.");	
-	}
-		
-	/// <summary>
-	/// Reset this instance to its default values.
-	/// </summary>
-	public void Reset()
-	{
-		Uninitialize();
-		Initialize();
-		OCLogger.Fine(gameObject.name + " is reset.");	
-	}
-
-	/// <summary>
-	/// Raises the enable event when ${Name} is loaded.
+	/// Raises the enable event when OCServerListener is loaded.
 	/// </summary>
 	public void OnEnable()
 	{
-		OCLogger.Fine(gameObject.name + " is enabled.");
+		Initialize();
+		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
+			" is enabled.");
 	}
-
+		
 	/// <summary>
-	/// Raises the disable event when ${Name} goes out of scope.
+	/// Raises the disable event when OCServerListener goes out of scope.
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine(gameObject.name + " is disabled.");
+		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
+			" is disabled.");
 	}
 
 	/// <summary>
-	/// Raises the destroy event when ${Name} is about to be destroyed.
+	/// Raises the destroy event when OCServerListener is about to be destroyed.
 	/// </summary>
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
+			" is about to be destroyed.");
+	}
+		
+	public IEnumerator Listen()
+	{
+		try
+		{
+			m_Listener = new 
+				TcpListener
+				(	IPAddress.Parse(m_NetworkElement.IPAddress)
+				, m_NetworkElement.PortNumber
+				)
+			;
+			
+			m_Listener.Start();
+		}
+		catch(SocketException se)
+		{
+			OCLogger.Error(se.Message);
+			yield break;
+		}
+			
+		while(!m_ShouldStop)
+		{
+			if(!m_Listener.Pending())
+			{
+				// If listener is pending, sleep for a while to relax the CPU.
+				yield return new WaitForSeconds(0.05f);
+			}
+			else
+			{
+				try
+				{
+					Socket workSocket = m_Listener.AcceptSocket();
+					new
+				}
+			}
+		}
 	}
 
 	//---------------------------------------------------------------------------
@@ -181,7 +159,8 @@ public class ${Name} : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
-		ExampleVar = 0;
+		m_NetworkElement = networkElement;
+		m_ShouldStop = false;			
 	}
 	
 	/// <summary>
@@ -189,8 +168,8 @@ public class ${Name} : OCMonoBehaviour
 	/// </summary>
 	private void Uninitialize()
 	{
-	}
-			
+	}	
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -200,13 +179,16 @@ public class ${Name} : OCMonoBehaviour
 	#region Other Members
 
 	//---------------------------------------------------------------------------		
-
+		
 	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.${Name}"/> class.  
-	/// Generally, intitialization should occur in the Start or Awake
-	/// functions, not here.
+	/// Initializes a new instance of the 
+	/// <see cref="OpenCog.Network.OCServerListener"/> class.  Initialization 
+	/// occurs in the OnEnable function, not here.
 	/// </summary>
-	public ${Name}()
+	/// <param name='networkElement'>
+	/// Network element.
+	/// </param>
+	public OCServerListener(OCNetworkElement networkElement)
 	{
 	}
 
@@ -216,15 +198,10 @@ public class ${Name} : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-}// class ${Name}
+}// class OCServerListener.Network
 
 }// namespace OpenCog
 
 
 
-]]>
-        </File>
-    </TemplateFiles>
 
-    <FileOptions/>
-</Template>

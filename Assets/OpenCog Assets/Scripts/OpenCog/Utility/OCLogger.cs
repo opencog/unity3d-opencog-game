@@ -27,6 +27,7 @@ using Enum = System.Enum;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using ArgumentException = System.ArgumentException;
 
 #endregion
 
@@ -120,10 +121,10 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 			logLevel = (LogLevel)
 				Enum.Parse(typeof(LogLevel), OCConfig.Instance.get("LOG_LEVEL"));
 		}
-		catch(OCException e)
+		catch(ArgumentException ae)
 		{
 			Debug.LogError
-				("In OCLogger.OnEnable: Failed to construct [" + e.Message + "]");
+				("In OCLogger.OnEnable: Failed to construct [" + ae.Message + "]");
 		}
 		CurrentLevel = logLevel;
 			

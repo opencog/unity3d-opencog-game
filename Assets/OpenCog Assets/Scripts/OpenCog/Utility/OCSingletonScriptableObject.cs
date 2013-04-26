@@ -45,7 +45,7 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 	/// <summary>
 	/// The singleton instance.
 	/// </summary>
-	protected static T m_Instance = null;
+	private static T m_Instance = null;
 		
 	//---------------------------------------------------------------------------
 

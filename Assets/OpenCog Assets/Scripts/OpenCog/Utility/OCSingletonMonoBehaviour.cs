@@ -46,7 +46,7 @@ public class OCSingletonMonoBehaviour<T> : MonoBehaviour
 	/// <summary>
 	/// The singleton instance.
 	/// </summary>
-	protected static T m_Instance = null;
+	private static T m_Instance = null;
 		
 	//---------------------------------------------------------------------------
 
