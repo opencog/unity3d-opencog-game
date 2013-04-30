@@ -28,7 +28,7 @@ using Serializable = System.SerializableAttribute;
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Utility.Console
 {
 
 /// <summary>
