@@ -18,7 +18,6 @@
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
-using System.Net.Sockets;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
@@ -34,7 +33,7 @@ namespace OpenCog.Network
 {
 
 /// <summary>
-/// The OpenCog OCServerListener.
+/// The OpenCog OCStringMessage.
 /// </summary>
 #region Class Attributes
 
@@ -43,7 +42,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCServerListener : OCScriptableObject
+public class OCStringMessage : OCMessage
 {
 
 	//---------------------------------------------------------------------------
@@ -52,9 +51,7 @@ public class OCServerListener : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 	
-	private bool m_ShouldStop;
-	private TcpListener m_Listener;
-	private OCNetworkElement m_NetworkElement;
+	private string m_Content;
 			
 	//---------------------------------------------------------------------------
 
@@ -66,7 +63,11 @@ public class OCServerListener : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 		
-
+	public string MessageContent
+	{
+		get{ return m_Content; }
+		set{ m_Content = value; }
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -78,89 +79,7 @@ public class OCServerListener : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 
-	/// <summary>
-	/// Raises the enable event when OCServerListener is loaded.
-	/// </summary>
-	public void OnEnable()
-	{
-		//Initialize();
-		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
-			" is enabled.");
-	}
-		
-	/// <summary>
-	/// Raises the disable event when OCServerListener goes out of scope.
-	/// </summary>
-	public void OnDisable()
-	{
-		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
-			" is disabled.");
-	}
-
-	/// <summary>
-	/// Raises the destroy event when OCServerListener is about to be destroyed.
-	/// </summary>
-	public void OnDestroy()
-	{
-		Uninitialize();
-		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
-			" is about to be destroyed.");
-	}
-		
-	public IEnumerator Listen()
-	{
-		try
-		{
-			m_Listener = new 
-				TcpListener
-				(	IPAddress.Parse(m_NetworkElement.IPAddress)
-				, m_NetworkElement.PortNumber
-				)
-			;
-			
-			m_Listener.Start();
-		}
-		catch(SocketException se)
-		{
-			OCLogger.Error(se.Message);
-			yield break;
-		}
-			
-		while(!m_ShouldStop)
-		{
-			if(!m_Listener.Pending())
-			{
-				// If listener is pending, sleep for a while to relax the CPU.
-				yield return new WaitForSeconds(0.05f);
-			}
-			else
-			{
-				try
-				{
-					Socket workSocket = m_Listener.AcceptSocket();
-					new OCMessageHandler(m_NetworkElement, workSocket).start();
-				}
-				catch( SocketException se )
-				{
-					OCLogger.Error(se.Message);
-				}
-			}
-		}
-	}
-		
-	public void Stop()
-	{
-		m_ShouldStop = true;
-		try
-		{
-			m_Listener.Stop();
-			m_Listener = null;
-		}
-		catch(SocketException se)
-		{
-			OCLogger.Error(se.Message);
-		}
-	}
+	
 
 	//---------------------------------------------------------------------------
 
@@ -172,22 +91,16 @@ public class OCServerListener : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 	
-	/// <summary>
-	/// Initializes this instance.  Set default values here.
-	/// </summary>
-	private void Initialize(OCNetworkElement networkElement)
+	public override string ToString()
 	{
-		m_NetworkElement = networkElement;
-		m_ShouldStop = false;			
+		return m_MessageContent;
 	}
 	
-	/// <summary>
-	/// Uninitializes this instance.  Cleanup refernces here.
-	/// </summary>
-	private void Uninitialize()
+	public override void FromString(string message)
 	{
-	}	
-		
+		m_MessageContent = message;
+	}
+			
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -197,17 +110,17 @@ public class OCServerListener : OCScriptableObject
 	#region Other Members
 
 	//---------------------------------------------------------------------------		
-		
-	/// <summary>
-	/// Initializes a new instance of the 
-	/// <see cref="OpenCog.Network.OCServerListener"/> class.  Initialization 
-	/// occurs in the OnEnable function, not here.
-	/// </summary>
-	/// <param name='networkElement'>
-	/// Network element.
-	/// </param>
-	public OCServerListener(OCNetworkElement networkElement)
+
+	public OCStringMessage(string sourceID, string targetID) 
+	: base(sourceID, targetID, OCMessage.MessageType.STRING)
 	{
+
+	}
+	
+	public OCStringMessage(string sourceID, string targetID, string message) 
+	: base(sourceID, targetID, OCMessage.MessageType.STRING)
+	{
+		m_Content = message;
 	}
 
 	//---------------------------------------------------------------------------
@@ -216,9 +129,9 @@ public class OCServerListener : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 
-}// class OCServerListener.Network
+}// class OCStringMessage
 
-}// namespace OpenCog
+}// namespace OpenCog.Network
 
 
 

@@ -24,6 +24,8 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using System.Collections.Generic;
+using System.Net.Sockets;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -68,6 +70,36 @@ public class OCNetworkElement : OCMonoBehaviour
 	private IPAddress m_RouterIP;
 	private int m_RouterPort;
 		
+	/// <summary>
+	/// Server listener to make this network element acting as a server.
+	/// </summary>
+	private OCServerListener m_Listener;
+		
+	// Unread messages
+	private System.Object m_UnreadMessagesLock = new object();
+	private int m_UnreadMessagesCount;
+		
+	/// <summary>
+	/// Queue used to store received messages from router. Uses a concurrent
+	/// implementation of the queue interface.
+	/// </summary>
+	private Queue<OCMessage> m_MessageQueue = new Queue<OCMessage>();
+		
+	/// <summary>
+	/// A hashset to record the unavailable end points.
+	/// </summary>
+	private HashSet<string> m_UnavailableElements = new HashSet<string>();
+		
+	/// <summary>
+	/// Client socket to talk to the router.
+	/// </summary>
+	private Socket m_ClientSocket;
+		
+	/// <summary>
+	/// Flag to check if the connection between this network element and router
+  /// has been established.
+	/// </summary>
+	private bool m_IsEstablished = false;
 	
 
 	//---------------------------------------------------------------------------
@@ -80,7 +112,7 @@ public class OCNetworkElement : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	public static int CONNECTIONTIMEOUT 
+	public static int CONNECTION_TIMEOUT 
 	{
 		get { return m_CONNECTION_TIMEOUT;}
 	}	
@@ -88,7 +120,40 @@ public class OCNetworkElement : OCMonoBehaviour
 	public static string WHITESPACE 
 	{
 		get { return m_WHITESPACE;}
-	}			
+	}
+		
+	public string FAILEDMESSAGE 
+	{
+		get { return m_FAILED_MESSAGE;}
+	}
+
+	public string NEWLINE 
+	{
+		get { return m_NEWLINE;}
+	}
+
+	public string OKMESSAGE 
+	{
+		get { return m_OK_MESSAGE;}
+	}
+
+	public bool IsEstablished 
+	{
+		get { return m_IsEstablished;}
+		set { m_IsEstablished = value;}
+	}
+
+	public IPAddress IP 
+	{
+		get { return this.m_IP;}
+		set { m_IP = value;}
+	}
+
+	public int Port 
+	{
+		get { return this.m_Port;}
+		set { m_Port = value;}
+	}		
 			
 	//---------------------------------------------------------------------------
 
@@ -175,6 +240,17 @@ public class OCNetworkElement : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
+		m_ID = id;
+		m_Port = OCPortManager.AllocatePort();
+        m_IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+		m_RouterIP = IPAddress.Parse(this.routerIpString);
+		m_RouterPort = OCConfig.Instance.getInt("ROUTER_PORT", 16312);
+		
+		listener = new OCServerListener(this);
+		
+		StartCoroutine(Connect());
+		StartCoroutine(m_Listener.Listen());
+		StartCoroutine(RequestMessage(1));			
 	}
 	
 	/// <summary>
@@ -182,6 +258,85 @@ public class OCNetworkElement : OCMonoBehaviour
 	/// </summary>
 	private void Uninitialize()
 	{
+		StopCoroutine("m_Listener.Listen");
+		StopCoroutine("RequestMessage");
+		m_Listener.stop();
+		disconnect();
+		OCPortManager.ReleasePort(m_Port);			
+	}
+		
+	private IEnumerator Connect()
+	{
+		Socket asyncSocket = new 
+			Socket
+			( AddressFamily.InterNetwork
+			, SocketType.Stream
+			, ProtocolType.Tcp
+			)
+		;
+			
+		IPEndPoint ipe = new IPEndPoint(m_RouterIP, m_RouterPort);
+			
+		OCLogger.Debugging("Start Connecting to router");
+			
+		// Start the async connection request.
+		System.IAsyncResult ar = asyncSocket
+		.	BeginConnect
+			(	ipe
+			, new AsyncCallback(ConnectCallback)
+			, asyncSocket
+			)
+		;
+			
+		yield return new WaitForSeconds(0.1f);
+			
+		int retryTimes = CONNECTION_TIMEOUT;
+		while(!ar.IsCompleted)
+		{
+			retryTimes--;
+			if(retryTimes == 0)
+			{
+				OCLogger.Warn("Connection timed out.");
+				yield break;
+			}
+				
+			yield return new WaitForSeconds(0.1f);
+		}
+	}
+					
+	/// <summary>
+	/// Async callback function to be invoked once the connection is established. 
+	/// </summary>
+	/// <param name='ar'>
+	/// Async result <see cref="IAsyncResult"/>
+	/// </param>
+	private void ConnectCallback(IAsyncResult ar)
+	{
+		try 
+		{
+			// Retrieve the socket from the state object.
+			m_ClientSocket = (Socket) ar.AsyncState;
+			// Complete the connection.
+			m_ClientSocket.EndConnect(ar);
+
+            established = true;
+
+			OCLogger.Debugging("Socket connected to router.");
+			
+			LoginRouter();
+		}
+		catch (Exception e)
+		{
+			OCLogger.Warn(e.ToString());
+		}
+	}
+		
+	private void LoginRouter()
+	{
+		string command = "LOGIN " + this.myID + WHITESPACE + 
+						this.myIP.ToString() + WHITESPACE + this.myPort + 
+                        NEWLINE;
+		_send(command);
 	}
 			
 	//---------------------------------------------------------------------------
