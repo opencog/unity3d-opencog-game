@@ -31,7 +31,7 @@ using Serializable = System.SerializableAttribute;
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Embodiment
 {
 
 /// <summary>
@@ -57,10 +57,8 @@ public class OCPhysiologicalModel : OCMonoBehaviour
      */
 	private long MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-	/**
-     * Actually, the following parameters should be decided by the amount
-     * of eating and drinking.
-     */
+	// Actually, the following parameters should be decided by the amount
+    // of eating and drinking.
 	private double EAT_ENERGY_INCREASE;
 	private double EAT_POO_INCREASE;
 	private double DRINK_THIRST_DECREASE;
@@ -79,7 +77,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 	/**
 	 * Create a system parameters instance.
 	 */
-	private Config m_config = Config.getInstance();
+	private Config m_config = Config.GetInstance();
 
 	/**
      * Update the physiological model every 0.5 second.
@@ -113,7 +111,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
      */
 	private Dictionary<string, double> m_factorSummaryMap = new Dictionary<string, double>();
 			
-	private OCConnector m_connector;
+//	private OCConnector m_connector;
 
 	private AvatarMode m_currentMode;
 
@@ -170,24 +168,22 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 		this.IDLE_ENERGY_DECREASE_RATE = - m_millisecondsPerTick / (MILLISECONDS_PER_DAY / m_config.getInt("EAT_STOPS_PER_DAY"));
 		this.SLEEP_ENERGY_INCREASE_RATE = - IDLE_ENERGY_DECREASE_RATE * 5;
 		this.STARVING_ENERGY_DECREASE_RATE = IDLE_ENERGY_DECREASE_RATE * 2;
-		
-
 		this.FITNESS_DECREASE_OUTSIDE_HOME = m_config.getFloat("FITNESS_DECREASE_OUTSIDE_HOME");
-
 		this.EAT_ENERGY_INCREASE = m_config.getFloat("EAT_ENERGY_INCREASE");
 		this.EAT_POO_INCREASE = m_config.getFloat("EAT_POO_INCREASE");
 		this.DRINK_THIRST_DECREASE = m_config.getFloat("EAT_THIRST_DECREASE");
 		this.DRINK_PEE_INCREASE = m_config.getFloat("DRINK_PEE_INCREASE");
 
-		this.energy = m_config.getFloat("INIT_ENERGY");
-		this._fitness = m_config.getFloat("INIT_FITNESS");
-		this.currentMode = AvatarMode.IDLE;
+		m_energy = m_config.getFloat("INIT_ENERGY");
+		m_fitness = m_config.getFloat("INIT_FITNESS");
+		m_currentMode = AvatarMode.IDLE;
 
 		//		this.AT_HOME_DISTANCE = config.getFloat("AT_HOME_DISTANCE");
 		//		this.FITNESS_INCREASE_AT_HOME = config.getFloat("FITNESS_INCREASE_AT_HOME");
 		//		this.at_home_flag = false;
 
-		setupBasicFactors();
+		SetupBasicFactors();
+
 		m_connector = gameObject.GetComponent<OCConnector>() as OCConnector;
 	}
 
@@ -204,7 +200,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 //			CheckAtHomeStatus();
 			
 			// Some actions here
-			timeTick();
+			TimeTick();
 
 			// Reset the timer.
 			m_updateTimer = 0.0f;
@@ -228,29 +224,29 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 		UpdateFitness();
 		UpdateEnergy();
 		
-		this.modeCounts[(int)this.currentMode]++;
+		m_modeCounts[(int)m_currentMode]++;
 
-		if(currentMode != AvatarMode.SLEEP)
+		if(m_currentMode != AvatarMode.SLEEP)
 		{
-			currentMode = AvatarMode.IDLE;
+			m_currentMode = AvatarMode.IDLE;
 		}
 
-		foreach(string factor in basicFactorMap.Keys)
+		foreach(string factor in m_basicFactorMap.Keys)
 		{
-			factorSummaryMap[factor] = basicFactorMap[factor].value;
+			m_factorSummaryMap[factor] = m_basicFactorMap[factor].value;
 		}
-		factorSummaryMap["energy"] = this.energy;	
-		factorSummaryMap["fitness"] = this._fitness; 
+		m_factorSummaryMap["energy"] = m_energy;
+		m_factorSummaryMap["fitness"] = m_fitness;
 		
-		if(connector != null)
+		if(m_connector != null)
 		{
 			// Send updated values to OAC
-			connector.SendMessage("sendAvatarSignalsAndTick", factorSummaryMap);
+			m_connector.SendMessage("sendAvatarSignalsAndTick", m_factorSummaryMap);
 
 			// Also update values holding by OCConnector, which would be displayed 
 			// in psi panel in unity
-			connector.SetDemandValue("Energy", (float)this.energy);
-			connector.SetDemandValue("Integrity", (float)this._fitness); 
+			m_connector.SetDemandValue("Energy", (float)m_energy);
+			m_connector.SetDemandValue("Integrity", (float)m_fitness);
 		}	
 	}
 
@@ -264,7 +260,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 	{
 		effect.applyEffect(this);
 		// Ensure energy is in acceptable bounds
-		this.energy = NumberUtil.zeroOneCut(this.energy);
+		m_energy = OpenCog.Utility.NumberUtil.zeroOneCut(m_energy);
 
 	}
 
@@ -288,26 +284,26 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 
 	private void UpdateEnergy()
 	{
-		if(this.currentMode == AvatarMode.IDLE)
+		if(m_currentMode == AvatarMode.IDLE)
 		{
-			this.energy += IDLE_ENERGY_DECREASE_RATE;
+			m_energy += IDLE_ENERGY_DECREASE_RATE;
 		}
 		else
-		if(this.currentMode == AvatarMode.SLEEP)
+		if(m_currentMode == AvatarMode.SLEEP)
 		{
-			this.energy += SLEEP_ENERGY_INCREASE_RATE;
+			m_energy += SLEEP_ENERGY_INCREASE_RATE;
 		}
 
-		if(basicFactorMap["hunger"].value > 0.9)
+		if(m_basicFactorMap["hunger"].value > 0.9)
 		{
-			this.energy += STARVING_ENERGY_DECREASE_RATE;
+			m_energy += STARVING_ENERGY_DECREASE_RATE;
 		}
 
-		if(basicFactorMap["thirst"].value > 0.9)
+		if(m_basicFactorMap["thirst"].value > 0.9)
 		{
-			this.energy += STARVING_ENERGY_DECREASE_RATE;
+			m_energy += STARVING_ENERGY_DECREASE_RATE;
 		}
-		this.energy = NumberUtil.zeroOneCut(this.energy);
+		this.m_energy = OpenCog.Utility.NumberUtil.zeroOneCut(this.energy);
 	}
 
 	/**

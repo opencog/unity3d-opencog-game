@@ -538,6 +538,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		// Get the world game object.
 		WorldGameObject world = GameObject.Find("World").GetComponent<WorldGameObject>() as WorldGameObject;
 
+
 		// Get the chunks data.
 		worldData = world.WorldData;
 		floorHeight = worldData.floor;

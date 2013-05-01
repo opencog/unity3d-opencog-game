@@ -91,7 +91,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 
 		//---------------------------------------------------------------------------
 		
-		public string Id {
+		public string ID {
 			get { return m_id; }
 			set { m_id = value; }
 		}
@@ -247,7 +247,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		
 		public OpenCog.Serialization.OCPropertyField CheckPropertyExist (string keyStr)
 		{
-			foreach (OpenCog.Serialization.OCPropertyField ocp in properties) {
+			foreach (OpenCog.Serialization.OCPropertyField ocp in m_properties) {
 				if (ocp.key == keyStr)
 					return ocp;
 			}
@@ -259,9 +259,9 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			// Check if property existing
 			OpenCog.Serialization.OCPropertyField ocp = CheckPropertyExist (keyStr);
 			if (ocp != null) {
-				properties.Remove (ocp);
+				m_properties.Remove (ocp);
 			}
-			properties.Add (new OpenCog.Serialization.OCPropertyField (keyStr, valueStr, type));
+			m_properties.Add (new OpenCog.Serialization.OCPropertyField (keyStr, valueStr, type));
 		}
 
 		public void RemoveProperty (string keyStr)
@@ -269,7 +269,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			// Check if property existing
 			OpenCog.Serialization.OCPropertyField ocp = CheckPropertyExist (keyStr);
 			if (ocp != null) {
-				properties.Remove (ocp);
+				m_properties.Remove (ocp);
 			}
 		}
 
@@ -322,60 +322,60 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		{
 		}
 		
-		public OCObjectMapInfo (UnityEngine.GameObject go)
+		public OCObjectMapInfo (UnityEngine.GameObject gameObject)
 		{
 			// Get id of a game object
-			this.m_id = go.GetInstanceID ().ToString ();
+			m_id = gameObject.GetInstanceID ().ToString ();
 			// Get name
-			this.m_name = go.name;
+			m_name = gameObject.name;
 			// TODO: By default, we are using object type.
-			this.m_type = EmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
+			m_type = EmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
 
 			// Convert from unity coordinate to OAC coordinate.
-			this.Position = VectorUtil.ConvertToOpenCogCoord (go.transform.position);
+			m_position = VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
 			// Get rotation
-			this.Rotation = new Rotation (go.transform.rotation);
+			m_rotation = new Rotation (gameObject.transform.rotation);
 			// Calculate the velocity later
-			this.Velocity = Vector3.zero;
+			m_velocity = Vector3.zero;
 
 			// Get size
-			if (go.collider != null) {
+			if (gameObject.collider != null) {
 				// Get size information from collider.
-				this.width = go.collider.bounds.size.z;
-				this.height = go.collider.bounds.size.y;
-				this.length = go.collider.bounds.size.x;
+				m_width = gameObject.collider.bounds.size.z;
+				m_height = gameObject.collider.bounds.size.y;
+				m_length = gameObject.collider.bounds.size.x;
 			} else {
-				Debug.LogWarning ("No collider for gameobject " + go.name + ", assuming a point.");
+				Debug.LogWarning ("No collider for gameobject " + gameObject.name + ", assuming a point.");
 				// Set default value of the size.
-				this.width = 0.1f;
-				this.height = 0.1f;
-				this.length = 0.1f;
+				m_width = 0.1f;
+				m_height = 0.1f;
+				m_length = 0.1f;
 			}
 
-			if (go.tag == "OCA") {
+			if (gameObject.tag == "OCA") {
 				// This is an OC avatar, we will use the brain id instead of unity id.
-				OCConnector connector = go.GetComponent<OCConnector> () as OCConnector;
+				OCConnector connector = gameObject.GetComponent<OCConnector> () as OCConnector;
 				if (connector != null)
-					this.m_id = connector.BrainId;
-				this.m_type = EmbodimentXMLTags.PET_OBJECT_TYPE;
+					m_id = connector.BrainId;
+				m_type = EmbodimentXMLTags.PET_OBJECT_TYPE;
 
-			} else if (go.tag == "Player") {
+			} else if (gameObject.tag == "Player") {
 				// This is a human player avatar.
-				this.m_type = EmbodimentXMLTags.AVATAR_OBJECT_TYPE;
-				this.length = OCObjectMapInfo.DEFAULT_AVATAR_LENGTH;
-				this.width = OCObjectMapInfo.DEFAULT_AVATAR_WIDTH;
-				this.height = OCObjectMapInfo.DEFAULT_AVATAR_HEIGHT;
+				m_type = EmbodimentXMLTags.AVATAR_OBJECT_TYPE;
+				m_length = OCObjectMapInfo.DEFAULT_AVATAR_LENGTH;
+				m_width = OCObjectMapInfo.DEFAULT_AVATAR_WIDTH;
+				m_height = OCObjectMapInfo.DEFAULT_AVATAR_HEIGHT;
 			}
 
 			// Get weight
-			if (go.rigidbody != null) {
-				this.weight = go.rigidbody.mass;
+			if (gameObject.rigidbody != null) {
+				m_weight = gameObject.rigidbody.mass;
 			} else {
-				this.weight = 0.0f;
+				m_weight = 0.0f;
 			}
 
 			// Get a property manager instance
-			OCPropertyManager manager = go.GetComponent<OCPropertyManager> () as OCPropertyManager;
+			OCPropertyManager manager = gameObject.GetComponent<OCPropertyManager> () as OCPropertyManager;
 			if (manager != null) {
 				// Copy all OC properties from the manager, if any.
 				foreach (OpenCog.Serialization.OCPropertyField ocp in manager.propertyList) {
@@ -386,11 +386,11 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			this.AddProperty ("visibility-status", "visible", PropertyType.STRING);
 			this.AddProperty ("detector", "true", PropertyType.BOOL);
 			
-			string goName = go.name;
-			if (go.name.Contains ("("))
-				goName = go.name.Remove (go.name.IndexOf ('('));
+			string gameObjectName = gameObject.name;
+			if (gameObjectName.Contains ("("))
+				gameObjectName = gameObjectName.Remove (gameObjectName.IndexOf ('('));
 
-			this.AddProperty ("class", goName, PropertyType.STRING);
+			this.AddProperty ("class", gameObjectName, PropertyType.STRING);
 		}
 		
 		public static OCObjectMapInfo CreateTerrainMapInfo (Chunk chunk, uint x, uint y, uint z, BlockData blockData)

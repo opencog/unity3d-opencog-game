@@ -30,7 +30,7 @@ using Serializable = System.SerializableAttribute;
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Embodiment
 {
 
 /// <summary>
@@ -53,12 +53,21 @@ public class PhysiologicalEffect : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 	
 	private CostLevel m_costLevel;
-    private float m_energyIncrease = 0.0f;
-    private float m_fitnessChange = 0.0f;
-    private OCPhysiologicalModel.AvatarMode m_newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
-    private Dictionary<string, float> m_changeFactors = new Dictionary<string,float>();
-    private List<string> m_resetFactors = new List<string>();
-			
+
+	private float m_energyIncrease = 0.0f;
+
+	private float m_fitnessChange = 0.0f;
+
+	private OCPhysiologicalModel.AvatarMode m_newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
+
+	private Dictionary<string, float> m_changeFactors = new Dictionary<string,float>();
+
+	private List<string> m_resetFactors = new List<string>();
+
+	private float BASE_ENERGY_COST;
+
+	private Utility.Config config = Utility.Config.GetInstance();
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -82,32 +91,38 @@ public class PhysiologicalEffect : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 
 	public void ApplyEffect(OCPhysiologicalModel model)
-    {
-        // Update energy
-        model.energy -= getActionCost((float)model.fitness);
-        model.energy += energyIncrease;
+	{
+		// Update energy
+		model.energy -= getActionCost((float)model.fitness);
+		model.energy += energyIncrease;
         
-        model.fitness += fitnessChange;
+		model.fitness += fitnessChange;
         
-        // Set new mode
-        model.currentMode = newMode;
-        // Change factors...
-        foreach(String factorName in changeFactors.Keys) {
-            float changeValue = changeFactors[factorName];
-            if (changeValue < 0.0f) 
-                model.basicFactorMap[factorName].decrease(-changeValue);
-            else 
-                model.basicFactorMap[factorName].increase(changeValue);
-        }
-        // Reset factors
-        foreach(String factorName in resetFactors) {
-            model.basicFactorMap[factorName].reset();
-        }
+		// Set new mode
+		model.currentMode = newMode;
+		// Change factors...
+		foreach(String factorName in changeFactors.Keys)
+		{
+			float changeValue = changeFactors[factorName];
+			if(changeValue < 0.0f)
+			{
+				model.basicFactorMap[factorName].decrease(-changeValue);
+			}
+			else
+			{
+				model.basicFactorMap[factorName].increase(changeValue);
+			}
+		}
+		// Reset factors
+		foreach(String factorName in resetFactors)
+		{
+			model.basicFactorMap[factorName].reset();
+		}
 
-        // Deal with the action which has effects on the physiological factors.
+		// Deal with the action which has effects on the physiological factors.
         
-        // For reference, these are the old physiological effect of actions.
-        /*switch (effect.actionName)
+		// For reference, these are the old physiological effect of actions.
+		/*switch (effect.actionName)
         {
             case "sleep":
                 this.currentMode = AvatarMode.SLEEP;
@@ -139,16 +154,16 @@ public class PhysiologicalEffect : OCMonoBehaviour
         }*/
         
         
-    }
+	}
     
-    /**
-     * Calculate the actual energy cost according to BASE_ENERGY_COST, fitness and level.  
-     * Higher energy cost is produced with lower fitness, higher BASE_ENERGY_COST and level. 
+	/**
+     * Calculate the actual energy cost according to BASE_ENERGY_COST, fitness and level.
+     * Higher energy cost is produced with lower fitness, higher BASE_ENERGY_COST and level.
      */
-    public float GetActionCost(float fitness)
-    {
-        return (float) (1.5 - fitness) * ((int)level * BASE_ENERGY_COST);
-    }
+	public float GetActionCost(float fitness)
+	{
+		return (float)(1.5 - fitness) * ((int)m_costLevel * BASE_ENERGY_COST);
+	}
 
 	//---------------------------------------------------------------------------
 
@@ -172,14 +187,21 @@ public class PhysiologicalEffect : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------		
 
-	 public enum CostLevel { NONE = 0, LOW = 1, MEDIUM = 2, HIGH = 3, STRONG = 4 };
+	public enum CostLevel
+	{
+		NONE = 0,
+		LOW = 1,
+		MEDIUM = 2,
+		HIGH = 3,
+		STRONG = 4
+	};
 
-		public PhysiologicalEffect(CostLevel level)
-    {
-        this.level = level;
-        // MAX_ACTION_NUM is the number of normal actions possible on a full battery charge.
-        this.BASE_ENERGY_COST = 1.0f / config.getInt("MAX_ACTION_NUM");
-    }
+	public PhysiologicalEffect(CostLevel level)
+	{
+		m_costLevel = level;
+		// MAX_ACTION_NUM is the number of normal actions possible on a full battery charge.
+		this.BASE_ENERGY_COST = 1.0f / config.GetInt("MAX_ACTION_NUM");
+	}
 
 	//---------------------------------------------------------------------------
 

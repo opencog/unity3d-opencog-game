@@ -17,6 +17,7 @@
 
 #region Usings, Namespaces, and Pragmas
 
+using System.Net;
 using System.Collections;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
@@ -85,7 +86,7 @@ public class Config
         }
     }
 
-    public long getLong(string paramName, long DEFAULT=0)
+    public long GetLong(string paramName, long DEFAULT=0)
     {
         if (table.ContainsKey(paramName)) {
             return long.Parse((string)table[paramName]);
@@ -94,7 +95,7 @@ public class Config
         }
     }
 	
-	public int getInt(string paramName, int DEFAULT=0)
+	public int GetInt(string paramName, int DEFAULT=0)
     {
         if (table.ContainsKey(paramName)) {
             return int.Parse((string)table[paramName]);
@@ -103,7 +104,7 @@ public class Config
         }
     }
 
-    public float getFloat(string paramName, long DEFAULT=0)
+    public float GetFloat(string paramName, long DEFAULT=0)
     {
         if (table.ContainsKey(paramName)) {
             return float.Parse((string)table[paramName]);
@@ -112,7 +113,7 @@ public class Config
         }
     }
 
-	public void loadFromFile(string fileName) 
+	public void LoadFromFile(string fileName)
     {
 	    StreamReader reader = new StreamReader(fileName);
 	    char[] separator = {'=',' '};
@@ -168,7 +169,7 @@ public class Config
 
 	//---------------------------------------------------------------------------		
 
-	public static Config getInstance()
+	public static Config GetInstance()
 	{
 		if (instance == null)
 			instance = new Config();
