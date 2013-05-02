@@ -72,7 +72,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		private string m_type;
 		private UnityEngine.Vector3 m_position; // Position of object
 		private Vector3Wrapper m_positionWrapper;
-		private Rotation m_rotation; // Rotation of object
+		private Rotation m_rotation = new Rotation(0, 0, 0); // Rotation of object
 		private UnityEngine.Vector3 m_velocity; // Velocity of an object, if it is moving.
 		private Vector3Wrapper m_velocityWrapper;
 		private float m_length, m_width, m_height; // Size of an object.
@@ -391,6 +391,30 @@ public class OCObjectMapInfo : OCMonoBehaviour
 				gameObjectName = gameObjectName.Remove (gameObjectName.IndexOf ('('));
 
 			this.AddProperty ("class", gameObjectName, PropertyType.STRING);
+		}
+
+		public static OCObjectMapInfo CreateObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, BlockData blockData)
+		{
+			string blockName = "CHUNK_" + chunkX + "_" + chunkY + "_" + chunkZ +
+                               "_BLOCK_" + blockGlobalX + "_" + blockGlobalY + "_" + blockGlobalZ;
+			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();
+			mapinfo.Height = 1;
+			mapinfo.Width = 1;
+			mapinfo.Length = 1;
+			mapinfo.Type = EmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
+			mapinfo.Id = blockName;
+			mapinfo.Name = blockName;
+			mapinfo.Velocity = Vector3.zero;
+			mapinfo.Position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
+
+			// Add block properties
+			mapinfo.AddProperty ("class", "block", PropertyType.STRING);
+			mapinfo.AddProperty ("visibility-status", "visible", PropertyType.STRING);
+			mapinfo.AddProperty ("detector", "true", PropertyType.BOOL);
+			mapinfo.AddProperty (EmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.GetType().ToString(), PropertyType.STRING);
+			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
+			return mapinfo;
+
 		}
 		
 		public static OCObjectMapInfo CreateTerrainMapInfo (Chunk chunk, uint x, uint y, uint z, BlockData blockData)

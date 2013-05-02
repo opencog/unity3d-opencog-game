@@ -43,66 +43,61 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class OCPerceptionCollector : OCMonoBehaviour
+	public class OCPerceptionCollector : OCMonoBehaviour
 {
-	private class OCConnector
-		{
-
-		}
-
-	//---------------------------------------------------------------------------
-
-	#region Private Member Data
-
 	//---------------------------------------------------------------------------
 	
+		#region Private Member Data
+	
+	//---------------------------------------------------------------------------
+		
 	private float m_updatePerceptionInterval = 0.5f; // Percept 5 times per second.
 	private float m_timer = 0.0f; // Reset timer at the end of every interval.
 	private OCConnector m_connector; // The OCConnector instance used to send map-info.
 	private int m_id; // A local copy of the game object id that this component attached to.
 	private Dictionary<int, OCObjectMapInfo> m_mapInfoCache = new Dictionary<int, OCObjectMapInfo>();
-
+	
 	private Dictionary<int, bool> m_mapInfoCacheStatus = new Dictionary<int, bool>(); // A flag map indicates if a cached map info has been percepted in latest cycle.
 	private Dictionary<StateChangesRegister.StateInfo, System.Object> m_stateInfoCache = new Dictionary<StateChangesRegister.StateInfo, System.Object>();
-
-
+	
 	private ArrayList m_statesToDelete = new ArrayList();
-
+	
 	private System.Object m_cacheLock = new System.Object();
-
+	
 	private List<OCObjectMapInfo> m_removedObjects = new List<OCObjectMapInfo>(); // A list of objects recently removed. This is a temporary data structure, cleared whenever it is processed.
 	private bool m_perceptWorldFirstTime = true;
 
 	//private WorldData m_worldData; // Reference to the world data.
 	private Map m_map;
+	
 	private Dictionary<string, bool> m_chunkStatusMap = new Dictionary<string, bool>(); // A map to mark if current chunk needs to be percepted. True means perception in need.
 	private int m_floorHeight; // Currently, just percept the block above the horizon.
-	private bool m_havePerceptTerrainForFirstTime = false;
-
+	private bool m_hasPerceivedTerrainForFirstTime = false;
+	
 	private bool m_perceptStateChangesFirstTime = true;
-		
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-	#region Accessors and Mutators
-
-	//---------------------------------------------------------------------------
 			
 	//---------------------------------------------------------------------------
-
-	#endregion
-
+	
+		#endregion
+	
 	//---------------------------------------------------------------------------
-
-	#region Public Member Functions
-
+	
+		#region Accessors and Mutators
+	
 	//---------------------------------------------------------------------------
-		
+				
+	//---------------------------------------------------------------------------
+	
+		#endregion
+	
+	//---------------------------------------------------------------------------
+	
+		#region Public Member Functions
+	
+	//---------------------------------------------------------------------------
+			
 	public static bool hasBoundaryChuncks = true; // if has auto generated boundary chunks, like the stairs around the map
-
+	
 	/// <summary>
 	/// Called when the script instance is being loaded.
 	/// </summary>
@@ -111,7 +106,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		Initialize();
 		OCLogger.Fine(gameObject.name + " is awake.");
 	}
-
+	
 	/// <summary>
 	/// Use this for initialization
 	/// </summary>
@@ -119,7 +114,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 	{
 		OCLogger.Fine(gameObject.name + " is started.");
 	}
-
+	
 	/// <summary>
 	/// Update is called once per frame.
 	/// </summary>
@@ -130,21 +125,21 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		{
 			return;
 		}
-		
+			
 		this.timer += Time.deltaTime;
-		
+			
 		// Percept the world once in each interval.
 		if(timer >= UpdatePerceptionInterval)
 		{
 			this.perceptWorld();
-			this.perceptTerrain();
+			this.PerceiveTerrain();
 			perceptStateChanges();
 			timer = 0.0f;
 		}
-			
+				
 		OCLogger.Fine(gameObject.name + " is updated.");	
 	}
-		
+			
 	/// <summary>
 	/// Reset this instance to its default values.
 	/// </summary>
@@ -154,7 +149,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		Initialize();
 		OCLogger.Fine(gameObject.name + " is reset.");	
 	}
-
+	
 	/// <summary>
 	/// Raises the enable event when OCPerceptionCollector is loaded.
 	/// </summary>
@@ -162,7 +157,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 	{
 		OCLogger.Fine(gameObject.name + " is enabled.");
 	}
-
+	
 	/// <summary>
 	/// Raises the disable event when OCPerceptionCollector goes out of scope.
 	/// </summary>
@@ -170,7 +165,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 	{
 		OCLogger.Fine(gameObject.name + " is disabled.");
 	}
-
+	
 	/// <summary>
 	/// Raises the destroy event when OCPerceptionCollector is about to be destroyed.
 	/// </summary>
@@ -179,7 +174,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		Uninitialize();
 		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
 	}
-		
+			
 	public OCObjectMapInfo GetOCObjectMapInfo(int objId)
 	{
 		OCObjectMapInfo result = null;
@@ -189,7 +184,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		}
 		return result;
 	}
-		
+			
 	/// <summary>
 	/// Percept and check map info of all available objects.
 	/// </summary>
@@ -197,7 +192,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 	{
 		HashSet<int> updatedObjects = null;
 		HashSet<int> disappearedObjects = null;
-
+	
 		List<int> cacheIdList = new List<int>();
 		cacheIdList.AddRange(mapInfoCache.Keys);
 		// Before performing the perception task, set the all map info caches' updated status to false.
@@ -206,7 +201,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		{
 			mapInfoCacheStatus[oid] = false;
 		}
-
+	
 		// Update the map info of all avatar in the repository(including player avatar).
 		foreach(GameObject oca in OCARepository.GetAllOCA())
 		{
@@ -219,7 +214,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				updatedObjects.Add(oca.GetInstanceID());
 			}
 		}
-		
+			
 		// Update the map info of all OCObjects in repository.
 		foreach(GameObject go in GameObject.FindGameObjectsWithTag("OCObject"))
 		{
@@ -232,7 +227,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				updatedObjects.Add(go.GetInstanceID());
 			}
 		}
-
+	
 		// Handle all objects that disappeared in this cycle.
 		foreach(int oid in cacheIdList)
 		{
@@ -248,7 +243,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				disappearedObjects.Add(oid);
 			}
 		}
-
+	
 		List<OCObjectMapInfo> latestMapInfoSeq = new List<OCObjectMapInfo>();
 		if(updatedObjects != null)
 		{
@@ -258,7 +253,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				latestMapInfoSeq.Add(this.mapInfoCache[oid]);
 			}
 		}
-
+	
 		if(disappearedObjects != null)
 		{
 			foreach(int oid in disappearedObjects)
@@ -270,16 +265,16 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				this.mapInfoCacheStatus.Remove(oid);
 			}
 		}
-
+	
 		if(latestMapInfoSeq.Count > 0)
 		{
 			// Append latest map info sequence to OC connector's sending queue.
 			connector.sendMapInfoMessage(latestMapInfoSeq, perceptWorldFirstTime);
 		}
-		
+			
 		perceptWorldFirstTime = false;
 	}
-		
+			
 	/// <summary>
 	/// Mark the chunk status as changed.
 	/// </summary>
@@ -292,14 +287,14 @@ public class OCPerceptionCollector : OCMonoBehaviour
 			chunkStatusMap[chunkId] = true;
 		}
 	}
-	
+		
 	public void addNewState(StateChangesRegister.StateInfo ainfo)
 	{
 		System.Reflection.FieldInfo stateValInfo = ainfo.behaviour.GetType().GetField(ainfo.stateName);
 		System.Object valObj = stateValInfo.GetValue(ainfo.behaviour);
 		stateInfoCache.Add(ainfo, valObj);		
 	}
-	
+		
 	public static void NotifyBlockRemoved(Vector3i blockBuildPoint)
 	{
 		Transform allAvatars = GameObject.Find("Avatars").transform;
@@ -316,7 +311,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 			}
 		}
 	}
-	
+		
 	public static void NotifyBlockAdded(Vector3i blockBuildPoint)
 	{
 		Transform allAvatars = GameObject.Find("Avatars").transform;
@@ -333,20 +328,20 @@ public class OCPerceptionCollector : OCMonoBehaviour
 			}
 		}
 	}
+		
 	
-
+		
 	
-
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-	#region Private Member Functions
-
 	//---------------------------------------------------------------------------
 	
+		#endregion
+	
+	//---------------------------------------------------------------------------
+	
+		#region Private Member Functions
+	
+	//---------------------------------------------------------------------------
+		
 	/// <summary>
 	/// Initializes this instance.  Set default values here.
 	/// </summary>
@@ -355,7 +350,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		// Obtain components of this OCAvatar.
 		this.connector = gameObject.GetComponent("OCConnector") as OCConnector;
 		this.id = gameObject.GetInstanceID();
-		
+			
 		foreach(StateInfo ainfo in StateChangesRegister.StateList)
 		{			
 			System.Reflection.FieldInfo stateValInfo = ainfo.behaviour.GetType().GetField(ainfo.stateName);
@@ -363,14 +358,14 @@ public class OCPerceptionCollector : OCMonoBehaviour
 			stateInfoCache.Add(ainfo, valObj);
 		}
 	}
-	
+		
 	/// <summary>
 	/// Uninitializes this instance.  Cleanup refernces here.
 	/// </summary>
 	private void Uninitialize()
 	{
 	}
-		
+			
 	/// <summary>
 	/// Build meta map-info and cache it. If the map-info has been cached already,
 	/// then check if it is up-to-date.
@@ -385,9 +380,9 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		bool isUpdated = false;
 		OCObjectMapInfo mapInfo;
 		int goId = go.GetInstanceID();
-
+	
 		this.mapInfoCacheStatus[goId] = true;
-
+	
 		if(this.mapInfoCache.ContainsKey(goId))
 		{
 			// Read cache
@@ -401,21 +396,21 @@ public class OCPerceptionCollector : OCMonoBehaviour
 			{
 				this.mapInfoCache[goId] = mapInfo;
 			}
-			
+				
 			// We don't send all the existing objects as appear actions to the opencog at the time the robot is loaded.
 			if(! perceptWorldFirstTime)
 			{
 				connector.handleObjectAppearOrDisappear(mapInfo.Id, mapInfo.Type, true);
 			}
-			
+				
 			// When constructing the new map info instance, 
 			// dynamical data of this game object has been obtained.
 			return true;
 		}
-		
+			
 		// Position
 		Vector3 currentPos = VectorUtil.ConvertToOpenCogCoord(go.transform.position);
-
+	
 		if(go.tag == "OCA")
 		{
 			// Fix the model center point problem.
@@ -423,13 +418,13 @@ public class OCPerceptionCollector : OCMonoBehaviour
 			// 3D model problem, correct it by adding half of the avatar height.
 			//currentPos.z += mapInfo.Height * 0.5f;
 		}
-
+	
 		Vector3 cachedPos = mapInfo.Position;
 		Vector3 cachedVelocity = mapInfo.Velocity;
 		bool hasMoved = false;
-		
+			
 		if(!currentPos.Equals(cachedPos) && 
-            Vector3.Distance(cachedPos, currentPos) > OCObjectMapInfo.POSITION_DISTANCE_THRESHOLD)
+	            Vector3.Distance(cachedPos, currentPos) > OCObjectMapInfo.POSITION_DISTANCE_THRESHOLD)
 		{
 			hasMoved = true;
 			isUpdated = true;
@@ -437,7 +432,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 			// Update the velocity
 			mapInfo.Velocity = calculateVelocity(cachedPos, currentPos);
 		}
-		
+			
 		// if start to move
 		if(cachedVelocity == Vector3.zero && hasMoved)
 		{
@@ -451,20 +446,20 @@ public class OCPerceptionCollector : OCMonoBehaviour
 			connector.sendMoveActionDone(go, mapInfo.startMovePos, currentPos);
 			mapInfo.Velocity = Vector3.zero;
 		}
-
+	
 		// Rotation
 		Rotation currentRot = new Rotation(go.transform.rotation);
 		Rotation cachedRot = mapInfo.Rotation;
-
+	
 		if(!currentRot.Equals(cachedRot))
 		{
 			isUpdated = true;
 			mapInfo.Rotation = currentRot;
 		}
-
+	
 		return isUpdated;
 	}
-		
+			
 	/// <summary>
 	/// Notify OAC that certain block has been removed.
 	/// </summary>
@@ -477,32 +472,32 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		uint blockX = (uint)hitPoint.X % worldData.ChunkBlockWidth;
 		uint blockY = (uint)hitPoint.Y % worldData.ChunkBlockHeight;
 		uint blockZ = (uint)hitPoint.Z % worldData.ChunkBlockDepth;
-
+	
 		Chunk currentChunk = worldData.Chunks[chunkX, chunkY, chunkZ];
-
-/*		// check if this block is contained in a block conjunction.
-		// If so, find out the base z index of this conjunction.
-		int z = blockZ;
-		for (; z > floorHeight; z--)
-		{
-			if (currentChunk.Blocks[blockX, blockY, z].Type != BlockType.Air ||
-				!CheckSurfaceBlock(currentChunk, blockX, blockY, z) ||
-				z == floorHeight + 1)
-				break;
-		}
-		 */
+	
+		/*		// check if this block is contained in a block conjunction.
+			// If so, find out the base z index of this conjunction.
+			int z = blockZ;
+			for (; z > floorHeight; z--)
+			{
+				if (currentChunk.Blocks[blockX, blockY, z].Type != BlockType.Air ||
+					!CheckSurfaceBlock(currentChunk, blockX, blockY, z) ||
+					z == floorHeight + 1)
+					break;
+			}
+			 */
 		OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateTerrainMapInfo(currentChunk, blockX, blockY, blockZ, 1, currentChunk.Blocks[blockX, blockY, blockZ].Type);
 		//mapinfo.Visibility = OCObjectMapInfo.VISIBLE_STATUS.UNKNOWN;
 		mapinfo.RemoveProperty("visibility-status");
 		mapinfo.AddProperty("remove", "true", PropertyType.BOOL);
-
+	
 		List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo>();
 		removedBlockList.Add(mapinfo);
 		connector.handleObjectAppearOrDisappear(mapinfo.Id, mapinfo.Type, false);
 		connector.sendTerrainInfoMessage(removedBlockList);
-	
-	}
 		
+	}
+			
 	private void _notifyBlockAdded(Vector3i hitPoint)
 	{
 		uint chunkX = (uint)(hitPoint.X / worldData.ChunkBlockWidth);
@@ -511,18 +506,76 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		uint blockX = (uint)(hitPoint.X % worldData.ChunkBlockWidth);
 		uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
 		uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
-
+	
 		Chunk currentChunk = worldData.Chunks[chunkX, chunkY, chunkZ];
 		OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateTerrainMapInfo(currentChunk, blockX, blockY, blockZ, 1, currentChunk.Blocks[blockX, blockY, blockZ].Type);
-		
-		
+			
+			
 		List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
 		addedBlockList.Add(mapinfo);
 		connector.handleObjectAppearOrDisappear(mapinfo.Id, mapinfo.Type, true);
 		connector.sendTerrainInfoMessage(addedBlockList);
-	
-	}
 		
+	}
+	
+	private void PerceiveTerrain()
+	{
+		if(m_hasPerceivedTerrainForFirstTime)
+		{
+			return;
+		}
+
+		List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo>();
+		Map map = UnityEngine.GameObject.Find("Map");
+
+
+		foreach(Chunk chunk in map.GetChunks())
+		{
+			Vector3i viChunkPosition = chunk.GetPosition();
+
+			Debug.Log("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
+
+			// Maybe do some empty check here...there will be many empty chunks. But it might be
+			// equally expensive without setting new empty flags while creating chunks.
+
+			Vector3i viChunkStartingCorner = new Vector3i(viChunkPosition.x * chunk.SIZE_X, viChunkPosition.y * chunk.SIZE_Y & viChunkPosition.z * chunk.SIZE_Z);
+			Vector3i viChunkEndingCorner = new Vector3i((viChunkPosition.x + 1) * chunk.SIZE_X - 1, (viChunkPosition.y + 1) * chunk.SIZE_Y - 1, (viChunkPosition.z + 1) * chunk.SIZE_Z - 1);
+
+			Debug.Log("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
+			Debug.Log("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
+
+			for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
+			{
+				for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
+				{
+					for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
+					{
+						// Ok...now we have some globalz....
+
+						BlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
+
+						if(!globalBlock.IsEmpty)
+						{
+							OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+
+							terrainMapinfoList.Add(globalMapInfo);
+
+							// in case there are too many blocks, we send every 5000 blocks per message
+							if(terrainMapinfoList.Count >= 5)
+							{
+								m_connector.sendTerrainInfoMessage(terrainMapinfoList, true);
+								terrainMapinfoList.Clear();
+							}
+						}
+
+					}
+
+				}
+
+			}
+		}
+	}
+			
 	/// <summary>
 	/// currently, this function only runs for one time, when a robot is loaded
 	/// Percept the minecraft-like terrain.
@@ -531,14 +584,14 @@ public class OCPerceptionCollector : OCMonoBehaviour
 	/// </summary>
 	private void PerceptTerrain()
 	{
-		if(havePerceptTerrainForFirstTime)
+		if(hasPerceivedTerrainForFirstTime)
 		{
 			return;
 		}
 		// Get the world game object.
 		WorldGameObject world = GameObject.Find("World").GetComponent<WorldGameObject>() as WorldGameObject;
-
-
+	
+	
 		// Get the chunks data.
 		worldData = world.WorldData;
 		floorHeight = worldData.floor;
@@ -553,18 +606,18 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				{
 					continue;
 				}
-				
+					
 				Chunk currentChunk = worldData.Chunks[chunk_x, chunk_y, 0];
-				if(!chunkStatusMap.ContainsKey(currentChunk.ToString()))
+				if(!m_chunkStatusMap.ContainsKey(currentChunk.ToString()))
 				{
-					chunkStatusMap[currentChunk.ToString()] = true;
+					m_chunkStatusMap[currentChunk.ToString()] = true;
 				}
-
+	
 				if(chunkStatusMap[currentChunk.ToString()])
 				{
 					// Mark as percepted.
 					chunkStatusMap[currentChunk.ToString()] = false;
-
+	
 					bool conjunctionBreak = true;
 					for(uint x = 0; x < currentChunk.Width; x++)
 					{
@@ -576,42 +629,48 @@ public class OCPerceptionCollector : OCMonoBehaviour
 								{
 									conjunctionBreak = false;
 									OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateTerrainMapInfo(currentChunk, x, y, z, 1, currentChunk.Blocks[x, y, z].Type);
-								
-									terrainMapinfoList.Add(mapinfo);
 									
+									terrainMapinfoList.Add(mapinfo);
+
 									// in case there are too many blocks, we send every 5000 blocks per message
 									if(terrainMapinfoList.Count >= 5000)
 									{
 										connector.sendTerrainInfoMessage(terrainMapinfoList, true);
 										terrainMapinfoList.Clear();
 									}
-
+	
 								}   
 							}
 						}
 					}
-
+	
 				}
-				
-
-
+					
+	
+	
 			}
-			
-		}
 				
+		}
+					
 		if(terrainMapinfoList.Count > 0)
 		{
 			connector.sendTerrainInfoMessage(terrainMapinfoList, ! havePerceptTerrainForFirstTime);
 			terrainMapinfoList.Clear();
 		}
-		
+			
 		if(! havePerceptTerrainForFirstTime)
 		{
 			connector.sendFinishPerceptTerrian();
 		}
 		havePerceptTerrainForFirstTime = true;
 	}
-		
+
+		private void PerceiveStateChanges()
+		{
+
+		}
+
+			
 	private void PerceptStateChanges()
 	{
 		foreach(StateInfo stateInfo in StateChangesRegister.StateList)
@@ -622,18 +681,18 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				StatesToDelete.Add(stateInfo);
 				continue;
 			}
-
+	
 			System.Reflection.FieldInfo stateValInfo = stateInfo.behaviour.GetType().GetField(stateInfo.stateName);
 			System.Object valObj = stateValInfo.GetValue(stateInfo.behaviour);
-			
+				
 			String type = stateValInfo.FieldType.ToString();
-
+	
 			if(stateValInfo.FieldType.IsEnum)
 			{
 				type = "Enum";
 			}
-					
-
+						
+	
 			System.Object old = stateInfoCache[stateInfo];
 			if(!System.Object.Equals(stateInfoCache[stateInfo], valObj))
 			{
@@ -642,14 +701,14 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				{
 					// the opencog does not process enum type, we change it into string
 					connector.handleObjectStateChange(stateInfo.gameObject, stateInfo.stateName, "System.String", 
-					                                  stateInfoCache[stateInfo].ToString(), valObj.ToString());
+						                                  stateInfoCache[stateInfo].ToString(), valObj.ToString());
 				}
 				else
 				{
 					connector.handleObjectStateChange(stateInfo.gameObject, stateInfo.stateName, type, stateInfoCache[stateInfo], valObj);
 				}
-				
-				
+					
+					
 				stateInfoCache[stateInfo] = valObj;
 			}
 			else
@@ -665,24 +724,24 @@ public class OCPerceptionCollector : OCMonoBehaviour
 				{
 					connector.sendExistingStates(stateInfo.gameObject, stateInfo.stateName, type, valObj);
 				}
-		
+			
 			}
-				
-		
+					
+			
 		}
-		
+			
 		foreach(StateInfo stateInfo in StatesToDelete)
 		{
 			// the state doesn't exist any more, remove it;
 			stateInfoCache.Remove(stateInfo);
 			StateChangesRegister.UnregisterState(stateInfo);
-		
+			
 		}
 		StatesToDelete.Clear();
-		
+			
 		perceptStateChangesFirstTime = false;
 	}
-		
+			
 	/// <summary>
 	/// Check if a block is on the surface of a chunk, which means it is
 	/// a neighbor of an "Air" type block.
@@ -700,40 +759,40 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		{
 			return true;
 		}
-
+	
 		// Below
 		if(z - 1 >= 0 && chunk.Blocks[x, y, z - 1].Type == BlockType.Air)
 		{
 			return true;
 		}
-
+	
 		// East
 		if(x + 1 < chunk.Width && chunk.Blocks[x + 1, y, z].Type == BlockType.Air)
 		{
 			return true;
 		}
-
+	
 		// West
 		if(x - 1 >= 0 && chunk.Blocks[x - 1, y, z].Type == BlockType.Air)
 		{
 			return true;
 		}
-
+	
 		// North
 		if(y - 1 >= 0 && chunk.Blocks[x, y - 1, z].Type == BlockType.Air)
 		{
 			return true;
 		}
-
+	
 		// South
 		if(y + 1 < chunk.Height && chunk.Blocks[x, y + 1, z].Type == BlockType.Air)
 		{
 			return true;
 		}
-
+	
 		return false;
 	}
-		
+			
 	/// <summary>
 	/// Learn from the Basin Terrain Generator, just for debugging purpose.
 	/// </summary>
@@ -751,7 +810,7 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		{
 			return false;
 		}
-
+	
 		if(x <= 1 || y <= 1)
 		{
 			return false;
@@ -760,29 +819,29 @@ public class OCPerceptionCollector : OCMonoBehaviour
 		{
 			return false;
 		}
-
+	
 		return true;
 	}
-		
+			
 	protected UnityEngine.Vector3 calculateVelocity(UnityEngine.Vector3 oldPos, UnityEngine.Vector3 newPos)
 	{
 		UnityEngine.Vector3 deltaVector = newPos - oldPos;
 		// We suppose the object is performing uniform motion.
 		UnityEngine.Vector3 velocity = deltaVector / this.UpdatePerceptionInterval;
-			
+				
 		return velocity;
 	}
-			
+				
 	//---------------------------------------------------------------------------
-
-	#endregion
-
+	
+		#endregion
+	
 	//---------------------------------------------------------------------------
-
-	#region Other Members
-
+	
+		#region Other Members
+	
 	//---------------------------------------------------------------------------		
-
+	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="OpenCog.OCPerceptionCollector"/> class.  
 	/// Generally, intitialization should occur in the Start or Awake
@@ -791,13 +850,13 @@ public class OCPerceptionCollector : OCMonoBehaviour
 	public OCPerceptionCollector()
 	{
 	}
-
+	
 	//---------------------------------------------------------------------------
-
-	#endregion
-
+	
+		#endregion
+	
 	//---------------------------------------------------------------------------
-
+	
 }// class OCPerceptionCollector
 
 }// namespace OpenCog
