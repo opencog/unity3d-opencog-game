@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using OpenCog.Aspects;
+//using OpenCog.Aspects;
 using UnityEngine;
-using PostSharp.Aspects;
+//using PostSharp.Aspects;
 using System.Reflection;
 
 [Serializable]
@@ -26,21 +26,21 @@ public class Map : MonoBehaviour
 		ForwardDrop
 	};
 
-	[OCLogAspect]
+//	[OCLogAspect]
 	public void SetBlockAndRecompute (BlockData block, Vector3i pos)
 	{
 		MethodInfo info = this.GetType().GetMember("SetBlockAndRecompute")[0] as MethodInfo;
 
-		object[] attributes = info.GetCustomAttributes(typeof(OCLogAspect), true);
-		OCLogAspect asp = null;
-
-		if(attributes != null)
-			asp = attributes[0] as OCLogAspect;
-
-		if(asp == null)
-			Debug.Log("No OCLog Aspect...");
-
-		asp.OnEntry(null);
+//		object[] attributes = info.GetCustomAttributes(typeof(OCLogAspect), true);
+//		OCLogAspect asp = null;
+//
+//		if(attributes != null)
+//			asp = attributes[0] as OCLogAspect;
+//
+//		if(asp == null)
+//			Debug.Log("No OCLog Aspect...");
+//
+//		asp.OnEntry(null);
 
 		SetBlock (block, pos);
 		
@@ -68,7 +68,7 @@ public class Map : MonoBehaviour
 		
 		UpdateMeshColliderAfterBlockChange ();
 
-		asp.OnExit(null);
+//		asp.OnExit(null);
 	}
 	
 //	private bool IsBlockOnChunkEdge (Vector3i blockPositionGlobal)
