@@ -18,6 +18,7 @@
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
+using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
@@ -50,8 +51,10 @@ public class OCConnector : OCNetworkElement
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-	
 
+	private string m_myBrainId;   /** For example "OAC_NPC" */
+	private bool m_isInitialized = false; // Old property: IsInit(), old member var: isOacAlive
+	private Dictionary<string, float> m_feelingValueMap;
 			
 	//---------------------------------------------------------------------------
 
@@ -62,8 +65,24 @@ public class OCConnector : OCNetworkElement
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-		
 
+	/**
+     * Accessor to this avatar's brain id. (a.k.a OAC_xxx)
+     */
+	public string BrainID
+	{
+		get { return m_myBrainID; }
+	}
+
+	public Dictionary<string, float> FeelingValueMap
+	{
+		get { return m_feelingValueMap; }
+	}
+
+	public bool IsInitialized // Old property: IsInit(), old member var: isOacAlive
+		{
+			get { return m_isInitialized; }
+		}
 			
 	//---------------------------------------------------------------------------
 

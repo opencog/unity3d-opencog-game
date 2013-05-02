@@ -18,24 +18,22 @@
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
-using System.ComponentModel;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
-using Type = System.Type;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Utility
 {
 
 /// <summary>
-/// The OpenCog OCTypeConverter.
+/// The OpenCog VectorUtil.
 /// </summary>
 #region Class Attributes
 
@@ -44,7 +42,7 @@ namespace OpenCog
 [Serializable]
 	
 #endregion
-public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
+public class VectorUtil : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -77,25 +75,69 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------
 
-	public static T ChangeType<T>(object value)
-	{
-		return (T)ChangeType(typeof(T), value);
-	}
-
-	public static object ChangeType(Type t, object value)
-	{
-		TypeConverter tc = TypeDescriptor.GetConverter(t);
-		return tc.ConvertFrom(value);
-	}
+	public static double NormalizeAngle(double angle)
+		{
+			while(angle > Math.PI)
+			{
+				angle -= (Math.PI*2);
+			}
+			while(angle < -Math.PI)
+			{
+				angle += (Math.PI*2);
+			}
+			return angle;
+		}
 		
-	public static void RegisterTypeConverter<T, TC>() where TC : TypeConverter
-	{
-		TypeDescriptor.AddAttributes
-			(
-				typeof(T)
-			, new TypeConverterAttribute(typeof(TC))
-			);
-	}
+		/// <summary>
+		/// Converts any absolute angle value from OAC-based coordinates
+		/// to Unity-based ones.
+		/// </summary>
+		/// <param name="angle">
+		/// angle to be converted
+		/// </param>
+		/// <returns>
+		/// the converted absolute angle value
+		/// </returns>
+		public static double OAC2UnityConv(double angle)
+		{
+			double result = VectorUtil.NormalizeAngle(angle) + (Math.PI/2);
+			return VectorUtil.NormalizeAngle(result);
+		}
+		
+		/// <summary>
+		/// Converts any absolute angle value from Unity-based coordinates
+		/// to OAC-based ones.
+		/// </summary>
+		/// <param name="angle">
+		/// angle to be converted
+		/// </param>
+		/// <returns>
+		/// the converted absolute angle value
+		/// </returns>
+		public static double Unity2OACConv(double angle)
+		{
+			double result = VectorUtil.NormalizeAngle(angle) - (Math.PI/2);
+			return VectorUtil.NormalizeAngle(result);
+		}
+
+        /// <summary>
+        /// Convert a position vector from Unity (x, y, z) coordinate to OpenCog coordinate (x, z, y).
+        /// </summary>
+        public static UnityEngine.Vector3 ConvertToOpenCogCoord(UnityEngine.Vector3 unityCoord)
+        {
+            return new UnityEngine.Vector3(unityCoord.x, unityCoord.z, unityCoord.y);
+        }
+
+        /// <summary>
+        /// OpenCog takes the center point of one object as its physical coordinates.
+        /// However, sometimes we get the bottom left point vector from unity. In that situation,
+        /// we need to calculate its central point manually by its size.
+        /// </summary>
+		public static UnityEngine.Vector3 ConvertToCentralCoord(UnityEngine.Vector3 unityCoord, UnityEngine.Vector3 size)
+		{
+            UnityEngine.Vector3 ocVec = ConvertToOpenCogCoord(unityCoord);
+            return ocVec + 0.5f * size;
+		}
 
 	//---------------------------------------------------------------------------
 
@@ -127,7 +169,7 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------
 
-}// class OCTypeConverter
+}// class VectorUtil
 
 }// namespace OpenCog
 

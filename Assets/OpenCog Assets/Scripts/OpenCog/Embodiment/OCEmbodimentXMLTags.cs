@@ -42,7 +42,7 @@ namespace OpenCog
 [Serializable]
 	
 #endregion
-public class EmbodimentXMLTags : OCMonoBehaviour
+public class OCEmbodimentXMLTags : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------

@@ -310,7 +310,7 @@ public class OCNetworkElement : OCMonoBehaviour
 	/// <param name='ar'>
 	/// Async result <see cref="IAsyncResult"/>
 	/// </param>
-	private void ConnectCallback(IAsyncResult ar)
+	private void ConnectCallback(System.IAsyncResult ar)
 	{
 		try 
 		{

@@ -43,7 +43,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class StateChangesRegister : OCMonoBehaviour
+public class OCStateChangesRegister : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------

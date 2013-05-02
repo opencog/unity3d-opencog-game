@@ -43,7 +43,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class PhysiologicalEffect : OCMonoBehaviour
+public class OCPhysiologicalEffect : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -196,7 +196,7 @@ public class PhysiologicalEffect : OCMonoBehaviour
 		STRONG = 4
 	};
 
-	public PhysiologicalEffect(CostLevel level)
+	public OCPhysiologicalEffect(CostLevel level)
 	{
 		m_costLevel = level;
 		// MAX_ACTION_NUM is the number of normal actions possible on a full battery charge.

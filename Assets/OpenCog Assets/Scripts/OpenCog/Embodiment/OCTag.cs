@@ -18,24 +18,22 @@
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
-using System.ComponentModel;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
-using Type = System.Type;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Embodiment
 {
 
 /// <summary>
-/// The OpenCog OCTypeConverter.
+/// The OpenCog OCTag.
 /// </summary>
 #region Class Attributes
 
@@ -44,7 +42,7 @@ namespace OpenCog
 [Serializable]
 	
 #endregion
-public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
+public class OCTag : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -77,25 +75,7 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------
 
-	public static T ChangeType<T>(object value)
-	{
-		return (T)ChangeType(typeof(T), value);
-	}
-
-	public static object ChangeType(Type t, object value)
-	{
-		TypeConverter tc = TypeDescriptor.GetConverter(t);
-		return tc.ConvertFrom(value);
-	}
-		
-	public static void RegisterTypeConverter<T, TC>() where TC : TypeConverter
-	{
-		TypeDescriptor.AddAttributes
-			(
-				typeof(T)
-			, new TypeConverterAttribute(typeof(TC))
-			);
-	}
+	
 
 	//---------------------------------------------------------------------------
 
@@ -119,7 +99,10 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------		
 
-	
+	public OCTag(string propertyValue, System.Type propertyType)
+		{
+
+		}
 
 	//---------------------------------------------------------------------------
 
@@ -127,7 +110,7 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------
 
-}// class OCTypeConverter
+}// class OCTag
 
 }// namespace OpenCog
 
