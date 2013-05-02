@@ -218,7 +218,7 @@ public class SocialInteraction : OCMonoBehaviour
 		if(a.gameObject.tag == "Player")
 		{
 			Player player = a as Player;
-			HUD theHud = player.GetTheHUD();
+			OCHeadUpDisplay theHud = player.GetTheHUD();
 			if(theHud == null)
 			{
 				Debug.LogError("The player's HUD is null! --in touch action");

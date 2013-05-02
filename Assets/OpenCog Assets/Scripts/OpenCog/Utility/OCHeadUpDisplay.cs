@@ -43,7 +43,7 @@ namespace OpenCog
 [Serializable]
 	
 #endregion
-public class HUD : OCMonoBehaviour
+public class OCHeadUpDisplay : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -51,9 +51,9 @@ public class HUD : OCMonoBehaviour
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-	private Avatar m_selectedAvatar;
-
-	private Player m_player;
+//	private Avatar m_selectedAvatar;
+//
+//	private Player m_player;
 
 	private bool m_isShowingForcePanel = false;
 
@@ -623,11 +623,11 @@ public class HUD : OCMonoBehaviour
 	//---------------------------------------------------------------------------		
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.HUD"/> class.  
+	/// Initializes a new instance of the <see cref="OpenCog.OCHeadUpDisplay"/> class.  
 	/// Generally, intitialization should occur in the Start or Awake
 	/// functions, not here.
 	/// </summary>
-	public HUD()
+	public OCHeadUpDisplay()
 	{
 	}
 
