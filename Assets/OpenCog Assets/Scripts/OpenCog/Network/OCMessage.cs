@@ -148,7 +148,7 @@ public abstract class OCMessage : IConvertible
 		}
 	}
 		
-	public abstract string ToString();
+	public new abstract string ToString();
 	
 	public abstract void FromString(string message);
 

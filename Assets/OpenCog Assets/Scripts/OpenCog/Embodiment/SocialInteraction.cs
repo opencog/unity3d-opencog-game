@@ -23,6 +23,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using OpenCog.Actions;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -51,9 +52,9 @@ public class SocialInteraction : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	private ActionSummary m_touchAction;  // touch me, depend on the force you use, the npc would consider as pat, push or hit.
-	private ActionSummary m_kissAction; // kiss me
-	private ActionSummary m_hugAction;  // hug me
+	private OCAction m_touchAction;  // touch me, depend on the force you use, the npc would consider as pat, push or hit.
+	private OCAction m_kissAction; // kiss me
+	private OCAction m_hugAction;  // hug me
 		
 	//---------------------------------------------------------------------------
 

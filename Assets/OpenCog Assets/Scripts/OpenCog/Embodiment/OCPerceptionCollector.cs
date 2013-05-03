@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
+using OpenCog.Network;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
