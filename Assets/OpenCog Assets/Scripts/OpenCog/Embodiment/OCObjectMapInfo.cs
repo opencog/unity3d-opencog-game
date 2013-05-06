@@ -55,7 +55,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		/// public (I know Unity encourages you to do this).  Instead, make use of
 		/// public properties whenever possible.
 		/// </summary>
-		private int m_ExampleVar;
+		private int _exampleVar;
 		
 		 #region Constants
 		private static readonly float POSITION_DISTANCE_THRESHOLD = 0.05f;
@@ -67,19 +67,19 @@ public class OCObjectMapInfo : OCMonoBehaviour
 
         #endregion
 		
-		private string m_id;
-		private string m_name;
-		private string m_type;
-		private UnityEngine.Vector3 m_position; // Position of object
-		private Vector3Wrapper m_positionWrapper;
-		private Rotation m_rotation = new Rotation(0, 0, 0); // Rotation of object
-		private UnityEngine.Vector3 m_velocity; // Velocity of an object, if it is moving.
-		private Vector3Wrapper m_velocityWrapper;
-		private float m_length, m_width, m_height; // Size of an object.
-		private float m_weight; // weight of an object
-		private UnityEngine.Vector3 m_startMovePos; // the lastest time start to move position
-		private List<OpenCog.Serialization.OCPropertyField> m_properties = new List<OpenCog.Serialization.OCPropertyField> ();
-		private VISIBLE_STATUS m_visibility = VISIBLE_STATUS.VISIBLE; // Set the visibility of an object to visible by default.
+		private string _id;
+		private string _name;
+		private string _type;
+		private UnityEngine.Vector3 _position; // Position of object
+		private Vector3Wrapper _positionWrapper;
+		private Rotation _rotation = new Rotation(0, 0, 0); // Rotation of object
+		private UnityEngine.Vector3 _velocity; // Velocity of an object, if it is moving.
+		private Vector3Wrapper _velocityWrapper;
+		private float _length, _width, _height; // Size of an object.
+		private float _weight; // weight of an object
+		private UnityEngine.Vector3 _startMovePos; // the lastest time start to move position
+		private List<OpenCog.Serialization.OCPropertyField> _properties = new List<OpenCog.Serialization.OCPropertyField> ();
+		private VISIBLE_STATUS _visibility = VISIBLE_STATUS.VISIBLE; // Set the visibility of an object to visible by default.
 
 		//---------------------------------------------------------------------------
 
@@ -92,68 +92,68 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		//---------------------------------------------------------------------------
 		
 		public string ID {
-			get { return m_id; }
-			set { m_id = value; }
+			get { return _id; }
+			set { _id = value; }
 		}
 
 		public string Name {
-			get { return m_name; }
-			set { m_name = value; }
+			get { return _name; }
+			set { _name = value; }
 		}
 
 		public string Type {
-			get { return m_type; }
-			set { m_type = value; }
+			get { return _type; }
+			set { _type = value; }
 		}
 
 		// Will be called implicitly when serialized by protobuf-net.
 		// Do not invoke this explicitly.
 		public Vector3Wrapper PositionWrapper {
-			get { return m_positionWrapper; }
+			get { return _positionWrapper; }
 			set { Position = value.ToVector3 (); }
 		}
 
 		public UnityEngine.Vector3 Position {
-			get { return m_position; }
+			get { return _position; }
 			set {
-				m_position = value;
-				m_positionWrapper = new Vector3Wrapper (m_position);
+				_position = value;
+				_positionWrapper = new Vector3Wrapper (_position);
 			}
 		}
 
 		// Will be called implicitly when serialized by protobuf-net.
 		// Do not invoke this explicitly.
 		public Vector3Wrapper VelocityWrapper {
-			get { return m_velocityWrapper; }
+			get { return _velocityWrapper; }
 			set { Velocity = value.ToVector3 ();  }
 		}
 
 		public UnityEngine.Vector3 Velocity {
-			get { return m_velocity; }
+			get { return _velocity; }
 			set {
-				m_velocity = value;
-				velocityWrapper = new Vector3Wrapper (m_velocity);
+				_velocity = value;
+				velocityWrapper = new Vector3Wrapper (_velocity);
 			}
 		}
 
 		public Rotation Rotation {
-			get { return m_rotation; }
-			set { m_rotation = value; }
+			get { return _rotation; }
+			set { _rotation = value; }
 		}
 
 		public float Length {
-			get { return m_length; }
-			set { m_length = value; }
+			get { return _length; }
+			set { _length = value; }
 		}
 
 		public float Width {
-			get { return m_width; }
-			set { m_width = value; }
+			get { return _width; }
+			set { _width = value; }
 		}
 
 		public float Height {
-			get { return m_height; }
-			set { m_height = value; }
+			get { return _height; }
+			set { _height = value; }
 		}
 
 		public VISIBLE_STATUS Visibility {
@@ -172,7 +172,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		}
 
 		public UnityEngine.Vector3 Size {
-			get { return new UnityEngine.Vector3 ((float)this.m_length, (float)this.m_width, (float)this.m_height); }
+			get { return new UnityEngine.Vector3 ((float)this._length, (float)this._width, (float)this._height); }
 		}
 
 		//---------------------------------------------------------------------------
@@ -247,7 +247,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		
 		public OpenCog.Serialization.OCPropertyField CheckPropertyExist (string keyStr)
 		{
-			foreach (OpenCog.Serialization.OCPropertyField ocp in m_properties) {
+			foreach (OpenCog.Serialization.OCPropertyField ocp in _properties) {
 				if (ocp.key == keyStr)
 					return ocp;
 			}
@@ -259,9 +259,9 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			// Check if property existing
 			OpenCog.Serialization.OCPropertyField ocp = CheckPropertyExist (keyStr);
 			if (ocp != null) {
-				m_properties.Remove (ocp);
+				_properties.Remove (ocp);
 			}
-			m_properties.Add (new OpenCog.Serialization.OCPropertyField (keyStr, valueStr, type));
+			_properties.Add (new OpenCog.Serialization.OCPropertyField (keyStr, valueStr, type));
 		}
 
 		public void RemoveProperty (string keyStr)
@@ -269,7 +269,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			// Check if property existing
 			OpenCog.Serialization.OCPropertyField ocp = CheckPropertyExist (keyStr);
 			if (ocp != null) {
-				m_properties.Remove (ocp);
+				_properties.Remove (ocp);
 			}
 		}
 
@@ -325,53 +325,53 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		public OCObjectMapInfo (UnityEngine.GameObject gameObject)
 		{
 			// Get id of a game object
-			m_id = gameObject.GetInstanceID ().ToString ();
+			_id = gameObject.GetInstanceID ().ToString ();
 			// Get name
-			m_name = gameObject.name;
+			_name = gameObject.name;
 			// TODO: By default, we are using object type.
-			m_type = EmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
+			_type = EmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
 
 			// Convert from unity coordinate to OAC coordinate.
-			m_position = VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
+			_position = VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
 			// Get rotation
-			m_rotation = new Rotation (gameObject.transform.rotation);
+			_rotation = new Rotation (gameObject.transform.rotation);
 			// Calculate the velocity later
-			m_velocity = Vector3.zero;
+			_velocity = Vector3.zero;
 
 			// Get size
 			if (gameObject.collider != null) {
 				// Get size information from collider.
-				m_width = gameObject.collider.bounds.size.z;
-				m_height = gameObject.collider.bounds.size.y;
-				m_length = gameObject.collider.bounds.size.x;
+				_width = gameObject.collider.bounds.size.z;
+				_height = gameObject.collider.bounds.size.y;
+				_length = gameObject.collider.bounds.size.x;
 			} else {
 				Debug.LogWarning ("No collider for gameobject " + gameObject.name + ", assuming a point.");
 				// Set default value of the size.
-				m_width = 0.1f;
-				m_height = 0.1f;
-				m_length = 0.1f;
+				_width = 0.1f;
+				_height = 0.1f;
+				_length = 0.1f;
 			}
 
 			if (gameObject.tag == "OCA") {
 				// This is an OC avatar, we will use the brain id instead of unity id.
 				OCConnector connector = gameObject.GetComponent<OCConnector> () as OCConnector;
 				if (connector != null)
-					m_id = connector.BrainId;
-				m_type = EmbodimentXMLTags.PET_OBJECT_TYPE;
+					_id = connector.BrainId;
+				_type = EmbodimentXMLTags.PET_OBJECT_TYPE;
 
 			} else if (gameObject.tag == "Player") {
 				// This is a human player avatar.
-				m_type = EmbodimentXMLTags.AVATAR_OBJECT_TYPE;
-				m_length = OCObjectMapInfo.DEFAULT_AVATAR_LENGTH;
-				m_width = OCObjectMapInfo.DEFAULT_AVATAR_WIDTH;
-				m_height = OCObjectMapInfo.DEFAULT_AVATAR_HEIGHT;
+				_type = EmbodimentXMLTags.AVATAR_OBJECT_TYPE;
+				_length = OCObjectMapInfo.DEFAULT_AVATAR_LENGTH;
+				_width = OCObjectMapInfo.DEFAULT_AVATAR_WIDTH;
+				_height = OCObjectMapInfo.DEFAULT_AVATAR_HEIGHT;
 			}
 
 			// Get weight
 			if (gameObject.rigidbody != null) {
-				m_weight = gameObject.rigidbody.mass;
+				_weight = gameObject.rigidbody.mass;
 			} else {
-				m_weight = 0.0f;
+				_weight = 0.0f;
 			}
 
 			// Get a property manager instance

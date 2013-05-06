@@ -51,12 +51,12 @@ public abstract class OCAction : OCMonoBehaviour
 	/// <summary>
 	/// Indicates whether this action has an associated animation.
 	/// </summary>
-	private bool m_HasAnimation = false;
+	private bool _hasAnimation = false;
 
 	/// <summary>
 	/// The animation associated with this action, if any.
 	/// </summary>
-	private OCAnimationEffect m_AnimationEffect = null;
+	private OCAnimationEffect _animationEffect = null;
 
 
 	//---------------------------------------------------------------------------
@@ -78,8 +78,8 @@ public abstract class OCAction : OCMonoBehaviour
 	/// </value>
 	public bool HasAnimation
 	{
-		get {return m_HasAnimation;}
-		set {m_HasAnimation = value;}
+		get {return _hasAnimation;}
+		set {_hasAnimation = value;}
 	}
 
 	/// <summary>
@@ -92,8 +92,8 @@ public abstract class OCAction : OCMonoBehaviour
 	[OCBoolPropertyToggle("HasAnimation", true)]
 	public OCAnimationEffect AnimationEffect
 	{
-		get {return m_AnimationEffect;}
-		set {m_AnimationEffect = value;}
+		get {return _animationEffect;}
+		set {_animationEffect = value;}
 	}
 
 	//---------------------------------------------------------------------------

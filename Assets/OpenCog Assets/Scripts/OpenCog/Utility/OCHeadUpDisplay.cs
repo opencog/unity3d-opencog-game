@@ -52,60 +52,60 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-//	private Avatar m_selectedAvatar;
+//	private Avatar _selectedAvatar;
 //
-//	private Player m_player;
+//	private Player _player;
 
-	private bool m_isShowingForcePanel = false;
+	private bool _isShowingForcePanel = false;
 
-	private bool m_isForceIncrease = true;
+	private bool _isForceIncrease = true;
 
-	private bool m_showPsiPanel = false;
+	private bool _showPsiPanel = false;
 
-	private bool m_isFeelingTextureMapInitialized = false;
+	private bool _isFeelingTextureMapInitialized = false;
 
 	// We need to initialize the demand to texture map at the first time of obtaining the
 	// demand information.
-	private bool m_isDemandTextureMapInitialized = false;
+	private bool _isDemandTextureMapInitialized = false;
 
-	private float m_feelingBoxWidth;
+	private float _feelingBoxWidth;
 
-	private float m_demandBoxWidth;
+	private float _demandBoxWidth;
 
-	private float m_lastTimeRenderForcePanel;
+	private float _lastTimeRenderForcePanel;
 
-	private float m_currentForce = 1.0f;
+	private float _currentForce = 1.0f;
 
-	private OpenCog.Embodiment.SocialInteraction m_socialInteraction = null;
+	private OpenCog.Embodiment.SocialInteraction _socialInteraction = null;
 
-	private UnityEngine.Texture2D m_barTexture, m_backgroundTexture;
+	private UnityEngine.Texture2D _barTexture, _backgroundTexture;
 
-	private UnityEngine.Vector2 m_currentScrollPosition = new Vector2(0.0f, 0.0f);
+	private UnityEngine.Vector2 _currentScrollPosition = new Vector2(0.0f, 0.0f);
 
 	// the skin panel will use
-	private UnityEngine.GUISkin m_panelSkin;
+	private UnityEngine.GUISkin _panelSkin;
     
 	// style for label
-	private UnityEngine.GUIStyle m_boxStyle;
+	private UnityEngine.GUIStyle _boxStyle;
 
-	private UnityEngine.GUITexture m_reticuleTexture;
+	private UnityEngine.GUITexture _reticuleTexture;
     
 	// A map from feeling names to textures. The texture needs to be created dynamically
 	// whenever a new feeling is added.
-	private Dictionary<string, UnityEngine.Texture2D> m_feelingTextureMap;
+	private Dictionary<string, UnityEngine.Texture2D> _feelingTextureMap;
     
 	// A map from demand names to textures. The texture needs to be created dynamically
 	// whenever a new demandis added.
-	private Dictionary<string, UnityEngine.Texture2D> m_demandTextureMap;
+	private Dictionary<string, UnityEngine.Texture2D> _demandTextureMap;
     
 	// We need to initialize the feeling to texture map at the first time of obtaining the
 	// feeling information.
 
-	private OCConnector m_connector;
+	private OCConnector _connector;
 
-	private UnityEngine.Rect m_panel;
+	private UnityEngine.Rect _panel;
 
-	private UnityEngine.Vector2 m_panelScrollPosition;
+	private UnityEngine.Vector2 _panelScrollPosition;
 
 
 
@@ -122,7 +122,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 	public bool IsShowingForcePanel
 	{
-			get {return m_isShowingForcePanel;}
+			get {return _isShowingForcePanel;}
 	}
 
 	public float CurrentForceVal
@@ -159,11 +159,11 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		{
 			Debug.LogError("No \"Reticule\" game object found");
 		}
-		m_reticuleTexture = reticule.gameObject.GetComponent<GUITexture>();
-		m_reticuleTexture.pixelInset = new Rect(Screen.width / 2, Screen.height / 2, 16, 16);
+		_reticuleTexture = reticule.gameObject.GetComponent<GUITexture>();
+		_reticuleTexture.pixelInset = new Rect(Screen.width / 2, Screen.height / 2, 16, 16);
 
-		m_feelingTextureMap = new Dictionary<string, Texture2D>();
-		m_demandTextureMap = new Dictionary<string, Texture2D>();
+		_feelingTextureMap = new Dictionary<string, Texture2D>();
+		_demandTextureMap = new Dictionary<string, Texture2D>();
 		
 		ConstructForceTexture();
 
@@ -175,7 +175,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	/// </summary>
 	public void Update()
 	{
-		m_reticuleTexture.pixelInset = new Rect(Screen.width / 2, Screen.height / 2, 16, 16);
+		_reticuleTexture.pixelInset = new Rect(Screen.width / 2, Screen.height / 2, 16, 16);
 
 		OCLogger.Fine(gameObject.name + " is updated.");
 	}
@@ -222,7 +222,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 			Debug.LogError("To show the force panel but the SocialInteractioner is null!");
 			yield break;
 		}
-		m_socialInteraction = currentSocialInteraction;
+		_socialInteraction = currentSocialInteraction;
 		showForcePanel();
 		while(true)
 		{
@@ -237,7 +237,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 	public void hideForcePanel()
 	{
-		m_isShowingForcePanel = false;
+		_isShowingForcePanel = false;
 	}
 
 	void OnGUI()
@@ -247,42 +247,42 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		int width = 200;
 		Rect window = new Rect(inset, Screen.height - Screen.height / 3 - inset, width, Screen.height / 3);
         
-		if(m_selectedAvatar == null)
+		if(_selectedAvatar == null)
 		{
 			GUILayout.Window(2, window, ActionWindow, "Your Action List");
 		}
 		else
 		{
-			GUILayout.Window(2, window, ActionWindow, m_selectedAvatar.gameObject.transform.name + "'s Action List");
+			GUILayout.Window(2, window, ActionWindow, _selectedAvatar.gameObject.transform.name + "'s Action List");
 
 			// Psi (feeling, demand etc.) panel controlling section
-			if(m_selectedAvatar.tag == "OCA")
+			if(_selectedAvatar.tag == "OCA")
 			{
-				m_connector = selectedAvatar.GetComponent<OCConnector>() as OCConnector;
-				if(m_connector != null)
+				_connector = selectedAvatar.GetComponent<OCConnector>() as OCConnector;
+				if(_connector != null)
 				{
 					ShowPsiPanel();
 				}
 				// If the avatar has no connector it's a puppet Avatar controlled by the console only
-				if(m_panelSkin != null)
+				if(_panelSkin != null)
 				{
-					GUI.skin = m_panelSkin;
+					GUI.skin = _panelSkin;
 				}
 			}
 			else
 			{
 				HidePsiPanel();
-				m_connector = null;
+				_connector = null;
 			}
             
 			if(showPsiPanel)
 			{
-				if(m_connector != null)
+				if(_connector != null)
 				{
 					float theWidth = Screen.width * 0.25f;
 					float theHeight = Screen.height / 3;
 					panel = new Rect(Screen.width - theWidth - inset, Screen.height - theHeight - inset, theWidth, theHeight);
-					GUILayout.Window(3, panel, PsiPanel, m_selectedAvatar.gameObject.transform.name + "'s Psi States Panel",
+					GUILayout.Window(3, panel, PsiPanel, _selectedAvatar.gameObject.transform.name + "'s Psi States Panel",
                                      GUILayout.MinWidth(theWidth), GUILayout.MinHeight(theHeight));
 				}
 			}
@@ -296,32 +296,32 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		GUI.Box(new Rect(12, 12, 32, 32), "", theStyle);
 		
 		// the force is looping between minForce and maxForce, util the mouse button released
-		if(m_isShowingForcePanel)
+		if(_isShowingForcePanel)
 		{
 			float currentTime = Time.time;
 			float deltaForce = (currentTime - lastTimeRenderForcePanel) * maxForce;
-			if(m_isForceIncrease)
+			if(_isForceIncrease)
 			{
-				m_currentForce += deltaForce;
-				if(m_currentForce > maxForce)
+				_currentForce += deltaForce;
+				if(_currentForce > maxForce)
 				{
-					m_currentForce = maxForce;
-					m_isForceIncrease = false;
+					_currentForce = maxForce;
+					_isForceIncrease = false;
 				}
 			}
 			else
 			{
-				m_currentForce -= deltaForce;
-				if(m_currentForce < minForce)
+				_currentForce -= deltaForce;
+				if(_currentForce < minForce)
 				{
-					m_currentForce = minForce;
-					m_isForceIncrease = true;
+					_currentForce = minForce;
+					_isForceIncrease = true;
 				}
 			}
 
-			DisplayForcePanel(m_currentForce);
+			DisplayForcePanel(_currentForce);
 			
-			m_lastTimeRenderForcePanel = currentTime;
+			_lastTimeRenderForcePanel = currentTime;
 		}
 	}
 
@@ -361,18 +361,18 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 	private void  showForcePanel()
 	{
-		m_isShowingForcePanel = true;
-		m_isForceIncrease = true;
-		m_currentForce = 1.0f;
-		m_lastTimeRenderForcePanel = Time.time;
+		_isShowingForcePanel = true;
+		_isForceIncrease = true;
+		_currentForce = 1.0f;
+		_lastTimeRenderForcePanel = Time.time;
 	}
 
 	private void showFeelings()
 	{
-		Dictionary<string, float> feelingValueMap = m_connector.FeelingValueMap;
+		Dictionary<string, float> feelingValueMap = _connector.FeelingValueMap;
         
 		//panelScrollPosition = GUILayout.BeginScrollView(scrollPosition);
-		m_feelingBoxWidth = panel.width * 0.58f;
+		_feelingBoxWidth = panel.width * 0.58f;
 
 		// Display feeling levels
 		if(feelingValueMap.Count == 0)
@@ -416,9 +416,9 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 				GUILayout.Space(16f);
 				
 				// We only need to initialize the map at the first time.
-				if(!m_isFeelingTextureMapInitialized)
+				if(!_isFeelingTextureMapInitialized)
 				{
-					m_isFeelingTextureMapInitialized = true;
+					_isFeelingTextureMapInitialized = true;
 				}
 			}// lock
 		}// if			
@@ -429,16 +429,16 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	 */	
 	private void ShowDemands()
 	{
-		Dictionary<string, float> demandValueMap = m_connector.DemandValueMap;
-		string currentDemandName = m_connector.CurrentDemandName;
+		Dictionary<string, float> demandValueMap = _connector.DemandValueMap;
+		string currentDemandName = _connector.CurrentDemandName;
         
-		m_demandBoxWidth = panel.width * 0.58f;
+		_demandBoxWidth = panel.width * 0.58f;
 
 		// Display demand satisfactions (i.e. truth values)
 		if(demandValueMap.Count == 0)
 		{
 			GUILayout.BeginHorizontal();
-			GUILayout.Label("Waiting for demand update...", GUILayout.MaxWidth(m_panel.width));
+			GUILayout.Label("Waiting for demand update...", GUILayout.MaxWidth(_panel.width));
 			GUILayout.EndHorizontal();
 		}
 		else
@@ -456,28 +456,28 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 					Color c = (currentDemandName == demand) ? new Color(255, 0, 0, 0.6f) : 
                                                            new Color(0, 0, 255, 0.6f);
                     
-					if(m_demandTextureMap.ContainsKey(demand))
+					if(_demandTextureMap.ContainsKey(demand))
 					{
-						Destroy(m_demandTextureMap[demand]);
+						Destroy(_demandTextureMap[demand]);
 					}
-					m_demandTextureMap[demand] = ConstructBarTexture(value, (int)m_demandBoxWidth, c, dark);
+					_demandTextureMap[demand] = ConstructBarTexture(value, (int)_demandBoxWidth, c, dark);
 
 					// Set the texture of background.
-					m_boxStyle.normal.background = m_demandTextureMap[demand];
+					_boxStyle.normal.background = _demandTextureMap[demand];
                     
 					// Draw the label and bar for the demand
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(demand + ": ", m_panelSkin.label, GUILayout.MaxWidth(m_panel.width * 0.4f));
-					GUILayout.Box("", m_boxStyle, GUILayout.Width(demandBoxWidth), GUILayout.Height(16));
+					GUILayout.Label(demand + ": ", _panelSkin.label, GUILayout.MaxWidth(_panel.width * 0.4f));
+					GUILayout.Box("", _boxStyle, GUILayout.Width(demandBoxWidth), GUILayout.Height(16));
 					GUILayout.EndHorizontal();
 				}
                 
 				GUILayout.Space(16f); 
                 
 				// We only need to initialize the map at the first time.
-				if(!m_isDemandTextureMapInitialized)
+				if(!_isDemandTextureMapInitialized)
 				{
-					m_isDemandTextureMapInitialized = true;
+					_isDemandTextureMapInitialized = true;
 				}
 			}// lock
 		}// if
@@ -602,13 +602,13 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		float top = Screen.height / 2;
 		float left = Screen.width / 2;
 		
-		GUI.DrawTexture(new Rect(left, top, w, h), m_backgroundTexture);
+		GUI.DrawTexture(new Rect(left, top, w, h), _backgroundTexture);
 		GUI.Label(new Rect(left, top + 20.0f, 60.0f, 20.0f), MAX_FORCE.ToString());
 		GUI.Label(new Rect(left, top + (h - 20.0f), 60.0f, 20.0f), MIN_FORCE.ToString());
-		float forceHeight = m_currentForce / MAX_FORCE * (h - 40.0f);
+		float forceHeight = _currentForce / MAX_FORCE * (h - 40.0f);
 		
-		GUI.DrawTexture(new Rect(left + 20.0f, top + (h - 20.0f - forceHeight), w / 2, forceHeight), m_barTexture, ScaleMode.ScaleAndCrop);
-		GUI.Label(new Rect(left + 30.0f, top + h / 2, 100.0f, 20.0f), "Force=" + m_currentForce.ToString());
+		GUI.DrawTexture(new Rect(left + 20.0f, top + (h - 20.0f - forceHeight), w / 2, forceHeight), _barTexture, ScaleMode.ScaleAndCrop);
+		GUI.Label(new Rect(left + 30.0f, top + h / 2, 100.0f, 20.0f), "Force=" + _currentForce.ToString());
 		
 		
 	}

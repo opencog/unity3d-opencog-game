@@ -51,7 +51,7 @@ public class OCRawMessage : OCMessage
 
 	//---------------------------------------------------------------------------
 	
-	private string m_RawText;
+	private string _rawText;
 			
 	//---------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ public class OCRawMessage : OCMessage
 		
 	public string RawText
 	{
-		get{ return m_RawText; }
-		set{ m_RawText = value; }
+		get{ return _rawText; }
+		set{ _rawText = value; }
 	}
 			
 	//---------------------------------------------------------------------------
@@ -81,12 +81,12 @@ public class OCRawMessage : OCMessage
 
 	public override string ToString()
 	{
-		return m_RawText;
+		return _rawText;
 	}
 	
 	public override void FromString(string message)
 	{
-		m_RawText = message;
+		_rawText = message;
 	}
 
 	//---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ public class OCRawMessage : OCMessage
 	public OCRawMessage(string sourceID, string targetID, string message) 
 	: base(sourceID, targetID, OCMessage.MessageType.RAW)
 	{
-		m_RawText = message;
+		_rawText = message;
 	}
 
 	//---------------------------------------------------------------------------

@@ -58,24 +58,24 @@ public class Console : OCMonoBehaviour
 	/// public (I know Unity encourages you to do this).  Instead, make use of
 	/// public properties whenever possible.
 	/// </summary>
-	static private Console m_console; // singleton 
-	public GUISkin m_GUISkin; /// the skin the console will use
-	public GUIStyle m_commandStyle; /// style for my commands
-	private float m_currentYPosition; // The current y-position of the console.
-	private Movement m_movementState = Movement.NONE; // Keeps track of the current movement state of the console.
-	private bool m_isShown = false; // Keeps track of the current display status of the console.
-	private float m_panelHeight; // Height of the console panel.
-	private Rect m_panelRect; // Rect describing the area the console panel covers.
-	private Vector2 m_scrollPosition; // The scroll position in the panel text (history)
-	private ArrayList m_consoleEntries; // Previous entries to the console.
-	private string m_currentInput = ""; // The text currently being entered.
-	private LinkedList<string> m_inputHistory; // A history of input for up arrow support
-	private LinkedListNode<string> m_inputHistoryCurrent = null; /// Current inputHistory position
-	OCInputController m_inputController; // InputController to capture and return the consumer of input.
-	private string m_defaultCommand; // Default command??
-	private Hashtable m_commandTable = new Hashtable(); // Command history table, relation to m_consoleEntries is not yet clear.
-	private ArrayList m_completionPossibilities; // Potential commands to be used in command completion.
-	private bool m_isShowingCompletionOptions = false; // Whether we are currently showing completion options
+	static private Console _console; // singleton 
+	public GUISkin _GUISkin; /// the skin the console will use
+	public GUIStyle _commandStyle; /// style for my commands
+	private float _currentYPosition; // The current y-position of the console.
+	private Movement _movementState = Movement.NONE; // Keeps track of the current movement state of the console.
+	private bool _isShown = false; // Keeps track of the current display status of the console.
+	private float _panelHeight; // Height of the console panel.
+	private Rect _panelRect; // Rect describing the area the console panel covers.
+	private Vector2 _scrollPosition; // The scroll position in the panel text (history)
+	private ArrayList _consoleEntries; // Previous entries to the console.
+	private string _currentInput = ""; // The text currently being entered.
+	private LinkedList<string> _inputHistory; // A history of input for up arrow support
+	private LinkedListNode<string> _inputHistoryCurrent = null; /// Current inputHistory position
+	OCInputController _inputController; // InputController to capture and return the consumer of input.
+	private string _defaultCommand; // Default command??
+	private Hashtable _commandTable = new Hashtable(); // Command history table, relation to _consoleEntries is not yet clear.
+	private ArrayList _completionPossibilities; // Potential commands to be used in command completion.
+	private bool _isShowingCompletionOptions = false; // Whether we are currently showing completion options
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -113,40 +113,40 @@ public class Console : OCMonoBehaviour
 	{
 		Input.eatKeyPressOnTextFieldFocus = false;
 		
-		m_panelHeight = Screen.height * 0.30f;
-		m_inputController = (GameObject.FindWithTag("OCInputController") as GameObject).GetComponent<OCInputController>();
+		_panelHeight = Screen.height * 0.30f;
+		_inputController = (GameObject.FindWithTag("OCInputController") as GameObject).GetComponent<OCInputController>();
 		// Initialise position
-		m_currentYPosition = -m_panelHeight;
-		m_panelRect = new Rect(0, m_currentYPosition, Screen.width, m_panelHeight);
+		_currentYPosition = -_panelHeight;
+		_panelRect = new Rect(0, _currentYPosition, Screen.width, _panelHeight);
 		// If user has made console visible using public property then ensure
 		// it starts appearing
-		if(m_isShown)
+		if(_isShown)
 		{
-			this.m_movementState = Movement.APPEARING;
+			this._movementState = Movement.APPEARING;
 		}
 		
 		// TOFIX:
 		// ActionManager.globalActionCompleteEvent += new ActionCompleteHandler (notifyActionComplete);
 
 		// Initialise support
-		m_consoleEntries = new ArrayList();
-		m_inputHistory = new LinkedList<string>();
-		if(m_defaultCommand == null || m_defaultCommand == "")
+		_consoleEntries = new ArrayList();
+		_inputHistory = new LinkedList<string>();
+		if(_defaultCommand == null || _defaultCommand == "")
 		{
-			if(m_commandTable.Contains("say"))
+			if(_commandTable.Contains("say"))
 			{
-				m_defaultCommand = "say";
+				_defaultCommand = "say";
 			}
 		}
-		m_completionPossibilities = new ArrayList();
+		_completionPossibilities = new ArrayList();
 
 		// add history of commands here... good way of storing test cases
-		m_inputHistory.AddFirst("/do Avatar self MoveToObject \"Soccer Ball\"");
-		m_inputHistory.AddFirst("/do Avatar \"Soccer Ball\" Kick 3000");
-		m_inputHistory.AddFirst("/do Avatar \"Soccer Ball\" PickUp");
-		m_inputHistory.AddFirst("/do Avatar \"Soccer Ball\" Drop");
-		m_inputHistory.AddFirst("/list Avatar");
-		m_inputHistory.AddFirst("/load npc");
+		_inputHistory.AddFirst("/do Avatar self MoveToObject \"Soccer Ball\"");
+		_inputHistory.AddFirst("/do Avatar \"Soccer Ball\" Kick 3000");
+		_inputHistory.AddFirst("/do Avatar \"Soccer Ball\" PickUp");
+		_inputHistory.AddFirst("/do Avatar \"Soccer Ball\" Drop");
+		_inputHistory.AddFirst("/list Avatar");
+		_inputHistory.AddFirst("/load npc");
 			
 		OCLogger.Fine(gameObject.name + " is started.");
 	}
@@ -156,21 +156,21 @@ public class Console : OCMonoBehaviour
 	/// </summary>
 	public void Update()
 	{
-		m_panelHeight = Screen.height * 0.30f;
+		_panelHeight = Screen.height * 0.30f;
 
 		if(Input.GetKeyDown(KeyCode.BackQuote))
 		{
 			// If the window is already visible and isn't disappearing...
-			if(m_isShown && m_movementState != Movement.DISAPPEARING)
+			if(_isShown && _movementState != Movement.DISAPPEARING)
 			{
 				CloseChatWindow();
 			}
 			else
 			{
-				m_isShown = true;
-				m_inputController.setCharacterControl(false);
+				_isShown = true;
+				_inputController.setCharacterControl(false);
                 
-				m_movementState = Movement.APPEARING;
+				_movementState = Movement.APPEARING;
 			}
             
 		}
@@ -182,47 +182,47 @@ public class Console : OCMonoBehaviour
 		}
 			
 		if(Input.GetKeyDown(KeyCode.Return) && 
-                m_currentInput.Length > 0)
+                _currentInput.Length > 0)
 		{ // &&
 			// GUI.GetNameOfFocusedControl() == "CommandArea")
-			this.ProcessConsoleLine(m_currentInput);
-			m_currentInput = ""; // blank input field
-			m_inputHistoryCurrent = null; // reset current position in input history
+			this.ProcessConsoleLine(_currentInput);
+			_currentInput = ""; // blank input field
+			_inputHistoryCurrent = null; // reset current position in input history
 		}
 		// Implement input history using up/down arrow
 		if(Input.GetKeyDown(KeyCode.UpArrow))
 		{
-			if(m_inputHistoryCurrent == null)
+			if(_inputHistoryCurrent == null)
 			{
 				// TODO save current output so that we can push down to restore
 				// previously written text
-				m_inputHistoryCurrent = m_inputHistory.First;
+				_inputHistoryCurrent = _inputHistory.First;
 			}
 			else
-			if(m_inputHistoryCurrent.Next != null)
+			if(_inputHistoryCurrent.Next != null)
 			{
-				m_inputHistoryCurrent = m_inputHistoryCurrent.Next;
+				_inputHistoryCurrent = _inputHistoryCurrent.Next;
 			}
-			if(m_inputHistoryCurrent != null)
+			if(_inputHistoryCurrent != null)
 			{
-				m_currentInput = m_inputHistoryCurrent.Value;
+				_currentInput = _inputHistoryCurrent.Value;
 			}
 		}
 		else
 		if(Input.GetKeyDown(KeyCode.DownArrow))
 		{
-			if(m_inputHistoryCurrent != null && m_inputHistoryCurrent.Previous != null)
+			if(_inputHistoryCurrent != null && _inputHistoryCurrent.Previous != null)
 			{
-				m_inputHistoryCurrent = m_inputHistoryCurrent.Previous;
+				_inputHistoryCurrent = _inputHistoryCurrent.Previous;
 			}
-			if(m_inputHistoryCurrent != null)
+			if(_inputHistoryCurrent != null)
 			{
-				m_currentInput = m_inputHistoryCurrent.Value;
+				_currentInput = _inputHistoryCurrent.Value;
 			}
 		}
-		if(m_isShown)
+		if(_isShown)
 		{
-			m_inputController.setCharacterControl(false);
+			_inputController.setCharacterControl(false);
 		}
 			
 		OCLogger.Fine(gameObject.name + " is updated.");	
@@ -265,7 +265,7 @@ public class Console : OCMonoBehaviour
 		
 	public bool IsActive()
 	{
-		if(this.m_movementState != Movement.DISAPPEARING && m_isShown)
+		if(this._movementState != Movement.DISAPPEARING && _isShown)
 		{
 			return true;
 		}
@@ -277,45 +277,45 @@ public class Console : OCMonoBehaviour
 		
 	static public Console get()
 	{
-		return m_console;
+		return _console;
 	}
 
 	public void OnGUI()
 	{
-		if(m_GUISkin)
+		if(_GUISkin)
 		{
-			m_commandStyle = m_GUISkin.label;
-			m_commandStyle.normal.textColor = Color.blue;
-			GUI.skin = m_GUISkin;
+			_commandStyle = _GUISkin.label;
+			_commandStyle.normal.textColor = Color.blue;
+			GUI.skin = _GUISkin;
 		}
 		
-		if(m_isShown)
+		if(_isShown)
 		{
 			int movementSpeed = 10;
-			if(m_movementState == Movement.APPEARING)
+			if(_movementState == Movement.APPEARING)
 			{
-				m_currentYPosition = m_currentYPosition + movementSpeed;
-				if(m_currentYPosition >= 0)
+				_currentYPosition = _currentYPosition + movementSpeed;
+				if(_currentYPosition >= 0)
 				{
-					m_currentYPosition = 0;
-					m_movementState = Movement.NONE;
+					_currentYPosition = 0;
+					_movementState = Movement.NONE;
 				}
 			}
 			else
-			if(m_movementState == Movement.DISAPPEARING)
+			if(_movementState == Movement.DISAPPEARING)
 			{
-				m_currentYPosition = m_currentYPosition - movementSpeed;
-				if(m_currentYPosition <= -m_panelHeight)
+				_currentYPosition = _currentYPosition - movementSpeed;
+				if(_currentYPosition <= -_panelHeight)
 				{
-					m_currentYPosition = -m_panelHeight;
-					m_movementState = Movement.NONE;
-					m_isShown = false;
+					_currentYPosition = -_panelHeight;
+					_movementState = Movement.NONE;
+					_isShown = false;
 				}
 			}
-			m_panelRect = new Rect(0, m_currentYPosition, Screen.width, m_panelHeight);
-			m_panelRect = GUI.Window(1, m_panelRect, GlobalConsolePanel, "Command");
+			_panelRect = new Rect(0, _currentYPosition, Screen.width, _panelHeight);
+			_panelRect = GUI.Window(1, _panelRect, GlobalConsolePanel, "Command");
 			GUI.FocusWindow(0);
-			if(m_movementState != Movement.DISAPPEARING)
+			if(_movementState != Movement.DISAPPEARING)
 			{
 				
 				GUI.FocusWindow(1);
@@ -332,12 +332,12 @@ public class Console : OCMonoBehaviour
 		
 	public void AddCommand(ConsoleCommand cc)
 	{
-		m_commandTable[cc.GetName()] = cc;
+		_commandTable[cc.GetName()] = cc;
 	}
 
 	public void RemoveCommand(string cmdName)
 	{
-		m_commandTable.Remove(cmdName);
+		_commandTable.Remove(cmdName);
 	}
 
 	//---------------------------------------------------------------------------
@@ -357,7 +357,7 @@ public class Console : OCMonoBehaviour
 	{
 		// TOFIX:
 		//Input.eatKeyPressOnTextFieldFocus = false;
-		m_console = this;
+		_console = this;
 	}
 	
 	/// <summary>
@@ -372,49 +372,49 @@ public class Console : OCMonoBehaviour
 		// Begin a scroll view. All rects are calculated automatically - 
 		// it will use up any available screen space and make sure contents flow correctly.
 		// This is kept small with the last two parameters to force scrollbars to appear.
-		m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition);
+		_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 	
-		lock(m_consoleEntries)
+		lock(_consoleEntries)
 		{
-			foreach(ConsoleEntry entry in m_consoleEntries)
+			foreach(ConsoleEntry entry in _consoleEntries)
 			{
 				GUILayout.BeginHorizontal();
 				// Here, we format things slightly differently for each
 				// ConsoleEntry type.
-				m_commandStyle.wordWrap = true;
+				_commandStyle.wordWrap = true;
 				if(entry.type == ConsoleEntry.Type.ERROR)
 				{
 					// Display errors in red.
-					m_commandStyle.normal.textColor = Color.red;
-					GUILayout.Label(entry.msg, m_commandStyle);
+					_commandStyle.normal.textColor = Color.red;
+					GUILayout.Label(entry.msg, _commandStyle);
 					GUILayout.FlexibleSpace();
 				}
 				else
 				if(entry.type == ConsoleEntry.Type.SAY)
 				{
 					// Display talk in green
-					m_commandStyle.normal.textColor = Color.black;
+					_commandStyle.normal.textColor = Color.black;
 					GUILayout.Label("> ");
-					m_commandStyle.normal.textColor = Color.green;
-					GUILayout.Label(entry.msg, m_commandStyle);
+					_commandStyle.normal.textColor = Color.green;
+					GUILayout.Label(entry.msg, _commandStyle);
 					GUILayout.FlexibleSpace();
 				}
 				else
 				if(entry.type == ConsoleEntry.Type.COMMAND)
 				{
 					// Display commands in blue
-					m_commandStyle.normal.textColor = Color.black;
+					_commandStyle.normal.textColor = Color.black;
 					GUILayout.Label("> ");
-					m_commandStyle.normal.textColor = Color.blue;
-					GUILayout.Label(entry.msg, m_commandStyle);
+					_commandStyle.normal.textColor = Color.blue;
+					GUILayout.Label(entry.msg, _commandStyle);
 					GUILayout.FlexibleSpace();
 				}
 				else
 				if(entry.type == ConsoleEntry.Type.RESULT)
 				{
 					// Display results in black
-					m_commandStyle.normal.textColor = Color.black;
-					GUILayout.Label(entry.msg, m_commandStyle);
+					_commandStyle.normal.textColor = Color.black;
+					GUILayout.Label(entry.msg, _commandStyle);
 					GUILayout.FlexibleSpace();
 				}
                 
@@ -433,7 +433,7 @@ public class Console : OCMonoBehaviour
 			Event.current.character = '\0';
 		}
 		GUI.SetNextControlName("CommandArea");
-		this.m_currentInput = GUILayout.TextField(this.m_currentInput);
+		this._currentInput = GUILayout.TextField(this._currentInput);
 		
 		GUI.DragWindow();
 	}
@@ -449,10 +449,10 @@ public class Console : OCMonoBehaviour
 		// Mysteriously commented out....:
 		// this.showChat = true;
 		// Set movement state to start disappearing
-		this.m_movementState = Movement.DISAPPEARING;
+		this._movementState = Movement.DISAPPEARING;
 		// Re-enable the character controller for player movement
 			
-		m_inputController.setCharacterControl(true);
+		_inputController.setCharacterControl(true);
 	}
 		
 	private void AddConsoleEntry(string str, string sender, ConsoleEntry.Type type)
@@ -478,20 +478,20 @@ public class Console : OCMonoBehaviour
 		entry.type = type;
 
 		// Add to list
-		lock(m_consoleEntries)
+		lock(_consoleEntries)
 		{
-			m_consoleEntries.Add(entry);
+			_consoleEntries.Add(entry);
 		}
 		
 		// Prune oldest entries
-		if(m_consoleEntries.Count > 50)
+		if(_consoleEntries.Count > 50)
 		{
-			m_consoleEntries.RemoveAt(0);
+			_consoleEntries.RemoveAt(0);
 		}
 
 		// Ensure we are at the bottom...
 		// TODO Do this in a non-brittle way... i.e. find actual maximum value
-		m_scrollPosition.y = 1000000;	
+		_scrollPosition.y = 1000000;	
 	}
 
 	private bool TabComplete(string context)
@@ -508,16 +508,16 @@ public class Console : OCMonoBehaviour
 		if(possibilities.Count > 1)
 		{
 			// Only show completions if there are more than one...
-			m_isShowingCompletionOptions = true;
-			m_completionPossibilities = possibilities;
+			_isShowingCompletionOptions = true;
+			_completionPossibilities = possibilities;
 		}
 		else
 		if(possibilities.Count == 1)
 		{
 			// just complete the token
 			//inputField = contextExceptLastToken + " " + possibilities[0];
-			m_isShowingCompletionOptions = false;
-			m_completionPossibilities = null;
+			_isShowingCompletionOptions = false;
+			_completionPossibilities = null;
 		}
 		else
 		{
@@ -542,14 +542,14 @@ public class Console : OCMonoBehaviour
 			{
 				string cmd = args[0] as string;
 				// check if we recognise this command
-				if(!m_commandTable.Contains(cmd))
+				if(!_commandTable.Contains(cmd))
 				{
 					// we don't know about the command
 					AddConsoleEntry("error: unknown command " + (string)cmd, null, ConsoleEntry.Type.ERROR);
 				}
 				else
 				{
-					ConsoleCommand cc = m_commandTable[cmd] as ConsoleCommand;
+					ConsoleCommand cc = _commandTable[cmd] as ConsoleCommand;
 					args.RemoveAt(0); // remove actual command name
 					string result = cc.Run(args);
 					AddConsoleEntry(result, null, ConsoleEntry.Type.RESULT);
@@ -557,11 +557,11 @@ public class Console : OCMonoBehaviour
 			}
 		}
 		else
-		if(m_defaultCommand != null)
+		if(_defaultCommand != null)
 		{
 			// assume the input should be sent to whatever is the default
 			// command (usually just chat)
-			ConsoleCommand cc = m_commandTable[m_defaultCommand] as ConsoleCommand;
+			ConsoleCommand cc = _commandTable[_defaultCommand] as ConsoleCommand;
 			ArrayList args = SplitCommandLine(text);
 			if(args != null)
 			{
@@ -570,8 +570,8 @@ public class Console : OCMonoBehaviour
 				AddConsoleEntry(result, null, ConsoleEntry.Type.RESULT);
 			}
 		}
-		m_inputHistory.AddFirst(text);
-		m_inputHistoryCurrent = null;
+		_inputHistory.AddFirst(text);
+		_inputHistoryCurrent = null;
 	}
 		
 	private ArrayList SplitCommandLine(string command)
@@ -706,7 +706,7 @@ public class Console : OCMonoBehaviour
 
 		abstract public string GetName();
 			
-		protected string m_commandName = "empty";
+		protected string _commandName = "empty";
 	}
 		
 	// TOFIX: Replace below with real OCInputController;

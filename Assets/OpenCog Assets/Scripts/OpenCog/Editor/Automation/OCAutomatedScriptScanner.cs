@@ -52,12 +52,12 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 	/// <summary>
 	/// All of the candidate scripts.
 	/// </summary>
-	private static List<OCScript> m_Scripts = new List<OCScript>();
+	private static List<OCScript> _scripts = new List<OCScript>();
 
 	/// <summary>
 	/// Whenever we have scanned for scripts.
 	/// </summary>
-	private static bool m_IsInitialized = false;
+	private static bool _isInitialized = false;
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +77,7 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 	/// </value>
 	public static List<OCScript> Scripts
 	{
-		get {return m_Scripts;}
+		get {return _scripts;}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -92,9 +92,9 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 
 	public static void Init()
 	{
-		if( !m_IsInitialized )
+		if( !_isInitialized )
 		{
-			m_IsInitialized = true;
+			_isInitialized = true;
 
 			ScanAll();
 		}
@@ -106,7 +106,7 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 	public static void ScanAll()
 	{
 		//Get all of the asset paths
-		m_Scripts = AssetDatabase.GetAllAssetPaths()
+		_scripts = AssetDatabase.GetAllAssetPaths()
 			//Make sure we're looking at a C# source file
 			.Where(p => p.EndsWith(".cs"))
 			//Create instances of the MonoScripts for each MonoBehavior
@@ -132,7 +132,7 @@ public class OCAutomatedScriptScanner : MonoBehaviour
       )
       .ToList();
 
-//			foreach(OCScript script in m_Scripts)
+//			foreach(OCScript script in _scripts)
 //			{
 //				//if(script.Script.name == "Test")
 //				{

@@ -57,52 +57,48 @@ public class OCNetworkElement : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	private static readonly int m_CONNECTION_TIMEOUT = 10;
-	private static readonly string m_WHITESPACE = " ";
-	private static readonly string m_NEWLINE = "\n";
-	private static readonly string m_FAILED_MESSAGE = "FAILED";
-	private static readonly string m_OK_MESSAGE = "OK";
+
 	
 	// Settings of this network element instance.
-	private string m_ID;
-	private IPAddress m_IP;
-	private int m_Port;
+	private string _ID;
+	private IPAddress _IP;
+	private int _port;
 		
 	// Settings of router.
-	private string m_RouterID;
-	private IPAddress m_RouterIP;
-	private int m_RouterPort;
+	private string _routerID;
+	private IPAddress _routerIP;
+	private int _routerPort;
 		
 	/// <summary>
 	/// Server listener to make this network element acting as a server.
 	/// </summary>
-	private OCServerListener m_Listener;
+	private OCServerListener _listener;
 		
 	// Unread messages
-	private System.Object m_UnreadMessagesLock = new object();
-	private int m_UnreadMessagesCount;
+	private System.Object _unreadMessagesLock = new object();
+	private int _unreadMessagesCount;
 		
 	/// <summary>
 	/// Queue used to store received messages from router. Uses a concurrent
 	/// implementation of the queue interface.
 	/// </summary>
-	private Queue<OCMessage> m_MessageQueue = new Queue<OCMessage>();
+	private Queue<OCMessage> _messageQueue = new Queue<OCMessage>();
 		
 	/// <summary>
 	/// A hashset to record the unavailable end points.
 	/// </summary>
-	private HashSet<string> m_UnavailableElements = new HashSet<string>();
+	private HashSet<string> _unavailableElements = new HashSet<string>();
 		
 	/// <summary>
 	/// Client socket to talk to the router.
 	/// </summary>
-	private Socket m_ClientSocket;
+	private Socket _ClientSocket;
 		
 	/// <summary>
 	/// Flag to check if the connection between this network element and router
   /// has been established.
 	/// </summary>
-	private bool m_IsEstablished = false;
+	private bool _isEstablished = false;
 	
 
 	//---------------------------------------------------------------------------
@@ -115,47 +111,22 @@ public class OCNetworkElement : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	public static int CONNECTION_TIMEOUT 
-	{
-		get { return m_CONNECTION_TIMEOUT;}
-	}	
-		
-	public static string WHITESPACE 
-	{
-		get { return m_WHITESPACE;}
-	}
-		
-	public string FAILEDMESSAGE 
-	{
-		get { return m_FAILED_MESSAGE;}
-	}
-
-	public string NEWLINE 
-	{
-		get { return m_NEWLINE;}
-	}
-
-	public string OKMESSAGE 
-	{
-		get { return m_OK_MESSAGE;}
-	}
-
 	public bool IsEstablished 
 	{
-		get { return m_IsEstablished;}
-		set { m_IsEstablished = value;}
+		get { return _isEstablished;}
+		set { _isEstablished = value;}
 	}
 
 	public IPAddress IP 
 	{
-		get { return this.m_IP;}
-		set { m_IP = value;}
+		get { return this._IP;}
+		set { _IP = value;}
 	}
 
 	public int Port 
 	{
-		get { return this.m_Port;}
-		set { m_Port = value;}
+		get { return this._port;}
+		set { _port = value;}
 	}		
 		
 	/// <summary>
@@ -163,28 +134,28 @@ public class OCNetworkElement : OCMonoBehaviour
   /// </summary>
 	public bool HaveUnreadMessages
 	{
-		get { return (m_UnreadMessagesCount > 0);}
+		get { return (_unreadMessagesCount > 0);}
 	}		
 		
 	protected bool IsElementAvailable(string id)
 	{
-		return !m_UnavailableElements.Contains(id);
+		return !_unavailableElements.Contains(id);
 	}
 	
 	public void MarkAsUnavailable(string id)
 	{
 		if (IsElementAvailable(id))
 		{
-			m_UnavailableElements.Add(id); 	
+			_unavailableElements.Add(id); 	
 		}
 		
-		if (m_RouterID.Equals(id))
+		if (_routerID.Equals(id))
 		{
 			// Oops, router is unavailable!
 			// Reset the unread message number.
-			lock (m_UnreadMessagesLock)
+			lock (_unreadMessagesLock)
 			{
-				m_UnreadMessagesCount = 0;
+				_unreadMessagesCount = 0;
 			}
 		}
 	}		
@@ -197,7 +168,7 @@ public class OCNetworkElement : OCMonoBehaviour
 	{
 		if (!IsElementAvailable(id))
 		{
-			m_UnavailableElements.Remove(id);
+			_unavailableElements.Remove(id);
 		}
 	}		
 			
@@ -291,16 +262,16 @@ public class OCNetworkElement : OCMonoBehaviour
   /// <param name="messages">A list of unread messages</param>
 	public void PullMessage(List<OCMessage> messages)
 	{
-		lock(m_MessageQueue)
+		lock(_messageQueue)
 		{
 			foreach(OCMessage msg in messages)
 			{
-				m_MessageQueue.Enqueue(msg);
+				_messageQueue.Enqueue(msg);
 			}
 		}
-		lock(m_UnreadMessagesLock)
+		lock(_unreadMessagesLock)
 		{
-			m_UnreadMessagesCount -= messages.Count;
+			_unreadMessagesCount -= messages.Count;
 		}
 	}
 	
@@ -310,14 +281,14 @@ public class OCNetworkElement : OCMonoBehaviour
   /// <param name="message">An unread message</param>
 	public void PullMessage(OCMessage message)
 	{
-		lock(m_MessageQueue)
+		lock(_messageQueue)
 		{
-			m_MessageQueue.Enqueue(message);	
+			_messageQueue.Enqueue(message);	
 		}
 		
-		lock(m_UnreadMessagesLock)
+		lock(_unreadMessagesLock)
 		{
-			m_UnreadMessagesCount--;
+			_unreadMessagesCount--;
 		}
 	}
 	
@@ -346,16 +317,16 @@ public class OCNetworkElement : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
-		m_ID = id;
-		m_Port = OCPortManager.AllocatePort();
-        m_IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
-		m_RouterIP = IPAddress.Parse(this.routerIpString);
-		m_RouterPort = OCConfig.Instance.getInt("ROUTER_PORT", 16312);
+		_ID = id;
+		_port = OCPortManager.AllocatePort();
+        _IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+		_routerIP = IPAddress.Parse(this.routerIpString);
+		_routerPort = OCConfig.Instance.getInt("ROUTER_PORT", 16312);
 		
 		listener = new OCServerListener(this);
 		
 		StartCoroutine(Connect());
-		StartCoroutine(m_Listener.Listen());
+		StartCoroutine(_listener.Listen());
 		StartCoroutine(RequestMessage(1));			
 	}
 	
@@ -364,11 +335,11 @@ public class OCNetworkElement : OCMonoBehaviour
 	/// </summary>
 	private void Uninitialize()
 	{
-		StopCoroutine("m_Listener.Listen");
+		StopCoroutine("_listener.Listen");
 		StopCoroutine("RequestMessage");
-		m_Listener.stop();
+		_listener.stop();
 		disconnect();
-		OCPortManager.ReleasePort(m_Port);			
+		OCPortManager.ReleasePort(_port);			
 	}
 		
 	private IEnumerator Connect()
@@ -381,7 +352,7 @@ public class OCNetworkElement : OCMonoBehaviour
 			)
 		;
 			
-		IPEndPoint ipe = new IPEndPoint(m_RouterIP, m_RouterPort);
+		IPEndPoint ipe = new IPEndPoint(_routerIP, _routerPort);
 			
 		OCLogger.Debugging("Start Connecting to router");
 			
@@ -421,9 +392,9 @@ public class OCNetworkElement : OCMonoBehaviour
 		try 
 		{
 			// Retrieve the socket from the state object.
-			m_ClientSocket = (Socket) ar.AsyncState;
+			_ClientSocket = (Socket) ar.AsyncState;
 			// Complete the connection.
-			m_ClientSocket.EndConnect(ar);
+			_ClientSocket.EndConnect(ar);
 
             established = true;
 
@@ -451,11 +422,11 @@ public class OCNetworkElement : OCMonoBehaviour
 	private void Disconnect()
 	{
 		LoginRouter();
-		if(m_ClientSocket != null)
+		if(_ClientSocket != null)
 		{
-			m_ClientSocket.Shutdown(SocketShutdown.Both);
-			m_ClientSocket.Close();
-			m_ClientSocket = null;
+			_ClientSocket.Shutdown(SocketShutdown.Both);
+			_ClientSocket.Close();
+			_ClientSocket = null;
 		}
 	}
 		
@@ -464,7 +435,7 @@ public class OCNetworkElement : OCMonoBehaviour
   /// </summary>
 	private void LogoutRouter()
 	{
-		string command = "LOGOUT " + m_ID + NEWLINE;
+		string command = "LOGOUT " + _ID + NEWLINE;
 		Send(command);
 	}
 		
@@ -475,20 +446,20 @@ public class OCNetworkElement : OCMonoBehaviour
 	/// <returns>Send result</returns>
 	private bool Send(string text)
 	{
-    if (m_ClientSocket == null) return false;
+    if (_ClientSocket == null) return false;
 
-		lock (m_ClientSocket)
+		lock (_ClientSocket)
 		{
-      if (!m_ClientSocket.Connected)
+      if (!_ClientSocket.Connected)
       {
-          m_IsEstablished = false;
-          m_ClientSocket = null;
+          _isEstablished = false;
+          _ClientSocket = null;
           return false;
       }
 			
 			try 
 			{
-				Stream s = new NetworkStream(m_ClientSocket);
+				Stream s = new NetworkStream(_ClientSocket);
 				StreamReader sr = new StreamReader(s);
 				StreamWriter sw = new StreamWriter(s);
 
@@ -556,7 +527,7 @@ public class OCNetworkElement : OCMonoBehaviour
 		{
 			if (HaveUnreadMessages())
 			{	
-				string command = "REQUEST_UNREAD_MESSAGES " + m_ID + 
+				string command = "REQUEST_UNREAD_MESSAGES " + _ID + 
                                  WHITESPACE + limit + NEWLINE;
 				Send(command);
 			}
@@ -570,14 +541,14 @@ public class OCNetworkElement : OCMonoBehaviour
 	/// </summary>
 	private void Pulse()
 	{
-		if(m_MessageQueue.Count > 0)
+		if(_messageQueue.Count > 0)
 		{
 			//long startTime = DateTime.Now.Ticks;
 			Queue<OCMessage> messagesToProcess;
-			lock(m_MessageQueue)
+			lock(_messageQueue)
 			{
-				messagesToProcess = new Queue<OCMessage>(m_MessageQueue);
-				m_MessageQueue.Clear();
+				messagesToProcess = new Queue<OCMessage>(_messageQueue);
+				_messageQueue.Clear();
 			}
 			foreach(OCMessage msg in messagesToProcess)
 			{
@@ -609,6 +580,12 @@ public class OCNetworkElement : OCMonoBehaviour
 	public OCNetworkElement()
 	{
 	}
+		
+	public const int CONNECTION_TIMEOUT = 10;
+	public const string WHITESPACE = " ";
+	public const string NEWLINE = "\n";
+	public const string FAILED_MESSAGE = "FAILED";
+	public const string OK_MESSAGE = "OK";		
 
 	//---------------------------------------------------------------------------
 

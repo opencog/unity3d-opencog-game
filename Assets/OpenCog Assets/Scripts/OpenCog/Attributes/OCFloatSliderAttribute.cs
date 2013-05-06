@@ -47,12 +47,12 @@ public class OCFloatSliderAttribute : Attribute
 	/// <summary>
 	/// The minimum value cap.
 	/// </summary>
-	private float m_MinValue;
+	private float _minValue;
 
 	/// <summary>
 	/// The maximum value cap.
 	/// </summary>
-	private float m_MaxValue;
+	private float _maxValue;
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -72,8 +72,8 @@ public class OCFloatSliderAttribute : Attribute
 	/// </value>
 	public float MinValue
 	{
-		get { return m_MinValue; }
-		set { m_MinValue = value; }
+		get { return _minValue; }
+		set { _minValue = value; }
 	}
 
 	/// <summary>
@@ -84,8 +84,8 @@ public class OCFloatSliderAttribute : Attribute
 	/// </value>
 	public float MaxValue
 	{
-		get { return m_MaxValue; }
-		set { m_MaxValue = value; }
+		get { return _maxValue; }
+		set { _maxValue = value; }
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

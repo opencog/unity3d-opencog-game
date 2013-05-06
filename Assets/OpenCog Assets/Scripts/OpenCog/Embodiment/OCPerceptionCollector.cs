@@ -52,30 +52,30 @@ namespace OpenCog.Embodiment
 	
 	//---------------------------------------------------------------------------
 		
-	private float m_updatePerceptionInterval = 0.5f; // Percept 5 times per second.
-	private float m_timer = 0.0f; // Reset timer at the end of every interval.
-	private OCConnector m_connector; // The OCConnector instance used to send map-info.
-	private int m_id; // A local copy of the game object id that this component attached to.
-	private Dictionary<int, OCObjectMapInfo> m_mapInfoCache = new Dictionary<int, OCObjectMapInfo>();
+	private float _updatePerceptionInterval = 0.5f; // Percept 5 times per second.
+	private float _timer = 0.0f; // Reset timer at the end of every interval.
+	private OCConnector _connector; // The OCConnector instance used to send map-info.
+	private int _id; // A local copy of the game object id that this component attached to.
+	private Dictionary<int, OCObjectMapInfo> _mapInfoCache = new Dictionary<int, OCObjectMapInfo>();
 	
-	private Dictionary<int, bool> m_mapInfoCacheStatus = new Dictionary<int, bool>(); // A flag map indicates if a cached map info has been percepted in latest cycle.
-	private Dictionary<StateChangesRegister.StateInfo, System.Object> m_stateInfoCache = new Dictionary<StateChangesRegister.StateInfo, System.Object>();
+	private Dictionary<int, bool> _mapInfoCacheStatus = new Dictionary<int, bool>(); // A flag map indicates if a cached map info has been percepted in latest cycle.
+	private Dictionary<StateChangesRegister.StateInfo, System.Object> _stateInfoCache = new Dictionary<StateChangesRegister.StateInfo, System.Object>();
 	
-	private ArrayList m_statesToDelete = new ArrayList();
+	private ArrayList _statesToDelete = new ArrayList();
 	
-	private System.Object m_cacheLock = new System.Object();
+	private System.Object _cacheLock = new System.Object();
 	
-	private List<OCObjectMapInfo> m_removedObjects = new List<OCObjectMapInfo>(); // A list of objects recently removed. This is a temporary data structure, cleared whenever it is processed.
-	private bool m_perceptWorldFirstTime = true;
+	private List<OCObjectMapInfo> _removedObjects = new List<OCObjectMapInfo>(); // A list of objects recently removed. This is a temporary data structure, cleared whenever it is processed.
+	private bool _perceptWorldFirstTime = true;
 
-	//private WorldData m_worldData; // Reference to the world data.
-	private Map m_map;
+	//private WorldData _worldData; // Reference to the world data.
+	private Map _map;
 	
-	private Dictionary<string, bool> m_chunkStatusMap = new Dictionary<string, bool>(); // A map to mark if current chunk needs to be percepted. True means perception in need.
-	private int m_floorHeight; // Currently, just percept the block above the horizon.
-	private bool m_hasPerceivedTerrainForFirstTime = false;
+	private Dictionary<string, bool> _chunkStatusMap = new Dictionary<string, bool>(); // A map to mark if current chunk needs to be percepted. True means perception in need.
+	private int _floorHeight; // Currently, just percept the block above the horizon.
+	private bool _hasPerceivedTerrainForFirstTime = false;
 	
-	private bool m_perceptStateChangesFirstTime = true;
+	private bool _perceptStateChangesFirstTime = true;
 			
 	//---------------------------------------------------------------------------
 	
@@ -521,7 +521,7 @@ namespace OpenCog.Embodiment
 	
 	private void PerceiveTerrain()
 	{
-		if(m_hasPerceivedTerrainForFirstTime)
+		if(_hasPerceivedTerrainForFirstTime)
 		{
 			return;
 		}
@@ -564,7 +564,7 @@ namespace OpenCog.Embodiment
 							// in case there are too many blocks, we send every 5000 blocks per message
 							if(terrainMapinfoList.Count >= 5)
 							{
-								m_connector.sendTerrainInfoMessage(terrainMapinfoList, true);
+								_connector.sendTerrainInfoMessage(terrainMapinfoList, true);
 								terrainMapinfoList.Clear();
 							}
 						}
@@ -609,9 +609,9 @@ namespace OpenCog.Embodiment
 				}
 					
 				Chunk currentChunk = worldData.Chunks[chunk_x, chunk_y, 0];
-				if(!m_chunkStatusMap.ContainsKey(currentChunk.ToString()))
+				if(!_chunkStatusMap.ContainsKey(currentChunk.ToString()))
 				{
-					m_chunkStatusMap[currentChunk.ToString()] = true;
+					_chunkStatusMap[currentChunk.ToString()] = true;
 				}
 	
 				if(chunkStatusMap[currentChunk.ToString()])

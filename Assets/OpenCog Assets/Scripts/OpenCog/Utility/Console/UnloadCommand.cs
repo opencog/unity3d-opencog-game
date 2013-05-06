@@ -157,7 +157,7 @@ public class UnloadCommand : Console.ConsoleCommand
     }
     
     public override string GetName() {
-        return m_commandName;
+        return _commandName;
     }
 
 		//---------------------------------------------------------------------------
@@ -201,7 +201,7 @@ public class UnloadCommand : Console.ConsoleCommand
 		/// </summary>
 		public UnloadCommand ()
 		{
-			m_commandName = "unload";
+			_commandName = "unload";
 		}
 
 		//---------------------------------------------------------------------------

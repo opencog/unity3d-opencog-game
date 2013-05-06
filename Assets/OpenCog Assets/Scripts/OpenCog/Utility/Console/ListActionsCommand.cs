@@ -169,7 +169,7 @@ public class ListActionsCommand : Console.ConsoleCommand
     
 		public override string GetName ()
 		{
-			return m_commandName;
+			return _commandName;
 		}
 
 		//---------------------------------------------------------------------------
@@ -213,7 +213,7 @@ public class ListActionsCommand : Console.ConsoleCommand
 		/// </summary>
 		public ListActionsCommand ()
 		{
-			m_commandName = "list";
+			_commandName = "list";
 		}
 
 		//---------------------------------------------------------------------------

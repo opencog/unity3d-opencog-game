@@ -52,7 +52,7 @@ public class StateChangesRegister : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private static List<StateInfo> m_stateList = new List<StateInfo>();
+	private static List<StateInfo> _stateList = new List<StateInfo>();
 			
 	//---------------------------------------------------------------------------
 
@@ -66,8 +66,8 @@ public class StateChangesRegister : OCMonoBehaviour
 
 	public List<StateInfo> StateList
 	{
-		get { return m_stateList; }
-		set { m_stateList = value; }
+		get { return _stateList; }
+		set { _stateList = value; }
 	}
 
 	//---------------------------------------------------------------------------

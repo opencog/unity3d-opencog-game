@@ -51,7 +51,7 @@ public class OCStringMessage : OCMessage
 
 	//---------------------------------------------------------------------------
 	
-	private string m_Content;
+	private string _Content;
 			
 	//---------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ public class OCStringMessage : OCMessage
 		
 	public string MessageContent
 	{
-		get{ return m_Content; }
-		set{ m_Content = value; }
+		get{ return _Content; }
+		set{ _Content = value; }
 	}
 			
 	//---------------------------------------------------------------------------
@@ -93,12 +93,12 @@ public class OCStringMessage : OCMessage
 	
 	public override string ToString()
 	{
-		return m_MessageContent;
+		return _messageContent;
 	}
 	
 	public override void FromString(string message)
 	{
-		m_MessageContent = message;
+		_messageContent = message;
 	}
 			
 	//---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ public class OCStringMessage : OCMessage
 	public OCStringMessage(string sourceID, string targetID, string message) 
 	: base(sourceID, targetID, OCMessage.MessageType.STRING)
 	{
-		m_Content = message;
+		_Content = message;
 	}
 
 	//---------------------------------------------------------------------------

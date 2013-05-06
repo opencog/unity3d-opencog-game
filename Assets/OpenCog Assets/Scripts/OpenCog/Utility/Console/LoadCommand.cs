@@ -166,7 +166,7 @@ public class LoadCommand : Console.ConsoleCommand
 		
 		public override string GetName ()
 		{
-			return m_commandName;
+			return _commandName;
 		}
 		
 		//---------------------------------------------------------------------------
@@ -278,7 +278,7 @@ public class LoadCommand : Console.ConsoleCommand
 		/// </summary>
 		public LoadCommand ()
 		{
-			m_commandName = "load";
+			_commandName = "load";
 		}
 
 		//---------------------------------------------------------------------------

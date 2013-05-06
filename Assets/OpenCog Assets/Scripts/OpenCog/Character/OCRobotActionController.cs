@@ -49,10 +49,10 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 			//---------------------------------------------------------------------------
 
-			private Tree m_Tree;
-			private Hashtable m_IdleParams;
-			private Vector3i m_TargetBlockPos = Vector3i.zero;
-			private DateTime m_dtLastTNTSearchTime;
+			private Tree _tree;
+			private Hashtable _idleParams;
+			private Vector3i _targetBlockPos = Vector3i.zero;
+			private DateTime _dtLastTNTSearchTime;
 
 			//---------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			//---------------------------------------------------------------------------
 
 			public Vector3i TargetBlockPos {
-				get { return m_TargetBlockPos;}
-				set { m_TargetBlockPos = value;}
+				get { return _targetBlockPos;}
+				set { _targetBlockPos = value;}
 			}
 			
 			//---------------------------------------------------------------------------
@@ -99,14 +99,14 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 			public IEnumerator Start ()
 			{
-				m_Tree =
+				_tree =
 				BLOpenCogCharacterBehaviours.InstantiateTree
 				(TreeType.CharacterBehaviours_TrivialExploreBehaviour
 				, this
 				);
 
-				while (Application.isPlaying && m_Tree != null) {
-					yield return new WaitForSeconds (1.0f / m_Tree.Frequency);
+				while (Application.isPlaying && _tree != null) {
+					yield return new WaitForSeconds (1.0f / _tree.Frequency);
 					UpdateAI ();
 				}		
 			}
@@ -470,7 +470,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			
 			public void UpdateAI ()
 			{
-				m_Tree.Tick ();
+				_tree.Tick ();
 
 				Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
 
@@ -486,12 +486,12 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					TargetBlockPos = Vector3i.zero;
 				}
 				
-				if (m_dtLastTNTSearchTime == new DateTime())
+				if (_dtLastTNTSearchTime == new DateTime())
 				{
-					m_dtLastTNTSearchTime = DateTime.Now;	
+					_dtLastTNTSearchTime = DateTime.Now;	
 				}
 				
-				if (DateTime.Now.Subtract (m_dtLastTNTSearchTime).Seconds > 1)
+				if (DateTime.Now.Subtract (_dtLastTNTSearchTime).Seconds > 1)
 				{
 					bool doesTNTExist = false;
 
@@ -530,7 +530,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 						TargetBlockPos = Vector3i.zero;
 					}
 					
-					m_dtLastTNTSearchTime = DateTime.Now;
+					_dtLastTNTSearchTime = DateTime.Now;
 				}
 
 				

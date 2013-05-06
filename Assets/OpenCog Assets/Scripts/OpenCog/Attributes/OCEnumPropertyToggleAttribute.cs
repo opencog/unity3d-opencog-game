@@ -46,12 +46,12 @@ public class OCEnumPropertyToggleAttribute : Attribute
 	/// <summary>
 	/// The enum field name that will toggle the attribute display.
 	/// </summary>
-	private string m_EnumField;
+	private string _enumField;
 
 	/// <summary>
 	/// The enum value that will determine whether to display.
 	/// </summary>
-	private object m_EnumValue;
+	private object _enumValue;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -71,8 +71,8 @@ public class OCEnumPropertyToggleAttribute : Attribute
 	/// </value>
 	public string EnumField
 	{
-		get { return m_EnumField; }
-		set { m_EnumField = value; }
+		get { return _enumField; }
+		set { _enumField = value; }
 	}
 
 	/// <summary>
@@ -85,8 +85,8 @@ public class OCEnumPropertyToggleAttribute : Attribute
 	/// </value>
 	public object EnumValue
 	{
-		get { return m_EnumValue; }
-		set { m_EnumValue = value; }
+		get { return _enumValue; }
+		set { _enumValue = value; }
 	}
 
   /////////////////////////////////////////////////////////////////////////////

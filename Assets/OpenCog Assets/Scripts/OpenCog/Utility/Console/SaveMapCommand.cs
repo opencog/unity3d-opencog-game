@@ -154,7 +154,7 @@ public class SaveMapCommand : Console.ConsoleCommand
     
 		public override string GetName ()
 		{
-			return m_commandName;
+			return _commandName;
 		}
 
 		//---------------------------------------------------------------------------
@@ -208,7 +208,7 @@ public class SaveMapCommand : Console.ConsoleCommand
 		/// </summary>
 		public SaveMapCommand ()
 		{
-			m_commandName = "savemap";
+			_commandName = "savemap";
 		}
 
 		//---------------------------------------------------------------------------
