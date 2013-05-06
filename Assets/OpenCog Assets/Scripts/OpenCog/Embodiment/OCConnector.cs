@@ -25,6 +25,8 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using System.Xml;
+using OpenCog.Actions;
+using OpenCog.Character;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -47,14 +49,14 @@ namespace OpenCog.Embodiment
 public class OCConnector : Network.OCNetworkElement
 {
 		//TOFIX: delete these fake classes.
-		public class MetaAction
-		{}
-
-		public class ActionResult
-		{}
-
-		public class ActionSummary
-		{}
+//		public class MetaAction
+//		{}
+//
+//		public class ActionResult
+//		{}
+//
+//		public class ActionSummary
+//		{}
 
 	//---------------------------------------------------------------------------
 
@@ -73,9 +75,7 @@ public class OCConnector : Network.OCNetworkElement
 	private string _traits;	/** "princess" by default. */
 
 	private string _settingsFilename = "Assets/embodiment.config";
-	private HashSet<long> _ticketsToDrop; // Currently selected demand name.
-	private Dictionary<long, MetaAction> _ticketToActionMap; // The map from ticket to action, each action has its unique ticket.
-	private Dictionary<long, string> _ticketToPlanIdMap; // The map from ticket to action plan, each action plan contains a sequence of actions.
+
 	private string _masterID; // Define master's(owner's) information.
 	private string _masterName;
 	private List<Network.OCMessage> _messagesToSend = new List<Network.OCMessage>(); // The queue used to store the messages to be sent to OAC.
@@ -93,9 +93,8 @@ public class OCConnector : Network.OCNetworkElement
 	private int _globalStartPositionZ; // Map global Z beginning position.
 	private int _globalFloorHeight; // Floor height in the minecraft-like world.
 	private bool _isFirstSentMapInfo; // Flag to check if a valid map info(which should contain the info of the avatar itself) has been sent to OAC as a "handshake".
-	private LinkedList<MetaAction> _actionsList; // The list of actions that I am going to perform. The action plans are received from OAC.
-	private long _actionTicket; // The counter for actions executed. This counter is cycled. Therefore, repetition is allowed.
-	private System.Object _actionTicketLock = new System.Object(); // The lock used to avoid duplicated action tickets.
+	private LinkedList<OCAction> _actionsList; // The list of actions that I am going to perform. The action plans are received from OAC.
+
 	private int _msgCount = 0;
 	private string _currentPlanId; // The action plan id that is being performed currently.
 	private string _currentDemandName; // Currently selected demand name
@@ -110,7 +109,7 @@ public class OCConnector : Network.OCNetworkElement
 	private OpenCog.Map.OCMap _map;
 
 	//TOFIX: these members were only put in to push errors further
-	private OpenCog.Actions.ActionScheduler _actionScheduler;
+	private OCActionController _actionController;
 
 	//---------------------------------------------------------------------------
 
@@ -298,19 +297,19 @@ public class OCConnector : Network.OCNetworkElement
         
 	}
 
-		  /**
-     * Set the value of given demand
-     * 
-     * Abstract demands like certainty, competence and affiliation are updated by 
-     * OpenCog (PsiDemandUpdaterAgents), which are received by OCConnector::parsePsiDemandElement. 
-     * 
-     * While other physiological demands like energy, integrity are updated by 
-     * OCPhysiologicalModel in unity, which calls this function to update these demand values
-     */
-    public void SetDemandValue(string demandName, float demandValue)
-    {
-        _demandValueMap[demandName] = demandValue;
-    }
+	/**
+	* Set the value of given demand
+	* 
+	* Abstract demands like certainty, competence and affiliation are updated by 
+	* OpenCog (PsiDemandUpdaterAgents), which are received by OCConnector::parsePsiDemandElement. 
+	* 
+	* While other physiological demands like energy, integrity are updated by 
+	* OCPhysiologicalModel in unity, which calls this function to update these demand values
+	*/
+	public void SetDemandValue(string demandName, float demandValue)
+	{
+	  _demandValueMap[demandName] = demandValue;
+	}
 
 	public void sendBlockStructure(BlockData startBlock, bool isToRecognize)
 	{
@@ -339,63 +338,55 @@ public class OCConnector : Network.OCNetworkElement
         }
 	}
 
-		 /**
-     * To be called when instantiating a new OCAvatar.
-     * 
-     * @param agentId The id of OCAvatar
-     * @param agentName The name of OCAvatar
-     * @param agentTraits The traits of OCAvatar
-     * @param agentType The type of OCAvatar, "pet" by default
-     * @param masterId The human player id who creates the OCAvatar
-     * @param masterName The human player name who creates the OCAvatar
-     * @param agentPort The local listening port of this OCConnector instance in order to communicate with OpenCog.
-     * 
-     * @return Result of the initialization action.
-     */
-    public bool Init(string agentName, string agentTraits, string agentType,
-                    string masterId, string masterName)
+	 /**
+   * To be called when instantiating a new OCAvatar.
+   * 
+   * @param agentId The id of OCAvatar
+   * @param agentName The name of OCAvatar
+   * @param agentTraits The traits of OCAvatar
+   * @param agentType The type of OCAvatar, "pet" by default
+   * @param masterId The human player id who creates the OCAvatar
+   * @param masterName The human player name who creates the OCAvatar
+   * @param agentPort The local listening port of this OCConnector instance in order to communicate with OpenCog.
+   * 
+   * @return Result of the initialization action.
+   */
+  public bool Init(string agentName, string agentTraits, string agentType,
+                  string masterId, string masterName)
+  {
+    // Initialize basic attributes.
+    _baseID = agentName;//gameObject.GetInstanceID().ToString();
+    _ID = "AVATAR_" + _baseID;
+    _brainID = "OAC_" + _baseID;
+    _name = agentName;
+    _type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
+    _traits = "Princess";
+    _currentDemandName = "";
+    
+    // Load settings from file.
+    if (_settingsFilename.Length > 0) {
+        new OCConfig().LoadFromFile(_settingsFilename);
+    }
+    
+    // Initialize NetworkElement
+    base.InitializeNetworkElement(_ID);
+    
+    // Config master's settings.
+    _masterID = masterId;
+    _masterName = masterName;
+
+    // Create action list.
+    _actionsList = new LinkedList<OCAction>();
+
+    _isFirstSentMapInfo = true;
+    
+
+    _feelingValueMap = new Dictionary<string, float>();
+    _demandValueMap = new Dictionary<string, float>();
+    _perceptedAgents = new Dictionary<int, string>();
+
+    if (Map != null)
     {
-        // Initialize basic attributes.
-        _baseID = agentName;//gameObject.GetInstanceID().ToString();
-        _ID = "AVATAR_" + _baseID;
-        _brainID = "OAC_" + _baseID;
-        _name = agentName;
-        _type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
-        _traits = "Princess";
-        _currentDemandName = "";
-        
-        // Load settings from file.
-        if (_settingsFilename.Length > 0) {
-            new OCConfig().LoadFromFile(_settingsFilename);
-        }
-        
-        // Initialize NetworkElement
-        base.InitializeNetworkElement(_ID);
-        
-        // Config master's settings.
-        _masterID = masterId;
-        _masterName = masterName;
-
-        // Create action list.
-        _actionsList = new LinkedList<MetaAction>();
-
-        _isFirstSentMapInfo = true;
-        
-        // Initialize action ticket.
-        lock (_actionTicketLock)
-        {
-            _actionTicket = 0L;
-        }
-        
-        _ticketToActionMap = new Dictionary<long, MetaAction>();
-        _ticketToPlanIdMap = new Dictionary<long, string>();
-
-        _feelingValueMap = new Dictionary<string, float>();
-        _demandValueMap = new Dictionary<string, float>();
-        _perceptedAgents = new Dictionary<int, string>();
-
-        if (Map != null)
-        {
 			_mapName = Map.MapName;
 			
 			// If there are chuncks auto generated around the bounday, we should minus this boundary
@@ -404,48 +395,48 @@ public class OCConnector : Network.OCNetworkElement
 				// Calculate the offset of the terrain.
 				_blockCountX = Chunk.SIZE_X * Map.ChunkCountX;
 				_blockCountY = Chunk.SIZE_Y * Map.ChunkCountY;
-
-	            // There is an invisible chunk at the edge of the terrain, so we should take count of it.
-	            _globalStartPositionX = (int)Chunk.SIZE_X;
-	            _globalStartPositionY = (int)Chunk.SIZE_Y;
+	
+        // There is an invisible chunk at the edge of the terrain, so we should take count of it.
+        _globalStartPositionX = (int)Chunk.SIZE_X;
+        _globalStartPositionY = (int)Chunk.SIZE_Y;
 			}
 			else
 			{
-	            // Calculate the offset of the terrain.
+	      // Calculate the offset of the terrain.
 				_blockCountX = Chunk.SIZE_X * Map.ChunkCountX;
 				_blockCountY = Chunk.SIZE_Y * Map.ChunkCountY;
-
-	            // There is an invisible chunk at the edge of the terrain, so we should take count of it.
-	            _globalStartPositionX = 0;
-	            _globalStartPositionY = 0;
+	
+        // There is an invisible chunk at the edge of the terrain, so we should take count of it.
+        _globalStartPositionX = 0;
+        _globalStartPositionY = 0;
 			}
 			_blockCountZ = Chunk.SIZE_Z * Map.ChunkCountZ;
 			_globalStartPositionZ = 0;
-            // The floor height should be 1 unit larger than the block's z index.
-            _globalFloorHeight = Map.FloorHeight;
-        }
-        else
-        {
+	    // The floor height should be 1 unit larger than the block's z index.
+	    _globalFloorHeight = Map.FloorHeight;
+		}
+		else
+		{
 			_mapName = "unknown_map";
-            _blockCountX = 128;
+	    _blockCountX = 128;
 			_blockCountY = 128;
 			_blockCountZ = 128;
 
-            _globalStartPositionX = 0;
-            _globalStartPositionY = 0;
+			_globalStartPositionX = 0;
+			_globalStartPositionY = 0;
 			_globalStartPositionZ = 0;
-            _globalFloorHeight = 0;
-        }
-      
-        // Get action scheduler component.
+			_globalFloorHeight = 0;
+		}
+    
+    // Get action scheduler component.
 		// TOFIX: old classes here.
-        _actionScheduler = gameObject.GetComponent<OpenCog.Actions.ActionScheduler>() as OpenCog.Actions.ActionScheduler;
-        OpenCog.Actions.ActionManager.globalActionCompleteEvent += HandleOtherAgentActionResult;
+    _actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
+    OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
 
-        return true;
-    }
+    return true;
+  }
 
-	public IEnumerator connectOAC()
+	public IEnumerator ConnectOAC()
 	{
         // First step, connect to the router.
         int timeout = 100;
@@ -492,14 +483,14 @@ public class OCConnector : Network.OCNetworkElement
 	}
 
 	/**
-     * Process messages that are delivered by router, overriding the method in
-     * NetworkElement.
-     *
-     * @param message A message to be handled.
-     *
-     * @return false if not an exit command. (this is obsolete in this unity game, but
-     * it is OK to keep it)
-     */
+   * Process messages that are delivered by router, overriding the method in
+   * NetworkElement.
+   *
+   * @param message A message to be handled.
+   *
+   * @return false if not an exit command. (this is obsolete in this unity game, but
+   * it is OK to keep it)
+   */
 	public override bool ProcessNextMessage(Network.OCMessage message)
 	{
 		OCLogger.Debugging(message.ToString());
@@ -543,41 +534,42 @@ public class OCConnector : Network.OCNetworkElement
 		return false;
 	}
 
-		public void handleActionResult(ActionResult ar, MetaAction action)
-    {
-        bool result = (ar.status == ActionResult.Status.SUCCESS ? true : false);
-        
-        // Send action status to my brain.
-        SendActionStatus(_currentPlanId, action, result);
-        //Debug.LogWarning("Action plan " + this.currentPlanId + " sequence " + action.Sequence + " status sent.");
-        lock (_actionsList)
-        {
-            _actionsList.Remove(action);
-        }
-    }
-    
-    public void HandleOtherAgentActionResult(ActionResult ar)
-    {
-        // don't report actions that game from us.
-        // don't report actions without an action summary (these are from trying
-        // to do non-existant actions).
-        if (ar.avatar == gameObject.GetComponent<Avatar>() || ar.action == null) {
-            //Debug.LogWarning("skipping action result from " + ar.avatar);
-            return;
-        }
-		
-        // the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
-		
-        string timestamp = getCurrentTimestamp();
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = makeXMLElementRoot(doc);
+	public void handleActionResult(OCAction action)
+  {
+      bool result = action.status == OCAction.Status.SUCCESS;
+      
+      // Send action status to my brain.
+      SendActionStatus(_currentPlanId, action, result);
+      //Debug.LogWarning("Action plan " + this.currentPlanId + " sequence " + action.Sequence + " status sent.");
+      lock (_actionsList)
+      {
+      	_actionsList.Remove(action);
+      }
+  }
+  
+  public void HandleOtherAgentActionResult(OCAction action)
+  {
+    // don't report actions that game from us.
+    // don't report actions without an action summary (these are from trying
+    // to do non-existant actions).
+		//@TODO: Find a different way to check for this...
+//    if (ar.avatar == gameObject.GetComponent<Avatar>() || ar.action == null) {
+//        //Debug.LogWarning("skipping action result from " + ar.avatar);
+//        return;
+//    }
 
-        XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-        agentSignal.SetAttribute("id", ar.avatar.gameObject.GetInstanceID().ToString());
-        agentSignal.SetAttribute("type", ar.avatar.agentType);
-        agentSignal.SetAttribute("timestamp", timestamp);
-        XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
-        
+    // the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
+
+    string timestamp = getCurrentTimestamp();
+    XmlDocument doc = new XmlDocument();
+    XmlElement root = makeXMLElementRoot(doc);
+
+    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
+    agentSignal.SetAttribute("id", ar.avatar.gameObject.GetInstanceID().ToString());
+    agentSignal.SetAttribute("type", ar.avatar.agentType);
+    agentSignal.SetAttribute("timestamp", timestamp);
+    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+      
 		// note that the name and the action-instance-name are different
 		// ie: name = kick , while action-instance-name = kick2342
 		actionElement.SetAttribute("name", ar.action.actionName);
@@ -604,10 +596,11 @@ public class OCConnector : Network.OCNetworkElement
 		// we can only process the parameter type defined in class ActionParamType both in opencog and unity
 		// currently they are : boolean, int, float, string, vector, rotation, entity
 		// also see opencog/opencog/embodiment/control/perceptionActionInterface/BrainProxyAxon.xsd
-        ArrayList paramList = ar.parameters;
-        
-       if (paramList != null) {
-			
+    ArrayList paramList = ar.parameters;
+      
+    if (paramList != null) 
+		{
+		
 			int i;
 			if (targetType == "OCA" || targetType == "Player")
 			{
@@ -616,14 +609,15 @@ public class OCConnector : Network.OCNetworkElement
 				else 
 					i = 0;
 			}
-            else
+	    else
 			{
 				i = 0;
 			}
-            foreach (System.Object obj in paramList)
-            {
-                XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 				
+     foreach (System.Object obj in paramList)
+    	{
+      	XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
+			
 				// the first param in pinfo is usually the avator does this action, so we just skip it
 				string paratype = obj.GetType().ToString();
 				if (paratype == "System.Int32") // it's a int
@@ -658,7 +652,7 @@ public class OCConnector : Network.OCNetworkElement
 					param.SetAttribute("type", "entity");
 					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
 					XmlElement entityElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ENTITY_ELEMENT));
-					ActionTarget entity = obj as ActionTarget;
+					OCAction.Target entity = obj as OCAction.Target;
 					entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, entity.id.ToString());
 					entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, entity.type);
 					
@@ -693,19 +687,19 @@ public class OCConnector : Network.OCNetworkElement
 					continue;
 				}
 				              
-                i++;                
-            }
-        }
-
-        Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
-
-        OCLogger.Warn("sending action result from " + ar.avatar + "\n" + BeautifyXmlText(doc));
-
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        }
+	      i++;                
+	    }
     }
+
+    Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+
+    OCLogger.Warn("sending action result from " + ar.avatar + "\n" + BeautifyXmlText(doc));
+
+    lock (_messageSendingLock)
+    {
+        _messagesToSend.Add(message);
+    }
+  }
 	
 	
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
@@ -714,12 +708,12 @@ public class OCConnector : Network.OCNetworkElement
 		if (objectID == gameObject.GetInstanceID().ToString())
 			return;
 		
-	    string timestamp = GetCurrentTimestamp();
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
+	  string timestamp = GetCurrentTimestamp();
+    XmlDocument doc = new XmlDocument();
+    XmlElement root = MakeXMLElementRoot(doc);
 		
-        XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-        agentSignal.SetAttribute("id", objectID);
+    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
+    agentSignal.SetAttribute("id", objectID);
 		
 		string targetType;
 
@@ -728,9 +722,9 @@ public class OCConnector : Network.OCNetworkElement
 		else // it's an object
 			targetType = OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
 		
-        agentSignal.SetAttribute("type", "object");
-        agentSignal.SetAttribute("timestamp", timestamp);
-        XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+    agentSignal.SetAttribute("type", "object");
+    agentSignal.SetAttribute("timestamp", timestamp);
+    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
         
 		// note that the name and the action-instance-name are different
 		// ie: name = kick , while action-instance-name = kick2342
@@ -750,14 +744,14 @@ public class OCConnector : Network.OCNetworkElement
 		actionElement.SetAttribute("target", objectID);
 		actionElement.SetAttribute("target-type",targetType);		
 		
-        Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
-        
-        OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
-        
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        }		
+   	Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+   	
+   	OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
+   	
+   	lock (_messageSendingLock)
+   	{
+   	    _messagesToSend.Add(message);
+   	}		
 		
 	}
 	
@@ -766,15 +760,15 @@ public class OCConnector : Network.OCNetworkElement
 		if (obj == gameObject)
 			return;
 		
-        string timestamp = GetCurrentTimestamp();
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
+    string timestamp = GetCurrentTimestamp();
+    XmlDocument doc = new XmlDocument();
+    XmlElement root = MakeXMLElementRoot(doc);
 
-        XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-        agentSignal.SetAttribute("id", obj.GetInstanceID().ToString());
-        
-        agentSignal.SetAttribute("timestamp", timestamp);
-        XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
+    agentSignal.SetAttribute("id", obj.GetInstanceID().ToString());
+    
+    agentSignal.SetAttribute("timestamp", timestamp);
+    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
         
 		// note that the name and the action-instance-name are different
 		// ie: name = kick , while action-instance-name = kick2342
@@ -796,9 +790,9 @@ public class OCConnector : Network.OCNetworkElement
 			actionElement.SetAttribute("target-type",OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 		}
 	
-        XmlElement paramOld = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
+    XmlElement paramOld = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 		paramOld.SetAttribute("name", "startPosition");
-        XmlElement paramNew = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
+    XmlElement paramNew = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 		paramNew.SetAttribute("name", "endPosition");
 		
 		paramOld.SetAttribute("type", "vector");
@@ -815,12 +809,12 @@ public class OCConnector : Network.OCNetworkElement
 		
 		Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
         
-        OCLogger.Debugging("sending move action result: \n" + BeautifyXmlText(doc));
+    OCLogger.Debugging("sending move action result: \n" + BeautifyXmlText(doc));
         
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        }
+    lock (_messageSendingLock)
+    {
+        _messagesToSend.Add(message);
+    }
 	}
 	
 	// Send all the existing states of object to opencog when the robot is loaded 
@@ -829,20 +823,20 @@ public class OCConnector : Network.OCNetworkElement
 	{
 		string timestamp = GetCurrentTimestamp();
 		System.Diagnostics.Debug.Assert(obj != null && stateName != "" && valueType != "");
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
+    XmlDocument doc = new XmlDocument();
+    XmlElement root = MakeXMLElementRoot(doc);
 		
 		string id = obj.GetInstanceID().ToString();
 				
-        XmlElement StateSignal = (XmlElement) root.AppendChild(doc.CreateElement("state-info"));
-        StateSignal.SetAttribute("object-id", id);
+    XmlElement StateSignal = (XmlElement) root.AppendChild(doc.CreateElement("state-info"));
+    StateSignal.SetAttribute("object-id", id);
 
 		if (obj.tag == "OCA" || obj.tag == "Player")// it's an avatar
 			StateSignal.SetAttribute("object-type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
 		else // it's an object
 			StateSignal.SetAttribute("object-type",OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 
-        StateSignal.SetAttribute("state-name", stateName);
+    StateSignal.SetAttribute("state-name", stateName);
 		StateSignal.SetAttribute("timestamp", timestamp);
 		
 		XmlElement valueElement = (XmlElement)StateSignal.AppendChild(doc.CreateElement("state-value"));
@@ -892,14 +886,14 @@ public class OCConnector : Network.OCNetworkElement
 			return;
 		}
 
-        Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, OpenCog.Network.OCMessage.MessageType.STRING, BeautifyXmlText(doc));
-        
-        OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
-        
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        }		
+    Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, OpenCog.Network.OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+    
+    OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+    
+    lock (_messageSendingLock)
+    {
+        _messagesToSend.Add(message);
+    }		
 	}	
 	
 	// we handle object state change as an "stateChange" action, and send it to the opencog via "agent-signal"
@@ -909,9 +903,9 @@ public class OCConnector : Network.OCNetworkElement
 		if (obj == gameObject)
 			return;
 		
-        string timestamp = GetCurrentTimestamp();
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
+    string timestamp = GetCurrentTimestamp();
+    XmlDocument doc = new XmlDocument();
+    XmlElement root = MakeXMLElementRoot(doc);
 		
 		string id;
 		if (blockId != "")
@@ -925,11 +919,11 @@ public class OCConnector : Network.OCNetworkElement
 		else
 		    targetType = obj.tag;
 		
-        XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-        agentSignal.SetAttribute("id", id);
-        
-        agentSignal.SetAttribute("timestamp", timestamp);
-        XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
+    agentSignal.SetAttribute("id", id);
+    
+    agentSignal.SetAttribute("timestamp", timestamp);
+    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
         
 		// note that the name and the action-instance-name are different
 		// ie: name = kick , while action-instance-name = kick2342
@@ -952,14 +946,14 @@ public class OCConnector : Network.OCNetworkElement
 			actionElement.SetAttribute("target-type",OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 		}
 			
-        XmlElement paramStateName = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
+   	XmlElement paramStateName = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 		paramStateName.SetAttribute("name", "stateName");
 		paramStateName.SetAttribute("type", "string");
 		paramStateName.SetAttribute("value",stateName );
 
-        XmlElement paramOld = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
+    XmlElement paramOld = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 		paramOld.SetAttribute("name", "OldValue");
-        XmlElement paramNew = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
+    XmlElement paramNew = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 		paramNew.SetAttribute("name", "NewValue");
 		
 				
@@ -1030,59 +1024,59 @@ public class OCConnector : Network.OCNetworkElement
 		}
 
 
-        Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
-        
-        OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
-        
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        }		
+    Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+    
+    OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+    
+    lock (_messageSendingLock)
+    {
+        _messagesToSend.Add(message);
+    }		
 	}
 
-		 /// <summary>
-    ///	Send the availability status of an action to OAC. It is a mechanism to notify
+	/// <summary>
+	///	Send the availability status of an action to OAC. It is a mechanism to notify
 	/// OAC whether or not a specific action can be performed currently.
 	/// e.g. When avatar is close enough to a food stuff, it can pick it up, otherwise,
 	/// the "pick up" action is not available.
-    /// </summary>
-    /// <param name="action">
-    /// A <see cref="ActionSummary"/>
-    /// </param>
-    /// <param name="available">
-    /// whether or not the action is available.
-    /// </param>
-	public void SendActionAvailability(List<ActionSummary> actionList, bool available)
+	/// </summary>
+	/// <param name="action">
+	/// A <see cref="ActionSummary"/>
+	/// </param>
+	/// <param name="available">
+	/// whether or not the action is available.
+	/// </param>
+	public void SendActionAvailability(List<OCAction> actionList, bool available)
 	{
 		string timestamp = GetCurrentTimestamp();
-        // Create a xml document
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
+    // Create a xml document
+    XmlDocument doc = new XmlDocument();
+    XmlElement root = MakeXMLElementRoot(doc);
 
-        XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
-        avatarSignal.SetAttribute("id", _brainID);
-        avatarSignal.SetAttribute("timestamp", timestamp);
-        
-        // Extract actions from action list
-        foreach (ActionSummary action in actionList)
+    XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
+    avatarSignal.SetAttribute("id", _brainID);
+    avatarSignal.SetAttribute("timestamp", timestamp);
+    
+    // Extract actions from action list
+    foreach (OCAction action in actionList)
 		{
 			// Set the action name
-	        string ocActionName = ActionManager.getOCActionNameFromMap(action.actionName);
+	    string ocActionName = OCActionController.getOCActionNameFromMap(action.actionName);
 	        
 			// check if the method name has a mapping to opencog action name.
 			if (ocActionName == null) continue;
 			
-	        System.Xml.XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_AVAILABILITY_ELEMENT));
+	    System.Xml.XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_AVAILABILITY_ELEMENT));
 	        
-	        actionElement.SetAttribute("name", ocActionName);
+	    actionElement.SetAttribute("name", ocActionName);
 	        
-	        // Actions like "walk", "jump" are built-in naturally, they don't need an external target to act on.
-	        if (action.objectID != gameObject.GetInstanceID())
+	    // Actions like "walk", "jump" are built-in naturally, they don't need an external target to act on.
+	    if (action.objectID != gameObject.GetInstanceID())
 			{
-		        // Set the action target
-		        actionElement.SetAttribute("target", action.objectID.ToString());
+		    // Set the action target
+		    actionElement.SetAttribute("target", action.objectID.ToString());
 		        
-		        // Set the action target type
+		    // Set the action target type
 				// currently we only process the avatar and ocobject type, other types in EmbodimentXMLTages can is to be added when needed.
 				// if you add other types such as BLOCK_OBJECT_TYPE, you should also modify PAI::processAgentAvailability in opencog
 				string targetType = action.actionObject.tag;
@@ -1094,136 +1088,136 @@ public class OCConnector : Network.OCNetworkElement
 					OCLogger.Error("Error target type: " + targetType + " in action: " + action.actionName);
 			}
 							
-	        actionElement.SetAttribute("available", available ? "true" : "false");
+	    actionElement.SetAttribute("available", available ? "true" : "false");
 		}
 
-        Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+    Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
 
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        }
+    lock (_messageSendingLock)
+    {
+        _messagesToSend.Add(message);
+    }
 	}
 
-    /**
-     *  Add the map-info to message sending queue, yet we use the verb "send" here,
-     *  because that's what we intend to do.
-     */
-    public void SendMapInfoMessage(List<OCObjectMapInfo> newMapInfoSeq, bool isFirstTimePerceptMapObjects= false)
-    {
-        // No new map info to send.
-        if (newMapInfoSeq.Count == 0) return;
+  /**
+   *  Add the map-info to message sending queue, yet we use the verb "send" here,
+   *  because that's what we intend to do.
+   */
+  public void SendMapInfoMessage(List<OCObjectMapInfo> newMapInfoSeq, bool isFirstTimePerceptMapObjects= false)
+  {
+      // No new map info to send.
+      if (newMapInfoSeq.Count == 0) return;
 
-        LinkedList<OCObjectMapInfo> localMapInfo = new LinkedList<OCObjectMapInfo>(newMapInfoSeq);
+      LinkedList<OCObjectMapInfo> localMapInfo = new LinkedList<OCObjectMapInfo>(newMapInfoSeq);
 
-        // If information of avatar itself is in the list, then put it at the first position.
-        bool foundAvatarId = false;
-        foreach (OCObjectMapInfo objMapInfo in localMapInfo)
-        {
-            if (objMapInfo.ID.Equals(_brainID))
-            {
-                localMapInfo.Remove(objMapInfo);
-                localMapInfo.AddFirst(objMapInfo);
-                foundAvatarId = true;
-                break;
-            }
-        } // foreach
-        
-        if (!foundAvatarId && _isFirstSentMapInfo)
-        {
-            // First <map-info> message should contain information about the OCAvatar itself
-            // If it is not there, skip this.
-            OCLogger.Warn("Skipping first map-info message because it " +
-                     "does not contain info about the avatar itself!");
-            return;
-        }
-            
-        Network.OCStringMessage message =
-            (Network.OCStringMessage)SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data",isFirstTimePerceptMapObjects);
+      // If information of avatar itself is in the list, then put it at the first position.
+      bool foundAvatarId = false;
+      foreach (OCObjectMapInfo objMapInfo in localMapInfo)
+      {
+          if (objMapInfo.ID.Equals(_brainID))
+          {
+              localMapInfo.Remove(objMapInfo);
+              localMapInfo.AddFirst(objMapInfo);
+              foundAvatarId = true;
+              break;
+          }
+      } // foreach
+      
+      if (!foundAvatarId && _isFirstSentMapInfo)
+      {
+          // First <map-info> message should contain information about the OCAvatar itself
+          // If it is not there, skip this.
+          OCLogger.Warn("Skipping first map-info message because it " +
+                   "does not contain info about the avatar itself!");
+          return;
+      }
+          
+      Network.OCStringMessage message =
+          (Network.OCStringMessage)SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data",isFirstTimePerceptMapObjects);
 
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        } // lock
+      lock (_messageSendingLock)
+      {
+          _messagesToSend.Add(message);
+      } // lock
 
-        // First map info message has been sent.
-        _isFirstSentMapInfo = false;
-    }
+      // First map info message has been sent.
+      _isFirstSentMapInfo = false;
+  }
 
-    /**
-     * Add the terrain info message to message sending queue.
-     */
-    public void SendTerrainInfoMessage(List<OCObjectMapInfo> terrainInfoSeq, bool isFirstTimePerceptTerrain= false)
-    {
-        // No new map info to send.
-        if (terrainInfoSeq.Count == 0) return;
+  /**
+   * Add the terrain info message to message sending queue.
+   */
+  public void SendTerrainInfoMessage(List<OCObjectMapInfo> terrainInfoSeq, bool isFirstTimePerceptTerrain= false)
+  {
+      // No new map info to send.
+      if (terrainInfoSeq.Count == 0) return;
 
-        Network.OCStringMessage message =
-            (Network.OCStringMessage)SerializeMapInfo(terrainInfoSeq, "terrain-info", "terrain-data",isFirstTimePerceptTerrain);
+      Network.OCStringMessage message =
+          (Network.OCStringMessage)SerializeMapInfo(terrainInfoSeq, "terrain-info", "terrain-data",isFirstTimePerceptTerrain);
 
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-			SendMessages();
-        } // lock
-    }
+      lock (_messageSendingLock)
+      {
+          _messagesToSend.Add(message);
+		SendMessages();
+      } // lock
+  }
 
-    /**
-     * Function to serialize map info(and terrain info). The map info instance are serialized 
-     * by using protobuf-net, which is a fast message compiling tool. Eventually, all
-     * map infos will be packed instead of XML. But since the message processing in PAI(server side)
-     * distinguish message type by xml tags, we need to construct a simple XML with following format:
-     * 
-     *      <?xml version="1.0" encoding="UTF-8"?>
-     *      <oc:embodiment-msg xsi:schemaLocation="..." xmlns:xsi="..." xmlns:pet="...">
-     *          <map(terrain)-info global-position-x="24" global-position-y="24" \
-     *              global-position-offset="96" global-floor-height="99" is-first-time-percept-world = "false"(or "true") >
-     *              <map(terrain)-data timestamp="...">packed message stream</map(terrain)-data>
-     *          </map(terrain)-info>
-     *      </oc:embodiment-msg>
-     * 
-     * @param mapinfoSeq the map-info instance sequence to be serialized.
-     * @param messageTag the XML tag of message, currently there are "map-info" and "terrain-info".
-     * @param payloadTag the XML tag for wrapping the payload of message, currently there are "map-data"
-     * and "terrain-data".
-     */
-    private Network.OCMessage SerializeMapInfo(List<OCObjectMapInfo> mapinfoSeq, string messageTag, string payloadTag, bool isFirstTimePerceptWorld = false)
-    {
-        string timestamp = GetCurrentTimestamp();
-        // Create a xml document
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
+  /**
+   * Function to serialize map info(and terrain info). The map info instance are serialized 
+   * by using protobuf-net, which is a fast message compiling tool. Eventually, all
+   * map infos will be packed instead of XML. But since the message processing in PAI(server side)
+   * distinguish message type by xml tags, we need to construct a simple XML with following format:
+   * 
+   *      <?xml version="1.0" encoding="UTF-8"?>
+   *      <oc:embodiment-msg xsi:schemaLocation="..." xmlns:xsi="..." xmlns:pet="...">
+   *          <map(terrain)-info global-position-x="24" global-position-y="24" \
+   *              global-position-offset="96" global-floor-height="99" is-first-time-percept-world = "false"(or "true") >
+   *              <map(terrain)-data timestamp="...">packed message stream</map(terrain)-data>
+   *          </map(terrain)-info>
+   *      </oc:embodiment-msg>
+   * 
+   * @param mapinfoSeq the map-info instance sequence to be serialized.
+   * @param messageTag the XML tag of message, currently there are "map-info" and "terrain-info".
+   * @param payloadTag the XML tag for wrapping the payload of message, currently there are "map-data"
+   * and "terrain-data".
+   */
+  private Network.OCMessage SerializeMapInfo(List<OCObjectMapInfo> mapinfoSeq, string messageTag, string payloadTag, bool isFirstTimePerceptWorld = false)
+  {
+      string timestamp = GetCurrentTimestamp();
+      // Create a xml document
+      XmlDocument doc = new XmlDocument();
+      XmlElement root = MakeXMLElementRoot(doc);
 
-        // Create a terrain-info element and append to root element.
-        XmlElement mapInfo = (XmlElement)root.AppendChild(doc.CreateElement(messageTag));
-		mapInfo.SetAttribute("map-name", _mapName);
-        mapInfo.SetAttribute("global-position-x", _globalStartPositionX.ToString());
-        mapInfo.SetAttribute("global-position-y", _globalStartPositionY.ToString());
-		mapInfo.SetAttribute("global-position-z", _globalStartPositionZ.ToString());
-        mapInfo.SetAttribute("global-position-offset-x", _blockCountX.ToString());
-		mapInfo.SetAttribute("global-position-offset-y", _blockCountY.ToString());
-		mapInfo.SetAttribute("global-position-offset-z", _blockCountZ.ToString());
-        mapInfo.SetAttribute("global-floor-height", (_globalFloorHeight).ToString());
-		mapInfo.SetAttribute("is-first-time-percept-world", isFirstTimePerceptWorld.ToString().ToLower());
-		mapInfo.SetAttribute("timestamp", timestamp);
+      // Create a terrain-info element and append to root element.
+      XmlElement mapInfo = (XmlElement)root.AppendChild(doc.CreateElement(messageTag));
+	mapInfo.SetAttribute("map-name", _mapName);
+      mapInfo.SetAttribute("global-position-x", _globalStartPositionX.ToString());
+      mapInfo.SetAttribute("global-position-y", _globalStartPositionY.ToString());
+	mapInfo.SetAttribute("global-position-z", _globalStartPositionZ.ToString());
+      mapInfo.SetAttribute("global-position-offset-x", _blockCountX.ToString());
+	mapInfo.SetAttribute("global-position-offset-y", _blockCountY.ToString());
+	mapInfo.SetAttribute("global-position-offset-z", _blockCountZ.ToString());
+      mapInfo.SetAttribute("global-floor-height", (_globalFloorHeight).ToString());
+	mapInfo.SetAttribute("is-first-time-percept-world", isFirstTimePerceptWorld.ToString().ToLower());
+	mapInfo.SetAttribute("timestamp", timestamp);
 
-        string encodedPlainText;
-        using (var stream = new System.IO.MemoryStream())
-        {
-            // Serialize the instances into memory stream by protobuf-net
-            ProtoBuf.Serializer.Serialize<List<OCObjectMapInfo>>(stream, mapinfoSeq);
-            byte[] binary = stream.ToArray();
-            // Encoding the binary in base64 string format in order to transport
-            // via NetworkElement.
-            encodedPlainText = System.Convert.ToBase64String(binary);
-        }
+      string encodedPlainText;
+      using (var stream = new System.IO.MemoryStream())
+      {
+          // Serialize the instances into memory stream by protobuf-net
+          ProtoBuf.Serializer.Serialize<List<OCObjectMapInfo>>(stream, mapinfoSeq);
+          byte[] binary = stream.ToArray();
+          // Encoding the binary in base64 string format in order to transport
+          // via NetworkElement.
+          encodedPlainText = System.Convert.ToBase64String(binary);
+      }
 
-        XmlElement data = (XmlElement)mapInfo.AppendChild(doc.CreateElement(payloadTag));
+      XmlElement data = (XmlElement)mapInfo.AppendChild(doc.CreateElement(payloadTag));
 
-        data.InnerText = encodedPlainText;
+      data.InnerText = encodedPlainText;
 
-        return new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
-    }
+      return new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+  }
 	
 	public void SendFinishPerceptTerrian()
 	{
@@ -1246,72 +1240,72 @@ public class OCConnector : Network.OCNetworkElement
 	}
 
 	/**
-     * Return a current time stamp with a specific format.
-     */
-    public static string GetCurrentTimestamp()
-    {
-        return System.DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff");
-    }
+   * Return a current time stamp with a specific format.
+   */
+  public static string GetCurrentTimestamp()
+  {
+      return System.DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff");
+  }
 
-		 /**
-     * The interface of dialog system in the game.
-     * A player chats with avatar by typing text in the console,
-     * then the text would be sent to OAC by this method.
-     * 
-     * @param text the chat text to be sent.
-     * @param source GameObject that sent the communication.
-     */
-    public void SendSpeechContent(string text, UnityEngine.GameObject source)
-    {
-        text = text.TrimEnd('\n');
-        // Don't send a message unless we are initialized to connect to
-        // a server
-        if (!_isInitialized) {
-            OCLogger.Warn("Avatar[" + _ID + "]: Received '" + text +
-                    "' from player but I am not connected to an OAC.");
-            return;
-        }
-        OCLogger.Debugging("Avatar[" + _ID + "]: Received '" + text + "' from player.");
+	 /**
+   * The interface of dialog system in the game.
+   * A player chats with avatar by typing text in the console,
+   * then the text would be sent to OAC by this method.
+   * 
+   * @param text the chat text to be sent.
+   * @param source GameObject that sent the communication.
+   */
+  public void SendSpeechContent(string text, UnityEngine.GameObject source)
+  {
+      text = text.TrimEnd('\n');
+      // Don't send a message unless we are initialized to connect to
+      // a server
+      if (!_isInitialized) {
+          OCLogger.Warn("Avatar[" + _ID + "]: Received '" + text +
+                  "' from player but I am not connected to an OAC.");
+          return;
+      }
+      OCLogger.Debugging("Avatar[" + _ID + "]: Received '" + text + "' from player.");
 
-        // Avoid creating messages if the destination (avatar brain) isn't available 
-        if (!IsElementAvailable(_brainID))
-            return;
-        
-        System.Text.StringBuilder speechMsg = new System.Text.StringBuilder();
-        speechMsg.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+      // Avoid creating messages if the destination (avatar brain) isn't available 
+      if (!IsElementAvailable(_brainID))
+          return;
+      
+      System.Text.StringBuilder speechMsg = new System.Text.StringBuilder();
+      speechMsg.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 
-        speechMsg.Append("<oc:embodiment-msg xmlns:oc=\"http://www.opencog.org/brain\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opencog.org/brain BrainProxyAxon.xsd\">\n");
-        speechMsg.Append("<communication source-id=\"");
-        speechMsg.Append(source.GetInstanceID());
-        speechMsg.Append("\" timestamp=\"");
-        speechMsg.Append(GetCurrentTimestamp());
-        speechMsg.Append("\">");
-        speechMsg.Append(text);
-        speechMsg.Append("</communication>");
-        speechMsg.Append("</oc:embodiment-msg>");
-        
-        Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, Network.OCMessage.MessageType.RAW, speechMsg.ToString());
-        
-        // Add the message to the sending queue.
-        lock (_messageSendingLock) {
-            _messagesToSend.Add(message);
-        }
-    }
+      speechMsg.Append("<oc:embodiment-msg xmlns:oc=\"http://www.opencog.org/brain\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opencog.org/brain BrainProxyAxon.xsd\">\n");
+      speechMsg.Append("<communication source-id=\"");
+      speechMsg.Append(source.GetInstanceID());
+      speechMsg.Append("\" timestamp=\"");
+      speechMsg.Append(GetCurrentTimestamp());
+      speechMsg.Append("\">");
+      speechMsg.Append(text);
+      speechMsg.Append("</communication>");
+      speechMsg.Append("</oc:embodiment-msg>");
+      
+      Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, Network.OCMessage.MessageType.RAW, speechMsg.ToString());
+      
+      // Add the message to the sending queue.
+      lock (_messageSendingLock) {
+          _messagesToSend.Add(message);
+      }
+  }
     
-    /**
-     * Save data and exit from embodiment system normally 
-     * when finalizing the OCAvatar. 
-     */
-    public void SaveAndExit()
-    {
-        if (_isInitialized) {
-            // TODO save local data of this avatar.
-            UnloadOAC();
-        }
-		// TOFIX
-		// Finalize is nog Uninitialize, which I believe is called on raising the OnDestroy event...?
-        //finalize();
-    }
+  /**
+   * Save data and exit from embodiment system normally 
+   * when finalizing the OCAvatar. 
+   */
+  public void SaveAndExit()
+  {
+      if (_isInitialized) {
+          // TODO save local data of this avatar.
+          UnloadOAC();
+      }
+	// TOFIX
+	// Finalize is nog Uninitialize, which I believe is called on raising the OnDestroy event...?
+      //finalize();
+  }
 
 	//---------------------------------------------------------------------------
 
@@ -1431,12 +1425,13 @@ public class OCConnector : Network.OCNetworkElement
 	// but a single action that current the robot want to do
 	private void ParseSingleActionElement(XmlElement element)
 	{
-		Avatar oca = gameObject.GetComponent<Avatar>() as Avatar;
+		OCActionController oca = gameObject.GetComponent<OCActionController>() as OCActionController;
 		if (oca == null)
 			return;
 		
-	    string actionName = element.GetAttribute(OCEmbodimentXMLTags.NAME_ATTRIBUTE);
-        if (actionName == "BuildBlockAtPosition")
+	  string actionName = element.GetAttribute(OCEmbodimentXMLTags.NAME_ATTRIBUTE);
+			
+    if (actionName == "BuildBlockAtPosition")
 		{
 			int x = 0,y = 0,z = 0;
 			XmlNodeList list = element.GetElementsByTagName(OCEmbodimentXMLTags.PARAMETER_ELEMENT);
@@ -1506,10 +1501,10 @@ public class OCConnector : Network.OCNetworkElement
         _currentDemandName = element.GetAttribute(OCEmbodimentXMLTags.DEMAND_ATTRIBUTE);
         
         XmlNodeList list = element.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_ELEMENT);
-        LinkedList<MetaAction> actionPlan = new LinkedList<MetaAction>();
+        LinkedList<OCAction> actionPlan = new LinkedList<OCAction>();
         for (int i = 0; i < list.Count; i++)
         {
-            MetaAction avatarAction = MetaAction.Factory((XmlElement)list.Item(i), true);
+            OCAction avatarAction = OCAction.CreateAction((XmlElement)list.Item(i), true);
 
             actionPlan.AddLast(avatarAction);
         }
@@ -1519,7 +1514,7 @@ public class OCConnector : Network.OCNetworkElement
             _actionsList = actionPlan;
         }
         // Start to perform an action in front of the action list.
-        _actionScheduler.SendMessage("receiveActionPlan", actionPlan);
+        _actionController.SendMessage("receiveActionPlan", actionPlan);
         //processNextAvatarAction();
     }
 	/**
@@ -1534,7 +1529,7 @@ public class OCConnector : Network.OCNetworkElement
             }
         
         // Ask action scheduler to stop all current actions.
-        _actionScheduler.SendMessage("cancelCurrentActionPlan");
+        _actionController.SendMessage("cancelCurrentActionPlan");
         SendActionStatus(_currentPlanId, false);
     }
 
@@ -1655,77 +1650,77 @@ public class OCConnector : Network.OCNetworkElement
 
 
     
-    /**
-     * Creates and store an action status message to be sent to an OAC.
-     * This message represents the status of all actions of the given planId.
-     * This method will create a agent-signal xml message like:
-     * 
-     * (currently this is avatar-signal, but should be changed...)
-     * <agent-signal id="..." timestamp="...">
-     * <action name="..." plan-id="..." sequence="..." status="..."/>
-     * </agent-signal>
-     * 
-     * @param planId plan id
-     * @param action avatar action
-     * @param success action result
-     */
-    private void SendActionStatus(string planId, MetaAction action, bool success)
-    {
-        string timestamp = GetCurrentTimestamp();
-        // Create a xml document
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
+  /**
+   * Creates and store an action status message to be sent to an OAC.
+   * This message represents the status of all actions of the given planId.
+   * This method will create a agent-signal xml message like:
+   * 
+   * (currently this is avatar-signal, but should be changed...)
+   * <agent-signal id="..." timestamp="...">
+   * <action name="..." plan-id="..." sequence="..." status="..."/>
+   * </agent-signal>
+   * 
+   * @param planId plan id
+   * @param action avatar action
+   * @param success action result
+   */
+  private void SendActionStatus(string planId, OCAction action, bool success)
+  {
+      string timestamp = GetCurrentTimestamp();
+      // Create a xml document
+      XmlDocument doc = new XmlDocument();
+      XmlElement root = MakeXMLElementRoot(doc);
 
-        XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
-        avatarSignal.SetAttribute("id", _brainID);
-        avatarSignal.SetAttribute("timestamp", timestamp);
-        XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
-        actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
-        actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, action.Sequence.ToString());
-        actionElement.SetAttribute("name", action.Name);
-        actionElement.SetAttribute("status", success ? "done" : "error");
+      XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
+      avatarSignal.SetAttribute("id", _brainID);
+      avatarSignal.SetAttribute("timestamp", timestamp);
+      XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+      actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
+      actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, action.Sequence.ToString());
+      actionElement.SetAttribute("name", action.Name);
+      actionElement.SetAttribute("status", success ? "done" : "error");
 
-        Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+      Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
 
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        }
-    }
-    
-    /**
-     * Creates and store an action status message to be sent to an OAC.
-     * This message represents the status of all actions of the given planId.
-     * This method will create a agent-signal xml message like:
-     * 
-     * (currently this is avatar-signal, but should be changed...)
-     * <agent-signal id="..." timestamp="...">
-     * <action name="..." plan-id="..." sequence="..." status="..."/>
-     * </agent-signal>
-     * 
-     * @param planId plan id
-     * @param success action result
-     */
-    private void SendActionStatus(string planId, bool success)
-    {
-        string timestamp = GetCurrentTimestamp();
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
+      lock (_messageSendingLock)
+      {
+          _messagesToSend.Add(message);
+      }
+  }
+  
+  /**
+   * Creates and store an action status message to be sent to an OAC.
+   * This message represents the status of all actions of the given planId.
+   * This method will create a agent-signal xml message like:
+   * 
+   * (currently this is avatar-signal, but should be changed...)
+   * <agent-signal id="..." timestamp="...">
+   * <action name="..." plan-id="..." sequence="..." status="..."/>
+   * </agent-signal>
+   * 
+   * @param planId plan id
+   * @param success action result
+   */
+  private void SendActionStatus(string planId, bool success)
+  {
+      string timestamp = GetCurrentTimestamp();
+      XmlDocument doc = new XmlDocument();
+      XmlElement root = MakeXMLElementRoot(doc);
 
-        XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
-        avatarSignal.SetAttribute("id", _brainID);
-        avatarSignal.SetAttribute("timestamp", timestamp);
-        XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
-        actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
-        actionElement.SetAttribute("status", success ? "done" : "error");
+      XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
+      avatarSignal.SetAttribute("id", _brainID);
+      avatarSignal.SetAttribute("timestamp", timestamp);
+      XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+      actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
+      actionElement.SetAttribute("status", success ? "done" : "error");
 
-        Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, OpenCog.Network.OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+      Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, OpenCog.Network.OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
-        lock (_messageSendingLock)
-        {
-            _messagesToSend.Add(message);
-        }
-    }
+      lock (_messageSendingLock)
+      {
+          _messagesToSend.Add(message);
+      }
+  }
 
 	//---------------------------------------------------------------------------
 

@@ -219,11 +219,11 @@ public class OCNetworkElement : OCMonoBehaviour
   /// <param name="newMessagesNum">number of new arriving messages</param>
 	public void NotifyNewMessages(int newMessagesNum)
 	{
-		log.Debugging("Notified about new messages in Router.");
-		lock(this.unreadMessagesLock)
+		OCLogger.Debugging("Notified about new messages in Router.");
+		lock(_unreadMessagesLock)
 		{
-			unreadMessagesNum += newMessagesNum;
-			log.Debugging("Unread messages [" + this.unreadMessagesNum + "]");
+			_unreadMessagesCount += newMessagesNum;
+			OCLogger.Debugging("Unread messages [" + _unreadMessagesCount + "]");
 		}
 	}
 	
