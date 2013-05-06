@@ -156,7 +156,7 @@ public class TalkCommand : Console.ConsoleCommand
     }
     
     public override string GetName() {
-        return m_commandName;
+        return _commandName;
     }
 
 		//---------------------------------------------------------------------------
@@ -201,7 +201,7 @@ public class TalkCommand : Console.ConsoleCommand
 		/// </summary>
 		public TalkCommand ()
 		{
-			m_commandName = "say";
+			_commandName = "say";
 		}
 
 		//---------------------------------------------------------------------------

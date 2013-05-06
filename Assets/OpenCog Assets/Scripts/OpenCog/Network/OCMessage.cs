@@ -57,17 +57,17 @@ public abstract class OCMessage : IConvertible
 	/// <summary>
 	/// The ID of source OCNetworkElement.
 	/// </summary>
-	private string m_SourceID;
+	private string _sourceID;
 		
 	/// <summary>
 	/// The ID of the target OCNetworkElement.
 	/// </summary>
-	private string m_TargetID;
+	private string _targetID;
 		
 	/// <summary>
 	/// The type of the message.
 	/// </summary>
-	private MessageType m_Type;
+	private MessageType _type;
 		
 		
 			
@@ -83,20 +83,20 @@ public abstract class OCMessage : IConvertible
 		
 	public string SourceID 
 	{
-		get { return this.m_SourceID;}
-		set { m_SourceID = value;}
+		get { return this._sourceID;}
+		set { _sourceID = value;}
 	}
 
 	public string TargetID 
 	{
-		get { return this.m_TargetID;}
-		set { m_TargetID = value;}
+		get { return this._targetID;}
+		set { _targetID = value;}
 	}
 
 	public MessageType Type 
 	{
-		get { return this.m_Type;}
-		set { m_Type = value;}
+		get { return this._type;}
+		set { _type = value;}
 	}
 			
 	//---------------------------------------------------------------------------
@@ -147,9 +147,11 @@ public abstract class OCMessage : IConvertible
 				return null;
 		}
 	}
-		
+
+	// new version of getPlainTextRepresentation
 	public abstract string ToString();
-	
+
+	// new version of loadPlainTextRepresentation
 	public abstract void FromString(string message);
 
 	#region IConvertible implementation
@@ -263,9 +265,9 @@ public abstract class OCMessage : IConvertible
 		
 	public OCMessage (string sourceID, string targetID, MessageType type)
 	{
-		m_SourceID = sourceID;
-		m_TargetID = targetID;
-		m_Type = type;
+		_sourceID = sourceID;
+		_targetID = targetID;
+		_type = type;
 	}
 		
 	/// <summary>

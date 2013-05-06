@@ -55,7 +55,7 @@ public class ActionCommand : Console.ConsoleCommand
 		/// public (I know Unity encourages you to do this).  Instead, make use of
 		/// public properties whenever possible.
 		/// </summary>
-		private int m_ExampleVar;
+		private int _exampleVar;
 
 		//---------------------------------------------------------------------------
 
@@ -258,7 +258,7 @@ public class ActionCommand : Console.ConsoleCommand
     
 		public override string GetName ()
 		{
-			return m_commandName;
+			return _commandName;
 		}
 
 		//---------------------------------------------------------------------------
@@ -302,7 +302,7 @@ public class ActionCommand : Console.ConsoleCommand
 		/// </summary>
 		public ActionCommand ()
 		{
-			m_commandName = "do";
+			_commandName = "do";
 		}
 
 		//---------------------------------------------------------------------------

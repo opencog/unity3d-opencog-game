@@ -57,33 +57,33 @@ public class OCMessageHandler : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 	
-	private OCNetworkElement m_NetworkElement;
+	private OCNetworkElement _networkElement;
 		
 	/// <summary>
 	/// The TCP socket where the connection is being handled.
 	/// </summary>
-	private Socket m_Socket;
+	private Socket _socket;
 			
 	/// <summary>
 	/// The global state.
 	/// </summary>
-	private readonly int m_DOING_NOTHING = 0;
-	private readonly int m_READING_MESSAGES = 1;
+	private readonly int DOING_NOTHING = 0;
+	private readonly int READING_MESSAGES = 1;
 		
 	/// <summary>
 	///Message handling fields.
 	/// </summary>
-	private OCMessage.MessageType m_MessageType;
-	private string m_MessageTo;
-	private string m_MessageFrom;
-	private StringBuilder m_Message;
-	private List<OCMessage> m_MessageBuffer;
+	private OCMessage.MessageType _messageType;
+	private string _messageTo;
+	private string _messageFrom;
+	private StringBuilder _message;
+	private List<OCMessage> _messageBuffer;
 		
-	private bool m_UseMessageBuffer = false;
-	private int m_MaxMessagesInBuffer = 100;
+	private bool _useMessageBuffer = false;
+	private int _maxMessagesInBuffer = 100;
 		
-	private int m_LineCount;
-	private int m_State;
+	private int _lineCount;
+	private int _state;
 	
 			
 	//---------------------------------------------------------------------------
@@ -122,13 +122,13 @@ public class OCMessageHandler : OCScriptableObject
 			
 		try
 		{
-			Stream s = new NetworkStream(m_Socket);
+			Stream s = new NetworkStream(_socket);
 			reader = new StreamReader(s);
 			writer = new StreamWriter(s);
 		}
 		catch( IOException ioe )
 		{
-			m_Socket.Close();
+			_socket.Close();
 			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
 		}
 			
@@ -162,7 +162,7 @@ public class OCMessageHandler : OCScriptableObject
 		{
 			reader.Close();
 			writer.Close();
-			m_Socket.Close();
+			_socket.Close();
 		}
 		catch( IOException ioe )
 		{
@@ -183,15 +183,15 @@ public class OCMessageHandler : OCScriptableObject
 	
 	private void Initialize(OCNetworkElement networkElement, Socket socket)
 	{
-		m_NetworkElement = networkElement;
-		m_Socket = socket;	
-		m_LineCount = 0;
-		m_State = m_DOING_NOTHING;
+		_networkElement = networkElement;
+		_socket = socket;	
+		_lineCount = 0;
+		_state = _dOING_NOTHING;
 			
-		m_MessageTo = null;
-		m_MessageFrom = null;
-		m_Message = new StringBuilder();
-		m_MessageBuffer = new List<OCMessage>();
+		_messageTo = null;
+		_messageFrom = null;
+		_message = new StringBuilder();
+		_messageBuffer = new List<OCMessage>();
 	}
 		
 	/// <summary>
@@ -226,7 +226,7 @@ public class OCMessageHandler : OCScriptableObject
 					// Get new message number.
 					int numberOfMessages = int.Parse(token.Current.ToString());
 
-					m_NetworkElement.notifyNewMessages(numberOfMessages);
+					_networkElement.notifyNewMessages(numberOfMessages);
 					answer = OCNetworkElement.OK_MESSAGE;
 
                       OCLogger.Debugging("onLine: Notified about [" + 

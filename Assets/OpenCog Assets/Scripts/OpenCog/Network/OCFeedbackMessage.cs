@@ -51,7 +51,7 @@ public class OCFeedbackMessage : OCMessage
 
 	//---------------------------------------------------------------------------
 	
-	private string m_MessageContent;
+	private string _messageContent;
 			
 	//---------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ public class OCFeedbackMessage : OCMessage
 		
 	public string MessageContent
 	{
-		get{ return m_MessageContent; }
-		set{ m_MessageContent = value; }
+		get{ return _messageContent; }
+		set{ _messageContent = value; }
 	}
 			
 	//---------------------------------------------------------------------------
@@ -81,12 +81,12 @@ public class OCFeedbackMessage : OCMessage
 
 	public override string ToString()
 	{
-		return m_MessageContent;
+		return _messageContent;
 	}
 	
 	public override void FromString(string message)
 	{
-		m_MessageContent = message;
+		_messageContent = message;
 	}
 
 	//---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ public class OCFeedbackMessage : OCMessage
 	public OCFeedbackMessage(string sourceID, string targetID, string message) 
 	: base(sourceID, targetID, OCMessage.MessageType.FEEDBACK)
 	{
-		m_MessageContent = message;
+		_messageContent = message;
 	}
 
 	//---------------------------------------------------------------------------

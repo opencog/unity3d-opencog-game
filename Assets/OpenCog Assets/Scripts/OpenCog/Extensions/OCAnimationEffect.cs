@@ -49,24 +49,24 @@ public class OCAnimationEffect
 	/// <summary>
 	/// The target Unity game object to be animated.
 	/// </summary>
-	private GameObject m_Target = null;
+	private GameObject _target = null;
 
 	/// <summary>
 	/// The Unity animation state that we're wrapping.
 	/// </summary>
-	private AnimationState m_State = null;
+	private AnimationState _state = null;
 
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
 	/// </summary>
-	private Hashtable m_iTweenParams;
+	private Hashtable _iTweenParams;
 
 	/// <summary>
 	/// The length of the animation's cross fade.
 	/// </summary>
-	private float m_FadeLength = 0.5f;
+	private float _fadeLength = 0.5f;
 
-//	private bool m_Initialized = false;
+//	private bool _initialized = false;
 
 
 
@@ -89,8 +89,8 @@ public class OCAnimationEffect
 	[OCTooltip("The Unity animation state that we're wrapping.")]
 	public AnimationState State
 	{
-		get{ return m_State;}
-		set{ m_State = value;}
+		get{ return _state;}
+		set{ _state = value;}
 	}
 
 	/// <summary>
@@ -102,8 +102,8 @@ public class OCAnimationEffect
 	[OCTooltip("The length of the animation's cross fade.")]
 	public float FadeLength
 	{
-		get{ return this.m_FadeLength;}
-		set{ m_FadeLength = value;}
+		get{ return this._fadeLength;}
+		set{ _fadeLength = value;}
 	}
 
 	/// <summary>
@@ -115,14 +115,14 @@ public class OCAnimationEffect
 	[OCTooltip("The target Unity game object to be animated.")]
 	public GameObject Target
 	{
-		get{ return this.m_Target;}
-		set{ m_Target = value;}
+		get{ return this._target;}
+		set{ _target = value;}
 	}
 
 //	public bool IsInitialized
 //	{
-//		get { return m_Initialized;}
-//		set { m_Initialized = value;}
+//		get { return _initialized;}
+//		set { _initialized = value;}
 //	}
 
 	/// <summary>
@@ -136,7 +136,7 @@ public class OCAnimationEffect
 	public float Time
 	{
 		get{ return ValueOrDefault<float>(iT.MoveBy.time);}
-		set{ m_iTweenParams[iT.MoveBy.time] = value;}
+		set{ _iTweenParams[iT.MoveBy.time] = value;}
 	}
 
 	/// <summary>
@@ -150,7 +150,7 @@ public class OCAnimationEffect
 	public string EaseType
 	{
 		get{ return ValueOrDefault<string>(iT.MoveBy.easetype);}
-		set{ m_iTweenParams[iT.MoveBy.easetype] = value;}
+		set{ _iTweenParams[iT.MoveBy.easetype] = value;}
 	}
 
 	/// <summary>
@@ -165,7 +165,7 @@ public class OCAnimationEffect
 	public int Delay
 	{
 		get{ return ValueOrDefault<int>(iT.MoveBy.delay);}
-		set{ m_iTweenParams[iT.MoveBy.delay] = value;}
+		set{ _iTweenParams[iT.MoveBy.delay] = value;}
 	}
 
 	/// <summary>
@@ -180,7 +180,7 @@ public class OCAnimationEffect
 	public string OnStart
 	{
 		get{ return ValueOrDefault<string>(iT.MoveBy.onstart);}
-		set{ m_iTweenParams[iT.MoveBy.onstart] = value;}
+		set{ _iTweenParams[iT.MoveBy.onstart] = value;}
 	}
 
 	/// <summary>
@@ -195,7 +195,7 @@ public class OCAnimationEffect
 	public string OnEnd
 	{
 		get{ return ValueOrDefault<string>(iT.MoveBy.oncomplete);}
-		set{ m_iTweenParams[iT.MoveBy.oncomplete] = value;}
+		set{ _iTweenParams[iT.MoveBy.oncomplete] = value;}
 	}
 
 	//@TODO: Don't move the characters directly through the animation.
@@ -212,7 +212,7 @@ public class OCAnimationEffect
 	public float MoveByX
 	{
 		get{ return ValueOrDefault<float>(iT.MoveBy.x);}
-		set{ m_iTweenParams[iT.MoveBy.x] = value;}
+		set{ _iTweenParams[iT.MoveBy.x] = value;}
 	}
 
 	/// <summary>
@@ -227,7 +227,7 @@ public class OCAnimationEffect
 	public float MoveByY
 	{
 		get{ return ValueOrDefault<float>(iT.MoveBy.y);}
-		set{ m_iTweenParams[iT.MoveBy.y] = value;}
+		set{ _iTweenParams[iT.MoveBy.y] = value;}
 	}
 
 
@@ -243,7 +243,7 @@ public class OCAnimationEffect
 	public float MoveByZ
 	{
 		get{ return ValueOrDefault<float>(iT.MoveBy.z);}
-		set{ m_iTweenParams[iT.MoveBy.z] = value;}
+		set{ _iTweenParams[iT.MoveBy.z] = value;}
 	}
 
 	/// <summary>
@@ -258,7 +258,7 @@ public class OCAnimationEffect
 	public float RotateByX
 	{
 		get{ return ValueOrDefault<float>(iT.RotateBy.x);}
-		set{ m_iTweenParams[iT.RotateBy.x] = value;}
+		set{ _iTweenParams[iT.RotateBy.x] = value;}
 	}
 
 	/// <summary>
@@ -273,7 +273,7 @@ public class OCAnimationEffect
 	public float RotateByY
 	{
 		get{ return ValueOrDefault<float>(iT.RotateBy.y);}
-		set{ m_iTweenParams[iT.RotateBy.y] = value;}
+		set{ _iTweenParams[iT.RotateBy.y] = value;}
 	}
 
 
@@ -289,13 +289,13 @@ public class OCAnimationEffect
 	public float RotateByZ
 	{
 		get{ return ValueOrDefault<float>(iT.RotateBy.z);}
-		set{ m_iTweenParams[iT.RotateBy.z] = value;}
+		set{ _iTweenParams[iT.RotateBy.z] = value;}
 	}
 
 	public Vector3 Position
 	{
 		get{ return ValueOrDefault<Vector3>("position");}
-		set{ m_iTweenParams["position"] = value;}
+		set{ _iTweenParams["position"] = value;}
 	}
 
 			
@@ -323,7 +323,7 @@ public class OCAnimationEffect
 		FadeLength = anim.FadeLength;
 		Target = anim.Target;
 		State = anim.State;
-		m_iTweenParams = anim.m_iTweenParams;
+		_iTweenParams = anim._iTweenParams;
 	}
 
 	//---------------------------------------------------------------------------
@@ -351,12 +351,12 @@ public class OCAnimationEffect
 
 		Target = target;
 		State = animationState;
-		m_iTweenParams = new Hashtable();
+		_iTweenParams = new Hashtable();
 		Time = State.length / State.speed + 0.01f;
 		EaseType = "linear";//iTween.EaseType.linear;
 		Delay = 0;
 
-		//m_Initialized = true;
+		//_initialized = true;
 		//DontDestroyOnLoad(this);
 	}
 
@@ -365,27 +365,27 @@ public class OCAnimationEffect
 	/// </summary>
 	public void PlayAndTranslate()
 	{
-		iTween.MoveBy(m_Target, m_iTweenParams);
+		iTween.MoveBy(_target, _iTweenParams);
 	}
 
 	public void PlayAndRotate()
 	{
-		iTween.RotateBy(m_Target, m_iTweenParams);
+		iTween.RotateBy(_target, _iTweenParams);
 	}
 
 	public void Stop()
 	{
-		iTween.Stop(m_Target);
+		iTween.Stop(_target);
 	}
 
 	public bool IsPlaying
 	{
-		get { return m_Target.animation.IsPlaying(State.name);}
+		get { return _target.animation.IsPlaying(State.name);}
 	}
 
 	public bool IsPlayingButNotThis
 	{
-		get { return m_Target.animation.isPlaying && !IsPlaying;}
+		get { return _target.animation.isPlaying && !IsPlaying;}
 	}
 
 	/// <summary>
@@ -393,7 +393,7 @@ public class OCAnimationEffect
 	/// </summary>
 	public void Start()
 	{
-		m_Target.animation.CrossFade(m_State.name, m_FadeLength);
+		_target.animation.CrossFade(_state.name, _fadeLength);
 	}
 
 	/// <summary>
@@ -401,9 +401,9 @@ public class OCAnimationEffect
 	/// </summary>
 	public void End()
 	{
-		if(m_State.wrapMode != WrapMode.Loop)
+		if(_state.wrapMode != WrapMode.Loop)
 		{
-			m_Target.animation.Stop();
+			_target.animation.Stop();
 		}
 	}
 
@@ -419,8 +419,8 @@ public class OCAnimationEffect
 			
 	private T ValueOrDefault<T>(string key)
 	{
-		if(m_iTweenParams.Contains(key))
-			return (T)m_iTweenParams[key];
+		if(_iTweenParams.Contains(key))
+			return (T)_iTweenParams[key];
 		else
 			return default(T);
 	}

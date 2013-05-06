@@ -52,9 +52,9 @@ public class OCServerListener : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 	
-	private bool m_ShouldStop;
-	private TcpListener m_Listener;
-	private OCNetworkElement m_NetworkElement;
+	private bool _shouldStop;
+	private TcpListener _listener;
+	private OCNetworkElement _networkElement;
 			
 	//---------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ public class OCServerListener : OCScriptableObject
 	public void OnEnable()
 	{
 		//Initialize();
-		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
+		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
 			" is enabled.");
 	}
 		
@@ -93,7 +93,7 @@ public class OCServerListener : OCScriptableObject
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
+		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
 			" is disabled.");
 	}
 
@@ -103,7 +103,7 @@ public class OCServerListener : OCScriptableObject
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine("Server Listener for " + m_NetworkElement.gameObject.name + 
+		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
 			" is about to be destroyed.");
 	}
 		
@@ -111,14 +111,14 @@ public class OCServerListener : OCScriptableObject
 	{
 		try
 		{
-			m_Listener = new 
+			_listener = new 
 				TcpListener
-				(	IPAddress.Parse(m_NetworkElement.IPAddress)
-				, m_NetworkElement.PortNumber
+				(	IPAddress.Parse(_networkElement.IPAddress)
+				, _networkElement.PortNumber
 				)
 			;
 			
-			m_Listener.Start();
+			_listener.Start();
 		}
 		catch(SocketException se)
 		{
@@ -126,9 +126,9 @@ public class OCServerListener : OCScriptableObject
 			yield break;
 		}
 			
-		while(!m_ShouldStop)
+		while(!_shouldStop)
 		{
-			if(!m_Listener.Pending())
+			if(!_listener.Pending())
 			{
 				// If listener is pending, sleep for a while to relax the CPU.
 				yield return new WaitForSeconds(0.05f);
@@ -137,8 +137,8 @@ public class OCServerListener : OCScriptableObject
 			{
 				try
 				{
-					Socket workSocket = m_Listener.AcceptSocket();
-					new OCMessageHandler(m_NetworkElement, workSocket).start();
+					Socket workSocket = _listener.AcceptSocket();
+					new OCMessageHandler(_networkElement, workSocket).start();
 				}
 				catch( SocketException se )
 				{
@@ -150,11 +150,11 @@ public class OCServerListener : OCScriptableObject
 		
 	public void Stop()
 	{
-		m_ShouldStop = true;
+		_shouldStop = true;
 		try
 		{
-			m_Listener.Stop();
-			m_Listener = null;
+			_listener.Stop();
+			_listener = null;
 		}
 		catch(SocketException se)
 		{
@@ -177,8 +177,8 @@ public class OCServerListener : OCScriptableObject
 	/// </summary>
 	private void Initialize(OCNetworkElement networkElement)
 	{
-		m_NetworkElement = networkElement;
-		m_ShouldStop = false;			
+		_networkElement = networkElement;
+		_shouldStop = false;			
 	}
 	
 	/// <summary>

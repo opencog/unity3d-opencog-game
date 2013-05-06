@@ -5,11 +5,13 @@ using System.Collections;
 public class FileTerrainGenerator
 {
 	private string _fullMapPath;
-	private Map _map;
+	private OpenCog.Map.OCMap _map;
 	private const string _baseMapFolder = "Assets\\Maps";
 	
-	public FileTerrainGenerator (Map map, string mapName)
+	public FileTerrainGenerator (OpenCog.Map.OCMap map, string mapName)
 	{
+		map.MapName = mapName;
+
 		_map = map;
 		_fullMapPath = System.IO.Path.Combine (_baseMapFolder, mapName);
 	}

@@ -46,7 +46,7 @@ public class OCTooltipAttribute : Attribute
 	/// <summary>
 	/// The tooltip string to be displayed.
 	/// </summary>
-	private string m_Description;
+	private string _description;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -66,8 +66,8 @@ public class OCTooltipAttribute : Attribute
 	/// </value>
   public string Description
 	{
-		get { return m_Description; }
-		set { m_Description = value; }
+		get { return _description; }
+		set { _description = value; }
 	}
 
   /////////////////////////////////////////////////////////////////////////////

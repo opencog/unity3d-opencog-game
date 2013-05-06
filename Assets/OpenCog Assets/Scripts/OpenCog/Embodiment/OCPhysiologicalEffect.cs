@@ -52,17 +52,17 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private CostLevel m_costLevel;
+	private CostLevel _costLevel;
 
-	private float m_energyIncrease = 0.0f;
+	private float _energyIncrease = 0.0f;
 
-	private float m_fitnessChange = 0.0f;
+	private float _fitnessChange = 0.0f;
 
-	private OCPhysiologicalModel.AvatarMode m_newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
+	private OCPhysiologicalModel.AvatarMode _newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
 
-	private Dictionary<string, float> m_changeFactors = new Dictionary<string,float>();
+	private Dictionary<string, float> _changeFactors = new Dictionary<string,float>();
 
-	private List<string> m_resetFactors = new List<string>();
+	private List<string> _resetFactors = new List<string>();
 
 	private float BASE_ENERGY_COST;
 
@@ -101,7 +101,7 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 		// Set new mode
 		model.currentMode = newMode;
 		// Change factors...
-		foreach(String factorName in changeFactors.Keys)
+		foreach(string factorName in changeFactors.Keys)
 		{
 			float changeValue = changeFactors[factorName];
 			if(changeValue < 0.0f)
@@ -114,7 +114,7 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 			}
 		}
 		// Reset factors
-		foreach(String factorName in resetFactors)
+		foreach(string factorName in resetFactors)
 		{
 			model.basicFactorMap[factorName].reset();
 		}
@@ -162,7 +162,7 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
      */
 	public float GetActionCost(float fitness)
 	{
-		return (float)(1.5 - fitness) * ((int)m_costLevel * BASE_ENERGY_COST);
+		return (float)(1.5 - fitness) * ((int)_costLevel * BASE_ENERGY_COST);
 	}
 
 	//---------------------------------------------------------------------------
@@ -198,7 +198,7 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 
 	public OCPhysiologicalEffect(CostLevel level)
 	{
-		m_costLevel = level;
+		_costLevel = level;
 		// MAX_ACTION_NUM is the number of normal actions possible on a full battery charge.
 		this.BASE_ENERGY_COST = 1.0f / config.GetInt("MAX_ACTION_NUM");
 	}

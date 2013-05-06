@@ -52,25 +52,25 @@ public class OCFeelingPanel : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	private bool m_isFeelingTextureMapInitialized = false;
+	private bool _isFeelingTextureMapInitialized = false;
 
-	private bool m_isShowingPanel = true;
+	private bool _isShowingPanel = true;
 	// the skin the console will use
-	private UnityEngine.GUISkin m_panelSkin;
+	private UnityEngine.GUISkin _panelSkin;
 	// style for label
-	private UnityEngine.GUIStyle m_boxStyle;
+	private UnityEngine.GUIStyle _boxStyle;
 	// A map from feeling names to textures. The texture needs to be created dynamically
 	// whenever a new feeling is added.
-	private Dictionary<string, UnityEngine.Texture2D> m_feelingTextureMap;
+	private Dictionary<string, UnityEngine.Texture2D> _feelingTextureMap;
 	// We need to initialize the feeling to texture map at the first time of obtaining the
 	// feeling information.
 
 
-	private OpenCog.Network.OCConnector m_connector;
+	private OCConnector _connector;
 
-	private UnityEngine.Rect m_panel;
+	private UnityEngine.Rect _panel;
 
-	private UnityEngine.Vector2 m_scrollPosition;
+	private UnityEngine.Vector2 _scrollPosition;
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -105,8 +105,8 @@ public class OCFeelingPanel : OCMonoBehaviour
 	/// </summary>
 	public void Start()
 	{
-		m_connector = GetComponent<Network.OCConnector>() as Network.OCConnector;
-		m_feelingTextureMap = new Dictionary<string, UnityEngine.Texture2D>();
+		_connector = GetComponent<Network.OCConnector>() as Network.OCConnector;
+		_feelingTextureMap = new Dictionary<string, UnityEngine.Texture2D>();
 
 		OCLogger.Fine(gameObject.name + " is started.");
 	}
@@ -156,25 +156,25 @@ public class OCFeelingPanel : OCMonoBehaviour
 
 	public void ShowPanel()
 	{
-		m_isShowingPanel = true;
+		_isShowingPanel = true;
 	}
 
 	public void HidePanel()
 	{
-		m_isShowingPanel = false;
+		_isShowingPanel = false;
 	}
 
 	public void OnGUI()
 	{
-		if(m_panelSkin != null)
+		if(_panelSkin != null)
 		{
-			UnityEngine.GUI.skin = m_panelSkin;
+			UnityEngine.GUI.skin = _panelSkin;
 		}
 
-		if(m_isShowingPanel)
+		if(_isShowingPanel)
 		{
-			m_panel = new UnityEngine.Rect(UnityEngine.Screen.width * 0.65f, UnityEngine.Screen.height * 0.7f, UnityEngine.Screen.width * 0.35f, UnityEngine.Screen.height * 0.3f);
-			m_panel = UnityEngine.GUI.Window(2, m_panel, FeelingMonitorPanel, gameObject.name + " Feeling Panel");
+			_panel = new UnityEngine.Rect(UnityEngine.Screen.width * 0.65f, UnityEngine.Screen.height * 0.7f, UnityEngine.Screen.width * 0.35f, UnityEngine.Screen.height * 0.3f);
+			_panel = UnityEngine.GUI.Window(2, _panel, FeelingMonitorPanel, gameObject.name + " Feeling Panel");
 		}
 	}
 
@@ -204,23 +204,23 @@ public class OCFeelingPanel : OCMonoBehaviour
 
 	private void FeelingMonitorPanel(int id)
 	{
-		Dictionary<string, float> feelingValueMap = m_connector.FeelingValueMap;
+		Dictionary<string, float> feelingValueMap = _connector.FeelingValueMap;
 		if(feelingValueMap.Count == 0)
 		{
 			return;
 		}
 
-		m_scrollPosition = UnityEngine.GUILayout.BeginScrollView(m_scrollPosition);
+		_scrollPosition = UnityEngine.GUILayout.BeginScrollView(_scrollPosition);
 
 		float feelingBarWidth = UnityEngine.Screen.width * 0.3f;
 
-		m_boxStyle = m_panelSkin.box;
+		_boxStyle = _panelSkin.box;
 		lock(feelingValueMap)
 		{
 			int topOffset = 5;
 			foreach(string feeling in feelingValueMap.Keys)
 			{
-				if(!m_isFeelingTextureMapInitialized)
+				if(!_isFeelingTextureMapInitialized)
 				{
 					float r = UnityEngine.Random.value;
 					float g = UnityEngine.Random.value;
@@ -229,22 +229,22 @@ public class OCFeelingPanel : OCMonoBehaviour
 					UnityEngine.Texture2D t = new UnityEngine.Texture2D(1, 1);
 					t.SetPixel(0, 0, c);
 					t.Apply();
-					m_feelingTextureMap[feeling] = t;
+					_feelingTextureMap[feeling] = t;
 				}
 				float value = feelingValueMap[feeling];
 
 				// Set the texture of background.
-				m_boxStyle.normal.background = m_feelingTextureMap[feeling];
+				_boxStyle.normal.background = _feelingTextureMap[feeling];
 				UnityEngine.GUILayout.BeginHorizontal();
-				UnityEngine.GUILayout.Label(feeling + ": ", m_panelSkin.label, UnityEngine.GUILayout.MaxWidth(m_panel.width * 0.3f));
-				UnityEngine.GUILayout.Box("", m_boxStyle, UnityEngine.GUILayout.Width(feelingBarWidth * value), UnityEngine.GUILayout.Height(16));
+				UnityEngine.GUILayout.Label(feeling + ": ", _panelSkin.label, UnityEngine.GUILayout.MaxWidth(_panel.width * 0.3f));
+				UnityEngine.GUILayout.Box("", _boxStyle, UnityEngine.GUILayout.Width(feelingBarWidth * value), UnityEngine.GUILayout.Height(16));
 				UnityEngine.GUILayout.EndHorizontal();
 				topOffset += 15;
 			}
 			// We only need to initialize the map at the first time.
-			if(!m_isFeelingTextureMapInitialized)
+			if(!_isFeelingTextureMapInitialized)
 			{
-				m_isFeelingTextureMapInitialized = true;
+				_isFeelingTextureMapInitialized = true;
 			}
 		}
 

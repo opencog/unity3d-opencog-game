@@ -46,7 +46,7 @@ public class OCSingletonMonoBehaviour<T> : MonoBehaviour
 	/// <summary>
 	/// The singleton instance.
 	/// </summary>
-	private static T m_Instance = null;
+	private static T _instance = null;
 		
 	//---------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ public class OCSingletonMonoBehaviour<T> : MonoBehaviour
 	{
 		get
 		{
-			if(m_Instance == null && !Instantiate())
+			if(_instance == null && !Instantiate())
 			{
 				Debug.LogError
 				( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " 
@@ -77,7 +77,7 @@ public class OCSingletonMonoBehaviour<T> : MonoBehaviour
 				);
 			}
 				
-			return m_Instance;
+			return _instance;
 		}
 	}
 			
@@ -107,7 +107,7 @@ public class OCSingletonMonoBehaviour<T> : MonoBehaviour
 	private static bool Instantiate()
 	{
 		//Assert that we're not already instantiated
-		if(m_Instance != null)
+		if(_instance != null)
 		{
 			throw new 
 				OCException("In OCSingletonMonoBehaviour.Instantiate, we're already " +
@@ -115,18 +115,18 @@ public class OCSingletonMonoBehaviour<T> : MonoBehaviour
 		}
 			
 		//Find one in the scene if we've added a prefab for it.
-		m_Instance = (T)FindObjectOfType(typeof(T));
+		_instance = (T)FindObjectOfType(typeof(T));
 			
 		//Otherwise create a new object for our monobehaviour singleton.
-		if(m_Instance == null)
+		if(_instance == null)
 		{
 			GameObject gameObject = 
 				new GameObject(typeof(T).ToString(), typeof(T));
 				
-			m_Instance = gameObject.GetComponent<T>();				
+			_instance = gameObject.GetComponent<T>();				
 		}
 			
-		return m_Instance != null;
+		return _instance != null;
 	}
 					
 					

@@ -49,7 +49,7 @@ public class OCSingleton<T> : OCMonoBehaviour where T : OCMonoBehaviour
 	/// <summary>
 	/// The global instance of this singleton.
 	/// </summary>
-	protected static T m_Instance;
+	protected static T _instance;
 
 	//---------------------------------------------------------------------------
 
@@ -95,18 +95,18 @@ public class OCSingleton<T> : OCMonoBehaviour where T : OCMonoBehaviour
 	{
 		get
 		{
-			if(m_Instance == null)
+			if(_instance == null)
 			{
-				m_Instance = (T)FindObjectOfType(typeof(T));
+				_instance = (T)FindObjectOfType(typeof(T));
 		
-				if(m_Instance == null)
+				if(_instance == null)
 				{
 					Debug.LogError("An instance of " + typeof(T) +
 		              " is needed in the scene, but there is none.");
 				}
 			}
 
-			return m_Instance;
+			return _instance;
 		}
 	}
 

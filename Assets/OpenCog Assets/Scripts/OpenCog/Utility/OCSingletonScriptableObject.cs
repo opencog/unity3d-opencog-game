@@ -45,7 +45,7 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 	/// <summary>
 	/// The singleton instance.
 	/// </summary>
-	private static T m_Instance = null;
+	private static T _instance = null;
 		
 	//---------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 	{
 		get
 		{
-			if(m_Instance == null && !Instantiate())
+			if(_instance == null && !Instantiate())
 			{
 				Debug.LogError
 				( "In OCSingletonScriptableObject.Instance, an instance of singleton " 
@@ -76,7 +76,7 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 				);
 			}
 				
-			return m_Instance;
+			return _instance;
 		}
 	}
 			
@@ -106,21 +106,21 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 	private static bool Instantiate()
 	{
 		//Assert that we're not already instantiated
-		if(m_Instance != null)
+		if(_instance != null)
 		{
 			throw new 
 				OCException("In OCSingletonScriptableObject.Instantiate, " +
 					"we're already instantiated!");
 		}
 			
-		m_Instance = (T)FindObjectOfType(typeof(T));
+		_instance = (T)FindObjectOfType(typeof(T));
 			
-		if(m_Instance == null)
+		if(_instance == null)
 		{
-			m_Instance = ScriptableObject.CreateInstance<T>();
+			_instance = ScriptableObject.CreateInstance<T>();
 		}
 					
-		return m_Instance != null;
+		return _instance != null;
 	}
 					
 					

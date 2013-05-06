@@ -56,12 +56,12 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// current log level, it will be displayed in the Unity Console output 
 	/// window.
 	/// </summary>
-	private LogLevel m_CurrentLevel;
+	private LogLevel _currentLevel;
 	
 	/// <summary>
 	/// Is the logger enabled?
 	/// </summary>
-	private bool m_IsLogEnabled;
+	private bool _isLogEnabled;
 
 	//---------------------------------------------------------------------------
 
@@ -83,8 +83,8 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// </value>
 	static public LogLevel CurrentLevel
 	{
-		get{ return Instance.m_CurrentLevel;}
-		set{ Instance.m_CurrentLevel = value;}
+		get{ return Instance._currentLevel;}
+		set{ Instance._currentLevel = value;}
 	}
 	
 	/// <summary>
@@ -95,8 +95,8 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// </value>
 	static public bool IsLogEnabled
 	{
-		get{ return Instance.m_IsLogEnabled;}
-		set{ Instance.m_IsLogEnabled = value;}
+		get{ return Instance._isLogEnabled;}
+		set{ Instance._isLogEnabled = value;}
 	}		
 
 			
@@ -213,7 +213,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// </param>
 	private void Log(LogLevel level, System.Object message, bool showTrace=false)
 	{
-		if(!m_IsLogEnabled)
+		if(!_isLogEnabled)
 		{
 			return;
 		}
@@ -237,7 +237,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 		{
 			logToPrint = "[" + level.ToString() + "] " + message.ToString();
 		}
-		if(level <= m_CurrentLevel)
+		if(level <= _currentLevel)
 		{
 			/** 
 			 * Use unity api for writing information to 

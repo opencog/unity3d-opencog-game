@@ -13,7 +13,7 @@ public class TerrainGenerator {
 	private NoiseArray3D islandNoise3D = new NoiseArray3D(1/40f);
 	private NoiseArray3D caveNoise3D = new NoiseArray3D(1/50f);
 	
-	private Map map;
+	private OpenCog.Map.OCMap map;
 	
 	private Block water;
 	
@@ -25,7 +25,7 @@ public class TerrainGenerator {
 	private Block snow;
 	private Block ice;
 	
-	public TerrainGenerator(Map map) {
+	public TerrainGenerator(OpenCog.Map.OCMap map) {
 		this.map = map;
 		BlockSet blockSet = map.GetBlockSet();
 		

@@ -41,7 +41,7 @@ public class OCAutomatedPlayerBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
-  private int m_ExamplePrivateVar = 0;
+  private int _examplePrivateVar = 0;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -57,12 +57,12 @@ public class OCAutomatedPlayerBuilder : MonoBehaviour
   {
     get
     {
-      return m_ExamplePrivateVar;
+      return _examplePrivateVar;
     }
 
     set
     {
-      m_ExamplePrivateVar = value;
+      _examplePrivateVar = value;
     }
   }
 

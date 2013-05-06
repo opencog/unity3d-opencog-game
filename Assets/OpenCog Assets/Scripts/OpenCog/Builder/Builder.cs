@@ -58,7 +58,7 @@ public class Builder : MonoBehaviour {
 			if(point.HasValue) {
 				bool empty = !BlockCharacterCollision.GetContactBlockCharacter(point.Value, transform.position, characterCollider).HasValue;
 				if(empty) {
-					BlockData block = new BlockData( selectedBlock );
+					BlockData block = new BlockData( selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
 					block.SetDirection( GetDirection(-transform.forward) );
 					map.SetBlockAndRecompute(block, point.Value);
 				}

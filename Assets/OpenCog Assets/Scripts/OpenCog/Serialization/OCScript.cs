@@ -50,17 +50,17 @@ public class OCScript
 	/// <summary>
 	/// All of the serialized properties.
 	/// </summary>
-	public Dictionary<string, OCPropertyField> m_Properties;
+	public Dictionary<string, OCPropertyField> _properties;
 
 	/// <summary>
 	/// The instance ID.
 	/// </summary>
-	public int m_ID;
+	public int _ID;
 
 	/// <summary>
 	/// The script itself.
 	/// </summary>
-	public MonoScript m_Script;
+	public MonoScript _script;
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -80,8 +80,8 @@ public class OCScript
 	/// </value>
 	public Dictionary<string, OCPropertyField> Properties
 	{
-		get{ return m_Properties; }
-		set{ m_Properties = value; }
+		get{ return _properties; }
+		set{ _properties = value; }
 	}
 
 	/// <summary>
@@ -92,8 +92,8 @@ public class OCScript
 	/// </value>
 	public int ID
 	{
-		get{ return m_ID; }
-		set{ m_ID = value; }
+		get{ return _ID; }
+		set{ _ID = value; }
 	}
 
 	/// <summary>
@@ -104,8 +104,8 @@ public class OCScript
 	/// </value>
 	public MonoScript Script
 	{
-		get{ return m_Script; }
-		set{ m_Script = value; }
+		get{ return _script; }
+		set{ _script = value; }
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -120,9 +120,9 @@ public class OCScript
 
 	public OCScript(int ID, MonoScript Script, Dictionary<string, OCPropertyField> Properties)
 	{
-		m_ID = ID;
-		m_Script = Script;
-		m_Properties = Properties;
+		_ID = ID;
+		_script = Script;
+		_properties = Properties;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

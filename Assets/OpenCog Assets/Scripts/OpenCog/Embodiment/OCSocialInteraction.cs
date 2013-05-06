@@ -51,9 +51,9 @@
 //
 //	//---------------------------------------------------------------------------
 //		
-//	private ActionSummary m_touchAction;  // touch me, depend on the force you use, the npc would consider as pat, push or hit.
-//	private ActionSummary m_kissAction; // kiss me
-//	private ActionSummary m_hugAction;  // hug me
+//	private ActionSummary _touchAction;  // touch me, depend on the force you use, the npc would consider as pat, push or hit.
+//	private ActionSummary _kissAction; // kiss me
+//	private ActionSummary _hugAction;  // hug me
 //		
 //	//---------------------------------------------------------------------------
 //
@@ -91,16 +91,16 @@
 //	{
 //		AnimSummary animS = new AnimSummary();
 //		OCPhysiologicalEffect effect = new OCPhysiologicalEffect(OCPhysiologicalEffect.CostLevel.LOW);
-//		m_touchAction = new ActionSummary(this, "Touch", animS, effect, true);
-//		m_touchAction.usesCallback = true;
+//		_touchAction = new ActionSummary(this, "Touch", animS, effect, true);
+//		_touchAction.usesCallback = true;
 //		myActionList.Add("Touch");
 //		
-//		m_kissAction = new ActionSummary(this, "Kiss", animS, effect, true);
-//		m_kissAction.usesCallback = true;
+//		_kissAction = new ActionSummary(this, "Kiss", animS, effect, true);
+//		_kissAction.usesCallback = true;
 //		myActionList.Add("Kiss");
 //		
-//		m_hugAction = new ActionSummary(this, "Hug", animS, effect, true);
-//		m_hugAction.usesCallback = true;
+//		_hugAction = new ActionSummary(this, "Hug", animS, effect, true);
+//		_hugAction.usesCallback = true;
 //		myActionList.Add("Hug");
 //
 //		OCLogger.Fine(gameObject.name + " is started.");
@@ -152,9 +152,9 @@
 //	public void AddAction(Avatar avatar)
 //	{
 //		ActionManager AM = avatar.GetComponent<ActionManager>() as ActionManager;
-//		AM.addAction(m_touchAction);
-//		AM.addAction(m_kissAction);
-//		AM.addAction(m_hugAction);
+//		AM.addAction(_touchAction);
+//		AM.addAction(_kissAction);
+//		AM.addAction(_hugAction);
 //
 //
 //	}
@@ -259,7 +259,7 @@
 //			ArrayList pp = new ArrayList();
 //			pp.Add(force);
 //
-//			ActionResult ar = new ActionResult(m_touchAction, ActionResult.Status.SUCCESS, a, pp, a.gameObject.name + " touched " + gameObject.name);
+//			ActionResult ar = new ActionResult(_touchAction, ActionResult.Status.SUCCESS, a, pp, a.gameObject.name + " touched " + gameObject.name);
 //			completionCallback(ar);
 //		}
 //	}

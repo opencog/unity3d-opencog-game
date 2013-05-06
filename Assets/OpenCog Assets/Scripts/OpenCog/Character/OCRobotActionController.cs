@@ -49,10 +49,10 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 			//---------------------------------------------------------------------------
 
-			private Tree m_Tree;
-			private Hashtable m_IdleParams;
-			private Vector3i m_TargetBlockPos = Vector3i.zero;
-			private DateTime m_dtLastTNTSearchTime;
+			private Tree _tree;
+			private Hashtable _idleParams;
+			private Vector3i _targetBlockPos = Vector3i.zero;
+			private DateTime _dtLastTNTSearchTime;
 
 			//---------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			//---------------------------------------------------------------------------
 
 			public Vector3i TargetBlockPos {
-				get { return m_TargetBlockPos;}
-				set { m_TargetBlockPos = value;}
+				get { return _targetBlockPos;}
+				set { _targetBlockPos = value;}
 			}
 			
 			//---------------------------------------------------------------------------
@@ -99,14 +99,14 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 			public IEnumerator Start ()
 			{
-				m_Tree =
+				_tree =
 				BLOpenCogCharacterBehaviours.InstantiateTree
 				(TreeType.CharacterBehaviours_TrivialExploreBehaviour
 				, this
 				);
 
-				while (Application.isPlaying && m_Tree != null) {
-					yield return new WaitForSeconds (1.0f / m_Tree.Frequency);
+				while (Application.isPlaying && _tree != null) {
+					yield return new WaitForSeconds (1.0f / _tree.Frequency);
 					UpdateAI ();
 				}		
 			}
@@ -174,7 +174,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
-					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+					OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
 
 					if (ret != BehaveResult.Success)
 						return ret;
@@ -189,7 +189,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardDrop)
+						&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardDrop)
 //					&& robotForwardDistance <= 2.5f
 					&& robotForwardDistance >= 0.5f
 //					&& robotRightDistance < 0.5f
@@ -242,7 +242,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
-					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+					OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
 
 					if (ret != BehaveResult.Success)
 						return ret;
@@ -257,7 +257,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					if (TargetBlockPos != Vector3i.zero
 					//&& robotUpDistance >= 1.5f
 					&& robotForwardDistance >= 0.5f
-					&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardClimb)
+					&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardClimb)
 					&& charController.isGrounded) {
 						action.Execute ();
 						//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
@@ -280,7 +280,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
-					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+					OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
 
 					if (ret != BehaveResult.Success)
 						return ret;
@@ -295,7 +295,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardRun)
+						&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardRun)
 					&& robotForwardDistance > 3.5f
 //					&& robotRightDistance < 1.5f
 //					&& robotLeftDistance < 1.5f
@@ -322,7 +322,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
-					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+					OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
 
 					if (ret != BehaveResult.Success)
 						return ret;
@@ -335,7 +335,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardJump)
+						&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardJump)
 					&& robotUpDistance >= 1.5f
 					&& robotForwardDistance >= 0.0f
 					&& charController.isGrounded) {
@@ -430,7 +430,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 
 					BehaveResult ret = DefaultActionTickHandler (action);
 
-					Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+					OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
 
 					if (ret != BehaveResult.Success)
 						return ret;
@@ -445,7 +445,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
 
 					if (TargetBlockPos != Vector3i.zero
-						&& map.IsPathOpen(transform, charController.height, Map.PathDirection.ForwardWalk)
+						&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardWalk)
 					&& robotForwardDistance <= 3.5f
 					&& robotForwardDistance >= 0.5f
 					&& robotUpDistance <= 1.5f
@@ -470,9 +470,9 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 			
 			public void UpdateAI ()
 			{
-				m_Tree.Tick ();
+				_tree.Tick ();
 
-				Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
+				OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
 
 				List3D<Chunk> chunks = map.GetChunks ();
 
@@ -486,12 +486,12 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 					TargetBlockPos = Vector3i.zero;
 				}
 				
-				if (m_dtLastTNTSearchTime == new DateTime())
+				if (_dtLastTNTSearchTime == new DateTime())
 				{
-					m_dtLastTNTSearchTime = DateTime.Now;	
+					_dtLastTNTSearchTime = DateTime.Now;	
 				}
 				
-				if (DateTime.Now.Subtract (m_dtLastTNTSearchTime).Seconds > 1)
+				if (DateTime.Now.Subtract (_dtLastTNTSearchTime).Seconds > 1)
 				{
 					bool doesTNTExist = false;
 
@@ -530,7 +530,7 @@ public class OCRobotActionController : OCMonoBehaviour, IAgent
 						TargetBlockPos = Vector3i.zero;
 					}
 					
-					m_dtLastTNTSearchTime = DateTime.Now;
+					_dtLastTNTSearchTime = DateTime.Now;
 				}
 
 				
