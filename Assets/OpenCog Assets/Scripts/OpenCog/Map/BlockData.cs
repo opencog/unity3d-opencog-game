@@ -11,9 +11,40 @@ public struct BlockData {
 	
 	public Block block;
 	private BlockDirection direction;
-	
-	public BlockData(Block block) {
+
+	private int _globalX;
+	private int _globalY;
+	private int _globalZ;
+
+	public int GlobalX
+	{
+		get {return _globalX;}
+		set {_globalX = value;}
+	}
+
+	public int GlobalY
+	{
+		get {return _globalY;}
+		set {_globalY = value;}
+	}
+
+	public int GlobalZ
+	{
+		get {return _globalZ;}
+		set {_globalZ = value;}
+	}
+
+	// TOFIX: May need to be re-enabled...hope not, since all blockdata that gets instantiated should get its coordinates too.
+//	public BlockData(Block block) {
+//		this.block = block;
+//		direction = BlockDirection.Z_PLUS;
+//	}
+
+	public BlockData(Block block, Vector3i globalPosition) {
 		this.block = block;
+		this._globalX = globalPosition.x;
+		this._globalY = globalPosition.y;
+		this._globalZ = globalPosition.z;
 		direction = BlockDirection.Z_PLUS;
 	}
 	

@@ -29,7 +29,7 @@ using Serializable = System.SerializableAttribute;
 
 #endregion
 
-namespace OpenCog.Embodiment
+namespace OpenCog.Utility
 {
 
 /// <summary>

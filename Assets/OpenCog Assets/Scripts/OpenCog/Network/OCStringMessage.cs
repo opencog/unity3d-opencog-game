@@ -51,7 +51,7 @@ public class OCStringMessage : OCMessage
 
 	//---------------------------------------------------------------------------
 	
-	private string _Content;
+	private string _content;
 			
 	//---------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ public class OCStringMessage : OCMessage
 		
 	public string MessageContent
 	{
-		get{ return _Content; }
-		set{ _Content = value; }
+		get{ return _content; }
+		set{ _content = value; }
 	}
 			
 	//---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ public class OCStringMessage : OCMessage
 	public OCStringMessage(string sourceID, string targetID, string message) 
 	: base(sourceID, targetID, OCMessage.MessageType.STRING)
 	{
-		_Content = message;
+		_content = message;
 	}
 
 	//---------------------------------------------------------------------------

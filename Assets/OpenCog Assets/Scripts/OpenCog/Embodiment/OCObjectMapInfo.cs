@@ -72,13 +72,13 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		private string _type;
 		private UnityEngine.Vector3 _position; // Position of object
 		private Vector3Wrapper _positionWrapper;
-		private Rotation _rotation = new Rotation(0, 0, 0); // Rotation of object
+		private Utility.Rotation _rotation = new Utility.Rotation(0, 0, 0); // Rotation of object
 		private UnityEngine.Vector3 _velocity; // Velocity of an object, if it is moving.
 		private Vector3Wrapper _velocityWrapper;
 		private float _length, _width, _height; // Size of an object.
 		private float _weight; // weight of an object
 		private UnityEngine.Vector3 _startMovePos; // the lastest time start to move position
-		private List<OpenCog.Serialization.OCPropertyField> _properties = new List<OpenCog.Serialization.OCPropertyField> ();
+		private Dictionary<string, Embodiment.OCTag> _tags = new Dictionary<string, Embodiment.OCTag>();
 		private VISIBLE_STATUS _visibility = VISIBLE_STATUS.VISIBLE; // Set the visibility of an object to visible by default.
 
 		//---------------------------------------------------------------------------
@@ -132,11 +132,11 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			get { return _velocity; }
 			set {
 				_velocity = value;
-				velocityWrapper = new Vector3Wrapper (_velocity);
+				_velocityWrapper = new Vector3Wrapper (_velocity);
 			}
 		}
 
-		public Rotation Rotation {
+		public Utility.Rotation Rotation {
 			get { return _rotation; }
 			set { _rotation = value; }
 		}
@@ -157,18 +157,18 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		}
 
 		public VISIBLE_STATUS Visibility {
-			get { return this.visibility; }
-			set { this.visibility = value; }
+			get { return _visibility; }
+			set { _visibility = value; }
 		}
 
-		public List<OpenCog.Serialization.OCPropertyField> Properties {
-			get { return properties; }
-			set { properties = value; }
+		public Dictionary<string, Embodiment.OCTag> Properties {
+			get { return _tags; }
+			set { _tags = value; }
 		}
 
 		public float Weight {
-			get { return weight; }
-			set { weight = value; }
+			get { return _weight; }
+			set { _weight = value; }
 		}
 
 		public UnityEngine.Vector3 Size {
@@ -245,37 +245,36 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
 		}
 		
-		public OpenCog.Serialization.OCPropertyField CheckPropertyExist (string keyStr)
+		public Embodiment.OCTag CheckTagExists (string keyStr)
 		{
-			foreach (OpenCog.Serialization.OCPropertyField ocp in _properties) {
-				if (ocp.key == keyStr)
-					return ocp;
-			}
-			return null;
+			Embodiment.OCTag tagToCheck = _tags[keyStr];
+
+			return tagToCheck;
 		}
 
-		public void AddProperty (string keyStr, string valueStr, System.Type type)
+		public void AddTag (string keyStr, string valueStr, System.Type type)
 		{
 			// Check if property existing
-			OpenCog.Serialization.OCPropertyField ocp = CheckPropertyExist (keyStr);
-			if (ocp != null) {
-				_properties.Remove (ocp);
+			Embodiment.OCTag tagToAdd = CheckTagExists(keyStr);
+
+			if (_tags.ContainsKey(keyStr)) {
+				_tags.Remove (keyStr);
 			}
-			_properties.Add (new OpenCog.Serialization.OCPropertyField (keyStr, valueStr, type));
+
+			_tags.Add(keyStr, new OCTag(valueStr, type));
 		}
 
-		public void RemoveProperty (string keyStr)
+		public void RemoveTag (string keyStr)
 		{
 			// Check if property existing
-			OpenCog.Serialization.OCPropertyField ocp = CheckPropertyExist (keyStr);
-			if (ocp != null) {
-				_properties.Remove (ocp);
+			if (_tags.ContainsKey(keyStr)) {
+				_tags.Remove (keyStr);
 			}
 		}
 
-		public void UpdateProperty (string keyStr, string valueStr, System.Type type)
+		public void UpdateTag (string keyStr, string valueStr, System.Type type)
 		{
-			AddProperty (keyStr, valueStr, type);
+			AddTag (keyStr, valueStr, type);
 		}
 
 		//---------------------------------------------------------------------------
@@ -329,14 +328,14 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			// Get name
 			_name = gameObject.name;
 			// TODO: By default, we are using object type.
-			_type = EmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
+			_type = OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
 
 			// Convert from unity coordinate to OAC coordinate.
-			_position = VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
+			_position = Utility.VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
 			// Get rotation
-			_rotation = new Rotation (gameObject.transform.rotation);
+			_rotation = new Utility.Rotation (gameObject.transform.rotation);
 			// Calculate the velocity later
-			_velocity = Vector3.zero;
+			_velocity = UnityEngine.Vector3.zero;
 
 			// Get size
 			if (gameObject.collider != null) {
@@ -345,7 +344,8 @@ public class OCObjectMapInfo : OCMonoBehaviour
 				_height = gameObject.collider.bounds.size.y;
 				_length = gameObject.collider.bounds.size.x;
 			} else {
-				Debug.LogWarning ("No collider for gameobject " + gameObject.name + ", assuming a point.");
+				OCLogger.Warn ("No collider for gameobject " + gameObject.name + ", assuming a point.");
+
 				// Set default value of the size.
 				_width = 0.1f;
 				_height = 0.1f;
@@ -354,14 +354,15 @@ public class OCObjectMapInfo : OCMonoBehaviour
 
 			if (gameObject.tag == "OCA") {
 				// This is an OC avatar, we will use the brain id instead of unity id.
-				OCConnector connector = gameObject.GetComponent<OCConnector> () as OCConnector;
+				OpenCog.Embodiment.OCConnector connector = gameObject.GetComponent<OpenCog.Embodiment.OCConnector> () as OpenCog.Embodiment.OCConnector;
+
 				if (connector != null)
-					_id = connector.BrainId;
-				_type = EmbodimentXMLTags.PET_OBJECT_TYPE;
+					_id = connector.BrainID;
+				_type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
 
 			} else if (gameObject.tag == "Player") {
 				// This is a human player avatar.
-				_type = EmbodimentXMLTags.AVATAR_OBJECT_TYPE;
+				_type = OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE;
 				_length = OCObjectMapInfo.DEFAULT_AVATAR_LENGTH;
 				_width = OCObjectMapInfo.DEFAULT_AVATAR_WIDTH;
 				_height = OCObjectMapInfo.DEFAULT_AVATAR_HEIGHT;
@@ -375,75 +376,75 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			}
 
 			// Get a property manager instance
-			OCPropertyManager manager = gameObject.GetComponent<OCPropertyManager> () as OCPropertyManager;
-			if (manager != null) {
-				// Copy all OC properties from the manager, if any.
-				foreach (OpenCog.Serialization.OCPropertyField ocp in manager.propertyList) {
-					this.AddProperty (ocp.Key, ocp.value, ocp.valueType);
-				}
-			}
+			// TOFIX
+//			OCPropertyManager manager = gameObject.GetComponent<OCPropertyManager> () as OCPropertyManager;
+//			if (manager != null) {
+//				// Copy all OC properties from the manager, if any.
+//				foreach (OpenCog.Serialization.OCPropertyField ocp in manager.propertyList) {
+//					this.AddProperty (ocp.Key, ocp.value, ocp.valueType);
+//				}
+//			}
 
-			this.AddProperty ("visibility-status", "visible", PropertyType.STRING);
-			this.AddProperty ("detector", "true", PropertyType.BOOL);
+			this.AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
+			this.AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
 			
 			string gameObjectName = gameObject.name;
 			if (gameObjectName.Contains ("("))
 				gameObjectName = gameObjectName.Remove (gameObjectName.IndexOf ('('));
 
-			this.AddProperty ("class", gameObjectName, PropertyType.STRING);
+			this.AddTag ("class", gameObjectName, System.Type.GetType("System.String"));
 		}
 
 		public static OCObjectMapInfo CreateObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, BlockData blockData)
 		{
-			string blockName = "CHUNK_" + chunkX + "_" + chunkY + "_" + chunkZ +
-                               "_BLOCK_" + blockGlobalX + "_" + blockGlobalY + "_" + blockGlobalZ;
+			string blockName = "BLOCK_" + blockData.GetHashCode();
 			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();
 			mapinfo.Height = 1;
 			mapinfo.Width = 1;
 			mapinfo.Length = 1;
-			mapinfo.Type = EmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
-			mapinfo.Id = blockName;
+			mapinfo.Type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
+			mapinfo.ID = blockName;
 			mapinfo.Name = blockName;
-			mapinfo.Velocity = Vector3.zero;
+			mapinfo.Velocity = UnityEngine.Vector3.zero;
 			mapinfo.Position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
 
 			// Add block properties
-			mapinfo.AddProperty ("class", "block", PropertyType.STRING);
-			mapinfo.AddProperty ("visibility-status", "visible", PropertyType.STRING);
-			mapinfo.AddProperty ("detector", "true", PropertyType.BOOL);
-			mapinfo.AddProperty (EmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.GetType().ToString(), PropertyType.STRING);
+			mapinfo.AddTag ("class", "block", System.Type.GetType("System.String"));
+			mapinfo.AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
+			mapinfo.AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
+			mapinfo.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.GetType().ToString(), System.Type.GetType("System.String"));
 			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
 			return mapinfo;
 
 		}
 		
-		public static OCObjectMapInfo CreateTerrainMapInfo (Chunk chunk, uint x, uint y, uint z, BlockData blockData)
-		{
-			// Construct a unique block name.
-			string blockName = "CHUNK_" + chunk.X + "_" + chunk.Y + "_" + chunk.Z +
-                               "_BLOCK_" + x + "_" + y + "_" + z;
-			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();
-			mapinfo.Height = 1;
-			mapinfo.Width = 1;
-			mapinfo.Length = 1;
-			mapinfo.Type = EmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
-			mapinfo.Id = blockName;
-			mapinfo.Name = blockName;
-			Vector3 pos = new Vector3 (chunk.X * chunk.Width + x, chunk.Z * chunk.Depth + z, chunk.Y * chunk.Height + y);
-			pos = VectorUtil.ConvertToCentralCoord (pos, mapinfo.Size);
-			mapinfo.Velocity = Vector3.zero;
-			mapinfo.Position = pos;
-			Rotation rot = new Rotation (0, 0, 0);
-			mapinfo.Rotation = rot;
-
-			// Add block properties
-			mapinfo.AddProperty ("class", "block", PropertyType.STRING);
-			mapinfo.AddProperty ("visibility-status", "visible", PropertyType.STRING);
-			mapinfo.AddProperty ("detector", "true", PropertyType.BOOL);
-			mapinfo.AddProperty (EmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.GetType().ToString(), PropertyType.STRING);
-			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
-			return mapinfo;
-		}
+//		public static OCObjectMapInfo CreateTerrainMapInfo (Chunk chunk, uint x, uint y, uint z, BlockData blockData)
+//		{
+//
+//			// Construct a unique block name.
+//			string blockName = "BLOCK_" + x + "_" + y + "_" + z;
+//			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();
+//			mapinfo.Height = 1;
+//			mapinfo.Width = 1;
+//			mapinfo.Length = 1;
+//			mapinfo.Type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
+//			mapinfo.Id = blockName;
+//			mapinfo.Name = blockName;
+//			UnityEngine.Vector3 pos = new UnityEngine.Vector3 (chunk.X * chunk.Width + x, chunk.Z * chunk.Depth + z, chunk.Y * chunk.Height + y);
+//			pos = VectorUtil.ConvertToCentralCoord (pos, mapinfo.Size);
+//			mapinfo.Velocity = UnityEngine.Vector3.zero;
+//			mapinfo.Position = pos;
+//			Utility.Rotation rot = new Utility.Rotation (0, 0, 0);
+//			mapinfo.Rotation = rot;
+//
+//			// Add block properties
+//			mapinfo.AddProperty ("class", "block", System.Type.GetType("System.String"));
+//			mapinfo.AddProperty ("visibility-status", "visible", System.Type.GetType("System.String"));
+//			mapinfo.AddProperty ("detector", "true", System.Type.GetType("System.Boolean"));
+//			mapinfo.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.GetType().ToString(), PropertyType.STRING);
+//			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
+//			return mapinfo;
+//		}
 		
 		/// <summary>
 		/// Since protobuf-net requires a data contract declaration on fields of 

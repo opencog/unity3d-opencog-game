@@ -147,9 +147,11 @@ public abstract class OCMessage : IConvertible
 				return null;
 		}
 	}
-		
+
+	// new version of getPlainTextRepresentation
 	public new abstract string ToString();
-	
+
+	// new version of loadPlainTextRepresentation
 	public abstract void FromString(string message);
 
 	#region IConvertible implementation

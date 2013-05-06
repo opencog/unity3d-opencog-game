@@ -30,11 +30,11 @@ using Serializable = System.SerializableAttribute;
 
 #endregion
 
-namespace OpenCog.Embodiment
+namespace OpenCog
 {
 
 /// <summary>
-/// The OpenCog StateChangesRegister.
+/// The OpenCog OCEmotionalExpression.
 /// </summary>
 #region Class Attributes
 
@@ -43,7 +43,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class StateChangesRegister : OCMonoBehaviour
+public class OCEmotionalExpression : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -52,7 +52,17 @@ public class StateChangesRegister : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private static List<StateInfo> _stateList = new List<StateInfo>();
+	private static string _facialTexturePath = "Assets/Models/smallrobot/Materials/";
+	// The texture of facial expressions stored in resources should be named by this prefix plus feeling name
+	private static string _facialTexturePrefix = "smallrobot_texture_";
+
+	private static string _facialTextureExt = ".TGA";
+
+	private Dictionary<string, UnityEngine.Texture2D> _emotionTextureMap = new Dictionary<string, UnityEngine.Texture2D>();
+
+	private UnityEngine.Transform _face = null;
+
+	private float _showEmotionThreshold = 0.5f;
 			
 	//---------------------------------------------------------------------------
 
@@ -63,13 +73,13 @@ public class StateChangesRegister : OCMonoBehaviour
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-	public List<StateInfo> StateList
+		
+	public float ShowEmotionThreshold
 	{
-		get { return _stateList; }
-		set { _stateList = value; }
+		get { return _showEmotionThreshold;}
+		set { _showEmotionThreshold = value;}
 	}
-
+			
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -80,36 +90,61 @@ public class StateChangesRegister : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	public static void RegisterState(UnityEngine.GameObject go, UnityEngine.Behaviour bh, string stateName)
+	void Start()
 	{
-		System.Diagnostics.Debug.Assert(go != null && bh != null && stateName != null);
-			
-		StateInfo aInfo = new StateInfo();
-		aInfo.gameObject = go;
-		aInfo.behaviour = bh;
-		aInfo.stateName = stateName;
-			
-		StateList.Add(aInfo);
-			
-			 
-		UnityEngine.GameObject[] OCAs = UnityEngine.GameObject.FindGameObjectsWithTag("OCA");
-		foreach(UnityEngine.GameObject OCA in OCAs)
+		_face = transform.Find("robot/robotG/mainG/prt_18");
+		if(!face)
 		{
-			OCPerceptionCollector pCollector = OCA.GetComponent<OCPerceptionCollector>() as OCPerceptionCollector;
-			if(pCollector != null)
-			{
-				pCollector.addNewState(aInfo);
-			}
+			Debug.LogError("Face of the robot is not found");
 		}
-			
 	}
-		
-	public static void UnregisterState(StateInfo aInfo)
-	{
-		if(StateList.Contains(aInfo))
-		{
-			StateList.Remove(aInfo);
-		}
+
+	public void showEmotionExpression(Dictionary<string, float> feelingValueMap)
+	{ 
+		/* TODO: uncomment this function after new robot expressions are done
+        string dominant_feeling = ""; 
+        float dominant_feeling_value = 0; 
+
+        // Find dominant feeling and its value
+        lock (feelingValueMap)
+        {
+            foreach (string feeling in feelingValueMap.Keys)
+            {
+                float value = feelingValueMap[feeling];
+
+                if (dominant_feeling_value <= value) {
+                    dominant_feeling = feeling;
+                    dominant_feeling_value = value;
+                }
+            }   
+        }// lock  
+
+
+        if (dominant_feeling_value < showEmotionThreshold)
+            dominant_feeling = "normal"; 
+
+        // Get corresponding facial texture, if fails try to load it from resources
+        Texture2D tex = null;
+        string textureName = facialTexturePrefix + dominant_feeling + facialTextureExt;
+        string textureFullPath = facialTexturePath + textureName;
+
+        if (this.emotionTextureMap.ContainsKey(dominant_feeling))
+            tex = this.emotionTextureMap[dominant_feeling];
+        else {
+            tex = (Texture2D)Resources.LoadAssetAtPath(textureFullPath, typeof(Texture2D));
+            if (tex)
+            {
+                this.emotionTextureMap[dominant_feeling] = tex;
+                Debug.Log("Texture for " + dominant_feeling + " loaded.");
+            }
+        } 
+    
+        // Set facial texture
+        if (tex)
+            face.gameObject.renderer.material.mainTexture = tex;
+        else
+            Debug.LogError("Failed to get texture named: " + textureName);          
+		  */
 	}
 
 	//---------------------------------------------------------------------------
@@ -134,16 +169,7 @@ public class StateChangesRegister : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------		
 
-	public struct StateInfo
-	{
-		public UnityEngine.GameObject gameObject;
-
-		public UnityEngine.Behaviour behaviour;
-
-		public string stateName;
-		//public System.Object stateVariable; // the object reference to the state variable
-		
-	}
+	
 
 	//---------------------------------------------------------------------------
 
@@ -151,7 +177,7 @@ public class StateChangesRegister : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-}// class StateChangesRegister
+}// class OCEmotionalExpression
 
 }// namespace OpenCog
 

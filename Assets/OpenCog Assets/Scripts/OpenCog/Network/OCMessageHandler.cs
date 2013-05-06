@@ -57,7 +57,7 @@ public class OCMessageHandler : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 	
-	private OCNetworkElement _NetworkElement;
+	private OCNetworkElement _networkElement;
 		
 	/// <summary>
 	/// The TCP socket where the connection is being handled.
@@ -67,8 +67,8 @@ public class OCMessageHandler : OCScriptableObject
 	/// <summary>
 	/// The global state.
 	/// </summary>
-	private readonly int _dOING_NOTHING = 0;
-	private readonly int _READING_MESSAGES = 1;
+	private readonly int DOING_NOTHING = 0;
+	private readonly int READING_MESSAGES = 1;
 		
 	/// <summary>
 	///Message handling fields.
@@ -183,7 +183,7 @@ public class OCMessageHandler : OCScriptableObject
 	
 	private void Initialize(OCNetworkElement networkElement, Socket socket)
 	{
-		_NetworkElement = networkElement;
+		_networkElement = networkElement;
 		_socket = socket;	
 		_lineCount = 0;
 		_state = _dOING_NOTHING;
@@ -226,7 +226,7 @@ public class OCMessageHandler : OCScriptableObject
 					// Get new message number.
 					int numberOfMessages = int.Parse(token.Current.ToString());
 
-					_NetworkElement.notifyNewMessages(numberOfMessages);
+					_networkElement.notifyNewMessages(numberOfMessages);
 					answer = OCNetworkElement.OK_MESSAGE;
 
                       OCLogger.Debugging("onLine: Notified about [" + 

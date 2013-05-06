@@ -54,7 +54,7 @@ public class OCServerListener : OCScriptableObject
 	
 	private bool _shouldStop;
 	private TcpListener _listener;
-	private OCNetworkElement _NetworkElement;
+	private OCNetworkElement _networkElement;
 			
 	//---------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ public class OCServerListener : OCScriptableObject
 	public void OnEnable()
 	{
 		//Initialize();
-		OCLogger.Fine("Server Listener for " + _NetworkElement.gameObject.name + 
+		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
 			" is enabled.");
 	}
 		
@@ -93,7 +93,7 @@ public class OCServerListener : OCScriptableObject
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine("Server Listener for " + _NetworkElement.gameObject.name + 
+		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
 			" is disabled.");
 	}
 
@@ -103,7 +103,7 @@ public class OCServerListener : OCScriptableObject
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine("Server Listener for " + _NetworkElement.gameObject.name + 
+		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
 			" is about to be destroyed.");
 	}
 		
@@ -113,8 +113,8 @@ public class OCServerListener : OCScriptableObject
 		{
 			_listener = new 
 				TcpListener
-				(	IPAddress.Parse(_NetworkElement.IPAddress)
-				, _NetworkElement.PortNumber
+				(	IPAddress.Parse(_networkElement.IPAddress)
+				, _networkElement.PortNumber
 				)
 			;
 			
@@ -138,7 +138,7 @@ public class OCServerListener : OCScriptableObject
 				try
 				{
 					Socket workSocket = _listener.AcceptSocket();
-					new OCMessageHandler(_NetworkElement, workSocket).start();
+					new OCMessageHandler(_networkElement, workSocket).start();
 				}
 				catch( SocketException se )
 				{
@@ -177,7 +177,7 @@ public class OCServerListener : OCScriptableObject
 	/// </summary>
 	private void Initialize(OCNetworkElement networkElement)
 	{
-		_NetworkElement = networkElement;
+		_networkElement = networkElement;
 		_shouldStop = false;			
 	}
 	

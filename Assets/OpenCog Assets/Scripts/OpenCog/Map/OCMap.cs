@@ -1,70 +1,169 @@
-using System;
+
+/// Unity3D OpenCog World Embodiment Program
+/// Copyright (C) 2013  Novamente			
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as
+/// published by the Free Software Foundation, either version 3 of the
+/// License, or (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#region Usings, Namespaces, and Pragmas
+
 using System.Collections;
 using System.Collections.Generic;
-//using OpenCog.Aspects;
-using UnityEngine;
-//using PostSharp.Aspects;
 using System.Reflection;
+using OpenCog.Attributes;
+using OpenCog.Extensions;
+using ImplicitFields = ProtoBuf.ImplicitFields;
+using ProtoContract = ProtoBuf.ProtoContractAttribute;
+using Serializable = System.SerializableAttribute;
+using UnityEngine;
+using OpenCog.Utility;
 
+//using PostSharp.Aspects;
+//using OpenCog.Aspects;
+
+//The private field is assigned but its value is never used
+#pragma warning disable 0414
+
+#endregion
+
+namespace OpenCog.Map
+{
+
+/// <summary>
+/// The OpenCog OCMap.
+/// </summary>
+#region Class Attributes
+
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[OCExposePropertyFields]
 [Serializable]
 [AddComponentMenu("VoxelEngine/Map")]
-public class Map : MonoBehaviour
-{
-	
-	[SerializeField]
-	private BlockSet blockSet;
-	private List3D<Chunk> chunks = new List3D<Chunk> ();
-	private SunLightMap sunLightmap = new SunLightMap ();
-	private LightMap lightmap = new LightMap ();
 
-	private int _chunkCountX;
-	private int _chunkCountY;
-	private int _chunkCountZ;
+#endregion
+public class OCMap : OCMonoBehaviour
+{
+
+	//---------------------------------------------------------------------------
+
+	#region Private Member Data
+
+	//---------------------------------------------------------------------------
+
+	// TOFIX: SerializeField necessary here?
+	[SerializeField]
+	private BlockSet _blockSet;
+	private List3D<Chunk> _chunks = new List3D<Chunk> ();
+	private SunLightMap _sunLightmap = new SunLightMap ();
+	private LightMap _lightmap = new LightMap ();
+
+	private string _mapName;
+
 	private int _floorHeight;
 
+	private bool _chunkLimitsInitialized;
+	private int _minChunkX;
+	private int _minChunkY;
+	private int _minChunkZ;
+	private int _maxChunkX;
+	private int _maxChunkY;
+	private int _maxChunkZ;
+
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+	#region Accessors and Mutators
+
+	//---------------------------------------------------------------------------
+
+	/// <summary>
+	/// Gets the number of chunks the map contains along the X axis.
+	/// </summary>
+	/// <value>
+	/// The number of chunks the map contains along the X axis.
+	/// </value>
 	public int ChunkCountX
 	{
-		get { return _chunkCountX; }
+		get
+		{
+			return (_maxChunkX - _minChunkX) + 1;
+		}
 	}
 
+	/// <summary>
+	/// Gets the number of chunks the map contains along the Y axis.
+	/// </summary>
+	/// <value>
+	/// The number of chunks the map contains along the Y axis.
+	/// </value>
 	public int ChunkCountY
 	{
-		get { return _chunkCountY; }
+		get
+		{
+			return (_maxChunkY - _minChunkY) + 1;
+		}
 	}
 
+	/// <summary>
+	/// Gets the number of chunks the map contains along the Z axis.
+	/// </summary>
+	/// <value>
+	/// The number of chunks the map contains along the Z axis.
+	/// </value>
 	public int ChunkCountZ
 	{
-		get { return _chunkCountZ; }
+		get
+		{
+			return (_maxChunkZ - _minChunkZ) + 1;
+		}
 	}
 
+	// The height of the floor level, OpenCog ignores blocks below this level. May need to use water level for this (if everything below
+	// this level gets lake-ified) or use some method to calculate the lowest grass block.
 	public int FloorHeight
 	{
 		get { return _floorHeight; }
 	}
 
-	private string _mapName;
-
+	/// <summary>
+	/// Gets or sets the name of the map.
+	/// </summary>
+	/// <value>
+	/// The name of the map.
+	/// </value>
 	public string MapName
 	{
 		get { return _mapName;}
 		set { _mapName = Value;}
 	}
-	
-	public enum PathDirection
-	{
-		ForwardWalk,
-		ForwardRun,
-		ForwardClimb,
-		ForwardJump,
-		ForwardDrop
-	};
+			
+	//---------------------------------------------------------------------------
 
+	#endregion
 
-//	[OCLogAspect]
+	//---------------------------------------------------------------------------
+
+	#region Public Member Functions
+
+	//---------------------------------------------------------------------------
+
 	public void SetBlockAndRecompute (BlockData block, Vector3i pos)
 	{
 		MethodInfo info = this.GetType().GetMember("SetBlockAndRecompute")[0] as MethodInfo;
 
+// TOFIX: uncomment when aspect stuff is in place?
 //		object[] attributes = info.GetCustomAttributes(typeof(OCLogAspect), true);
 //		OCLogAspect asp = null;
 //
@@ -77,19 +176,26 @@ public class Map : MonoBehaviour
 //		asp.OnEntry(null);
 
 		SetBlock (block, pos);
-		
+
+		// Convert the global coordinate of the block to the chunk coordinates.
 		Vector3i chunkPos = Chunk.ToChunkPosition (pos);
+
+		UpdateChunkLimits(chunkPos);
+
+		// Convert the global coordinate of the block to the coordinate within the chunk.
 		Vector3i localPos = Chunk.ToLocalPosition (pos);
 		
 		SetDirty (chunkPos);
-		
+
+		// If on the lower boundary of a chunk...set the neighbouring chunk to dirty too.
 		if (localPos.x == 0)
 			SetDirty (chunkPos - Vector3i.right);
 		if (localPos.y == 0)
 			SetDirty (chunkPos - Vector3i.up);
 		if (localPos.z == 0)
 			SetDirty (chunkPos - Vector3i.forward);
-		
+
+		// If on the upper boundary of a chunk...set the neighbouring chunk to dirty too.
 		if (localPos.x == Chunk.SIZE_X - 1)
 			SetDirty (chunkPos + Vector3i.right);
 		if (localPos.y == Chunk.SIZE_Y - 1)
@@ -101,53 +207,29 @@ public class Map : MonoBehaviour
 		LightComputer.RecomputeLightAtPosition (this, pos);
 		
 		UpdateMeshColliderAfterBlockChange ();
-
+// TOFIX: uncomment when aspect stuff is in place?
 //		asp.OnExit(null);
 	}
-	
-//	private bool IsBlockOnChunkEdge (Vector3i blockPositionGlobal)
-//	{
-//		int chunkXDim = 16;
-//		int chunkZDim = 16;
-//		
-//		if ((blockPositionGlobal.x == 0) || ((blockPositionGlobal.x + 1) % chunkXDim == 0))
-//			return true;
-//		else if ((blockPositionGlobal.z == 0) || ((blockPositionGlobal.z + 1) % chunkZDim == 0))
-//			return true;
-//		else 
-//			return false;
-//		
-//	}
-	
-	private Vector3i Vector3ToVector3i(Vector3 inputVector)
-	{
-		int iX, iY, iZ;
-		
-		iX = (int)Mathf.Round (inputVector.x);
-		iY = (int)Mathf.Round (inputVector.y);
-		iZ = (int)Mathf.Round (inputVector.z);
-		return new Vector3i(iX, iY, iZ);
-	}
-	
-	public bool IsPathOpen (Transform characterTransform, float characterHeight, PathDirection intendedDirection)
+
+	public bool IsPathOpen (UnityEngine.Transform characterTransform, float characterHeight, PathDirection intendedDirection)
 	{
 		bool bPathIsOpen = false;
 		
-		Vector3i vCharForward = Vector3ToVector3i(characterTransform.forward);
+		Vector3i vCharForward = VectorUtil.Vector3ToVector3i(characterTransform.forward);
 		
 		//Debug.Log ("vFeetPosition = [" + vFeetPosition.x + ", " + vFeetPosition.y + ", " + vFeetPosition.z + "]");
 		//Debug.Log ("vFeetForwardPosition = [" + vFeetForwardPosition.x + ", " + vFeetForwardPosition.y + ", " + vFeetForwardPosition.z + "]");
 		
-		Vector3 vFeet = new Vector3 (characterTransform.position.x, characterTransform.position.y, characterTransform.position.z);
+		UnityEngine.Vector3 vFeet = new UnityEngine.Vector3 (characterTransform.position.x, characterTransform.position.y, characterTransform.position.z);
 				
 		vFeet.y -= (characterHeight / 2);
 				
-		Vector3 vFeetForward = characterTransform.forward + vFeet;
+		UnityEngine.Vector3 vFeetForward = characterTransform.forward + vFeet;
 		
-		Vector3i viStandingOn = Vector3ToVector3i(vFeet);
+		Vector3i viStandingOn = VectorUtil.Vector3ToVector3i(vFeet);
 		//Debug.Log ("Standing on world block: [" + viStandingOn.x + ", " + viStandingOn.y + ", " + viStandingOn.z + "]");
 		
-		Vector3i viStandingOnForward = Vector3ToVector3i(vFeetForward);
+		Vector3i viStandingOnForward = VectorUtil.Vector3ToVector3i(vFeetForward);
 		//Debug.Log ("Forward of standing on world block: [" + viStandingOnForward.x + ", " + viStandingOnForward.y + ", " + viStandingOnForward.z + "]");
 				
 		Vector3i viLowerBody = new Vector3i (viStandingOn.x, viStandingOn.y, viStandingOn.z);
@@ -227,7 +309,13 @@ public class Map : MonoBehaviour
 		
 		return bPathIsOpen;
 	}
-	
+
+	/// <summary>
+	/// Sets the chunk to dirty.
+	/// </summary>
+	/// <param name='chunkPos'>
+	/// Chunk position coordinates.
+	/// </param>
 	public void SetDirty (Vector3i chunkPos)
 	{
 		Chunk chunk = GetChunk (chunkPos);
@@ -263,67 +351,12 @@ public class Map : MonoBehaviour
 	{
 		StartCoroutine (StartUpdateMeshColliderAfterBlockChange ());	
 	}
-	
-	IEnumerator StartUpdateMeshColliderAfterBlockChange ()
-	{
-		Transform[] objects = GetComponentsInChildren<Transform> ();
-		
-		yield return null;
-		
-		for (int i = objects.Length -1; i >= 0; i--) {
-			if (objects [i].gameObject.renderer) {
-				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
-				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
 
-				if (myCollider != null) {
-
-					myCollider.sharedMesh = null;
-				
-					myCollider.sharedMesh = myFilter.mesh;
-				
-					//Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());
-				}
-				
-//				Debug.Log ("i: " + objects [i].name);
-//				Debug.Log ("Center: " + myCollider.bounds.center.ToString());
-//				Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
-			}
-		}
-	}
-	
 	public void AddColliders ()
 	{
- 
 		StartCoroutine (StartAddColliders ());
 	}
- 
-	IEnumerator StartAddColliders ()
-	{
-		Transform[] objects = GetComponentsInChildren<Transform> ();
-		
-		yield return null;
- 
-		for (int i = objects.Length -1; i >= 0; i--) {
-			if (objects[i] != null && objects [i].gameObject.renderer) {
-				//Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
-								
-				if (objects[i].gameObject.GetComponent<MeshCollider>() == null)
-				{
-					MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
-					MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
-					
-					myCollider.sharedMesh = null;
-					
-					myCollider.sharedMesh = myFilter.mesh;
-					
-					//Debug.Log ("i: " + objects [i].name);
-					//Debug.Log ("Center: " + myCollider.bounds.center.ToString());
-					//Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");	
-				}
-			}
-		}
-	}
-	
+
 	public void SetBlock (Block block, Vector3i pos)
 	{
 		SetBlock (new BlockData (block), pos);
@@ -379,20 +412,8 @@ public class Map : MonoBehaviour
 		
 		return 0;
 	}
-	
-	private Chunk GetChunkInstance (Vector3i chunkPos)
-	{
-		if (chunkPos.y < 0)
-			return null;
-		Chunk chunk = GetChunk (chunkPos);
-		if (chunk == null) {
-			chunk = new Chunk (this, chunkPos);
-			chunks.AddOrReplace (chunk, chunkPos);
-		}
-		return chunk;
-	}
 
-	public Chunk GetChunk (Vector3i chunkPos)
+		public Chunk GetChunk (Vector3i chunkPos)
 	{
 		return chunks.SafeGet (chunkPos);
 	}
@@ -421,5 +442,157 @@ public class Map : MonoBehaviour
 	{
 		return blockSet;
 	}
-	
-}
+
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+	#region Private Member Functions
+
+	//---------------------------------------------------------------------------
+
+	/// <summary>
+	/// Updates the chunk limits based on chunks that are added to the map
+	/// </summary>
+	/// <param name='chunkPosition'>
+	/// The position of the chunk to update the chunk limits with.
+	/// </param>
+	private void UpdateChunkLimits(Vector3i chunkPosition)
+	{
+		if (_chunkLimitsInitialized)
+		{
+			_minChunkX = Mathf.Min(chunkPosition.x, _minChunkX);
+			_minChunkY = Mathf.Min(chunkPosition.y, _minChunkY);
+			_minChunkZ = Mathf.Min(chunkPosition.z, _minChunkZ);
+
+			_maxChunkX = Mathf.Max(chunkPosition.x, _maxChunkX);
+			_maxChunkY = Mathf.Max(chunkPosition.x, _maxChunkY);
+			_maxChunkZ = Mathf.Max(chunkPosition.x, _maxChunkZ);
+		}
+		else
+		{
+			_minChunkX = chunkPosition.x;
+			_minChunkY = chunkPosition.y;
+			_minChunkZ = chunkPosition.z;
+
+			_maxChunkX = chunkPosition.x;
+			_maxChunkY = chunkPosition.y;
+			_maxChunkZ = chunkPosition.z;
+		}
+	}
+
+	private IEnumerator StartUpdateMeshColliderAfterBlockChange ()
+	{
+		Transform[] objects = GetComponentsInChildren<Transform> ();
+		
+		yield return null;
+		
+		for (int i = objects.Length -1; i >= 0; i--) {
+			if (objects [i].gameObject.renderer) {
+				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
+				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
+
+				if (myCollider != null) {
+
+					myCollider.sharedMesh = null;
+				
+					myCollider.sharedMesh = myFilter.mesh;
+				
+					//Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());
+				}
+				
+//				Debug.Log ("i: " + objects [i].name);
+//				Debug.Log ("Center: " + myCollider.bounds.center.ToString());
+//				Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
+			}
+		}
+	}
+
+	private IEnumerator StartAddColliders ()
+	{
+		Transform[] objects = GetComponentsInChildren<Transform> ();
+		
+		yield return null;
+ 
+		for (int i = objects.Length -1; i >= 0; i--) {
+			if (objects[i] != null && objects [i].gameObject.renderer) {
+				//Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
+								
+				if (objects[i].gameObject.GetComponent<MeshCollider>() == null)
+				{
+					MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
+					MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
+					
+					myCollider.sharedMesh = null;
+
+					myCollider.sharedMesh = myFilter.mesh;
+					
+					//Debug.Log ("i: " + objects [i].name);
+					//Debug.Log ("Center: " + myCollider.bounds.center.ToString());
+					//Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");	
+				}
+			}
+		}
+	}
+
+
+	private Chunk GetChunkInstance (Vector3i chunkPos)
+	{
+		if (chunkPos.y < 0)
+			return null;
+		Chunk chunk = GetChunk (chunkPos);
+		if (chunk == null) {
+			chunk = new Chunk (this, chunkPos);
+			chunks.AddOrReplace (chunk, chunkPos);
+		}
+		return chunk;
+	}
+
+//	private bool IsBlockOnChunkEdge (Vector3i blockPositionGlobal)
+//	{
+//		int chunkXDim = 16;
+//		int chunkZDim = 16;
+//		
+//		if ((blockPositionGlobal.x == 0) || ((blockPositionGlobal.x + 1) % chunkXDim == 0))
+//			return true;
+//		else if ((blockPositionGlobal.z == 0) || ((blockPositionGlobal.z + 1) % chunkZDim == 0))
+//			return true;
+//		else 
+//			return false;
+//		
+//	}
+			
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+	#region Other Members
+
+	//---------------------------------------------------------------------------		
+
+	public enum PathDirection
+	{
+		ForwardWalk,
+		ForwardRun,
+		ForwardClimb,
+		ForwardJump,
+		ForwardDrop
+	};
+
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+}// class OCMap
+
+}// namespace OpenCog
+
+
+
+

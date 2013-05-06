@@ -31,7 +31,6 @@ public abstract class Block {
 		};
 	}
 	
-	
 	public bool DrawPreview(Rect position) {
 		Texture texture = GetTexture();
 		if(texture != null) GUI.DrawTextureWithTexCoords(position, texture, GetPreviewFace());

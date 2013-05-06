@@ -3,19 +3,19 @@ using System.Collections;
 
 public class TreeGenerator {
 	
-	private Map map;
+	private OpenCog.Map.OCMap map;
 	
 	private Block wood;
 	private Block leaves;
 	
-	public TreeGenerator(Map map) {
+	public TreeGenerator(OpenCog.Map.OCMap map) {
 		this.map = map;
 		BlockSet blockSet = map.GetBlockSet();
 		wood = blockSet.GetBlock("Wood");
 		leaves = blockSet.GetBlock("Leaves");
 	}
 	
-	public TreeGenerator(Map map, Block wood, Block leaves) {
+	public TreeGenerator(OpenCog.Map.OCMap map, Block wood, Block leaves) {
 		this.map = map;
 		this.wood = wood;
 		this.leaves = leaves;

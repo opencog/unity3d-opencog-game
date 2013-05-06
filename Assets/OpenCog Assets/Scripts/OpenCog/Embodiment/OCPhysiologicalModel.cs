@@ -256,7 +256,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
      * Currently, it would be invoked by ActionManager, by using 
      *      SendMessage("processPhysiologicalEffect", phyEffect)
      */
-	public void ProcessPhysiologicalEffect(PhysiologicalEffect effect)
+	public void ProcessPhysiologicalEffect(OCPhysiologicalEffect effect)
 	{
 		effect.applyEffect(this);
 		// Ensure energy is in acceptable bounds

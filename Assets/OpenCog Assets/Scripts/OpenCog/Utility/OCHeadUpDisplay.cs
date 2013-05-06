@@ -31,7 +31,7 @@ using OpenCog.Network;
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Utility
 {
 
 /// <summary>
@@ -76,11 +76,11 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 	private float _currentForce = 1.0f;
 
-	private OpenCog.Embodiment.SocialInteraction _socialInteraction = null;
+	//private OpenCog.Embodiment.OCSocialInteraction _socialInteraction = null;
 
 	private UnityEngine.Texture2D _barTexture, _backgroundTexture;
 
-	private UnityEngine.Vector2 _currentScrollPosition = new Vector2(0.0f, 0.0f);
+	private UnityEngine.Vector2 _currentScrollPosition = new UnityEngine.Vector2(0.0f, 0.0f);
 
 	// the skin panel will use
 	private UnityEngine.GUISkin _panelSkin;
@@ -101,7 +101,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	// We need to initialize the feeling to texture map at the first time of obtaining the
 	// feeling information.
 
-	private OCConnector _connector;
+	private OpenCog.Embodiment.OCConnector _connector;
 
 	private UnityEngine.Rect _panel;
 
@@ -215,25 +215,25 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
 	}
 
-	public IEnumerator gettingForceFromHud(OpenCog.Embodiment.SocialInteraction currentSocialInteraction)
-	{
-		if(currentSocialInteraction == null)
-		{
-			Debug.LogError("To show the force panel but the SocialInteractioner is null!");
-			yield break;
-		}
-		_socialInteraction = currentSocialInteraction;
-		showForcePanel();
-		while(true)
-		{
-			yield return new WaitForSeconds(0.1f);
-			if(!isShowForcePanel)
-			{
-				break;
-			}
-		}
-		yield break;
-	}
+//	public IEnumerator gettingForceFromHud(OpenCog.Embodiment.OCSocialInteraction currentSocialInteraction)
+//	{
+//		if(currentSocialInteraction == null)
+//		{
+//			Debug.LogError("To show the force panel but the SocialInteractioner is null!");
+//			yield break;
+//		}
+//		_socialInteraction = currentSocialInteraction;
+//		showForcePanel();
+//		while(true)
+//		{
+//			yield return new WaitForSeconds(0.1f);
+//			if(!isShowForcePanel)
+//			{
+//				break;
+//			}
+//		}
+//		yield break;
+//	}
 
 	public void hideForcePanel()
 	{

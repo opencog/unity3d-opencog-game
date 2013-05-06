@@ -23,17 +23,18 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using System.Collections.Generic;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
 
 #endregion
 
-namespace OpenCog.Network
+namespace OpenCog
 {
 
 /// <summary>
-/// The OpenCog OCConnector.
+/// The OpenCog OCPortManager.
 /// </summary>
 #region Class Attributes
 
@@ -42,7 +43,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCConnector : OCNetworkElement
+public class OCPortManager 
 {
 
 	//---------------------------------------------------------------------------
@@ -50,8 +51,8 @@ public class OCConnector : OCNetworkElement
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-	
-	
+
+	private static HashSet<int> _userPorts = new HashSet<int>();
 			
 	//---------------------------------------------------------------------------
 
@@ -75,7 +76,32 @@ public class OCConnector : OCNetworkElement
 
 	//---------------------------------------------------------------------------
 
+	public static int AllocatePort()
+	{
+		int port = MIN_PORT_NUMBER;
+			
+		while (usedPorts.Contains(port) && port < 65535)
+		{
+			port++;
+		}
+		
+		if (port >= 65535) // No ports are available
+		{
+			OCLogger.Error("No more ports available between " + MIN_PORT_NUMBER + " and " + port + ".");
+			return -1;
+		}
+		
+		usedPorts.Add(port);
+		return port;
+	}
 	
+	public static void ReleasePort(int port)
+	{
+		if (usedPorts.Contains(port))
+		{
+			usedPorts.Remove(port);
+		}
+	}
 
 	//---------------------------------------------------------------------------
 
@@ -99,7 +125,7 @@ public class OCConnector : OCNetworkElement
 
 	//---------------------------------------------------------------------------		
 
-	
+	private const int MIN_PORT_NUMBER = 12315;
 
 	//---------------------------------------------------------------------------
 
@@ -107,9 +133,9 @@ public class OCConnector : OCNetworkElement
 
 	//---------------------------------------------------------------------------
 
-}// class OCConnector
+}// class OCPortManager
 
-}// namespace OpenCog.Network
+}// namespace OpenCog
 
 
 

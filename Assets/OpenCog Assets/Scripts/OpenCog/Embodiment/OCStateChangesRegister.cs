@@ -18,24 +18,23 @@
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
-using System.ComponentModel;
+using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
-using Type = System.Type;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
 
 #endregion
 
-namespace OpenCog
+namespace OpenCog.Embodiment
 {
 
 /// <summary>
-/// The OpenCog OCTypeConverter.
+/// The OpenCog StateChangesRegister.
 /// </summary>
 #region Class Attributes
 
@@ -44,7 +43,7 @@ namespace OpenCog
 [Serializable]
 	
 #endregion
-public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
+public class OCStateChangesRegister : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -53,7 +52,7 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------
 	
-
+	private static List<StateInfo> _stateList = new List<StateInfo>();
 			
 	//---------------------------------------------------------------------------
 
@@ -64,9 +63,13 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-		
 
-			
+	public List<StateInfo> StateList
+	{
+		get { return _stateList; }
+		set { _stateList = value; }
+	}
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -77,24 +80,36 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------
 
-	public static T ChangeType<T>(object value)
+	public static void RegisterState(UnityEngine.GameObject go, UnityEngine.Behaviour bh, string stateName)
 	{
-		return (T)ChangeType(typeof(T), value);
-	}
-
-	public static object ChangeType(Type t, object value)
-	{
-		TypeConverter tc = TypeDescriptor.GetConverter(t);
-		return tc.ConvertFrom(value);
+		System.Diagnostics.Debug.Assert(go != null && bh != null && stateName != null);
+			
+		StateInfo aInfo = new StateInfo();
+		aInfo.gameObject = go;
+		aInfo.behaviour = bh;
+		aInfo.stateName = stateName;
+			
+		StateList.Add(aInfo);
+			
+			 
+		UnityEngine.GameObject[] OCAs = UnityEngine.GameObject.FindGameObjectsWithTag("OCA");
+		foreach(UnityEngine.GameObject OCA in OCAs)
+		{
+			OCPerceptionCollector pCollector = OCA.GetComponent<OCPerceptionCollector>() as OCPerceptionCollector;
+			if(pCollector != null)
+			{
+				pCollector.addNewState(aInfo);
+			}
+		}
+			
 	}
 		
-	public static void RegisterTypeConverter<T, TC>() where TC : TypeConverter
+	public static void UnregisterState(StateInfo aInfo)
 	{
-		TypeDescriptor.AddAttributes
-			(
-				typeof(T)
-			, new TypeConverterAttribute(typeof(TC))
-			);
+		if(StateList.Contains(aInfo))
+		{
+			StateList.Remove(aInfo);
+		}
 	}
 
 	//---------------------------------------------------------------------------
@@ -119,7 +134,16 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------		
 
-	
+	public struct StateInfo
+	{
+		public UnityEngine.GameObject gameObject;
+
+		public UnityEngine.Behaviour behaviour;
+
+		public string stateName;
+		//public System.Object stateVariable; // the object reference to the state variable
+		
+	}
 
 	//---------------------------------------------------------------------------
 
@@ -127,7 +151,7 @@ public class OCTypeConverter : OCSingletonScriptableObject<OCTypeConverter>
 
 	//---------------------------------------------------------------------------
 
-}// class OCTypeConverter
+}// class StateChangesRegister
 
 }// namespace OpenCog
 

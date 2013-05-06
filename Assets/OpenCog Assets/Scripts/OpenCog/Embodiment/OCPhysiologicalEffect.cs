@@ -43,7 +43,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class PhysiologicalEffect : OCMonoBehaviour
+public class OCPhysiologicalEffect : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -101,7 +101,7 @@ public class PhysiologicalEffect : OCMonoBehaviour
 		// Set new mode
 		model.currentMode = newMode;
 		// Change factors...
-		foreach(String factorName in changeFactors.Keys)
+		foreach(string factorName in changeFactors.Keys)
 		{
 			float changeValue = changeFactors[factorName];
 			if(changeValue < 0.0f)
@@ -114,7 +114,7 @@ public class PhysiologicalEffect : OCMonoBehaviour
 			}
 		}
 		// Reset factors
-		foreach(String factorName in resetFactors)
+		foreach(string factorName in resetFactors)
 		{
 			model.basicFactorMap[factorName].reset();
 		}
@@ -196,7 +196,7 @@ public class PhysiologicalEffect : OCMonoBehaviour
 		STRONG = 4
 	};
 
-	public PhysiologicalEffect(CostLevel level)
+	public OCPhysiologicalEffect(CostLevel level)
 	{
 		_costLevel = level;
 		// MAX_ACTION_NUM is the number of normal actions possible on a full battery charge.

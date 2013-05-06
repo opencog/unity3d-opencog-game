@@ -20,11 +20,9 @@ using UnityEditor;
 using System.Collections;
 using System;
 
-namespace OpenCog
+namespace OpenCog.Serialization
 {
 
-namespace Serialization
-{
 
 /// <summary>
 /// The OpenCog Type Switch idomatic class.  Adapted from here:
@@ -196,8 +194,6 @@ public static class OCTypeSwitch
 	/////////////////////////////////////////////////////////////////////////////
 
 }// class OCTypeSwitch
-
-}// namespace Serialization
 
 }// namespace OpenCog
 
