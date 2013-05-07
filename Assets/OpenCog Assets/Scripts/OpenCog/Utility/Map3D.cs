@@ -19,8 +19,8 @@ public class Map3D<I> {
 		Set(val, pos.x, pos.y, pos.z);
 	}
 	public void Set(I val, int x, int y, int z) {
-		Vector3i chunkPos = Chunk.ToChunkPosition(x, y, z);
-		Vector3i localPos = Chunk.ToLocalPosition(x, y, z);
+		Vector3i chunkPos = OCChunk.ToChunkPosition(x, y, z);
+		Vector3i localPos = OCChunk.ToLocalPosition(x, y, z);
 		Chunk3D<I> chunk = GetChunkInstance(chunkPos);
 		chunk.Set(val, localPos);
 	}
@@ -29,8 +29,8 @@ public class Map3D<I> {
 		return Get(pos.x, pos.y, pos.z);
 	}
 	public I Get(int x, int y, int z) {
-		Vector3i chunkPos = Chunk.ToChunkPosition(x, y, z);
-		Vector3i localPos = Chunk.ToLocalPosition(x, y, z);
+		Vector3i chunkPos = OCChunk.ToChunkPosition(x, y, z);
+		Vector3i localPos = OCChunk.ToLocalPosition(x, y, z);
 		Chunk3D<I> chunk = GetChunk(chunkPos);
 		if(chunk != null) return chunk.Get(localPos);
 		return defaultValue;
@@ -57,7 +57,7 @@ public class Map3D<I> {
 
 public class Chunk3D<I> {
 	
-	private I[,,] chunk = new I[Chunk.SIZE_Z, Chunk.SIZE_Y, Chunk.SIZE_X];
+	private I[,,] chunk = new I[OpenCog.Map.OCChunk.SIZE_Z, OpenCog.Map.OCChunk.SIZE_Y, OpenCog.Map.OCChunk.SIZE_X];
 	
 	public void Set(I val, Vector3i pos) {
 		Set(val, pos.x, pos.y, pos.z);

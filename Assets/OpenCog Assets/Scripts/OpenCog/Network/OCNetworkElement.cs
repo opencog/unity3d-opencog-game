@@ -21,15 +21,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Xml;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using IAsyncResult = System.IAsyncResult;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
-using System.Collections.Generic;
-using System.Net.Sockets;
-using System.Xml;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414

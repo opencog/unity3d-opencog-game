@@ -61,10 +61,10 @@ public class OCMap : OCMonoBehaviour
 
 	// TOFIX: SerializeField necessary here?
 	[SerializeField]
-	private BlockSet _blockSet;
-	private List3D<Chunk> _chunks = new List3D<Chunk> ();
-	private SunLightMap _sunLightmap = new SunLightMap ();
-	private LightMap _lightmap = new LightMap ();
+	private OpenCog.BlockSet.OCBlockSet _blockSet;
+	private List3D<OCChunk> _chunks = new List3D<OCChunk> ();
+	private OpenCog.Map.Lighting.OCSunLightMap _sunLightmap = new OpenCog.Map.Lighting.OCSunLightMap ();
+	private OpenCog.Map.Lighting.OCLightMap _lightmap = new OpenCog.Map.Lighting.OCLightMap ();
 
 	private string _mapName;
 
@@ -159,7 +159,7 @@ public class OCMap : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	public void SetBlockAndRecompute (BlockData block, Vector3i pos)
+	public void SetBlockAndRecompute (OCBlockData block, Vector3i pos)
 	{
 		MethodInfo info = this.GetType().GetMember("SetBlockAndRecompute")[0] as MethodInfo;
 
@@ -178,12 +178,12 @@ public class OCMap : OCMonoBehaviour
 		SetBlock (block, pos);
 
 		// Convert the global coordinate of the block to the chunk coordinates.
-		Vector3i chunkPos = Chunk.ToChunkPosition (pos);
+		Vector3i chunkPos = OCChunk.ToChunkPosition (pos);
 
 		UpdateChunkLimits(chunkPos);
 
 		// Convert the global coordinate of the block to the coordinate within the chunk.
-		Vector3i localPos = Chunk.ToLocalPosition (pos);
+		Vector3i localPos = OCChunk.ToLocalPosition (pos);
 		
 		SetDirty (chunkPos);
 
@@ -196,15 +196,15 @@ public class OCMap : OCMonoBehaviour
 			SetDirty (chunkPos - Vector3i.forward);
 
 		// If on the upper boundary of a chunk...set the neighbouring chunk to dirty too.
-		if (localPos.x == Chunk.SIZE_X - 1)
+		if (localPos.x == OCChunk.SIZE_X - 1)
 			SetDirty (chunkPos + Vector3i.right);
-		if (localPos.y == Chunk.SIZE_Y - 1)
+		if (localPos.y == OCChunk.SIZE_Y - 1)
 			SetDirty (chunkPos + Vector3i.up);
-		if (localPos.z == Chunk.SIZE_Z - 1)
+		if (localPos.z == OCChunk.SIZE_Z - 1)
 			SetDirty (chunkPos + Vector3i.forward);
 		
-		SunLightComputer.RecomputeLightAtPosition (this, pos);
-		LightComputer.RecomputeLightAtPosition (this, pos);
+		OCSunLightComputer.RecomputeLightAtPosition (this, pos);
+		OCLightComputer.RecomputeLightAtPosition (this, pos);
 		
 		UpdateMeshColliderAfterBlockChange ();
 // TOFIX: uncomment when aspect stuff is in place?
@@ -318,7 +318,7 @@ public class OCMap : OCMonoBehaviour
 	/// </param>
 	public void SetDirty (Vector3i chunkPos)
 	{
-		Chunk chunk = GetChunk (chunkPos);
+		OCChunk chunk = GetChunk (chunkPos);
 		if (chunk != null)
 			chunk.GetChunkRendererInstance ().SetDirty ();
 	}
@@ -357,88 +357,88 @@ public class OCMap : OCMonoBehaviour
 		StartCoroutine (StartAddColliders ());
 	}
 
-	public void SetBlock (Block block, Vector3i pos)
+	public void SetBlock (OpenCog.BlockSet.BaseBlockSet.OCBlock block, Vector3i pos)
 	{
-		SetBlock (new BlockData (block), pos);
+		SetBlock (new OCBlockData (block), pos);
 	}
 
-	public void SetBlock (Block block, int x, int y, int z)
+	public void SetBlock (OpenCog.BlockSet.BaseBlockSet.OCBlock block, int x, int y, int z)
 	{
-		SetBlock (new BlockData (block), x, y, z);
+		SetBlock (new OCBlockData (block), x, y, z);
 	}
 	
-	public void SetBlock (BlockData block, Vector3i pos)
+	public void SetBlock (OCBlockData block, Vector3i pos)
 	{
 		SetBlock (block, pos.x, pos.y, pos.z);
 	}
 
-	public void SetBlock (BlockData block, int x, int y, int z)
+	public void SetBlock (OCBlockData block, int x, int y, int z)
 	{
-		Chunk chunk = GetChunkInstance (Chunk.ToChunkPosition (x, y, z));
+		OCChunk chunk = GetChunkInstance (OCChunk.ToChunkPosition (x, y, z));
 		if (chunk != null)
-			chunk.SetBlock (block, Chunk.ToLocalPosition (x, y, z));
+			chunk.SetBlock (block, OCChunk.ToLocalPosition (x, y, z));
 	}
 	
-	public BlockData GetBlock (Vector3i pos)
+	public OCBlockData GetBlock (Vector3i pos)
 	{
 		return GetBlock (pos.x, pos.y, pos.z);
 	}
 
-	public BlockData GetBlock (int x, int y, int z)
+	public OCBlockData GetBlock (int x, int y, int z)
 	{
-		Chunk chunk = GetChunk (Chunk.ToChunkPosition (x, y, z));
+		OCChunk chunk = GetChunk (OCChunk.ToChunkPosition (x, y, z));
 		if (chunk == null)
-			return default(BlockData);
-		return chunk.GetBlock (Chunk.ToLocalPosition (x, y, z));
+			return default(OCBlockData);
+		return chunk.GetBlock (OCChunk.ToLocalPosition (x, y, z));
 	}
 	
 	public int GetMaxY (int x, int z)
 	{
-		Vector3i chunkPos = Chunk.ToChunkPosition (x, 0, z);
+		Vector3i chunkPos = OCChunk.ToChunkPosition (x, 0, z);
 		chunkPos.y = chunks.GetMax ().y;
-		Vector3i localPos = Chunk.ToLocalPosition (x, 0, z);
+		Vector3i localPos = OCChunk.ToLocalPosition (x, 0, z);
 		
 		for (; chunkPos.y >= 0; chunkPos.y--) {
-			localPos.y = Chunk.SIZE_Y - 1;
+			localPos.y = OCChunk.SIZE_Y - 1;
 			for (; localPos.y >= 0; localPos.y--) {
-				Chunk chunk = chunks.SafeGet (chunkPos);
+				OCChunk chunk = chunks.SafeGet (chunkPos);
 				if (chunk == null)
 					break;
-				BlockData block = chunk.GetBlock (localPos);
+				OCBlockData block = chunk.GetBlock (localPos);
 				if (!block.IsEmpty ())
-					return Chunk.ToWorldPosition (chunkPos, localPos).y;
+					return OCChunk.ToWorldPosition (chunkPos, localPos).y;
 			}
 		}
 		
 		return 0;
 	}
 
-		public Chunk GetChunk (Vector3i chunkPos)
+		public OCChunk GetChunk (Vector3i chunkPos)
 	{
 		return chunks.SafeGet (chunkPos);
 	}
 	
-	public List3D<Chunk> GetChunks ()
+	public List3D<OCChunk> GetChunks ()
 	{
 		return chunks;
 	}
 	
-	public SunLightMap GetSunLightmap ()
+	public OpenCog.Map.Lighting.OCSunLightMap GetSunLightmap ()
 	{
 		return sunLightmap;
 	}
 	
-	public LightMap GetLightmap ()
+	public OpenCog.Map.Lighting.OCLightMap GetLightmap ()
 	{
 		return lightmap;
 	}
 	
-	public void SetBlockSet (BlockSet blockSet)
+	public void SetBlockSet (OpenCog.BlockSet.OCBlockSet blockSet)
 	{
 		this.blockSet = blockSet;
 	}
 
-	public BlockSet GetBlockSet ()
+	public OpenCog.BlockSet.OCBlockSet GetBlockSet ()
 	{
 		return blockSet;
 	}
@@ -538,13 +538,13 @@ public class OCMap : OCMonoBehaviour
 	}
 
 
-	private Chunk GetChunkInstance (Vector3i chunkPos)
+	private OCChunk GetChunkInstance (Vector3i chunkPos)
 	{
 		if (chunkPos.y < 0)
 			return null;
-		Chunk chunk = GetChunk (chunkPos);
+		OCChunk chunk = GetChunk (chunkPos);
 		if (chunk == null) {
-			chunk = new Chunk (this, chunkPos);
+			chunk = new OCChunk (this, chunkPos);
 			chunks.AddOrReplace (chunk, chunkPos);
 		}
 		return chunk;

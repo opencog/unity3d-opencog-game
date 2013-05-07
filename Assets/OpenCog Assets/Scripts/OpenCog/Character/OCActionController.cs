@@ -26,6 +26,7 @@ using UnityEngine;
 using ContextType = BLOpenCogCharacterBehaviours.ContextType;
 using Tree = Behave.Runtime.Tree;
 using TreeType = BLOpenCogCharacterBehaviours.TreeType;
+using OpenCog.Map;
 
 namespace OpenCog
 {
@@ -480,9 +481,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	{
 		_tree.Tick ();
 
-		OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
+		OpenCog.Map.OCMap map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
 
-		List3D<Chunk> chunks = map.GetChunks ();
+		List3D<OCChunk> chunks = map.GetChunks ();
 
 		Vector3 robotPos = gameObject.transform.position;
 		Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
@@ -490,7 +491,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //		if(distanceVec.y < -1.0f + 0.5f && distanceVec.y > -1.0f - 0.5f)
 		if (distanceVec.sqrMagnitude < 2.25f) {
 			Debug.Log ("We've arrived at our goal TNT block...");
-			map.SetBlockAndRecompute (new BlockData (), TargetBlockPos);
+			map.SetBlockAndRecompute (new OCBlockData (), TargetBlockPos);
 			TargetBlockPos = Vector3i.zero;
 		}
 		
@@ -508,14 +509,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				for (int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); ++cy) {
 					for (int cz=chunks.GetMinZ(); cz<chunks.GetMaxZ(); ++cz) {
 						Vector3i chunkPos = new Vector3i (cx, cy, cz);
-						Chunk chunk = chunks.SafeGet (chunkPos);
+						OCChunk chunk = chunks.SafeGet (chunkPos);
 						if (chunk != null) {
-							for (int z=0; z<Chunk.SIZE_Z; z++) {
-								for (int x=0; x<Chunk.SIZE_X; x++) {
-									for (int y=0; y<Chunk.SIZE_Y; y++) {
+							for (int z=0; z<OCChunk.SIZE_Z; z++) {
+								for (int x=0; x<OCChunk.SIZE_X; x++) {
+									for (int y=0; y<OCChunk.SIZE_Y; y++) {
 										Vector3i localPos = new Vector3i (x, y, z);
-										BlockData blockData = chunk.GetBlock (localPos);
-										Vector3i candidatePos = Chunk.ToWorldPosition (chunk.GetPosition (), localPos);
+										OCBlockData blockData = chunk.GetBlock (localPos);
+										Vector3i candidatePos = OCChunk.ToWorldPosition (chunk.GetPosition (), localPos);
 										Vector3 candidateVec = ((Vector3)candidatePos) - robotPos;
 										if (!blockData.IsEmpty () && blockData.block.GetName () == "TNT") {
 											doesTNTExist = true;

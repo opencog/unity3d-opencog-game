@@ -108,8 +108,6 @@ public class OCConnector : Network.OCNetworkElement
 	private HashSet<string> _unavailableElements = new HashSet<string>();
 	private OpenCog.Map.OCMap _map;
 
-	//TOFIX: these members were only put in to push errors further
-	private OCActionController _actionController;
 
 	//---------------------------------------------------------------------------
 
@@ -311,7 +309,7 @@ public class OCConnector : Network.OCNetworkElement
 	  _demandValueMap[demandName] = demandValue;
 	}
 
-	public void sendBlockStructure(BlockData startBlock, bool isToRecognize)
+	public void sendBlockStructure(OpenCog.Map.OCBlockData startBlock, bool isToRecognize)
 	{
 	    XmlDocument doc = new XmlDocument();
         XmlElement root = MakeXMLElementRoot(doc);
@@ -393,30 +391,31 @@ public class OCConnector : Network.OCNetworkElement
 			if (OCPerceptionCollector.HasBoundaryChuncks)
 			{
 				// Calculate the offset of the terrain.
-				_blockCountX = Chunk.SIZE_X * Map.ChunkCountX;
-				_blockCountY = Chunk.SIZE_Y * Map.ChunkCountY;
-	
-        // There is an invisible chunk at the edge of the terrain, so we should take count of it.
-        _globalStartPositionX = (int)Chunk.SIZE_X;
-        _globalStartPositionY = (int)Chunk.SIZE_Y;
+				_blockCountX = OpenCog.Map.OCChunk.SIZE_X * Map.ChunkCountX;
+				_blockCountY = OpenCog.Map.OCChunk.SIZE_Y * Map.ChunkCountY;
+
+	            // There is an invisible chunk at the edge of the terrain, so we should take count of it.
+	            _globalStartPositionX = (int)OpenCog.Map.OCChunk.SIZE_X;
+	            _globalStartPositionY = (int)OpenCog.Map.OCChunk.SIZE_Y;
 			}
 			else
 			{
 	      // Calculate the offset of the terrain.
-				_blockCountX = Chunk.SIZE_X * Map.ChunkCountX;
-				_blockCountY = Chunk.SIZE_Y * Map.ChunkCountY;
+				_blockCountX = OpenCog.Map.OCChunk.SIZE_X * Map.ChunkCountX;
+				_blockCountY = OpenCog.Map.OCChunk.SIZE_Y * Map.ChunkCountY;
 	
         // There is an invisible chunk at the edge of the terrain, so we should take count of it.
         _globalStartPositionX = 0;
         _globalStartPositionY = 0;
 			}
-			_blockCountZ = Chunk.SIZE_Z * Map.ChunkCountZ;
+			_blockCountZ = OpenCog.Map.OCChunk.SIZE_Z * Map.ChunkCountZ;
 			_globalStartPositionZ = 0;
-	    // The floor height should be 1 unit larger than the block's z index.
-	    _globalFloorHeight = Map.FloorHeight;
-		}
-		else
-		{
+            // The floor height should be 1 unit larger than the block's z index.
+            _globalFloorHeight = Map.FloorHeight;
+        }
+        else
+        {
+			/// TOFIX: I have no idea if the below code makes sense...if Map==null....
 			_mapName = "unknown_map";
 	    _blockCountX = 128;
 			_blockCountY = 128;
@@ -430,7 +429,7 @@ public class OCConnector : Network.OCNetworkElement
     
     // Get action scheduler component.
 		// TOFIX: old classes here.
-    _actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
+    //_actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
     OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
 
     return true;

@@ -34,7 +34,7 @@ public class CharacterCollider : MonoBehaviour {
 		}
 	}
 	
-	private Map map;
+	private OpenCog.Map.OCMap map;
 	
 	private Vector3 groundPoint, groundNormal;
 	private Vector3 deltaPosition;
