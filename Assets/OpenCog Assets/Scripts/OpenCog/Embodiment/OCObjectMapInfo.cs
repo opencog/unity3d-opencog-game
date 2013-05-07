@@ -395,7 +395,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			this.AddTag ("class", gameObjectName, System.Type.GetType("System.String"));
 		}
 
-		public static OCObjectMapInfo CreateObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, BlockData blockData)
+		public static OCObjectMapInfo CreateObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
 		{
 			string blockName = "BLOCK_" + blockData.GetHashCode();
 			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();

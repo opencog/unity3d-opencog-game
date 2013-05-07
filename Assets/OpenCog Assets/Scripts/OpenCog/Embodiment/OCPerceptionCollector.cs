@@ -478,7 +478,7 @@ namespace OpenCog.Embodiment
 		uint globalBlockY = (uint)hitPoint.y;
 		uint globalBlockZ = (uint)hitPoint.z;
 	
-		Chunk currentChunk = worldData.Chunks[chunkX, chunkY, chunkZ];
+		OCChunk currentChunk = worldData.Chunks[chunkX, chunkY, chunkZ];
 	
 		/*		// check if this block is contained in a block conjunction.
 			// If so, find out the base z index of this conjunction.
@@ -508,14 +508,14 @@ namespace OpenCog.Embodiment
 	private void _notifyBlockAdded(Vector3i hitPoint)
 	{
 		//TOFIX MAYBE, XYZ XZY ETC.
-		uint chunkX = (uint)(hitPoint.x / Chunk.SIZE_X);
-		uint chunkY = (uint)(hitPoint.y / Chunk.SIZE_Y);
-		uint chunkZ = (uint)(hitPoint.z / Chunk.SIZE_Z);
-		uint blockX = (uint)(hitPoint.x % Chunk.SIZE_X);
-		uint blockY = (uint)(hitPoint.y % Chunk.SIZE_Y);
-		uint blockZ = (uint)(hitPoint.z % Chunk.SIZE_Z);
+		uint chunkX = (uint)(hitPoint.x / OCChunk.SIZE_X);
+		uint chunkY = (uint)(hitPoint.y / OCChunk.SIZE_Y);
+		uint chunkZ = (uint)(hitPoint.z / OCChunk.SIZE_Z);
+		uint blockX = (uint)(hitPoint.x % OCChunk.SIZE_X);
+		uint blockY = (uint)(hitPoint.y % OCChunk.SIZE_Y);
+		uint blockZ = (uint)(hitPoint.z % OCChunk.SIZE_Z);
 	
-		Chunk currentChunk = worldData.Chunks[chunkX, chunkY, chunkZ];
+		OCChunk currentChunk = worldData.Chunks[chunkX, chunkY, chunkZ];
 		OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateTerrainMapInfo(currentChunk, blockX, blockY, blockZ, 1, currentChunk.Blocks[blockX, blockY, blockZ].Type);
 			
 			
@@ -536,7 +536,7 @@ namespace OpenCog.Embodiment
 		List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo>();
 		Map map = UnityEngine.GameObject.Find("Map").GetComponent<Map>() as Map;
 
-		foreach(Chunk chunk in map.GetChunks())
+		foreach(OCChunk chunk in map.GetChunks())
 		{
 			Vector3i viChunkPosition = chunk.GetPosition();
 
@@ -559,7 +559,7 @@ namespace OpenCog.Embodiment
 					{
 						// Ok...now we have some globalz....
 
-						BlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
+						OCBlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
 
 						if(!globalBlock.IsEmpty())
 						{
