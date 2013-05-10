@@ -107,6 +107,8 @@ public class OCConnector : Network.OCNetworkElement
 	private int _moveActionCount = 0;
 	private HashSet<string> _unavailableElements = new HashSet<string>();
 	private OpenCog.Map.OCMap _map;
+		
+	private OCActionController _actionController;
 
 
 	//---------------------------------------------------------------------------
@@ -429,7 +431,7 @@ public class OCConnector : Network.OCNetworkElement
     
     // Get action scheduler component.
 		// TOFIX: old classes here.
-    //_actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
+    _actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
     OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
 
     return true;
@@ -551,7 +553,7 @@ public class OCConnector : Network.OCNetworkElement
     // don't report actions that game from us.
     // don't report actions without an action summary (these are from trying
     // to do non-existant actions).
-		//@TODO: Find a different way to check for this...
+		///TODO: Find a different way to check for this...
 //    if (ar.avatar == gameObject.GetComponent<Avatar>() || ar.action == null) {
 //        //Debug.LogWarning("skipping action result from " + ar.avatar);
 //        return;
@@ -559,12 +561,12 @@ public class OCConnector : Network.OCNetworkElement
 
     // the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
 
-    string timestamp = getCurrentTimestamp();
+    string timestamp = GetCurrentTimestamp();
     XmlDocument doc = new XmlDocument();
     XmlElement root = makeXMLElementRoot(doc);
 
     XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-    agentSignal.SetAttribute("id", ar.avatar.gameObject.GetInstanceID().ToString());
+    agentSignal.SetAttribute("id", gameObject.GetInstanceID().ToString());
     agentSignal.SetAttribute("type", ar.avatar.agentType);
     agentSignal.SetAttribute("timestamp", timestamp);
     XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));

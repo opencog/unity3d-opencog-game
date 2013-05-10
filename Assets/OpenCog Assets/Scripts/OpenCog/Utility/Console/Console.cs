@@ -125,8 +125,7 @@ public class Console : OCMonoBehaviour
 			this._movementState = Movement.APPEARING;
 		}
 		
-		// TOFIX:
-		// ActionManager.globalActionCompleteEvent += new ActionCompleteHandler (notifyActionComplete);
+		OCActionController.globalActionCompleteEvent += new ActionCompleteHandler (notifyActionComplete);
 
 		// Initialise support
 		_consoleEntries = new ArrayList();
