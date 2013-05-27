@@ -21,10 +21,7 @@ using OpenCog.Attributes;
 using ProtoBuf;
 using UnityEngine;
 
-namespace OpenCog
-{
-
-namespace Extensions
+namespace OpenCog.Extensions
 {
 
 /// <summary>
@@ -57,24 +54,6 @@ public class OCMonoBehaviour : MonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------    
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
-        
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.OCMonoBehaviour"/>
-	/// class.  Generally, intitialization should occur in the Start function.
-	/// </summary>
-	public OCMonoBehaviour()
-	{
-	}            
 
 	//---------------------------------------------------------------------------
 
@@ -162,9 +141,17 @@ public class OCMonoBehaviour : MonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	#region Member Classes
+	#region Other Members
 
 	//---------------------------------------------------------------------------        
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="OpenCog.OCMonoBehaviour"/>
+	/// class.  Generally, intitialization should occur in the Start function.
+	/// </summary>
+	public OCMonoBehaviour()
+	{
+	}
 
 	public delegate void Task(float time);
 
@@ -176,9 +163,7 @@ public class OCMonoBehaviour : MonoBehaviour
 
 }// class OCMonoBehaviour
 
-}// namespace Extensions
-
-}// namespace OpenCog
+}// namespace OpenCog.Extensions
 
 
 

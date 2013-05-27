@@ -46,12 +46,12 @@ public class OCDrawMethodAttribute : Attribute
 	/// <summary>
 	/// The string name of the custom draw method.
 	/// </summary>
-	private string m_DrawMethod = "";
+	private string _drawMethod = "";
 
 	/// <summary>
 	/// The parameters of the custom draw method.
 	/// </summary>
-	private object[] m_Parameters = null;
+	private object[] _parameters = null;
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -71,8 +71,8 @@ public class OCDrawMethodAttribute : Attribute
 	/// </value>
 	public string DrawMethod
 	{
-		get { return m_DrawMethod; }
-		set { m_DrawMethod = value; }
+		get { return _drawMethod; }
+		set { _drawMethod = value; }
 	}
 
 	/// <summary>
@@ -83,8 +83,8 @@ public class OCDrawMethodAttribute : Attribute
 	/// </value>
 	public object[] Parameters
 	{
-		get { return m_Parameters; }
-		set { m_Parameters = value; }
+		get { return _parameters; }
+		set { _parameters = value; }
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

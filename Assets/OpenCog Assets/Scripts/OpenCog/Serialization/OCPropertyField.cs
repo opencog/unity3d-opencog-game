@@ -62,7 +62,7 @@ public class OCPropertyField
 	/// The excluded property field public names.  Some Unity properties and
 	/// fields cause strange behavior when we expose them.  Best to exclude them.
 	/// </summary>
-	private static string[] m_ExcludedPropertyFieldPublicNames =
+	private static string[] _excludedPropertyFieldPublicNames =
 	{
 		"Use GUILayout"
 	,	"Enabled"
@@ -213,7 +213,7 @@ public class OCPropertyField
 	/// <summary>
 	/// Gets or sets the C# Type property or field info.  Will be null when
 	/// we're wrapping a SerializedProperty for which we don't know the
-	/// MemberInfo or Instance (e.g., m_Script).
+	/// MemberInfo or Instance (e.g., _script).
 	/// </summary>
 	/// <value>
 	/// The C# Type property or field member info.
@@ -252,7 +252,7 @@ public class OCPropertyField
 	{
 		get
 		{
-			return m_ExcludedPropertyFieldPublicNames;
+			return _excludedPropertyFieldPublicNames;
 		}
 	}
 

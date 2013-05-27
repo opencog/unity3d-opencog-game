@@ -46,8 +46,8 @@ public abstract class OCBasicAnimationAction : OCAction
 
 	//---------------------------------------------------------------------------
 
-	bool m_IsTranslation = false;
-	bool m_IsRotation = false;
+	bool _isTranslation = false;
+	bool _isRotation = false;
 
 	//---------------------------------------------------------------------------
 
@@ -61,13 +61,13 @@ public abstract class OCBasicAnimationAction : OCAction
 
 	public bool IsRotation
 	{
-		get { return this.m_IsRotation;}
-		set {	m_IsRotation = value;}
+		get { return this._isRotation;}
+		set {	_isRotation = value;}
 	}
 
 	public bool IsTranslation {
-		get {return this.m_IsTranslation;}
-		set {m_IsTranslation = value;}
+		get {return this._isTranslation;}
+		set {_isTranslation = value;}
 	}
 			
 	//---------------------------------------------------------------------------
@@ -111,9 +111,9 @@ public abstract class OCBasicAnimationAction : OCAction
 
 	public override void Execute()
 	{
-		if(m_IsTranslation)
+		if(_isTranslation)
 			AnimationEffect.PlayAndTranslate();
-		else if(m_IsRotation)
+		else if(_isRotation)
 			AnimationEffect.PlayAndRotate();
 	}
 

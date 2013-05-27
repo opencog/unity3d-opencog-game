@@ -20,11 +20,9 @@ using UnityEditor;
 using System.Collections;
 using System;
 
-namespace OpenCog
+namespace OpenCog.Serialization
 {
 
-namespace Serialization
-{
 
 /// <summary>
 /// The OpenCog Type Switch idomatic class.  Adapted from here:
@@ -107,6 +105,25 @@ public static class OCTypeSwitch
 			}
 		}
 	}
+			
+	/// <summary>
+	/// Do the switch between the specified cases without a source object.
+	/// </summary>
+	/// <param name='cases'>
+	/// The cases of our switch statement, encapsulated in CaseInfos.
+	/// </param>
+	public static void Do<T>(params CaseInfo[] cases)
+	{
+		var source = default(T);
+		foreach(var entry in cases)
+		{
+			if(entry.IsDefault || entry.Target.IsAssignableFrom(typeof(T)))
+			{
+				entry.Action(source);
+				break;
+			}
+		}
+	}
 
 	/// <summary>
 	/// An idiomatic way to represent cases without parameters.
@@ -177,8 +194,6 @@ public static class OCTypeSwitch
 	/////////////////////////////////////////////////////////////////////////////
 
 }// class OCTypeSwitch
-
-}// namespace Serialization
 
 }// namespace OpenCog
 

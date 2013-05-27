@@ -7,7 +7,7 @@ public class CharacterInputController : MonoBehaviour {
 	private CharacterMotor motor;
 	private CharacterMotorSwimming waterMotor;
 	
-	private Map map;
+	private OpenCog.Map.OCMap map;
 	private float jumpPressedTime = -100;
 
 	// Use this for initialization
