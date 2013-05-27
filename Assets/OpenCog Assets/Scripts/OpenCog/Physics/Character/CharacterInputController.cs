@@ -15,7 +15,7 @@ public class CharacterInputController : MonoBehaviour {
 		character = GetComponent<CharacterCollider>();
 		motor = GetComponent<CharacterMotor>();
 		waterMotor = GetComponent<CharacterMotorSwimming>();
-		map = (Map) GameObject.FindObjectOfType( typeof(Map) );
+		map = (OpenCog.Map.OCMap) GameObject.FindObjectOfType( typeof(OpenCog.Map.OCMap) );
 	}
 	
 	// Update is called once per frame

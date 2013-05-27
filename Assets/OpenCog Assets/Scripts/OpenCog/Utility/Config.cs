@@ -115,7 +115,7 @@ public class Config
 
 	public void LoadFromFile(string fileName)
     {
-	    StreamReader reader = new StreamReader(fileName);
+	    System.IO.StreamReader reader = new System.IO.StreamReader(fileName);
 	    char[] separator = {'=',' '};
         int linenumber = 0;
 	    
@@ -125,11 +125,12 @@ public class Config
 	        
 	        // not a commentary or an empty line
 	        if(line.Length > 0 && line[0] != '#'){
-	            string[] tokens = line.Split(separator,StringSplitOptions.RemoveEmptyEntries);
+	            string[] tokens = line.Split(separator, System.StringSplitOptions.RemoveEmptyEntries);
 	            if (tokens.Length < 2)
 	            {
-	                if (Debug.isDebugBuild)
-                        Debug.LogError("Invalid format at line " + linenumber +": '" + line + "'");
+					// TODO: Debug.isDebugBuild??
+	                //if (Debug.isDebugBuild)
+                        OCLogger.Debugging("Invalid format at line " + linenumber +": '" + line + "'");
 	            }
 	            if (table.ContainsKey(tokens[0])) 
 	            {
@@ -138,7 +139,7 @@ public class Config
 	            }
 	            else
 	            {
-                    Debug.LogWarning("Ignoring unknown parameter name '" + tokens[0] + "' at line "
+                    OCLogger.Debugging("Ignoring unknown parameter name '" + tokens[0] + "' at line "
                             + linenumber + ".");
 	        	}           
 	        }

@@ -58,6 +58,7 @@ public abstract class OCAction : OCMonoBehaviour
 	/// </summary>
 	private OCAnimationEffect _animationEffect = null;
 
+	private System.Guid _sourceID;
 
 	//---------------------------------------------------------------------------
 
@@ -143,9 +144,40 @@ public abstract class OCAction : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	#region Member Classes
+	#region Other Members
 
-	//---------------------------------------------------------------------------		
+	//---------------------------------------------------------------------------
+
+	// TODO: Code below is a set of stubs that may not be needed in the final implementation.
+
+	public enum ActionStatus { NONE = 0, RUNNING = 1, SUCCESS = 2, FAILURE = 3, EXCEPTION = 4 };
+
+	private ActionStatus _status;
+	public ActionStatus Status
+	{
+		get { return _status; }
+		set { _status = value; }
+	}
+
+	public class Target
+	{
+
+	}
+
+	private string _name;
+	public string Name
+	{
+		get { return _name; }
+		set { _name = value; }
+	}
+
+	// TODO: Once OCAction is data driven, this function should determine action type from the actionData and create an OCAction with that data.
+	public static OCAction CreateAction(System.Xml.XmlNode actionData, bool adjustCoordinates)
+	{
+				return new OpenCog.Actions.OCIdleAction();
+	}
+
+	// TODO: End of stub code
 
 	//---------------------------------------------------------------------------
 

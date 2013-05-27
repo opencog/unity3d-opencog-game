@@ -23,6 +23,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -88,16 +89,17 @@ public class OCStartGameMenu : OCAbstractMenu
 	//---------------------------------------------------------------------------
 	
 	protected override void OnMenuGUI() {
-		foreach(BlockSet blockset in _blockSetList) {
+		foreach(OpenCog.BlockSet.OCBlockSet blockset in _blockSetList) {
 			if(GUILayout.Button(blockset.name)) {
-				GameSetup.BlockSet = blockset;
+				// TODO: Fix this static issue LAKE HELP!!
+				//OCGameSetup.BlockSet = blockset;
 				Application.LoadLevel("Game");
 				return;
 			}
 		}
 		
 		if(GUILayout.Button("Back")) {
-			SwitchTo<MainMenu>();
+			SwitchTo<OCMainMenu>();
 		}
 	}
 			

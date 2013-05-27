@@ -128,9 +128,9 @@ class NoiseArray3D {
 	public void GenerateNoise(Vector3i offset) {
 		this.offset = offset;
 		
-		int sizeX = OCChunk.SIZE_X + 2;
-		int sizeY = OCChunk.SIZE_Y + 2;
-		int sizeZ = OCChunk.SIZE_Z + 2;
+		int sizeX = OpenCog.Map.OCChunk.SIZE_X + 2;
+		int sizeY = OpenCog.Map.OCChunk.SIZE_Y + 2;
+		int sizeZ = OpenCog.Map.OCChunk.SIZE_Z + 2;
 		
         for(int x=0; x<sizeX; x+=step) {
             for(int y=0; y<sizeY; y+=step) {

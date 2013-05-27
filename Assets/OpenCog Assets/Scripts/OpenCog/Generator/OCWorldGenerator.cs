@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Threading;
+using OpenCog.BlockSet.BaseBlockSet;
 
 
 [AddComponentMenu("VoxelEngine/WorldGenerator")]
@@ -20,7 +21,7 @@ public class OCWorldGenerator : MonoBehaviour {
 	public string MapName;
 	
 	void Awake() {
-		map = GetComponent<Map>();
+		map = GetComponent<OpenCog.Map.OCMap>();
 		
 		if (MapName != string.Empty)
 		{
@@ -33,13 +34,13 @@ public class OCWorldGenerator : MonoBehaviour {
 		{
 			terrainGenerator = new OCTerrainGenerator(map);
 			
-			Block[] woodBlocks = map.GetBlockSet().GetBlocks("Wood");
-			Block[] leavesBlocks = map.GetBlockSet().GetBlocks("Leaves");
+			OCBlock[] woodBlocks = map.GetBlockSet().GetBlocks("Wood");
+			OCBlock[] leavesBlocks = map.GetBlockSet().GetBlocks("Leaves");
 			
 			treeGenerator = new OCTreeGenerator[ Math.Max(woodBlocks.Length, leavesBlocks.Length) ];
 			for(int i=0; i<treeGenerator.Length; i++) {
-				Block wood = woodBlocks[ i%woodBlocks.Length ];
-				Block leaves = leavesBlocks[ i%leavesBlocks.Length ];
+				OCBlock wood = woodBlocks[ i%woodBlocks.Length ];
+				OCBlock leaves = leavesBlocks[ i%leavesBlocks.Length ];
 				treeGenerator[i] = new OCTreeGenerator(map, wood, leaves);
 			}	
 		}
@@ -54,7 +55,7 @@ public class OCWorldGenerator : MonoBehaviour {
 		{
 			building = true;
 			Vector3 pos = Camera.mainCamera.transform.position;
-			Vector3i current = OCChunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
+			Vector3i current = OpenCog.Map.OCChunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
 			Vector3i? column = columnMap.GetClosestEmptyColumn(current.x, current.z, worldGenerationRadius);
 			
 			if (column == null)
@@ -73,8 +74,8 @@ public class OCWorldGenerator : MonoBehaviour {
 					
 					yield return StartCoroutine( GenerateColumn(cx, cz) );
 					yield return null;
-					OCChunkSunLightComputer.ComputeRays(map, cx, cz);
-					OCChunkSunLightComputer.Scatter(map, columnMap, cx, cz);
+					OpenCog.Map.Lighting.OCChunkSunLightComputer.ComputeRays(map, cx, cz);
+					OpenCog.Map.Lighting.OCChunkSunLightComputer.Scatter(map, columnMap, cx, cz);
 					terrainGenerator.GeneratePlants(cx, cz);
 					
 					collidersUpToDate = false;
@@ -96,8 +97,8 @@ public class OCWorldGenerator : MonoBehaviour {
 			yield return null;
 			
 			if(treeGenerator.Length > 0) {
-				int x = cx * OCChunk.SIZE_X + OCChunk.SIZE_X/2;
-				int z = cz * OCChunk.SIZE_Z + OCChunk.SIZE_Z/2;
+				int x = cx * OpenCog.Map.OCChunk.SIZE_X + OpenCog.Map.OCChunk.SIZE_X/2;
+				int z = cz * OpenCog.Map.OCChunk.SIZE_Z + OpenCog.Map.OCChunk.SIZE_Z/2;
 				int y = map.GetMaxY(x, z)+1;
 				int index = UnityEngine.Random.Range( 0, treeGenerator.Length );
 				treeGenerator[index].Generate(x, y, z);
@@ -106,9 +107,9 @@ public class OCWorldGenerator : MonoBehaviour {
 	}
 	
 	public IEnumerator BuildColumn(int cx, int cz) {
-		List3D<OCChunk> chunks = map.GetChunks();
+		List3D<OpenCog.Map.OCChunk> chunks = map.GetChunks();
 		for(int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); cy++) {
-			OCChunk chunk = map.GetChunk( new Vector3i(cx, cy, cz) );
+			OpenCog.Map.OCChunk chunk = map.GetChunk( new Vector3i(cx, cy, cz) );
 			if(chunk != null) chunk.GetChunkRendererInstance().SetDirty();
 			if(chunk != null) yield return null;
 		}

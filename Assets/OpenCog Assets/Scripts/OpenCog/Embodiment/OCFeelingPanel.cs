@@ -108,7 +108,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 	/// </summary>
 	public void Start()
 	{
-		_connector = GetComponent<Network.OCConnector>() as Network.OCConnector;
+		_connector = GetComponent<OpenCog.Embodiment.OCConnector>() as OpenCog.Embodiment.OCConnector;
 		_feelingTextureMap = new Dictionary<string, UnityEngine.Texture2D>();
 
 		OCLogger.Fine(gameObject.name + " is started.");

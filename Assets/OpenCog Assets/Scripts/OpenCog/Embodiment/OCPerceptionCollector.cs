@@ -204,22 +204,23 @@ namespace OpenCog.Embodiment
 		}
 	
 		// Update the map info of all avatar in the repository(including player avatar).
-		foreach(UnityEngine.GameObject oca in OCARepository.GetAllOCA())
-		{
-			if(this.buildMapInfo(oca))
-			{
-				if(updatedObjects == null)
-				{
-					updatedObjects = new HashSet<int>();
-				}
-				updatedObjects.Add(oca.GetInstanceID());
-			}
-		}
+		// TODO: This should loop through a certain set of game objects, but I'm not sure which. So I'm disabling it for now.
+//		foreach(UnityEngine.GameObject oca in OCARepository.GetAllOCA())
+//		{
+//			if(this.buildMapInfo(oca))
+//			{
+//				if(updatedObjects == null)
+//				{
+//					updatedObjects = new HashSet<int>();
+//				}
+//				updatedObjects.Add(oca.GetInstanceID());
+//			}
+//		}
 			
 		// Update the map info of all OCObjects in repository.
 		foreach(UnityEngine.GameObject go in UnityEngine.GameObject.FindGameObjectsWithTag("OCObject"))
 		{
-			if(this.buildMapInfo(go))
+			if(this.BuildMapInfo(go))
 			{
 				if(updatedObjects == null)
 				{
@@ -259,7 +260,7 @@ namespace OpenCog.Embodiment
 		{
 			foreach(int oid in disappearedObjects)
 			{
-				_connector.handleObjectAppearOrDisappear(_mapInfoCache[oid].Id, _mapInfoCache[oid].Type, false);
+				_connector.HandleObjectAppearOrDisappear(_mapInfoCache[oid].ID, _mapInfoCache[oid].Type, false);
 				latestMapInfoSeq.Add(this._mapInfoCache[oid]);
 				// Remove disappeared object from cache.
 				this._mapInfoCache.Remove(oid);
@@ -270,7 +271,7 @@ namespace OpenCog.Embodiment
 		if(latestMapInfoSeq.Count > 0)
 		{
 			// Append latest map info sequence to OC connector's sending queue.
-			_connector.sendMapInfoMessage(latestMapInfoSeq, _perceptWorldFirstTime);
+			_connector.SendMapInfoMessage(latestMapInfoSeq, _perceptWorldFirstTime);
 		}
 			
 		_perceptWorldFirstTime = false;
@@ -349,14 +350,14 @@ namespace OpenCog.Embodiment
 	private void Initialize()
 	{
 		// Obtain components of this OCAvatar.
-		this.connector = gameObject.GetComponent("OCConnector") as OCConnector;
-		this.id = gameObject.GetInstanceID();
+		_connector = gameObject.GetComponent("OCConnector") as OCConnector;
+		_id = gameObject.GetInstanceID();
 			
 		foreach(OCStateChangesRegister.StateInfo ainfo in OCStateChangesRegister.StateList)
 		{			
 			System.Reflection.FieldInfo stateValInfo = ainfo.behaviour.GetType().GetField(ainfo.stateName);
 			System.Object valObj = stateValInfo.GetValue(ainfo.behaviour);
-			stateInfoCache.Add(ainfo, valObj);
+			_stateInfoCache.Add(ainfo, valObj);
 		}
 	}
 		
@@ -401,7 +402,7 @@ namespace OpenCog.Embodiment
 			// We don't send all the existing objects as appear actions to the opencog at the time the robot is loaded.
 			if(! _perceptWorldFirstTime)
 			{
-				_connector.handleObjectAppearOrDisappear(mapInfo.Id, mapInfo.Type, true);
+				_connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, true);
 			}
 				
 			// When constructing the new map info instance, 
@@ -431,20 +432,20 @@ namespace OpenCog.Embodiment
 			isUpdated = true;
 			mapInfo.Position = currentPos;
 			// Update the velocity
-			mapInfo.Velocity = calculateVelocity(cachedPos, currentPos);
+			mapInfo.Velocity = CalculateVelocity(cachedPos, currentPos);
 		}
 			
 		// if start to move
 		if(cachedVelocity == UnityEngine.Vector3.zero && hasMoved)
 		{
-			mapInfo.startMovePos = cachedPos;
-			_connector.handleObjectStateChange(go, "is_moving", "System.String", "false", "true");
+			mapInfo.StartMovePos = cachedPos;
+			_connector.HandleObjectStateChange(go, "is_moving", "System.String", "false", "true");
 		}
 		else
 		if(cachedVelocity != UnityEngine.Vector3.zero && ! hasMoved)
 		{// if stop moving
-			_connector.handleObjectStateChange(go, "is_moving", "System.String", "true", "false");
-			_connector.sendMoveActionDone(go, mapInfo.startMovePos, currentPos);
+			_connector.HandleObjectStateChange(go, "is_moving", "System.String", "true", "false");
+			_connector.SendMoveActionDone(go, mapInfo.StartMovePos, currentPos);
 			mapInfo.Velocity = UnityEngine.Vector3.zero;
 		}
 	
@@ -467,18 +468,18 @@ namespace OpenCog.Embodiment
 	/// <param name="hitPoint"></param>
 	private void _notifyBlockRemoved(Vector3i hitPoint)
 	{
-		uint chunkX = (uint)hitPoint.z / worldData.ChunkBlockWidth;
-		uint chunkY = (uint)hitPoint.y / worldData.ChunkBlockHeight;
-		uint chunkZ = (uint)hitPoint.z / worldData.ChunkBlockDepth;
-		uint blockX = (uint)hitPoint.x % worldData.ChunkBlockWidth;
-		uint blockY = (uint)hitPoint.y % worldData.ChunkBlockHeight;
-		uint blockZ = (uint)hitPoint.z % worldData.ChunkBlockDepth;
+		int chunkX = (int)hitPoint.x / OpenCog.Map.OCChunk.SIZE_X;
+		int chunkY = (int)hitPoint.y / OpenCog.Map.OCChunk.SIZE_Y;
+		int chunkZ = (int)hitPoint.z / OpenCog.Map.OCChunk.SIZE_Z;
+		int blockX = (int)hitPoint.x % OpenCog.Map.OCChunk.SIZE_X;
+		int blockY = (int)hitPoint.y % OpenCog.Map.OCChunk.SIZE_Y;
+		int blockZ = (int)hitPoint.z % OpenCog.Map.OCChunk.SIZE_Z;
 
-		uint globalBlockX = (uint)hitPoint.x;
-		uint globalBlockY = (uint)hitPoint.y;
-		uint globalBlockZ = (uint)hitPoint.z;
-	
-		OCChunk currentChunk = worldData.Chunks[chunkX, chunkY, chunkZ];
+		int globalBlockX = (int)hitPoint.x;
+		int globalBlockY = (int)hitPoint.y;
+		int globalBlockZ = (int)hitPoint.z;
+
+		OpenCog.Map.OCChunk currentChunk = _map.Chunks.Get(chunkX, chunkY, chunkZ);
 	
 		/*		// check if this block is contained in a block conjunction.
 			// If so, find out the base z index of this conjunction.
@@ -492,37 +493,37 @@ namespace OpenCog.Embodiment
 			}
 			 */
 
-		// TOFIX: Get the right value from BlockData to put into mapinfo
-		OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateObjectMapInfo(chunkX, chunkY, chunkZ, globalBlockX, globalBlockY, globalBlockZ, _map.GetBlock(globalBlockX, globalBlockY, globalBlockZ).ToString());
+		// TODO: Get the right value from BlockData to put into mapinfo
+		OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateObjectMapInfo(chunkX, chunkY, chunkZ, globalBlockX, globalBlockY, globalBlockZ, _map.GetBlock(globalBlockX, globalBlockY, globalBlockZ));
 		mapinfo.RemoveTag("visibility-status");
 		mapinfo.AddTag("remove", "true", System.Type.GetType("System.Boolean"));
 		//mapinfo.Visibility = OCObjectMapInfo.VISIBLE_STATUS.UNKNOWN;
 	
 		List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo>();
 		removedBlockList.Add(mapinfo);
-		_connector.handleObjectAppearOrDisappear(mapinfo.Id, mapinfo.Type, false);
-		_connector.sendTerrainInfoMessage(removedBlockList);
+		_connector.HandleObjectAppearOrDisappear(mapinfo.ID, mapinfo.Type, false);
+		_connector.SendTerrainInfoMessage(removedBlockList);
 		
 	}
 			
 	private void _notifyBlockAdded(Vector3i hitPoint)
 	{
-		//TOFIX MAYBE, XYZ XZY ETC.
-		uint chunkX = (uint)(hitPoint.x / OCChunk.SIZE_X);
-		uint chunkY = (uint)(hitPoint.y / OCChunk.SIZE_Y);
-		uint chunkZ = (uint)(hitPoint.z / OCChunk.SIZE_Z);
-		uint blockX = (uint)(hitPoint.x % OCChunk.SIZE_X);
-		uint blockY = (uint)(hitPoint.y % OCChunk.SIZE_Y);
-		uint blockZ = (uint)(hitPoint.z % OCChunk.SIZE_Z);
+		//TODO MAYBE, XYZ XZY ETC.
+		int chunkX = (int)(hitPoint.x / OpenCog.Map.OCChunk.SIZE_X);
+		int chunkY = (int)(hitPoint.y / OpenCog.Map.OCChunk.SIZE_Y);
+		int chunkZ = (int)(hitPoint.z / OpenCog.Map.OCChunk.SIZE_Z);
+		int blockX = (int)(hitPoint.x % OpenCog.Map.OCChunk.SIZE_X);
+		int blockY = (int)(hitPoint.y % OpenCog.Map.OCChunk.SIZE_Y);
+		int blockZ = (int)(hitPoint.z % OpenCog.Map.OCChunk.SIZE_Z);
 	
-		OCChunk currentChunk = worldData.Chunks[chunkX, chunkY, chunkZ];
-		OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateTerrainMapInfo(currentChunk, blockX, blockY, blockZ, 1, currentChunk.Blocks[blockX, blockY, blockZ].Type);
+		OpenCog.Map.OCChunk currentChunk = _map.Chunks.Get(chunkX, chunkY, chunkZ);
+		OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateObjectMapInfo(chunkX, chunkY, chunkZ, blockX, blockY, blockZ, currentChunk.GetBlock(blockX, blockY, blockZ));
 			
 			
 		List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
 		addedBlockList.Add(mapinfo);
-		_connector.handleObjectAppearOrDisappear(mapinfo.Id, mapinfo.Type, true);
-		_connector.sendTerrainInfoMessage(addedBlockList);
+		_connector.HandleObjectAppearOrDisappear(mapinfo.ID, mapinfo.Type, true);
+		_connector.SendTerrainInfoMessage(addedBlockList);
 		
 	}
 	
@@ -534,22 +535,22 @@ namespace OpenCog.Embodiment
 		}
 
 		List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo>();
-		Map map = UnityEngine.GameObject.Find("Map").GetComponent<Map>() as Map;
+		OpenCog.Map.OCMap map = UnityEngine.GameObject.Find("Map").GetComponent<OpenCog.Map.OCMap>() as OpenCog.Map.OCMap;
 
-		foreach(OCChunk chunk in map.GetChunks())
+		foreach(OpenCog.Map.OCChunk chunk in map.Chunks)
 		{
 			Vector3i viChunkPosition = chunk.GetPosition();
 
-			Debug.Log("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
+			OCLogger.Info("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
 
 			// Maybe do some empty check here...there will be many empty chunks. But it might be
 			// equally expensive without setting new empty flags while creating chunks.
 
-			Vector3i viChunkStartingCorner = new Vector3i(viChunkPosition.x * chunk.SIZE_X, viChunkPosition.y * chunk.SIZE_Y & viChunkPosition.z * chunk.SIZE_Z);
-			Vector3i viChunkEndingCorner = new Vector3i((viChunkPosition.x + 1) * chunk.SIZE_X - 1, (viChunkPosition.y + 1) * chunk.SIZE_Y - 1, (viChunkPosition.z + 1) * chunk.SIZE_Z - 1);
+			Vector3i viChunkStartingCorner = new Vector3i(viChunkPosition.x * Map.OCChunk.SIZE_X, viChunkPosition.y * Map.OCChunk.SIZE_Y & viChunkPosition.z * Map.OCChunk.SIZE_Z);
+			Vector3i viChunkEndingCorner = new Vector3i((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X - 1, (viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y - 1, (viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z - 1);
 
-			Debug.Log("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
-			Debug.Log("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
+			OCLogger.Info("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
+			OCLogger.Info("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
 
 			for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
 			{
@@ -559,7 +560,7 @@ namespace OpenCog.Embodiment
 					{
 						// Ok...now we have some globalz....
 
-						OCBlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
+						OpenCog.Map.OCBlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
 
 						if(!globalBlock.IsEmpty())
 						{
@@ -570,7 +571,7 @@ namespace OpenCog.Embodiment
 							// in case there are too many blocks, we send every 5000 blocks per message
 							if(terrainMapinfoList.Count >= 5)
 							{
-								_connector.sendTerrainInfoMessage(terrainMapinfoList, true);
+								_connector.SendTerrainInfoMessage(terrainMapinfoList, true);
 								terrainMapinfoList.Clear();
 							}
 						} // end if (!globalBlock.IsEmpty())
@@ -586,14 +587,14 @@ namespace OpenCog.Embodiment
 		// Check for remaining blocks to report to OpenCog
 		if(terrainMapinfoList.Count > 0)
 		{
-			_connector.SendTerrainInfoMessage(terrainMapinfoList, ! havePerceptTerrainForFirstTime);
+			_connector.SendTerrainInfoMessage(terrainMapinfoList, ! _hasPerceivedTerrainForFirstTime);
 			terrainMapinfoList.Clear();
 		}
 
 		// Communicate completion of initial terrain perception
 		if(! _hasPerceivedTerrainForFirstTime)
 		{
-			_connector.sendFinishPerceptTerrian();
+			_connector.SendFinishPerceptTerrain();
 			_hasPerceivedTerrainForFirstTime = true;
 		}
 	}
@@ -627,34 +628,34 @@ namespace OpenCog.Embodiment
 				if(type == "Enum")
 				{
 					// the opencog does not process enum type, we change it into string
-					_connector.handleObjectStateChange(stateInfo.gameObject, stateInfo.stateName, "System.String",
+					_connector.HandleObjectStateChange(stateInfo.gameObject, stateInfo.stateName, "System.String",
 						                                  _stateInfoCache[stateInfo].ToString(), valObj.ToString());
 				}
 				else
 				{
-					_connector.handleObjectStateChange(stateInfo.gameObject, stateInfo.stateName, type, _stateInfoCache[stateInfo], valObj);
+					_connector.HandleObjectStateChange(stateInfo.gameObject, stateInfo.stateName, type, _stateInfoCache[stateInfo], valObj);
 				}
 					
 					
 				_stateInfoCache[stateInfo] = valObj;
 			}
 			else
-			if(perceptStateChangesFirstTime)
+			if(_perceptStateChangesFirstTime)
 			{
 				// send this existing state to the opencog first time
 				if(type == "Enum")
 				{
 					// the opencog does not process enum type, we change it into string
-					_connector.sendExistingStates(stateInfo.gameObject, stateInfo.stateName, "System.String", valObj.ToString());
+					_connector.SendExistingStates(stateInfo.gameObject, stateInfo.stateName, "System.String", valObj.ToString());
 				}
 				else
 				{
-					_connector.sendExistingStates(stateInfo.gameObject, stateInfo.stateName, type, valObj);
+					_connector.SendExistingStates(stateInfo.gameObject, stateInfo.stateName, type, valObj);
 				}
 			
 			}
 		}
-		foreach(StateInfo stateInfo in StatesToDelete)
+		foreach(OCStateChangesRegister.StateInfo stateInfo in _statesToDelete)
 		{
 			// the state doesn't exist any more, remove it;
 			_stateInfoCache.Remove(stateInfo);
@@ -663,7 +664,7 @@ namespace OpenCog.Embodiment
 		}
 		_statesToDelete.Clear();
 
-		perceptStateChangesFirstTime = false;
+		_perceptStateChangesFirstTime = false;
 	}
 
 	protected UnityEngine.Vector3 CalculateVelocity(UnityEngine.Vector3 oldPos, UnityEngine.Vector3 newPos)

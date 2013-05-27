@@ -41,11 +41,11 @@ public class OCTerrainGenerator {
 	}
 
 	public IEnumerator Generate(int cx, int cz) {
-		terrainNoise.GenerateNoise(cx*OCChunk.SIZE_X, cz*OCChunk.SIZE_Z);
-		islandNoise.GenerateNoise(cx*OCChunk.SIZE_X, cz*OCChunk.SIZE_Z);
+		terrainNoise.GenerateNoise(cx*OpenCog.Map.OCChunk.SIZE_X, cz*OpenCog.Map.OCChunk.SIZE_Z);
+		islandNoise.GenerateNoise(cx*OpenCog.Map.OCChunk.SIZE_X, cz*OpenCog.Map.OCChunk.SIZE_Z);
 		
 		for(int cy=0; true; cy++) {
-			Vector3i worldPos = OCChunk.ToWorldPosition( new Vector3i(cx, cy, cz), Vector3i.zero );
+			Vector3i worldPos = OpenCog.Map.OCChunk.ToWorldPosition( new Vector3i(cx, cy, cz), Vector3i.zero );
 			terrainNoise3D.GenerateNoise(worldPos);
 			islandNoise3D.GenerateNoise(worldPos);
 			caveNoise3D.GenerateNoise(worldPos);
@@ -60,10 +60,10 @@ public class OCTerrainGenerator {
 	
 	private bool GenerateChunk(Vector3i chunkPos) {
 		bool generated = false;
-		for(int z=-1; z<OCChunk.SIZE_Z+1; z++) {
-			for(int x=-1; x<OCChunk.SIZE_X+1; x++) {
-				for(int y=0; y<OCChunk.SIZE_Y; y++) {
-					Vector3i worldPos = OCChunk.ToWorldPosition(chunkPos, new Vector3i(x, y, z));
+		for(int z=-1; z<OpenCog.Map.OCChunk.SIZE_Z+1; z++) {
+			for(int x=-1; x<OpenCog.Map.OCChunk.SIZE_X+1; x++) {
+				for(int y=0; y<OpenCog.Map.OCChunk.SIZE_Y; y++) {
+					Vector3i worldPos = OpenCog.Map.OCChunk.ToWorldPosition(chunkPos, new Vector3i(x, y, z));
 					
 					if(worldPos.y <= WATER_LEVEL) {
 						if(map.GetBlock(worldPos).IsEmpty()) map.SetBlock( water, worldPos );
@@ -92,9 +92,9 @@ public class OCTerrainGenerator {
 	
 	
 	public void GeneratePlants(int cx, int cz) {
-		for(int z=-1; z<OCChunk.SIZE_Z+1; z++) {
-			for(int x=-1; x<OCChunk.SIZE_X+1; x++) {
-				Vector3i worldPos = new Vector3i(cx*OCChunk.SIZE_X+x, 0, cz*OCChunk.SIZE_Z+z);
+		for(int z=-1; z<OpenCog.Map.OCChunk.SIZE_Z+1; z++) {
+			for(int x=-1; x<OpenCog.Map.OCChunk.SIZE_X+1; x++) {
+				Vector3i worldPos = new Vector3i(cx*OpenCog.Map.OCChunk.SIZE_X+x, 0, cz*OpenCog.Map.OCChunk.SIZE_Z+z);
 				worldPos.y = map.GetMaxY(worldPos.x, worldPos.z);
 				for(; worldPos.y>=WATER_LEVEL; worldPos.y--) {
 					if(map.GetBlock(worldPos).block == dirt && map.GetSunLightmap().GetLight(worldPos+Vector3i.up) > 5) {

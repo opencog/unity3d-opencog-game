@@ -23,6 +23,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -89,7 +90,7 @@ public class OCMainMenu : OCAbstractMenu
 	
 	protected override void OnMenuGUI() {
 		if( GUILayout.Button("START GAME") ) {
-			SwitchTo<StartGameMenu>();
+			SwitchTo<OCStartGameMenu>();
 		}
 		if( GUILayout.Button("BLOCKSET VIEWER") ) {
 			Application.LoadLevel("BlockSetViewer");

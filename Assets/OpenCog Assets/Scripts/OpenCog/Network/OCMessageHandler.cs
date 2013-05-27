@@ -48,7 +48,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCMessageHandler : OCScriptableObject
+public class OCMessageHandler : UnityEngine.MonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -110,7 +110,7 @@ public class OCMessageHandler : OCScriptableObject
 
 	public IEnumerator Start()
 	{
-		yield return StartCoroutine(Update);
+		yield return StartCoroutine(Update());
 	}
 		
 	public IEnumerator Update()
@@ -186,7 +186,7 @@ public class OCMessageHandler : OCScriptableObject
 		_networkElement = networkElement;
 		_socket = socket;	
 		_lineCount = 0;
-		_state = _dOING_NOTHING;
+		_state = DOING_NOTHING;
 			
 		_messageTo = null;
 		_messageFrom = null;
@@ -226,7 +226,7 @@ public class OCMessageHandler : OCScriptableObject
 					// Get new message number.
 					int numberOfMessages = int.Parse(token.Current.ToString());
 
-					_networkElement.notifyNewMessages(numberOfMessages);
+					_networkElement.NotifyNewMessages(numberOfMessages);
 					answer = OCNetworkElement.OK_MESSAGE;
 
                       OCLogger.Debugging("onLine: Notified about [" + 
@@ -246,12 +246,12 @@ public class OCMessageHandler : OCScriptableObject
 
                       OCLogger.Debugging("onLine: Unavailable element message received for [" + 
 					          id + "].");
-					this.ne.markAsUnavailable(id);
-					answer = NetworkElement.OK_MESSAGE;
+					_networkElement.MarkAsUnavailable(id);
+					answer = OCNetworkElement.OK_MESSAGE;
 				}
 				else
 				{
-					answer = NetworkElement.FAILED_MESSAGE;	
+					answer = OCNetworkElement.FAILED_MESSAGE;
 				}
 			}
 			else if(command.Equals("AVAILABLE_ELEMENT"))
@@ -262,58 +262,58 @@ public class OCMessageHandler : OCScriptableObject
 
                       OCLogger.Debugging("onLine: Available element message received for [" + 
 					          id + "].");
-					this.ne.markAsAvailable(id);
-					answer = NetworkElement.OK_MESSAGE;
+					_networkElement.MarkAsAvailable(id);
+					answer = OCNetworkElement.OK_MESSAGE;
 				}
 				else
 				{
-					answer = NetworkElement.FAILED_MESSAGE;	
+					answer = OCNetworkElement.FAILED_MESSAGE;
 				}
 			}
 			else if(command.Equals("START_MESSAGE")) // Parse a common message
 			{
-				if(this.state == READING_MESSAGES)
+				if(_state == READING_MESSAGES)
 				{
 					// A previous message was already read.
-					OCLogger.Debugging("onLine: From [" + this.currentMessageFrom +
-					          "] to [" + this.currentMessageTo +
-					          "] Type [" + this.currentMessageType + "]");
+					OCLogger.Debugging("onLine: From [" + _messageFrom +
+					          "] to [" + _messageTo +
+					          "] Type [" + _messageType + "]");
 				
-					OCMessage message = OCMessage.CreateMessage(this.currentMessageFrom,
-					                                  this.currentMessageTo,
-					                                  this.currentMessageType,
-					                                  this.currentMessage.ToString());
+					OCMessage message = OCMessage.CreateMessage(_messageFrom,
+					                                  _messageTo,
+					                                  _messageType,
+					                                  _message.ToString());
 					if( message == null )
 					{
 						OCLogger.Error("Could not factory message from the following string: " +
-						               this.currentMessage.ToString());	
+						               _message.ToString());
 					}
-					if(this.useMessageBuffer)
+					if(_useMessageBuffer)
 					{
-						this.messageBuffer.Add(message);
-						if(messageBuffer.Count > this.maxMessagesInBuffer)
+						_messageBuffer.Add(message);
+						if(_messageBuffer.Count > _maxMessagesInBuffer)
 						{
-							this.ne.pullMessage(this.messageBuffer);	
-							this.messageBuffer.Clear();
+							_networkElement.PullMessage(_messageBuffer);
+							_messageBuffer.Clear();
 						}
 					}
 					else
 					{
-						this.ne.pullMessage(message);	
+						_networkElement.PullMessage(message);
 					}
 						
-					this.lineCount = 0;
-					this.currentMessageTo = "";
-					this.currentMessageFrom = "";
-					this.currentMessageType = Message.MessageType.NONE;
-					this.currentMessage.Remove(0, this.currentMessage.Length);
+					_lineCount = 0;
+					_messageTo = "";
+					_messageFrom = "";
+					_messageType = OCMessage.MessageType.NONE;
+					_message.Remove(0, _message.Length);
 				}
 				else
 				{
-					if(this.state == DOING_NOTHING)
+					if(_state == DOING_NOTHING)
 					{
 						// Enter reading state from idle state.
-						this.state = READING_MESSAGES;	
+						_state = READING_MESSAGES;
 					}
 					else
 					{
@@ -325,75 +325,75 @@ public class OCMessageHandler : OCScriptableObject
 				
 				if( token.MoveNext() )
 				{
-					this.currentMessageFrom = token.Current.ToString();
+					_messageFrom = token.Current.ToString();
 					
 					if( token.MoveNext() )
 					{
-						this.currentMessageTo = token.Current.ToString();
+						_messageTo = token.Current.ToString();
 						if( token.MoveNext() )
 						{
-							this.currentMessageType = (Message.MessageType) int.Parse(token.Current.ToString());
+							_messageType = (OCMessage.MessageType) int.Parse(token.Current.ToString());
 						}
 						else
 						{
-							answer = NetworkElement.FAILED_MESSAGE;
+							answer = OCNetworkElement.FAILED_MESSAGE;
 						}
 					}
 					else
 					{
-						answer = NetworkElement.FAILED_MESSAGE;
+						answer = OCNetworkElement.FAILED_MESSAGE;
 					}	
 				}
 				else
 				{
-					answer = NetworkElement.FAILED_MESSAGE;
+					answer = OCNetworkElement.FAILED_MESSAGE;
 				}
-				this.lineCount = 0;
+				_lineCount = 0;
 			}
 			else if(command.Equals("NO_MORE_MESSAGES"))
 			{
-				if(this.state == READING_MESSAGES)
+				if(_state == READING_MESSAGES)
 				{
-					OCLogger.Info("onLine: From [" + this.currentMessageFrom +
-					          "] to [" + this.currentMessageTo +
-					          "] Type [" + this.currentMessageType + "].");	
+					OCLogger.Info("onLine: From [" + _messageFrom +
+					          "] to [" + _messageTo +
+					          "] Type [" + _messageType + "].");
 					
-					OCMessage message = OCMessage.CreateMessage(this.currentMessageFrom,
-					                                  this.currentMessageTo,
-					                                  this.currentMessageType,
-					                                  this.currentMessage.ToString());
+					OCMessage message = OCMessage.CreateMessage(_messageFrom,
+					                                  _messageTo,
+					                                  _messageType,
+					                                  _message.ToString());
 					
 					if(message == null)
 					{
 						OCLogger.Error("Could not factory message from the following string: [" +
-						               this.currentMessage.ToString() + "]");
+						               _message.ToString() + "]");
 					}
-					if(this.useMessageBuffer)
+					if(_useMessageBuffer)
 					{
-						this.messageBuffer.Add(message);
-						this.ne.pullMessage(messageBuffer);
-						this.messageBuffer.Clear();
+						_messageBuffer.Add(message);
+						_networkElement.PullMessage(_messageBuffer);
+						_messageBuffer.Clear();
 					}
 					else
 					{
-						this.ne.pullMessage(message);	
+						_networkElement.PullMessage(message);
 					}
 					
 					// reset variables to default values
-					this.lineCount = 0;
-					this.currentMessageTo = "";
-					this.currentMessageFrom = "";
-					this.currentMessageType = Message.MessageType.NONE;
-					this.currentMessage.Remove(0, this.currentMessage.Length);
-					this.state = DOING_NOTHING; // quit reading state
-					answer = NetworkElement.OK_MESSAGE;
+					_lineCount = 0;
+					_messageTo = "";
+					_messageFrom = "";
+					_messageType = OCMessage.MessageType.NONE;
+					_message.Remove(0, _message.Length);
+					_state = DOING_NOTHING; // quit reading state
+					answer = OCNetworkElement.OK_MESSAGE;
 				}
 				else
 				{
 					OCLogger.Error("onLine: Unexpected command [" +
 					               command + "]. Discarding line [" +
 					               inputLine + "]");
-					answer = NetworkElement.FAILED_MESSAGE;
+					answer = OCNetworkElement.FAILED_MESSAGE;
 				}
 			}
 			else
@@ -401,33 +401,33 @@ public class OCMessageHandler : OCScriptableObject
 				OCLogger.Error("onLine: Unexpected command [" +
 				               command + "]. Discarding line [" +
 				               inputLine + "]");
-				answer = NetworkElement.FAILED_MESSAGE;
+				answer = OCNetworkElement.FAILED_MESSAGE;
 			} // end processing command.
 		} // end processing selector 'c'
 		else if(selector == 'd')
 		{
-			if(this.state == READING_MESSAGES)
+			if(_state == READING_MESSAGES)
 			{
-				if(this.lineCount > 0)
+				if(_lineCount > 0)
 				{
-					this.currentMessage.Append("\n");	
+					_message.Append("\n");
 				}
-				this.currentMessage.Append(contents);
-				this.lineCount++;
+				_message.Append(contents);
+				_lineCount++;
 				
 			}
 			else
 			{
 				OCLogger.Error("onLine: Unexpected dataline. Discarding line [" +
 				               inputLine + "]");
-				answer = NetworkElement.FAILED_MESSAGE;
+				answer = OCNetworkElement.FAILED_MESSAGE;
 			}
 		} // end processing selector 'd'
 		else
 		{
 			OCLogger.Error("onLine: Invalid selector [" + selector
 			               + "]. Discarding line [" + inputLine + "].");
-			answer = NetworkElement.FAILED_MESSAGE;
+			answer = OCNetworkElement.FAILED_MESSAGE;
 		} // end processing selector
 		
 		return answer;

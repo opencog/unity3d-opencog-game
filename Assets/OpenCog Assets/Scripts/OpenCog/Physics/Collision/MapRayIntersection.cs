@@ -35,7 +35,7 @@ public class MapRayIntersection {
 		for(int z=startZ; z<=endZ; z++) {
 			for(int y=startY; y<=endY; y++) {
 				for(int x=startX; x<=endX; x++) {
-					OCBlockData block = map.GetBlock(x, y, z);
+					OpenCog.Map.OCBlockData block = map.GetBlock(x, y, z);
 					if(block.IsEmpty() || block.IsFluid()) continue;
 					float dis = BlockRayIntersection(new Vector3(x, y, z), ray);
 					minDistance = Mathf.Min(minDistance, dis);

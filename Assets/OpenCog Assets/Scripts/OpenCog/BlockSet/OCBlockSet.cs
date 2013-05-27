@@ -90,9 +90,9 @@ public class OCBlockSet : OCScriptableObject
 		set { _data = value; }
 	}
 
-	public int BlockCount()
+	public int BlockCount
 	{
-		return _blocks.Length;
+		get { return _blocks.Length; }
 	}
 			
 	//---------------------------------------------------------------------------

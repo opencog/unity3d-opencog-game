@@ -39,7 +39,7 @@ namespace OpenCog.Map
 			set {_globalZ = value;}
 		}
 	
-		// TOFIX: May need to be re-enabled...hope not, since all blockdata that gets instantiated should get its coordinates too.
+		// TODO: May need to be re-enabled...hope not, since all blockdata that gets instantiated should get its coordinates too.
 	//	public BlockData(Block block) {
 	//		this.block = block;
 	//		direction = BlockDirection.Z_PLUS;
@@ -78,7 +78,7 @@ namespace OpenCog.Map
 		}
 		
 		public bool IsFluid() {
-			return block is FluidBlock;
+			return block is OpenCog.BlockSet.BaseBlockSet.OCFluidBlock;
 		}
 	
 	}

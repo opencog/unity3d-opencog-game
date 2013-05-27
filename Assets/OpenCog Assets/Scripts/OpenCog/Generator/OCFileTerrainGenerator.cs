@@ -26,7 +26,7 @@ public class OCFileTerrainGenerator
 			
 		Substrate.AnvilRegionManager mcAnvilRegionManager = mcWorld.GetRegionManager();
 				
-		BlockSet blockSet = _map.GetBlockSet();
+		OpenCog.BlockSet.OCBlockSet blockSet = _map.GetBlockSet();
 				
 		_map.GetSunLightmap().SetSunHeight(3, 3, 3);
 		
@@ -88,11 +88,11 @@ public class OCFileTerrainGenerator
 												break;
 											}
 											
-											Block newBlock = blockSet.GetBlock(iBlockID);
+											OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(iBlockID);
 																					
-											_map.SetBlock (new OCBlockData(newBlock), blockPos);
+											_map.SetBlock (new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
 											
-											Vector3i chunkPos = OCChunk.ToChunkPosition(blockPos);
+											Vector3i chunkPos = OpenCog.Map.OCChunk.ToChunkPosition(blockPos);
 				
 											_map.SetDirty (chunkPos);	
 										}
