@@ -134,8 +134,8 @@ public class OCNetworkElement : OCMonoBehaviour
 	}		
 		
 	/// <summary>
-  /// Check if there are unread messages not yet pull from router.
-  /// </summary>
+	/// Check if there are unread messages not yet pull from router.
+	/// </summary>
 	public bool HaveUnreadMessages
 	{
 		get { return _unreadMessagesCount > 0; }
@@ -211,10 +211,10 @@ public class OCNetworkElement : OCMonoBehaviour
 		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
 	}
 		
-  /// <summary>
-  /// Notify a number of new messages from router.
-  /// </summary>
-  /// <param name="newMessagesNum">number of new arriving messages</param>
+	/// <summary>
+	/// Notify a number of new messages from router.
+	/// </summary>
+	/// <param name="newMessagesNum">number of new arriving messages</param>
 	public void NotifyNewMessages(int newMessagesNum)
 	{
 		OCLogger.Debugging("Notified about new messages in Router.");
@@ -225,10 +225,10 @@ public class OCNetworkElement : OCMonoBehaviour
 		}
 	}
 	
-  /// <summary>
-  /// Pull unread messages from router. 
-  /// </summary>
-  /// <param name="messages">A list of unread messages</param>
+	/// <summary>
+	/// Pull unread messages from router. 
+	/// </summary>
+	/// <param name="messages">A list of unread messages</param>
 	public void PullMessage(List<OCMessage> messages)
 	{
 		lock(_messageQueue)
@@ -244,10 +244,10 @@ public class OCNetworkElement : OCMonoBehaviour
 		}
 	}
 	
-  /// <summary>
-  /// Pull a message from router.
-  /// </summary>
-  /// <param name="message">An unread message</param>
+	/// <summary>
+	/// Pull a message from router.
+	/// </summary>
+	/// <param name="message">An unread message</param>
 	public void PullMessage(OCMessage message)
 	{
 		lock(_messageQueue)
@@ -261,11 +261,11 @@ public class OCNetworkElement : OCMonoBehaviour
 		}
 	}
 	
-    /// <summary>
-    /// Abstract method to be implemented by subclasses.
-    /// </summary>
-    /// <param name="message">OCMessage to be processed</param>
-    /// <returns>True if the message is an "exit" command.</returns>
+	/// <summary>
+	/// Abstract method to be implemented by subclasses.
+	/// </summary>
+	/// <param name="message">OCMessage to be processed</param>
+	/// <returns>True if the message is an "exit" command.</returns>
 	public virtual bool ProcessNextMessage(OCMessage message)
 	{
 		return false;
@@ -551,6 +551,39 @@ public class OCNetworkElement : OCMonoBehaviour
 		}
 	}
 
+	public void MarkAsUnavailable(string id)
+	{
+		if(IsElementAvailable(id))
+		{
+			_unavailableElements.Add(id);
+		}
+
+		if(_routerID != null)
+		{
+			if(_routerID.Equals(id))
+			{
+				// Oops, router is unavailable!
+				// Reset the unread message number.
+				lock(_unreadMessagesLock)
+				{
+					_unreadMessagesCount = 0;
+				}
+			}
+		}
+	}
+	
+	/// <summary>
+	/// Mark a network element as available.
+	/// </summary>
+	/// <param name="id">Network element id</param>
+	public void MarkAsAvailable(string id)
+	{
+		if(!IsElementAvailable(id))
+		{
+			_unavailableElements.Remove(id);
+		}
+	}
+
 	protected XmlElement MakeXMLElementRoot(XmlDocument doc)
 	{
 		doc.AppendChild(doc.CreateXmlDeclaration("1.0", "UTF-8", ""));
@@ -610,9 +643,13 @@ public class OCNetworkElement : OCMonoBehaviour
 	}
 		
 	public const int CONNECTION_TIMEOUT = 10;
+
 	public const string WHITESPACE = " ";
+
 	public const string NEWLINE = "\n";
+
 	public const string FAILED_MESSAGE = "FAILED";
+
 	public const string OK_MESSAGE = "OK";		
 
 	//---------------------------------------------------------------------------

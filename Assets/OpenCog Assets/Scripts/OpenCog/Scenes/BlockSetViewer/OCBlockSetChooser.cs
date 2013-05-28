@@ -23,13 +23,14 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
 
 #endregion
 
-namespace OpenCog.Scenes.BlockSetViewwer
+namespace OpenCog.Scenes.BlockSetViewer
 {
 
 /// <summary>
@@ -51,12 +52,13 @@ public class OCBlockSetChooser : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	[SerializeField] private OpenCog.BlockSet.OCBlockSet[] _blockSetList;
-	private int _index = 0;
-	// Member is not static, but a variable with the same name is used in DrawList
-	private UnityEngine.Vector2 scrollPosition;
+	[SerializeField] private OpenCog.BlockSet.OCBlockSet[] blockSetList;
+	private int index = 0;
+	private Vector2 scrollPosition;
 
-	private OCBlockSetViewer _viewer;
+	private OpenCog.Scenes.BlockSetViewer.OCBlockSetViewer viewer;
+	private OpenCog.BlockSet.OCBlockSet blockSet;
+
 			
 	//---------------------------------------------------------------------------
 
@@ -82,24 +84,24 @@ public class OCBlockSetChooser : OCMonoBehaviour
 
 	public void SetBlockSet(OpenCog.BlockSet.OCBlockSet blockSet) {
 		this.blockSet = blockSet;
-		index = Mathf.Clamp(_index, 0, blockSet.GetBlockCount());
+		index = Mathf.Clamp(index, 0, blockSet.BlockCount);
 		BuildBlock( blockSet.GetBlock(index) );
 	}
 
-	public void Start() {
-		_viewer = GetComponent<BlockSetViewer>();
-		_viewer.SetBlockSet( _blockSetList[index] );
+	void Start() {
+		viewer = GetComponent<OpenCog.Scenes.BlockSetViewer.OCBlockSetViewer>();
+		viewer.SetBlockSet( blockSetList[index] );
 	}
-	
-	public void OnGUI() {
+
+	void OnGUI() {
 		int oldIndex = index;
 		Rect position = new Rect(0, 0, 180, Screen.height);
-		_index = DrawList(position, _index, blockSetList, ref scrollPosition);
-		
-		if(_index != oldIndex) {
-			_viewer.SetBlockSet( _blockSetList[_index] );
+		index = DrawList(position, index, blockSetList, ref scrollPosition);
+
+		if(index != oldIndex) {
+			viewer.SetBlockSet( blockSetList[index] );
 		}
-		
+
 		GUILayout.BeginArea( new Rect(0, 0, Screen.width, Screen.height) );
 		GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();
@@ -122,7 +124,7 @@ public class OCBlockSetChooser : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private static int DrawList(UnityEngine.Rect position, int selected, OpenCog.BlockSet.OCBlockSet[] list, ref UnityEngine.Vector2 scrollPosition) {
+	private static int DrawList(Rect position, int selected, OpenCog.BlockSet.OCBlockSet[] list, ref Vector2 scrollPosition) {
 		GUILayout.BeginArea(position, GUI.skin.box);
 		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 		for(int i=0; i<list.Length; i++) {
@@ -139,14 +141,20 @@ public class OCBlockSetChooser : OCMonoBehaviour
 	private static bool DrawItem(string name, bool selected) {
 		Rect position = GUILayoutUtility.GetRect(new GUIContent(name), GUI.skin.box);
 		if(selected) GUI.Box(position, GUIContent.none);
-		
+
 		GUIStyle style = new GUIStyle(GUI.skin.label);
 		style.padding = GUI.skin.box.padding;
 		style.alignment = TextAnchor.MiddleLeft;
-		
+
 		GUI.Label(position, name, style);
-		
+
 		return Event.current.type == EventType.MouseDown && Event.current.button == 0 && position.Contains(Event.current.mousePosition);
+	}
+
+	private void BuildBlock(OpenCog.BlockSet.BaseBlockSet.OCBlock block) {
+		renderer.material = block.Atlas.Material;
+		MeshFilter filter = GetComponent<MeshFilter>();
+		block.Build().ToMesh(filter.mesh);
 	}
 			
 	//---------------------------------------------------------------------------

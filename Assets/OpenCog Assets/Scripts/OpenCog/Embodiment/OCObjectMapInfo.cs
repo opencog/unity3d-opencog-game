@@ -58,7 +58,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		private int _exampleVar;
 		
 		 #region Constants
-		private static readonly float POSITION_DISTANCE_THRESHOLD = 0.05f;
+		public static readonly float POSITION_DISTANCE_THRESHOLD = 0.05f;
 		private static readonly float ROTATION_DELTA = 0.0001f;
 		private static readonly float DEFAULT_AVATAR_LENGTH = 1f;
 		private static readonly float DEFAULT_AVATAR_WIDTH = 1f;
@@ -173,6 +173,12 @@ public class OCObjectMapInfo : OCMonoBehaviour
 
 		public UnityEngine.Vector3 Size {
 			get { return new UnityEngine.Vector3 ((float)this._length, (float)this._width, (float)this._height); }
+		}
+
+		public UnityEngine.Vector3 StartMovePos
+		{
+			get { return _startMovePos; }
+			set { _startMovePos = value; }
 		}
 
 		//---------------------------------------------------------------------------
@@ -376,7 +382,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			}
 
 			// Get a property manager instance
-			// TOFIX
+			// TODO
 //			OCPropertyManager manager = gameObject.GetComponent<OCPropertyManager> () as OCPropertyManager;
 //			if (manager != null) {
 //				// Copy all OC properties from the manager, if any.

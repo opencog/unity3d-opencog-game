@@ -93,12 +93,12 @@ public class OCStringMessage : OCMessage
 	
 	public override string ToString()
 	{
-		return _messageContent;
+		return _content;
 	}
 	
 	public override void FromString(string message)
 	{
-		_messageContent = message;
+		_content = message;
 	}
 			
 	//---------------------------------------------------------------------------

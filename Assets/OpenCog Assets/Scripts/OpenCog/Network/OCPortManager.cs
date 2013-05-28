@@ -52,7 +52,7 @@ public class OCPortManager
 
 	//---------------------------------------------------------------------------
 
-	private static HashSet<int> _userPorts = new HashSet<int>();
+	private static HashSet<int> _usedPorts = new HashSet<int>();
 			
 	//---------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ public class OCPortManager
 	{
 		int port = MIN_PORT_NUMBER;
 			
-		while (usedPorts.Contains(port) && port < 65535)
+		while (_usedPorts.Contains(port) && port < 65535)
 		{
 			port++;
 		}
@@ -91,15 +91,15 @@ public class OCPortManager
 			return -1;
 		}
 		
-		usedPorts.Add(port);
+		_usedPorts.Add(port);
 		return port;
 	}
 	
 	public static void ReleasePort(int port)
 	{
-		if (usedPorts.Contains(port))
+		if (_usedPorts.Contains(port))
 		{
-			usedPorts.Remove(port);
+			_usedPorts.Remove(port);
 		}
 	}
 

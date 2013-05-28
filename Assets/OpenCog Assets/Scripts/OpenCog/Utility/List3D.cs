@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class List3D<T> {
+public class List3D<T> : IEnumerable
+{
 	
 	private T[,,] list;
 	private Vector3i min, max;
@@ -123,4 +124,10 @@ public class List3D<T> {
 		return max.z;
 	}
 	
+}
+
+public class List3DEnumerator : IEnumerator
+{
+
+
 }

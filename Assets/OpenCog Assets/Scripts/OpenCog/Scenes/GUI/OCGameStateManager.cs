@@ -23,6 +23,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -66,7 +67,7 @@ public class OCGameStateManager : OCMonoBehaviour
 	private static OCGameStateManager Manager {
 		get {
 			if(_manager == null)
-					_manager = (GameStateManager) GameObject.FindObjectOfType( typeof(OCGameStateManager) );
+					_manager = (OCGameStateManager) GameObject.FindObjectOfType( typeof(OCGameStateManager) );
 
 			return _manager;
 		}
@@ -77,8 +78,8 @@ public class OCGameStateManager : OCMonoBehaviour
 			if(value) Time.timeScale = 1f/10000f;
 			if(!value) Time.timeScale = 1;
 			Screen.showCursor = value;
-			if(value) manager.SendMessage("OnPause", SendMessageOptions.DontRequireReceiver);
-			if(!value) manager.SendMessage("OnResume", SendMessageOptions.DontRequireReceiver);
+			if(value) _manager.SendMessage("OnPause", SendMessageOptions.DontRequireReceiver);
+			if(!value) _manager.SendMessage("OnResume", SendMessageOptions.DontRequireReceiver);
 		}
 		get {
 			return Time.timeScale <= 0.0001f;

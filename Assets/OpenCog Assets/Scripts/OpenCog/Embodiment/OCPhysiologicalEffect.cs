@@ -93,30 +93,30 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 	public void ApplyEffect(OCPhysiologicalModel model)
 	{
 		// Update energy
-		model.energy -= getActionCost((float)model.fitness);
-		model.energy += energyIncrease;
+		model.Energy -= GetActionCost((float)model.Fitness);
+		model.Energy += _energyIncrease;
         
-		model.fitness += fitnessChange;
+		model.Fitness += _fitnessChange;
         
 		// Set new mode
-		model.currentMode = newMode;
+		model.CurrentMode = _newAvatarMode;
 		// Change factors...
-		foreach(string factorName in changeFactors.Keys)
+		foreach(string factorName in _changeFactors.Keys)
 		{
-			float changeValue = changeFactors[factorName];
+			float changeValue = _changeFactors[factorName];
 			if(changeValue < 0.0f)
 			{
-				model.basicFactorMap[factorName].decrease(-changeValue);
+				model.BasicFactorMap[factorName].Decrease(-changeValue);
 			}
 			else
 			{
-				model.basicFactorMap[factorName].increase(changeValue);
+				model.BasicFactorMap[factorName].Increase(changeValue);
 			}
 		}
 		// Reset factors
-		foreach(string factorName in resetFactors)
+		foreach(string factorName in _resetFactors)
 		{
-			model.basicFactorMap[factorName].reset();
+			model.BasicFactorMap[factorName].Reset();
 		}
 
 		// Deal with the action which has effects on the physiological factors.

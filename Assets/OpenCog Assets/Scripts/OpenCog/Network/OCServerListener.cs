@@ -113,8 +113,8 @@ public class OCServerListener : OCScriptableObject
 		{
 			_listener = new 
 				TcpListener
-				(	IPAddress.Parse(_networkElement.IPAddress)
-				, _networkElement.PortNumber
+				(	_networkElement.IP
+				, _networkElement.Port
 				)
 			;
 			
@@ -131,14 +131,14 @@ public class OCServerListener : OCScriptableObject
 			if(!_listener.Pending())
 			{
 				// If listener is pending, sleep for a while to relax the CPU.
-				yield return new WaitForSeconds(0.05f);
+				yield return new UnityEngine.WaitForSeconds(0.05f);
 			}
 			else
 			{
 				try
 				{
 					Socket workSocket = _listener.AcceptSocket();
-					new OCMessageHandler(_networkElement, workSocket).start();
+					new OCMessageHandler(_networkElement, workSocket).Start();
 				}
 				catch( SocketException se )
 				{

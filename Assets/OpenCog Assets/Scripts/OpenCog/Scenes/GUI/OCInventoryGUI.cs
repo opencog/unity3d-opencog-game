@@ -23,6 +23,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -81,18 +82,18 @@ public class OCInventoryGUI : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 
 	public void Awake () {
-		Map map = (Map) GameObject.FindObjectOfType( typeof(Map) );
+		OpenCog.Map.OCMap map = (OpenCog.Map.OCMap) GameObject.FindObjectOfType( typeof(OpenCog.Map.OCMap) );
 		_blockSet = map.GetBlockSet();
 		GameObject player = GameObject.FindGameObjectWithTag( "Player" );
-		_builder = (Builder) player.GetComponent<Builder>();
+		_builder = (OpenCog.Builder.OCBuilder) player.GetComponent<OpenCog.Builder.OCBuilder>();
 	}
 	
 	public void Update () {
-		if( Input.GetKeyDown(KeyCode.E) && GameStateManager.IsPlaying ) {
+		if( Input.GetKeyDown(KeyCode.E) && OCGameStateManager.IsPlaying ) {
 			_show = !_show;
 			Screen.showCursor = _show;
 		}
-		if(GameStateManager.IsPause) show = false;
+		if(OCGameStateManager.IsPause) _show = false;
 	}
 	
 	public void OnGUI() {
@@ -114,17 +115,17 @@ public class OCInventoryGUI : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 	
 	private void DoInventoryWindow(int windowID) {
-		Block selected = builder.GetSelectedBlock();
-		selected = DrawInventory(_blockSet, ref _scrollPosition, selected);
-		_builder.SetSelectedBlock(selected);
+		OpenCog.BlockSet.BaseBlockSet.OCBlock selected = _builder.SelectedBlock;
+		selected = DrawInventory(_blockSet, ref scrollPosition, selected);
+		_builder.SelectedBlock = selected;
     }
 
 	private static OpenCog.BlockSet.BaseBlockSet.OCBlock DrawInventory(OpenCog.BlockSet.OCBlockSet blockSet, ref UnityEngine.Vector2 scrollPosition, OpenCog.BlockSet.BaseBlockSet.OCBlock selected) {
 		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
-		for(int i=0, y=0; i<blockSet.GetBlockCount(); y++) {
+		for(int i=0, y=0; i<blockSet.BlockCount; y++) {
 			GUILayout.BeginHorizontal();
 			for(int x=0; x<8; x++, i++) {
-				Block block = blockSet.GetBlock(i);
+				OpenCog.BlockSet.BaseBlockSet.OCBlock block = blockSet.GetBlock(i);
 				if( DrawBlock(block, block == selected && selected != null) ) {
 					selected = block;
 				}

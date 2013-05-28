@@ -93,9 +93,9 @@ public class OCEmotionalExpression : OCMonoBehaviour
 	void Start()
 	{
 		_face = transform.Find("robot/robotG/mainG/prt_18");
-		if(!face)
+		if(!_face)
 		{
-			Debug.LogError("Face of the robot is not found");
+			OCLogger.Error("Face of the robot is not found");
 		}
 	}
 

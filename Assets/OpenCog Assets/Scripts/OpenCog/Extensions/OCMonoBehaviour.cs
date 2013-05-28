@@ -42,7 +42,7 @@ public class OCMonoBehaviour : MonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-
+	protected System.Guid _uniqueEntityID;
 
 	//---------------------------------------------------------------------------
 
@@ -151,6 +151,7 @@ public class OCMonoBehaviour : MonoBehaviour
 	/// </summary>
 	public OCMonoBehaviour()
 	{
+		_uniqueEntityID = Guid.NewGuid();
 	}
 
 	public delegate void Task(float time);

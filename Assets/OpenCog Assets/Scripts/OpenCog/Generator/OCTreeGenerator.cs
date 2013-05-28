@@ -23,7 +23,7 @@ public class OCTreeGenerator {
 	
 	
 	public void Generate(int x, int y, int z) {
-		OCBlockData block = map.GetBlock(x, y-1, z);
+		OpenCog.Map.OCBlockData block = map.GetBlock(x, y-1, z);
 		if(block.IsEmpty() || !block.block.GetName().Equals("Dirt")) return;
 		if(Random.Range(0f, 1f) > 0.2f) return;
 		
@@ -33,7 +33,7 @@ public class OCTreeGenerator {
 	private void GenerateTree(int x, int y, int z) {
 		GenerateLeaves( new Vector3i(x, y+6, z), new Vector3i(x, y+6, z) );
 		for(int i=0; i<8; i++) {
-			map.SetBlock(new OCBlockData(wood), new Vector3i(x, y+i, z));
+			map.SetBlock(new OpenCog.Map.OCBlockData(wood, new Vector3i(x, y+i, z)), new Vector3i(x, y+i, z));
 		}
 	}
 	

@@ -64,7 +64,7 @@ public class OCStateChangesRegister : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	public List<StateInfo> StateList
+	public static List<StateInfo> StateList
 	{
 		get { return _stateList; }
 		set { _stateList = value; }
@@ -98,7 +98,7 @@ public class OCStateChangesRegister : OCMonoBehaviour
 			OCPerceptionCollector pCollector = OCA.GetComponent<OCPerceptionCollector>() as OCPerceptionCollector;
 			if(pCollector != null)
 			{
-				pCollector.addNewState(aInfo);
+				pCollector.AddNewState(aInfo);
 			}
 		}
 			

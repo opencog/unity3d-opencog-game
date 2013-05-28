@@ -48,7 +48,7 @@ namespace OpenCog.Embodiment
 #endregion
 public class OCConnector : Network.OCNetworkElement
 {
-		//TOFIX: delete these fake classes.
+		//TODO: delete these fake classes.
 //		public class MetaAction
 //		{}
 //
@@ -417,7 +417,7 @@ public class OCConnector : Network.OCNetworkElement
         }
         else
         {
-			/// TOFIX: I have no idea if the below code makes sense...if Map==null....
+			/// TODO: I have no idea if the below code makes sense...if Map==null....
 			_mapName = "unknown_map";
 	    _blockCountX = 128;
 			_blockCountY = 128;
@@ -430,9 +430,10 @@ public class OCConnector : Network.OCNetworkElement
 		}
     
     // Get action scheduler component.
-		// TOFIX: old classes here.
+		// TODO: old classes here.
     _actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
-    OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
+	// TODO: Removed due to new call structure for updating action statuses. Nothing to do really..just needs remembering.
+    //OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
 
     return true;
   }
@@ -534,173 +535,188 @@ public class OCConnector : Network.OCNetworkElement
 		}
 		return false;
 	}
+// TODO: Make sure the action status updating process initiated by OCConnector also covers the function below.
+//	public void handleActionResult(OCAction action)
+//  {
+//      bool result = (action.Status == OCAction.ActionStatus.SUCCESS);
+//
+//      // Send action status to my brain.
+//      SendActionStatus(_currentPlanId, action, result);
+//      //Debug.LogWarning("Action plan " + this.currentPlanId + " sequence " + action.Sequence + " status sent.");
+//      lock (_actionsList)
+//      {
+//      	_actionsList.Remove(action);
+//      }
+//  }
 
-	public void handleActionResult(OCAction action)
-  {
-      bool result = action.status == OCAction.Status.SUCCESS;
-      
-      // Send action status to my brain.
-      SendActionStatus(_currentPlanId, action, result);
-      //Debug.LogWarning("Action plan " + this.currentPlanId + " sequence " + action.Sequence + " status sent.");
-      lock (_actionsList)
-      {
-      	_actionsList.Remove(action);
-      }
-  }
-  
-  public void HandleOtherAgentActionResult(OCAction action)
-  {
-    // don't report actions that game from us.
-    // don't report actions without an action summary (these are from trying
-    // to do non-existant actions).
-		///TODO: Find a different way to check for this...
-//    if (ar.avatar == gameObject.GetComponent<Avatar>() || ar.action == null) {
-//        //Debug.LogWarning("skipping action result from " + ar.avatar);
-//        return;
-//    }
-
-    // the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
-
-    string timestamp = GetCurrentTimestamp();
-    XmlDocument doc = new XmlDocument();
-    XmlElement root = makeXMLElementRoot(doc);
-
-    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-    agentSignal.SetAttribute("id", gameObject.GetInstanceID().ToString());
-    agentSignal.SetAttribute("type", ar.avatar.agentType);
-    agentSignal.SetAttribute("timestamp", timestamp);
-    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
-      
-		// note that the name and the action-instance-name are different
-		// ie: name = kick , while action-instance-name = kick2342
-		actionElement.SetAttribute("name", ar.action.actionName);
-		actionElement.SetAttribute("action-instance-name", ar.actionInstanceName);
-		
-		bool result = (ar.status == ActionResult.Status.SUCCESS ? true : false);
-		actionElement.SetAttribute("result-state", "true"); //successful or failed
-		if (ar.action.objectID == gameObject.GetInstanceID()) {
-			actionElement.SetAttribute("target", _brainID);
-		} else {
-			actionElement.SetAttribute("target", ar.action.objectID.ToString());
-		}
-		
-		// currently we only process the avatar and ocobject type, other types in EmbodimentXMLTages can is to be added when needed.
-		// if you add other types such as BLOCK_OBJECT_TYPE, you should also modify PAI::processAgentActionWithParameters in opencog
-		string targetType = ar.action.actionObject.tag;
-		if (targetType == "OCA" || targetType == "Player")// it's an avatar
-			actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
-		else if (targetType == "OCObject") // it's an object
-			actionElement.SetAttribute("target-type",OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
-		else
-			Debug.LogError("Error target type: " + targetType + " in action: " + ar.action.actionName);
-				 
-		// we can only process the parameter type defined in class ActionParamType both in opencog and unity
-		// currently they are : boolean, int, float, string, vector, rotation, entity
-		// also see opencog/opencog/embodiment/control/perceptionActionInterface/BrainProxyAxon.xsd
-    ArrayList paramList = ar.parameters;
-      
-    if (paramList != null) 
+	public void UpdateActionStatuses()
 		{
-		
-			int i;
-			if (targetType == "OCA" || targetType == "Player")
-			{
-				if (ar.action.objectID == ar.avatar.gameObject.GetInstanceID())
-					i = -1;
-				else 
-					i = 0;
-			}
-	    else
-			{
-				i = 0;
-			}
-				
-     foreach (System.Object obj in paramList)
-    	{
-      	XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
-			
-				// the first param in pinfo is usually the avator does this action, so we just skip it
-				string paratype = obj.GetType().ToString();
-				if (paratype == "System.Int32") // it's a int
-				{
-					param.SetAttribute("type", "int");
-					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
-					param.SetAttribute("value", obj.ToString());
-				}
-				else if (paratype == "System.Single") // it's a float
-				{
-					param.SetAttribute("type", "float");
-					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
-					param.SetAttribute("value", obj.ToString());
-				}
-				else if (paratype == "System.Boolean") // it's a bool
-				{
-					param.SetAttribute("type", "boolean");
-					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
-				
-					param.SetAttribute("value", obj.ToString().ToLower());
-				}
-				else if (paratype == "System.String")// it's a string
-				{
-					param.SetAttribute("type", "string");
-					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
-					param.SetAttribute("value", obj.ToString());
-				}
-				// it's an entity, we only process the ActionTarget, 
-				// if your parameter is an Entiy, please change it into ActionTarget type first
-				else if (paratype == "ActionTarget") 
-				{
-					param.SetAttribute("type", "entity");
-					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
-					XmlElement entityElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ENTITY_ELEMENT));
-					OCAction.Target entity = obj as OCAction.Target;
-					entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, entity.id.ToString());
-					entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, entity.type);
-					
-					// currently it seems not use of OWNER_ID_ATTRIBUTE and OWNER_NAME_ATTRIBUTE, we just skip them
-				}
-				else if ( paratype == "UnityEngine.Vector3") // it's an vector
-				{   
-					UnityEngine.Vector3 vec = (Vector3)obj ;
-					param.SetAttribute("type", "vector");
-					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
-					XmlElement vectorElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.VECTOR_ELEMENT));
-					vectorElement.SetAttribute(OCEmbodimentXMLTags.X_ATTRIBUTE, vec.x.ToString());
-					vectorElement.SetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE, vec.y.ToString());
-					vectorElement.SetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE, vec.z.ToString());
-					
-				}
-				else if ( paratype ==  "IntVect") // it's an vector
-				{   
-					Vector3i vec = (Vector3i)obj ;
-					param.SetAttribute("type", "vector");
-					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
-					XmlElement vectorElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.VECTOR_ELEMENT));
-					vectorElement.SetAttribute(OCEmbodimentXMLTags.X_ATTRIBUTE, (vec.X + 0.5f).ToString());
-					vectorElement.SetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE, (vec.Y + 0.5f).ToString());
-					vectorElement.SetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE, (vec.Z + 0.5f).ToString());
-					
-				}
-				// todo: we don't have a rotation type
-				else 
-				{
-					// we can only process the type define in ActionParamType
-					continue;
-				}
-				              
-	      i++;                
-	    }
-    }
+			// GetComponents of type ActionController
 
-    Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+			// Call GetAndClearFinishedActions on ActionControllers to match the old situation
 
-    OCLogger.Warn("sending action result from " + ar.avatar + "\n" + BeautifyXmlText(doc));
+			// Call GetAndClearAllActions on ActionControlles in the new situation
 
-    lock (_messageSendingLock)
-    {
-        _messagesToSend.Add(message);
-    }
-  }
+			// Loop through Actions...or clones of them...or data structures for them...
+
+
+
+
+		}
+  
+//  public void HandleOtherAgentActionResult(OCAction action)
+//  {
+//    // don't report actions that game from us.
+//    // don't report actions without an action summary (these are from trying
+//    // to do non-existant actions).
+//		///TODO: Find a different way to check for this...
+////    if (ar.avatar == gameObject.GetComponent<Avatar>() || ar.action == null) {
+////        //Debug.LogWarning("skipping action result from " + ar.avatar);
+////        return;
+////    }
+//
+//    // the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
+//
+//    string timestamp = GetCurrentTimestamp();
+//    XmlDocument doc = new XmlDocument();
+//    XmlElement root = makeXMLElementRoot(doc);
+//
+//    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
+//    agentSignal.SetAttribute("id", gameObject.GetInstanceID().ToString());
+//    agentSignal.SetAttribute("type", ar.avatar.agentType);
+//    agentSignal.SetAttribute("timestamp", timestamp);
+//    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+//
+//		// note that the name and the action-instance-name are different
+//		// ie: name = kick , while action-instance-name = kick2342
+//		actionElement.SetAttribute("name", ar.action.actionName);
+//		actionElement.SetAttribute("action-instance-name", ar.actionInstanceName);
+//		
+//		bool result = (ar.status == ActionResult.Status.SUCCESS ? true : false);
+//		actionElement.SetAttribute("result-state", "true"); //successful or failed
+//		if (ar.action.objectID == gameObject.GetInstanceID()) {
+//			actionElement.SetAttribute("target", _brainID);
+//		} else {
+//			actionElement.SetAttribute("target", ar.action.objectID.ToString());
+//		}
+//
+//		// currently we only process the avatar and ocobject type, other types in EmbodimentXMLTages can is to be added when needed.
+//		// if you add other types such as BLOCK_OBJECT_TYPE, you should also modify PAI::processAgentActionWithParameters in opencog
+//		string targetType = ar.action.actionObject.tag;
+//		if (targetType == "OCA" || targetType == "Player")// it's an avatar
+//			actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
+//		else if (targetType == "OCObject") // it's an object
+//			actionElement.SetAttribute("target-type",OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
+//		else
+//			Debug.LogError("Error target type: " + targetType + " in action: " + ar.action.actionName);
+//				 
+//		// we can only process the parameter type defined in class ActionParamType both in opencog and unity
+//		// currently they are : boolean, int, float, string, vector, rotation, entity
+//		// also see opencog/opencog/embodiment/control/perceptionActionInterface/BrainProxyAxon.xsd
+//    ArrayList paramList = ar.parameters;
+//      
+//    if (paramList != null) 
+//		{
+//		
+//			int i;
+//			if (targetType == "OCA" || targetType == "Player")
+//			{
+//				if (ar.action.objectID == ar.avatar.gameObject.GetInstanceID())
+//					i = -1;
+//				else 
+//					i = 0;
+//			}
+//	    else
+//			{
+//				i = 0;
+//			}
+//				
+//     foreach (System.Object obj in paramList)
+//    	{
+//      	XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
+//			
+//				// the first param in pinfo is usually the avator does this action, so we just skip it
+//				string paratype = obj.GetType().ToString();
+//				if (paratype == "System.Int32") // it's a int
+//				{
+//					param.SetAttribute("type", "int");
+//					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
+//					param.SetAttribute("value", obj.ToString());
+//				}
+//				else if (paratype == "System.Single") // it's a float
+//				{
+//					param.SetAttribute("type", "float");
+//					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
+//					param.SetAttribute("value", obj.ToString());
+//				}
+//				else if (paratype == "System.Boolean") // it's a bool
+//				{
+//					param.SetAttribute("type", "boolean");
+//					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
+//				
+//					param.SetAttribute("value", obj.ToString().ToLower());
+//				}
+//				else if (paratype == "System.String")// it's a string
+//				{
+//					param.SetAttribute("type", "string");
+//					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
+//					param.SetAttribute("value", obj.ToString());
+//				}
+//				// it's an entity, we only process the ActionTarget, 
+//				// if your parameter is an Entiy, please change it into ActionTarget type first
+//				else if (paratype == "ActionTarget") 
+//				{
+//					param.SetAttribute("type", "entity");
+//					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
+//					XmlElement entityElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ENTITY_ELEMENT));
+//					OCAction.Target entity = obj as OCAction.Target;
+//					entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, entity.id.ToString());
+//					entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, entity.type);
+//					
+//					// currently it seems not use of OWNER_ID_ATTRIBUTE and OWNER_NAME_ATTRIBUTE, we just skip them
+//				}
+//				else if ( paratype == "UnityEngine.Vector3") // it's an vector
+//				{   
+//					UnityEngine.Vector3 vec = (Vector3)obj ;
+//					param.SetAttribute("type", "vector");
+//					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
+//					XmlElement vectorElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.VECTOR_ELEMENT));
+//					vectorElement.SetAttribute(OCEmbodimentXMLTags.X_ATTRIBUTE, vec.x.ToString());
+//					vectorElement.SetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE, vec.y.ToString());
+//					vectorElement.SetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE, vec.z.ToString());
+//					
+//				}
+//				else if ( paratype ==  "IntVect") // it's an vector
+//				{   
+//					Vector3i vec = (Vector3i)obj ;
+//					param.SetAttribute("type", "vector");
+//					param.SetAttribute("name", ar.action.pinfo[i+1].Name);
+//					XmlElement vectorElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.VECTOR_ELEMENT));
+//					vectorElement.SetAttribute(OCEmbodimentXMLTags.X_ATTRIBUTE, (vec.X + 0.5f).ToString());
+//					vectorElement.SetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE, (vec.Y + 0.5f).ToString());
+//					vectorElement.SetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE, (vec.Z + 0.5f).ToString());
+//					
+//				}
+//				// todo: we don't have a rotation type
+//				else 
+//				{
+//					// we can only process the type define in ActionParamType
+//					continue;
+//				}
+//				              
+//	      i++;                
+//	    }
+//    }
+//
+//    Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+//
+//    OCLogger.Warn("sending action result from " + ar.avatar + "\n" + BeautifyXmlText(doc));
+//
+//    lock (_messageSendingLock)
+//    {
+//        _messagesToSend.Add(message);
+//    }
+//  }
 	
 	
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
@@ -1062,32 +1078,34 @@ public class OCConnector : Network.OCNetworkElement
     foreach (OCAction action in actionList)
 		{
 			// Set the action name
-	    string ocActionName = OCActionController.getOCActionNameFromMap(action.actionName);
-	        
+	    string ocActionName = OCActionController.GetOCActionNameFromMap(action.Name);
+
 			// check if the method name has a mapping to opencog action name.
 			if (ocActionName == null) continue;
 			
 	    System.Xml.XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_AVAILABILITY_ELEMENT));
 	        
 	    actionElement.SetAttribute("name", ocActionName);
-	        
+
+		// TODO: Our new actions won't have targets, so we can skip this whole section.
+
 	    // Actions like "walk", "jump" are built-in naturally, they don't need an external target to act on.
-	    if (action.objectID != gameObject.GetInstanceID())
-			{
-		    // Set the action target
-		    actionElement.SetAttribute("target", action.objectID.ToString());
-		        
-		    // Set the action target type
-				// currently we only process the avatar and ocobject type, other types in EmbodimentXMLTages can is to be added when needed.
-				// if you add other types such as BLOCK_OBJECT_TYPE, you should also modify PAI::processAgentAvailability in opencog
-				string targetType = action.actionObject.tag;
-				if (targetType == "OCA" || targetType == "Player")// it's an avatar
-					actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
-				else if (targetType == "OCObject") // it's an object
-					actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
-				else
-					OCLogger.Error("Error target type: " + targetType + " in action: " + action.actionName);
-			}
+//	    if (action.Target != gameObject.GetInstanceID())
+//			{
+//		    // Set the action target
+//		    actionElement.SetAttribute("target", action.objectID.ToString());
+//		        
+//		    // Set the action target type
+//				// currently we only process the avatar and ocobject type, other types in EmbodimentXMLTages can is to be added when needed.
+//				// if you add other types such as BLOCK_OBJECT_TYPE, you should also modify PAI::processAgentAvailability in opencog
+//				string targetType = action.actionObject.tag;
+//				if (targetType == "OCA" || targetType == "Player")// it's an avatar
+//					actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
+//				else if (targetType == "OCObject") // it's an object
+//					actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
+//				else
+//					OCLogger.Error("Error target type: " + targetType + " in action: " + action.actionName);
+//			}
 							
 	    actionElement.SetAttribute("available", available ? "true" : "false");
 		}
@@ -1220,7 +1238,7 @@ public class OCConnector : Network.OCNetworkElement
       return new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
   }
 	
-	public void SendFinishPerceptTerrian()
+	public void SendFinishPerceptTerrain()
 	{
 		XmlDocument doc = new XmlDocument();
         XmlElement root = MakeXMLElementRoot(doc);
@@ -1303,7 +1321,7 @@ public class OCConnector : Network.OCNetworkElement
           // TODO save local data of this avatar.
           UnloadOAC();
       }
-	// TOFIX
+	// TODO
 	// Finalize is nog Uninitialize, which I believe is called on raising the OnDestroy event...?
       //finalize();
   }
@@ -1496,7 +1514,7 @@ public class OCConnector : Network.OCNetworkElement
             OCLogger.Warn("Stop all current actions");
             CancelAvatarActions();
         }
-        
+
         // Update current plan id and selected demand name.
         _currentPlanId = element.GetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE);
         _currentDemandName = element.GetAttribute(OCEmbodimentXMLTags.DEMAND_ATTRIBUTE);
@@ -1677,7 +1695,9 @@ public class OCConnector : Network.OCNetworkElement
       avatarSignal.SetAttribute("timestamp", timestamp);
       XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
       actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
-      actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, action.Sequence.ToString());
+
+		// TODO: Fix the Sequence attribute on Action which is currently missing.
+      	//actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, action.Sequence.ToString());
       actionElement.SetAttribute("name", action.Name);
       actionElement.SetAttribute("status", success ? "done" : "error");
 

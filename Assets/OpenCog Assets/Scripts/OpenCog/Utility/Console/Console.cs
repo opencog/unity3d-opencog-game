@@ -124,8 +124,9 @@ public class Console : OCMonoBehaviour
 		{
 			this._movementState = Movement.APPEARING;
 		}
-		
-		OCActionController.globalActionCompleteEvent += new ActionCompleteHandler (notifyActionComplete);
+
+		// TODO: Removed this, may need checking.
+		//OCActionController.globalActionCompleteEvent += new ActionCompleteHandler (notifyActionComplete);
 
 		// Initialise support
 		_consoleEntries = new ArrayList();
@@ -354,7 +355,7 @@ public class Console : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
-		// TOFIX:
+		// TODO:
 		//Input.eatKeyPressOnTextFieldFocus = false;
 		_console = this;
 	}
@@ -708,7 +709,7 @@ public class Console : OCMonoBehaviour
 		protected string _commandName = "empty";
 	}
 		
-	// TOFIX: Replace below with real OCInputController;
+	// TODO: Replace below with real OCInputController;
 	/// <summary>
 	/// OC input controller. Stub for yet to be designed and implented OCInputController.
 	/// </summary>

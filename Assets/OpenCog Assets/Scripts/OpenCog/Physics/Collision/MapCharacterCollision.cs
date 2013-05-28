@@ -27,7 +27,7 @@ public class MapCharacterCollision {
 		for(int x=x1; x<=x2; x++) {
 			for(int y=y1; y<=y2; y++) {
 				for(int z=z1; z<=z2; z++) {
-					OCBlockData block = map.GetBlock(x, y, z);
+					OpenCog.Map.OCBlockData block = map.GetBlock(x, y, z);
 					if(block.IsSolid()) {
 						Contact? _newContact = BlockCharacterCollision.GetContactBlockCharacter(new Vector3i(x, y, z), pos, collider);
 						if(_newContact.HasValue && _newContact.Value.delta.magnitude > float.Epsilon) {

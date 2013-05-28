@@ -59,7 +59,7 @@ public class OCMap : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	// TOFIX: SerializeField necessary here?
+	// TODO: SerializeField necessary here?
 	[SerializeField]
 	private OpenCog.BlockSet.OCBlockSet _blockSet;
 	private List3D<OCChunk> _chunks = new List3D<OCChunk> ();
@@ -146,7 +146,13 @@ public class OCMap : OCMonoBehaviour
 	public string MapName
 	{
 		get { return _mapName;}
-		set { _mapName = Value;}
+		set { _mapName = value;}
+	}
+
+	public List3D<OCChunk> Chunks
+	{
+		get { return _chunks; }
+		set { _chunks = value; }
 	}
 			
 	//---------------------------------------------------------------------------
@@ -163,7 +169,7 @@ public class OCMap : OCMonoBehaviour
 	{
 		MethodInfo info = this.GetType().GetMember("SetBlockAndRecompute")[0] as MethodInfo;
 
-// TOFIX: uncomment when aspect stuff is in place?
+// TODO: uncomment when aspect stuff is in place?
 //		object[] attributes = info.GetCustomAttributes(typeof(OCLogAspect), true);
 //		OCLogAspect asp = null;
 //
@@ -203,11 +209,11 @@ public class OCMap : OCMonoBehaviour
 		if (localPos.z == OCChunk.SIZE_Z - 1)
 			SetDirty (chunkPos + Vector3i.forward);
 		
-		OCSunLightComputer.RecomputeLightAtPosition (this, pos);
-		OCLightComputer.RecomputeLightAtPosition (this, pos);
+		OpenCog.Map.Lighting.OCSunLightComputer.RecomputeLightAtPosition (this, pos);
+		OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition (this, pos);
 		
 		UpdateMeshColliderAfterBlockChange ();
-// TOFIX: uncomment when aspect stuff is in place?
+// TODO: uncomment when aspect stuff is in place?
 //		asp.OnExit(null);
 	}
 
@@ -359,12 +365,12 @@ public class OCMap : OCMonoBehaviour
 
 	public void SetBlock (OpenCog.BlockSet.BaseBlockSet.OCBlock block, Vector3i pos)
 	{
-		SetBlock (new OCBlockData (block), pos);
+		SetBlock (new OCBlockData (block, pos), pos);
 	}
 
 	public void SetBlock (OpenCog.BlockSet.BaseBlockSet.OCBlock block, int x, int y, int z)
 	{
-		SetBlock (new OCBlockData (block), x, y, z);
+		SetBlock (new OCBlockData (block, new Vector3i(x, y, z)), x, y, z);
 	}
 	
 	public void SetBlock (OCBlockData block, Vector3i pos)
@@ -395,13 +401,13 @@ public class OCMap : OCMonoBehaviour
 	public int GetMaxY (int x, int z)
 	{
 		Vector3i chunkPos = OCChunk.ToChunkPosition (x, 0, z);
-		chunkPos.y = chunks.GetMax ().y;
+		chunkPos.y = _chunks.GetMax ().y;
 		Vector3i localPos = OCChunk.ToLocalPosition (x, 0, z);
 		
 		for (; chunkPos.y >= 0; chunkPos.y--) {
 			localPos.y = OCChunk.SIZE_Y - 1;
 			for (; localPos.y >= 0; localPos.y--) {
-				OCChunk chunk = chunks.SafeGet (chunkPos);
+				OCChunk chunk = _chunks.SafeGet (chunkPos);
 				if (chunk == null)
 					break;
 				OCBlockData block = chunk.GetBlock (localPos);
@@ -415,32 +421,32 @@ public class OCMap : OCMonoBehaviour
 
 		public OCChunk GetChunk (Vector3i chunkPos)
 	{
-		return chunks.SafeGet (chunkPos);
+		return _chunks.SafeGet (chunkPos);
 	}
 	
 	public List3D<OCChunk> GetChunks ()
 	{
-		return chunks;
+		return _chunks;
 	}
 	
 	public OpenCog.Map.Lighting.OCSunLightMap GetSunLightmap ()
 	{
-		return sunLightmap;
+		return _sunLightmap;
 	}
 	
 	public OpenCog.Map.Lighting.OCLightMap GetLightmap ()
 	{
-		return lightmap;
+		return _lightmap;
 	}
 	
 	public void SetBlockSet (OpenCog.BlockSet.OCBlockSet blockSet)
 	{
-		this.blockSet = blockSet;
+		_blockSet = blockSet;
 	}
 
 	public OpenCog.BlockSet.OCBlockSet GetBlockSet ()
 	{
-		return blockSet;
+		return _blockSet;
 	}
 
 	//---------------------------------------------------------------------------
@@ -545,7 +551,7 @@ public class OCMap : OCMonoBehaviour
 		OCChunk chunk = GetChunk (chunkPos);
 		if (chunk == null) {
 			chunk = new OCChunk (this, chunkPos);
-			chunks.AddOrReplace (chunk, chunkPos);
+			_chunks.AddOrReplace (chunk, chunkPos);
 		}
 		return chunk;
 	}

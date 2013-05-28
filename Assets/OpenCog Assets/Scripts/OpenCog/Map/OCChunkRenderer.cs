@@ -52,7 +52,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 		
 	private OpenCog.BlockSet.OCBlockSet _blockSet;
-	private OCChunk _chunk;
+	private OpenCog.Map.OCChunk _chunk;
 
 	private bool _dirty = false, _lightDirty = false;
 
@@ -67,7 +67,18 @@ public class OCChunkRenderer : OCMonoBehaviour
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-		
+
+		public OpenCog.BlockSet.OCBlockSet BlockSet
+		{
+			get { return _blockSet; }
+			set { _blockSet = value; }
+		}
+
+		public OpenCog.Map.OCChunk Chunk
+		{
+			get { return _chunk; }
+			set { _chunk = value; }
+		}
 
 	//---------------------------------------------------------------------------
 
@@ -101,13 +112,13 @@ public class OCChunkRenderer : OCMonoBehaviour
 	/// </summary>
 	public void Update()
 	{
-		if(dirty) {
+		if(_dirty) {
 			Build();
-			dirty = lightDirty = false;
+			_dirty = _lightDirty = false;
 		}
-		if(lightDirty) {
+		if(_lightDirty) {
 			BuildLighting();
-			lightDirty = false;
+			_lightDirty = false;
 		}
 
 		OCLogger.Fine(gameObject.name + " is updated.");	
@@ -149,15 +160,15 @@ public class OCChunkRenderer : OCMonoBehaviour
 	}
 
 	public static OCChunkRenderer CreateChunkRenderer(Vector3i pos, OpenCog.Map.OCMap map, OCChunk chunk) {
-		GameObject go = new GameObject("("+pos.x+" "+pos.y+" "+pos.z+")", typeof(MeshFilter), typeof(MeshRenderer), typeof(OCChunkRenderer));
+		UnityEngine.GameObject go = new UnityEngine.GameObject("("+pos.x+" "+pos.y+" "+pos.z+")", typeof(UnityEngine.MeshFilter), typeof(UnityEngine.MeshRenderer), typeof(OpenCog.Map.OCChunkRenderer));
 		go.transform.parent = map.transform;
-		go.transform.localPosition = new Vector3(pos.x*OCChunk.SIZE_X, pos.y*OCChunk.SIZE_Y, pos.z*OCChunk.SIZE_Z);
-		go.transform.localRotation = Quaternion.identity;
-		go.transform.localScale = Vector3.one;
+		go.transform.localPosition = new UnityEngine.Vector3(pos.x*OpenCog.Map.OCChunk.SIZE_X, pos.y*OpenCog.Map.OCChunk.SIZE_Y, pos.z*OpenCog.Map.OCChunk.SIZE_Z);
+		go.transform.localRotation = UnityEngine.Quaternion.identity;
+		go.transform.localScale = UnityEngine.Vector3.one;
 		
 		OCChunkRenderer chunkRenderer = go.GetComponent<OCChunkRenderer>();
-		chunkRenderer.blockSet = map.GetBlockSet();
-		chunkRenderer.chunk = chunk;
+		chunkRenderer.BlockSet = map.GetBlockSet();
+		chunkRenderer.Chunk = chunk;
 
 		go.renderer.castShadows = false;
 		go.renderer.receiveShadows = false;
@@ -166,10 +177,10 @@ public class OCChunkRenderer : OCMonoBehaviour
 	}
 
 	public void SetDirty() {
-		dirty = true;
+		_dirty = true;
 	}
 	public void SetLightDirty() {
-		lightDirty = true;
+		_lightDirty = true;
 	}
 
 	//---------------------------------------------------------------------------
@@ -187,7 +198,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
-		filter = GetComponent<MeshFilter>();
+		_filter = GetComponent<UnityEngine.MeshFilter>();
 	}
 	
 	/// <summary>
@@ -199,19 +210,19 @@ public class OCChunkRenderer : OCMonoBehaviour
 	}
 
 	private void Build() {
-		filter.sharedMesh = ChunkBuilder.BuildChunk(filter.sharedMesh, chunk);
+		_filter.sharedMesh = OpenCog.Builder.OCChunkBuilder.BuildChunk(_filter.sharedMesh, _chunk);
 
-		if(filter.sharedMesh == null) {
+		if(_filter.sharedMesh == null) {
 			Destroy(gameObject);
 			return;
 		}
 
-		renderer.sharedMaterials = blockSet.GetMaterials(filter.sharedMesh.subMeshCount);
+		renderer.sharedMaterials = _blockSet.GetMaterials(_filter.sharedMesh.subMeshCount);
 	}
 
 	private void BuildLighting() {
-		if(filter.sharedMesh != null) {
-			ChunkBuilder.BuildChunkLighting(filter.sharedMesh, chunk);
+		if(_filter.sharedMesh != null) {
+			OpenCog.Builder.OCChunkBuilder.BuildChunkLighting(_filter.sharedMesh, _chunk);
 		}
 	}
 			

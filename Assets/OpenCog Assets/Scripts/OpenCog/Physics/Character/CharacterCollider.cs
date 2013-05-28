@@ -41,7 +41,7 @@ public class CharacterCollider : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		map = (Map) GameObject.FindObjectOfType(typeof(Map));
+		map = (OpenCog.Map.OCMap) GameObject.FindObjectOfType(typeof(OpenCog.Map.OCMap));
 	}
 	
 	void OnDrawGizmos() {

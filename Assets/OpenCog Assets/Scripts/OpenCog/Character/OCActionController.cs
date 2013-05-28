@@ -16,6 +16,7 @@
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Behave.Runtime;
 using OpenCog.Actions;
 //using OpenCog.Aspects;
@@ -54,6 +55,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	private Hashtable _idleParams;
 	private Vector3i _targetBlockPos = Vector3i.zero;
 	private DateTime _dtLastTNTSearchTime;
+	private static Dictionary<string, string> builtinActionMap = new Dictionary<string, string>();
 
 	//---------------------------------------------------------------------------
 
@@ -596,9 +598,40 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	//---------------------------------------------------------------------------
 
-	#region Member Classes
+	#region Other Members
 
-	//---------------------------------------------------------------------------		
+	//---------------------------------------------------------------------------
+
+	// TODO: This cose is just a set of stubs to get rid of an error.
+	//public static event ActionCompleteHandler globalActionCompleteEvent;
+	//public delegate void ActionCompleteHandler(OCAction action);
+	// Removed...due to the fact that OCConnector will be polling this class for action status updates.
+
+	// TODO: Implement / remove build block function which can be called by OCConnector.ParseSingleActionElement. Will probably have to be amended with material / blockdata.
+	public void BuildBlockAtPosition(Vector3i desiredBlockLocation)
+	{
+
+	}
+
+	// TODO: Implement / remove move to location function which can be called by OCConnector.ParseSingleActionElement.
+	public void MoveToCoordinate(Vector3 desiredLocation)
+			{
+
+			}
+
+	// TODO: Implement function below properly.
+	public static string GetOCActionNameFromMap(string methodName)
+	{
+		if (builtinActionMap.ContainsValue(methodName))
+		{
+			foreach (KeyValuePair<string, string> pair in builtinActionMap)
+			{
+				if (pair.Value == methodName) return pair.Key;
+			}
+		}
+
+		return null;
+	}
 
 	//---------------------------------------------------------------------------
 

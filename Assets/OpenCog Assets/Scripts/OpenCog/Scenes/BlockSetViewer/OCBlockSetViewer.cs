@@ -23,13 +23,14 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
 
 #endregion
 
-namespace OpenCog.Scenes.BlockSetViewwer
+namespace OpenCog.Scenes.BlockSetViewer
 {
 
 /// <summary>
@@ -51,9 +52,9 @@ public class OCBlockSetViewer : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private OpenCog.BlockSet.OCBlockSet _blockSet;
+	private OpenCog.BlockSet.OCBlockSet blockSet;
 
-	private int _index = 0;
+	private int index = 0;
 	// Member is not static, but a variable with the same name is used in DrawList
 	private UnityEngine.Vector2 scrollPosition;
 			
@@ -81,10 +82,10 @@ public class OCBlockSetViewer : OCMonoBehaviour
 
 	public void OnGUI() {
 		Rect rect = new Rect(Screen.width-180, 0, 180, Screen.height);
-		int oldIndex = _index;
-		_index = DrawList(rect, _index, blockSet.GetBlocks(), ref scrollPosition);
-		if(oldIndex != _index) {
-			BuildBlock( blockSet.GetBlock(_index) );
+		int oldIndex = index;
+		index = DrawList(rect, index, blockSet.Blocks, ref scrollPosition);
+		if(oldIndex != index) {
+			BuildBlock( blockSet.GetBlock(index) );
 		}
 	}
 
@@ -99,7 +100,7 @@ public class OCBlockSetViewer : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 	
 	private void BuildBlock(OpenCog.BlockSet.BaseBlockSet.OCBlock block) {
-		renderer.material = block.GetAtlas().GetMaterial();
+		renderer.material = block.Atlas.Material;
 		MeshFilter filter = GetComponent<MeshFilter>();
 		block.Build().ToMesh(filter.mesh);
 	}
@@ -135,7 +136,14 @@ public class OCBlockSetViewer : OCMonoBehaviour
 		
 		return Event.current.type == EventType.MouseDown && Event.current.button == 0 && position.Contains(Event.current.mousePosition);
 	}
-			
+
+	public void SetBlockSet(OpenCog.BlockSet.OCBlockSet blockSet) {
+		this.blockSet = blockSet;
+		index = Mathf.Clamp(index, 0, blockSet.BlockCount);
+		BuildBlock( blockSet.GetBlock(index) );
+	}
+
+
 	//---------------------------------------------------------------------------
 
 	#endregion

@@ -43,6 +43,8 @@ public class OCScriptableObject : ScriptableObject
 
 	//---------------------------------------------------------------------------
 
+	protected System.Guid _uniqueEntityID;
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -62,6 +64,11 @@ public class OCScriptableObject : ScriptableObject
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+
+	public OCScriptableObject()
+	{
+		_uniqueEntityID = Guid.NewGuid();
+	}
 
 	//---------------------------------------------------------------------------
 

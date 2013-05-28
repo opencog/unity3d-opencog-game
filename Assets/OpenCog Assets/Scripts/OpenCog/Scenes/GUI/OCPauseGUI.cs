@@ -23,6 +23,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -112,12 +113,12 @@ public class OCPauseGUI : OCMonoBehaviour
 	
 	private void DrawMenu() {
 		if( GUILayout.Button("Resume", GUILayout.ExpandWidth(false)) ) {
-			GameStateManager.IsPlaying = true;
+			OCGameStateManager.IsPlaying = true;
 		}
 		DrawSunSlider();
 		GUILayout.Box(_help, GUILayout.ExpandWidth(false));
 		if( GUILayout.Button("Menu", GUILayout.ExpandWidth(false)) ) {
-			GameStateManager.IsPlaying = true;
+			OCGameStateManager.IsPlaying = true;
 			Screen.showCursor = true;
 			Application.LoadLevel("MainMenu");
 		}
@@ -136,7 +137,7 @@ public class OCPauseGUI : OCMonoBehaviour
 	}
 	
 	private void DrawSunSlider() {
-		const float min = (float) OCSunLightComputer.MIN_LIGHT / OCSunLightComputer.MAX_LIGHT;
+		const float min = (float) OpenCog.Map.Lighting.OCSunLightComputer.MIN_LIGHT / OpenCog.Map.Lighting.OCSunLightComputer.MAX_LIGHT;
 		const float max = 1;
 		Vector3 color = (Vector4)RenderSettings.ambientLight;
 		color.Normalize();
