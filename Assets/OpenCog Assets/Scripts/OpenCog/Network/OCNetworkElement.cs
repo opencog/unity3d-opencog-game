@@ -28,6 +28,7 @@ using IAsyncResult = System.IAsyncResult;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using OpenCog.Utility;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -47,7 +48,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCNetworkElement : OCMonoBehaviour
+public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 {
 
 	//---------------------------------------------------------------------------

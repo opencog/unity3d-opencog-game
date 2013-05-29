@@ -67,21 +67,21 @@ public class Rotation : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	[ProtoMember(1, IsRequired=true)]
+	//[ProtoMember(1, IsRequired=true)]
 	public float Pitch
 	{
 		get { return this.pitch; }
 		set { this.pitch = value; }
 	}
 
-	[ProtoMember(2, IsRequired = true)]
+	//[ProtoMember(2, IsRequired = true)]
 	public float Roll
 	{
 		get { return this.roll; }
 		set { this.roll = value; }
 	}
 
-	[ProtoMember(3, IsRequired = true)]
+	//[ProtoMember(3, IsRequired = true)]
 	public float Yaw
 	{
 		get { return this.yaw; }
@@ -101,9 +101,10 @@ public class Rotation : OCMonoBehaviour
 	public bool Equals(Rotation other)
 	{
 		// Decrease the impact the errors from float
-		return Math.Abs(pitch - other.Pitch) < 0.01f && 
-                   Math.Abs(roll - other.Roll) < 0.01f && 
-                   Math.Abs(yaw - other.Yaw) < 0.01f;
+
+		return System.Math.Abs(pitch - other.Pitch) < 0.01f &&
+                   System.Math.Abs(roll - other.Roll) < 0.01f &&
+                   System.Math.Abs(yaw - other.Yaw) < 0.01f;
 	}
 
 	public override int GetHashCode()

@@ -105,6 +105,7 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 	/// </summary>
 	private static bool Instantiate()
 	{
+		Debug.Log("In OCSingletonScriptableObject.Instantiate()");
 		//Assert that we're not already instantiated
 		if(_instance != null)
 		{
@@ -112,12 +113,14 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 				OCException("In OCSingletonScriptableObject.Instantiate, " +
 					"we're already instantiated!");
 		}
-			
+
 		_instance = (T)FindObjectOfType(typeof(T));
 			
 		if(_instance == null)
 		{
-			_instance = ScriptableObject.CreateInstance<T>();
+				Debug.Log("Preparing to create an instance of " + typeof(T) + ".");
+
+				_instance = (T)ScriptableObject.CreateInstance(typeof(T));
 		}
 					
 		return _instance != null;

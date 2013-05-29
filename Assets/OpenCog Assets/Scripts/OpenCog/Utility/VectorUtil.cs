@@ -23,6 +23,8 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using Math = System.Math;
+using Mathf = UnityEngine.Mathf;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -151,7 +153,7 @@ public class VectorUtil : OCMonoBehaviour
 	public static Vector3i Vector3ToVector3i(UnityEngine.Vector3 inputVector)
 	{
 		int iX, iY, iZ;
-		
+
 		iX = (int)Mathf.Round(inputVector.x);
 		iY = (int)Mathf.Round(inputVector.y);
 		iZ = (int)Mathf.Round(inputVector.z);

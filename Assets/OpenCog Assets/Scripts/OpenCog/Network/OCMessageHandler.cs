@@ -29,6 +29,7 @@ using OpenCog.Network;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using OpenCog.Utility;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -110,10 +111,10 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 
 	public IEnumerator Start()
 	{
-		yield return StartCoroutine(Update());
+		yield return StartCoroutine(UpdateMessages());
 	}
 		
-	public IEnumerator Update()
+	public IEnumerator UpdateMessages()
 	{
 		OCLogger.Info("Start handling socket connection.");
 		

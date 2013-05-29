@@ -24,6 +24,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using System.Collections.Generic;
+using OpenCog.Utility;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414

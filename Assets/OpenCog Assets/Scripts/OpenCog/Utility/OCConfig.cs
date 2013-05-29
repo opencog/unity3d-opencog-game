@@ -24,9 +24,10 @@ using OpenCog.Extensions;
 using OpenCog.Utility;
 using ProtoBuf;
 using UnityEngine;
+using OpenCog;
 
-namespace OpenCog
-{
+//namespace OpenCog
+//{
 
 /// <summary>
 /// The OpenCog OCConfig.
@@ -269,7 +270,7 @@ public class OCConfig : OCSingletonScriptableObject< OCConfig >
 
 }// class OCConfig
 
-}// namespace OpenCog
+//}// namespace OpenCog
 
 
 

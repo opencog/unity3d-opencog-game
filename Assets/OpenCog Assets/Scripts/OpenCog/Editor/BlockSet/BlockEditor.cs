@@ -3,20 +3,25 @@ using System.Collections;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEditor;
+using OpenCog.BlockSet.BaseBlockSet;
+using OpenCog.BlockSet;
+
 
 public class BlockEditor {
 	
 	private static Matrix4x4 atlasMatrix = Matrix4x4.identity;
 	private static int selectedFace = 0;
 
-	public static void DrawBlockEditor(Block block, BlockSet blockSet) {
+	public static void DrawBlockEditor(OCBlock block, OCBlockSet blockSet) {
+		//OpenCog.BlockSet.BaseBlockSet.OCBlock balls;
+
 		GUILayout.BeginVertical(GUI.skin.box);
 		{
 			string name = EditorGUILayout.TextField("Name", block.GetName());
 			block.SetName( FixNameString(name) );
-			
-			int atlas = EditorGUIUtils.Popup( "Atlas", block.GetAtlasID(), blockSet.GetAtlases() );
-			block.SetAtlasID(atlas);
+
+			int atlas = EditorGUIUtils.Popup( "Atlas", block.AtlasID, blockSet.Atlases );
+			block.AtlasID = atlas;
 		
 			int light = EditorGUILayout.IntField("Light", block.GetLight());
 			block.SetLight(light);
@@ -27,12 +32,12 @@ public class BlockEditor {
 		if(texture != null) {
 			FieldInfo field = DrawFacesList(block, texture);
 			int face = (int)field.GetValue(block);
-			DrawFaceEditor(ref face, block.GetAtlas(), ref atlasMatrix);
+			DrawFaceEditor(ref face, block.Atlas, ref atlasMatrix);
 			field.SetValue(block, face);
 		}
 	}
 	
-	private static FieldInfo DrawFacesList(Block block, Texture texture) {
+	private static FieldInfo DrawFacesList(OCBlock block, Texture texture) {
 		List<FieldInfo> fields = GetFaces(block);
 		Rect[] faces = new Rect[fields.Count];
 		string[] names = new string[fields.Count];
@@ -76,7 +81,7 @@ public class BlockEditor {
 		return selected;
 	}
 	
-	private static List<FieldInfo> GetFaces(Block block) {
+	private static List<FieldInfo> GetFaces(OCBlock block) {
 		FieldInfo[] fields = block.GetType().GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic );
 		List<FieldInfo> list = new List<FieldInfo>();
 		foreach(FieldInfo field in fields) {
@@ -92,9 +97,9 @@ public class BlockEditor {
 		return name;
 	}
 	
-	private static void DrawFaceEditor(ref int face, Atlas atlas, ref Matrix4x4 matrix) {
+	private static void DrawFaceEditor(ref int face, OCAtlas atlas, ref Matrix4x4 matrix) {
 		GUILayout.BeginVertical(GUI.skin.box);
-			Texture texture = atlas.GetTexture();
+			Texture texture = atlas.Texture;
 			Rect rect = GUILayoutUtility.GetAspectRect((float)texture.width/texture.height);
 		GUILayout.EndVertical();
 		
@@ -119,9 +124,9 @@ public class BlockEditor {
 			if(Event.current.type == EventType.MouseDown && Event.current.button == 0 && mouseInRect) {
 				Vector2 invMouse = invertY.MultiplyPoint( mouse );
 				if(invMouse.x >= 0 && invMouse.x <= 1 && invMouse.y >= 0 && invMouse.y <= 1) {
-					int posX = Mathf.FloorToInt( invMouse.x*atlas.GetWidth() );
-					int posY = Mathf.FloorToInt( invMouse.y*atlas.GetHeight() );
-					face = posY*atlas.GetWidth() + posX;
+					int posX = Mathf.FloorToInt( invMouse.x*atlas.Width );
+					int posY = Mathf.FloorToInt( invMouse.y*atlas.Height );
+					face = posY*atlas.Width + posX;
 				
 					GUI.changed = true;
 					Event.current.Use();

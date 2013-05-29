@@ -7,11 +7,13 @@ using System.Reflection;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using OpenCog.BlockSet;
+using OpenCog.BlockSet.BaseBlockSet;
 
 public class BlockSetExport {
 	
 	
-	public static string Export(BlockSet blockSet) {
+	public static string Export(OCBlockSet blockSet) {
 		XmlDocument document = new XmlDocument();
 		WriteBlockSet(blockSet, document);
 		
@@ -23,27 +25,27 @@ public class BlockSetExport {
         return writer.ToString();
 	}
 	
-	private static void WriteBlockSet(BlockSet blockSet, XmlDocument document) {
+	private static void WriteBlockSet(OCBlockSet blockSet, XmlDocument document) {
 		XmlNode blockSetNode = document.CreateElement("BlockSet");
 		document.AppendChild(blockSetNode);
 		
-		XmlNode atlasListNode = WriteAtlasList(blockSet.GetAtlases(), document);
+		XmlNode atlasListNode = WriteAtlasList(blockSet.Atlases, document);
 		blockSetNode.AppendChild(atlasListNode);
 		
-		XmlNode blockListNode = WriteBlockList(blockSet.GetBlocks(), document);
+		XmlNode blockListNode = WriteBlockList(blockSet.Blocks, document);
 		blockSetNode.AppendChild(blockListNode);
 	}
 	
-	private static XmlNode WriteAtlasList(Atlas[] list, XmlDocument document) {
+	private static XmlNode WriteAtlasList(OCAtlas[] list, XmlDocument document) {
 		XmlNode node = document.CreateElement("AtlasList");
-		foreach(Atlas atlas in list) {
+		foreach(OCAtlas atlas in list) {
 			XmlNode childNode = WriteAtlas(atlas, document);
 			node.AppendChild(childNode);
 		}
 		return node;
 	}
 	
-	private static XmlNode WriteAtlas(Atlas atlas, XmlDocument document) {
+	private static XmlNode WriteAtlas(OCAtlas atlas, XmlDocument document) {
 		XmlNode node = document.CreateElement("Atlas");
 		FieldInfo[] fields = GetFields(atlas.GetType());
 		foreach(FieldInfo field in fields) {
@@ -58,16 +60,16 @@ public class BlockSetExport {
 		return node;
 	}
 	
-	private static XmlNode WriteBlockList(Block[] list, XmlDocument document) {
+	private static XmlNode WriteBlockList(OCBlock[] list, XmlDocument document) {
 		XmlNode node = document.CreateElement("BlockList");
-		foreach(Block block in list) {
+		foreach(OCBlock block in list) {
 			XmlNode childNode = WriteBlock(block, document);
 			node.AppendChild(childNode);
 		}
 		return node;
 	}
 	
-	private static XmlNode WriteBlock(Block block, XmlDocument document) {
+	private static XmlNode WriteBlock(OCBlock block, XmlDocument document) {
 		XmlNode node = document.CreateElement(block.GetType().ToString());
 		FieldInfo[] fields = GetFields(block.GetType());
 		foreach(FieldInfo field in fields) {

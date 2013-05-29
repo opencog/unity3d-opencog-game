@@ -28,11 +28,12 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using ArgumentException = System.ArgumentException;
+using OpenCog;
 
 #endregion
 
-namespace OpenCog
-{
+//namespace OpenCog
+//{
 
 /// <summary>
 /// The OpenCog Logger.  Allows for logging at various levels of detail,
@@ -173,7 +174,8 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// </param>
 	static public void Debugging(System.Object message)
 	{
-		Instance.Log(LogLevel.DEBUG, message, true);	
+		if (Instance != null)
+			Instance.Log(LogLevel.DEBUG, message, true);
 	}
 	
 	/// <summary>
@@ -305,7 +307,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 
 }// class OCLogger
 
-}// namespace OpenCog
+//}// namespace OpenCog
 
 
 

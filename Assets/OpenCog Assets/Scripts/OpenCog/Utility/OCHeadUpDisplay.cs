@@ -25,6 +25,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Network;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -235,7 +236,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 //		yield break;
 //	}
 
-	public void hideForcePanel()
+	public void HideForcePanel()
 	{
 		_isShowingForcePanel = false;
 	}
@@ -246,83 +247,87 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		int inset = 3;
 		int width = 200;
 		Rect window = new Rect(inset, Screen.height - Screen.height / 3 - inset, width, Screen.height / 3);
-        
-		if(_selectedAvatar == null)
-		{
-			GUILayout.Window(2, window, ActionWindow, "Your Action List");
-		}
-		else
-		{
-			GUILayout.Window(2, window, ActionWindow, _selectedAvatar.gameObject.transform.name + "'s Action List");
+
+		// TODO: Verify that action list is gone.
+//		if(_selectedAvatar == null)
+//		{
+//			GUILayout.Window(2, window, ActionWindow, "Your Action List");
+//		}
+//		else
+//		{
+//			GUILayout.Window(2, window, ActionWindow, _selectedAvatar.gameObject.transform.name + "'s Action List");
+
 
 			// Psi (feeling, demand etc.) panel controlling section
-			if(_selectedAvatar.tag == "OCA")
-			{
-				_connector = selectedAvatar.GetComponent<OCConnector>() as OCConnector;
-				if(_connector != null)
-				{
-					ShowPsiPanel();
-				}
-				// If the avatar has no connector it's a puppet Avatar controlled by the console only
-				if(_panelSkin != null)
-				{
-					GUI.skin = _panelSkin;
-				}
-			}
-			else
-			{
-				HidePsiPanel();
-				_connector = null;
-			}
+			// TODO: Figure out when / if to display the emotion panel.
+//			if(_selectedAvatar.tag == "OCA")
+//			{
+//				_connector = selectedAvatar.GetComponent<OCConnector>() as OCConnector;
+//				if(_connector != null)
+//				{
+//					ShowPsiPanel();
+//				}
+//				// If the avatar has no connector it's a puppet Avatar controlled by the console only
+//				if(_panelSkin != null)
+//				{
+//					GUI.skin = _panelSkin;
+//				}
+//			}
+//			else
+//			{
+//				HidePsiPanel();
+//				_connector = null;
+//			}
+//            
+//			if(_showPsiPanel)
+//			{
+//				if(_connector != null)
+//				{
+//					float theWidth = Screen.width * 0.25f;
+//					float theHeight = Screen.height / 3;
+//					_panel = new Rect(Screen.width - theWidth - inset, Screen.height - theHeight - inset, theWidth, theHeight);
+//					GUILayout.Window(3, _panel, PsiPanel, _selectedAvatar.gameObject.transform.name + "'s Psi States Panel",
+//                                     GUILayout.MinWidth(theWidth), GUILayout.MinHeight(theHeight));
+//				}
+//			}
             
-			if(showPsiPanel)
-			{
-				if(_connector != null)
-				{
-					float theWidth = Screen.width * 0.25f;
-					float theHeight = Screen.height / 3;
-					panel = new Rect(Screen.width - theWidth - inset, Screen.height - theHeight - inset, theWidth, theHeight);
-					GUILayout.Window(3, panel, PsiPanel, _selectedAvatar.gameObject.transform.name + "'s Psi States Panel",
-                                     GUILayout.MinWidth(theWidth), GUILayout.MinHeight(theHeight));
-				}
-			}
-            
-		}// if
+//  	}// if
 
-		WorldGameObject world = GameObject.Find("World").GetComponent<WorldGameObject>();
-		GUIStyle theStyle = new GUIStyle();
-		theStyle.normal.background = world.storedBlockTexture;
-		GUI.Box(new Rect(8, 8, 40, 40), "");
-		GUI.Box(new Rect(12, 12, 32, 32), "", theStyle);
+		// TODO: Reenable this once it is clear what it does.
+//		WorldGameObject world = GameObject.Find("World").GetComponent<WorldGameObject>();
+//		GUIStyle theStyle = new GUIStyle();
+//		theStyle.normal.background = world.storedBlockTexture;
+//		GUI.Box(new Rect(8, 8, 40, 40), "");
+//		GUI.Box(new Rect(12, 12, 32, 32), "", theStyle);
 		
 		// the force is looping between minForce and maxForce, util the mouse button released
-		if(_isShowingForcePanel)
-		{
-			float currentTime = Time.time;
-			float deltaForce = (currentTime - lastTimeRenderForcePanel) * maxForce;
-			if(_isForceIncrease)
-			{
-				_currentForce += deltaForce;
-				if(_currentForce > maxForce)
-				{
-					_currentForce = maxForce;
-					_isForceIncrease = false;
-				}
-			}
-			else
-			{
-				_currentForce -= deltaForce;
-				if(_currentForce < minForce)
-				{
-					_currentForce = minForce;
-					_isForceIncrease = true;
-				}
-			}
-
-			DisplayForcePanel(_currentForce);
-			
-			_lastTimeRenderForcePanel = currentTime;
-		}
+//		if(_isShowingForcePanel)
+//		{
+//			float currentTime = Time.time;
+//			float deltaForce = (currentTime - _lastTimeRenderForcePanel) * MAX_FORCE;
+//			if(_isForceIncrease)
+//			{
+//				_currentForce += deltaForce;
+//				if(_currentForce > MAX_FORCE)
+//				{
+//					_currentForce = MAX_FORCE;
+//					_isForceIncrease = false;
+//				}
+//			}
+//			else
+//			{
+//				_currentForce -= deltaForce;
+//				if(_currentForce < MIN_FORCE)
+//				{
+//					_currentForce = MIN_FORCE;
+//					_isForceIncrease = true;
+//				}
+//			}
+//
+//			DisplayForcePanel(_currentForce);
+//			
+//			_lastTimeRenderForcePanel = currentTime;
+//		}
 	}
 
 	//---------------------------------------------------------------------------
@@ -340,6 +345,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
+		_connector = (OpenCog.Embodiment.OCConnector)OpenCog.Embodiment.OCConnector.Instance;
 	}
 	
 	/// <summary>
@@ -351,15 +357,15 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 	private void ShowPsiPanel()
 	{
-		showPsiPanel = true;
+		_showPsiPanel = true;
 	}
 
 	private void HidePsiPanel()
 	{
-		showPsiPanel = false;
+		_showPsiPanel = false;
 	}
 
-	private void  showForcePanel()
+	private void  ShowForcePanel()
 	{
 		_isShowingForcePanel = true;
 		_isForceIncrease = true;
@@ -367,18 +373,18 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		_lastTimeRenderForcePanel = Time.time;
 	}
 
-	private void showFeelings()
+	private void ShowFeelings()
 	{
 		Dictionary<string, float> feelingValueMap = _connector.FeelingValueMap;
         
 		//panelScrollPosition = GUILayout.BeginScrollView(scrollPosition);
-		_feelingBoxWidth = panel.width * 0.58f;
+		_feelingBoxWidth = _panel.width * 0.58f;
 
 		// Display feeling levels
 		if(feelingValueMap.Count == 0)
 		{
 			GUILayout.BeginHorizontal();
-			GUILayout.Label("Waiting for feeling update...", GUILayout.MaxWidth(panel.width));
+			GUILayout.Label("Waiting for feeling update...", GUILayout.MaxWidth(_panel.width));
 			GUILayout.EndHorizontal();
 		}
 		else
@@ -397,19 +403,19 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 					
 					// Remove old bar texture and create a new one, because each frame, 
 					// the unity will rearrange size and position of everytning shown on the screen
-					if(feelingTextureMap.ContainsKey(feeling))
+					if(_feelingTextureMap.ContainsKey(feeling))
 					{
-						Destroy(feelingTextureMap[feeling]);
+						Destroy(_feelingTextureMap[feeling]);
 					}
-					feelingTextureMap[feeling] = constructBarTexture(value, (int)feelingBoxWidth, c, dark);
+					_feelingTextureMap[feeling] = ConstructBarTexture(value, (int)_feelingBoxWidth, c, dark);
 					
 					// Set the texture of background.
-					boxStyle.normal.background = feelingTextureMap[feeling];
+					_boxStyle.normal.background = _feelingTextureMap[feeling];
 				
 					// Show the label and bar for the feeling
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(feeling + ": ", panelSkin.label, GUILayout.MaxWidth(panel.width * 0.4f));
-					GUILayout.Box("", boxStyle, GUILayout.Width(feelingBoxWidth), GUILayout.Height(16));
+					GUILayout.Label(feeling + ": ", _panelSkin.label, GUILayout.MaxWidth(_panel.width * 0.4f));
+					GUILayout.Box("", _boxStyle, GUILayout.Width(_feelingBoxWidth), GUILayout.Height(16));
 					GUILayout.EndHorizontal();
 				}
 				
@@ -432,7 +438,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		Dictionary<string, float> demandValueMap = _connector.DemandValueMap;
 		string currentDemandName = _connector.CurrentDemandName;
         
-		_demandBoxWidth = panel.width * 0.58f;
+		_demandBoxWidth = _panel.width * 0.58f;
 
 		// Display demand satisfactions (i.e. truth values)
 		if(demandValueMap.Count == 0)
@@ -468,7 +474,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 					// Draw the label and bar for the demand
 					GUILayout.BeginHorizontal();
 					GUILayout.Label(demand + ": ", _panelSkin.label, GUILayout.MaxWidth(_panel.width * 0.4f));
-					GUILayout.Box("", _boxStyle, GUILayout.Width(demandBoxWidth), GUILayout.Height(16));
+					GUILayout.Box("", _boxStyle, GUILayout.Width(_demandBoxWidth), GUILayout.Height(16));
 					GUILayout.EndHorizontal();
 				}
                 
@@ -486,24 +492,24 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	private void PsiPanel(int id)
 	{		
 		// Set box style based on skin
-		if(panelSkin != null)
+		if(_panelSkin != null)
 		{
-			boxStyle = panelSkin.box;
+			_boxStyle = _panelSkin.box;
 		}
 		else
 		{
-			boxStyle = new GUIStyle();
+			_boxStyle = new GUIStyle();
 		}
         
 		GUILayout.BeginVertical();
         
-		this.showDemands(); 
-		this.showFeelings(); 	
+		this.ShowDemands();
+		this.ShowFeelings();
         
 		GUILayout.EndVertical();
 	}
 
-	private UnityEngine.Texture2D constructBarTexture(float x, int width, UnityEngine.Color main, UnityEngine.Color background)
+	private UnityEngine.Texture2D ConstructBarTexture(float x, int width, UnityEngine.Color main, UnityEngine.Color background)
 	{
 		UnityEngine.Texture2D t = new UnityEngine.Texture2D(width, 16);
 		int i = 0;
@@ -527,74 +533,77 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 	private void ActionWindow(int id)
 	{
-		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+		_panelScrollPosition = GUILayout.BeginScrollView(_panelScrollPosition);
 		GUIStyle commandStyle = new GUIStyle();
 
+
 		// Use the selected avatar, or use the player object if no avatar selected
-		Avatar avatar = selectedAvatar;
-		if(selectedAvatar == null)
-		{
-			avatar = player;
-		}
-		if(avatar == null)
-		{
-			return;
-		}
+		// TODO: We need to clear up player / selected avatar
+//		Avatar avatar = selectedAvatar;
+//		if(selectedAvatar == null)
+//		{
+//			avatar = player;
+//		}
+//		if(avatar == null)
+//		{
+//			return;
+//		}
         
-		lock(avatar.AM.currentActions)
+//		lock(avatar.AM.currentActions)
 		{
-			foreach(ActionKey akey in avatar.AM.currentActions.Keys)
-			{
-				ActionSummary a = avatar.AM.currentActions[akey] as ActionSummary;
-				if(a.playerVisible)
-				{
-					commandStyle.normal.textColor = Color.green;
-				}
-				else
-				{
-					commandStyle.normal.textColor = Color.white;				
-				}
-				GUILayout.Label(a.actionObject.name + ":" + a.actionName, commandStyle);
-                
-			}
+			// TODO: Reenable action keys when we know how / why / what.
+//			foreach(ActionKey akey in avatar.AM.currentActions.Keys)
+//			{
+//				ActionSummary a = avatar.AM.currentActions[akey] as ActionSummary;
+//				if(a.playerVisible)
+//				{
+//					commandStyle.normal.textColor = Color.green;
+//				}
+//				else
+//				{
+//					commandStyle.normal.textColor = Color.white;				
+//				}
+//				GUILayout.Label(a.actionObject.name + ":" + a.actionName, commandStyle);
+//                
+//			}
 		}
 		// End the scrollview we began above.
 		GUILayout.EndScrollView();
 	}
 
-	private void constructForceTexture()
+	private void ConstructForceTexture()
 	{
 		float w = WIDTH;
 		float h = HEIGHT;
 		float top = Screen.height / 2;
 		float left = Screen.width / 2;
 		
-		barTex = new Texture2D((int)w, (int)h);
+		_barTexture = new Texture2D((int)w, (int)h);
 		
 		for(int i = 0; i<w; i++)
 		{
 			for(int j =0; j<h; j++)
 			{
-				barTex.SetPixel(i, j, new Color(((float)j) / h, 1.0f - ((float)j) / h, 0.2f, 1.0f));
+				_barTexture.SetPixel(i, j, new Color(((float)j) / h, 1.0f - ((float)j) / h, 0.2f, 1.0f));
 			}
 		}
 		
-		barTex.Apply();
+		_barTexture.Apply();
 
-		bgTex = new Texture2D((int)w, (int)h);
+		_backgroundTexture = new Texture2D((int)w, (int)h);
 				
 		for(int i = 0; i<w; i++)
 		{
 			for(int j =0; j<h; j++)
 			{
-				bgTex.SetPixel(i, j, new Color(0.14f, 0.15f, 0.16f, 0.7f));
+				_backgroundTexture.SetPixel(i, j, new Color(0.14f, 0.15f, 0.16f, 0.7f));
 			}
 		}
 		
-		bgTex.Apply();
+		_backgroundTexture.Apply();
 	}
 	
-	private void displayForcePanel(float currentforce)
+	private void DisplayForcePanel(float currentforce)
 	{
 		//Color bgColor = GUI.backgroundColor;
 		float w = WIDTH;
