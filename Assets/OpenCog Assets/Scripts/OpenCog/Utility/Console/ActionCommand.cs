@@ -18,11 +18,18 @@
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using OpenCog.Attributes;
+using OpenCog.Character;
 using OpenCog.Extensions;
+using Component = UnityEngine.Component;
+using GameObject = UnityEngine.GameObject;
 using ImplicitFields = ProtoBuf.ImplicitFields;
+using Object = UnityEngine.Object;
+using OCID = System.Guid;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using OpenCog.Actions;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -140,111 +147,142 @@ public class ActionCommand : Console.ConsoleCommand
 		public override string Run (ArrayList arguments)
 		{
 			//if (arguments.Count != 2) return "Wrong number of arguments";
-			string avatarName = (string)arguments [0];
-			string objectName = (string)arguments [1];
+			string sourceName = (string)arguments [0];
+			string targetName = (string)arguments [1];//also targetStartName
 			string actionName = (string)arguments [2];
+			string targetEndName = (string)arguments [3];
 
-			// Get the appropriate avatar and gameobject
-			UnityEngine.GameObject avatarObject = OCARepository.GetOCA (avatarName);
-			Avatar avatarScript = avatarObject.GetComponent ("Avatar") as Avatar;
-			if (avatarScript == null)
-				return "No Avatar script on avatar \"" + avatarName + "\".";
-			if (avatarObject.tag == "Player")
-				return "Avatar \"" + avatarName + "\" is a player!";
+			// Get the appropriate agent and gameobject		
+			OCActionController actionController = 
+				GameObject.FindSceneObjectsOfType(typeof(OCActionController))
+				.	Where(ac => (ac as OCActionController).gameObject.name == sourceName)
+				. Cast<OCActionController>()
+				. FirstOrDefault()
+			;
+			
+			if (actionController == null)
+				return "No Action Controller script on agent \"" + sourceName + "\".";
+			if (actionController.gameObject.tag == "Player")
+				return "Agent \"" + sourceName + "\" is controlled by the player!";
+			
+			OCID sourceID = actionController.ID;
 
 			// Get the object
-			// if objectName is "self" then assume the script is on the avatar
-			int actionObjectID;
-			if (objectName != "self") {
-				UnityEngine.GameObject OCObjects = UnityEngine.GameObject.Find ("Objects") as UnityEngine.GameObject;
-				UnityEngine.GameObject theActionObject = OCObjects.transform.FindChild (objectName).gameObject;
-				if (theActionObject == null)
-					return "No object called " + objectName;
-				actionObjectID = theActionObject.GetInstanceID ();
-			} else {
-				actionObjectID = avatarObject.GetInstanceID ();
+			// if objectName is "self" then assume the script is on the agent
+			OCID targetStartID;
+			if (targetName != null && targetName != "self") 
+			{
+				GameObject target = GameObject.Find(targetName);
+				if (target == null)
+					return "No object called " + targetName;
+				targetStartID = target.GetComponent<OCActionController>().ID;
+			} 
+			else 
+			{
+				targetStartID = actionController.ID;
 			}
+			
+			OCID targetEndID;
+			if(targetEndName != null && targetEndName != "self")
+			{
+				GameObject targetEnd = GameObject.Find(targetEndName);
+				if (targetEnd == null)
+					return "No object called " + targetEndName;
+				targetEndID = targetEnd.GetComponent<OCActionController>().ID;
+			} 
+			else 
+			{
+				targetEndID = actionController.ID;
+			}
+			
+			// Get the action from the Action Controller
+			OCAction action = 
+				actionController.GetComponentsInChildren<OCAction>()
+				.	Where(a => a.name == actionName)
+				.	Cast<OCAction>()
+				.	FirstOrDefault()
+			;
 
-			// Get the action summary from the Action Manager
-			ActionManager AM = avatarScript.GetComponent<ActionManager> () as ActionManager;
-			ActionSummary action = AM.getActionSummary (actionObjectID, actionName);
 			if (action == null)
 				return "No action called \"" + actionName + "\".";
+			
+			actionController.StartAction(action, sourceID, targetStartID, targetEndID);
 
-			System.Reflection.ParameterInfo[] pinfo = action.pinfo; //getFreeArguments();
-			if (pinfo.Length > 0) {
-				ArrayList args = new ArrayList ();
-				int i = 0;
-				int jmod = 3;
-				if (action.componentType == typeof(Avatar)) {
-					// Check we don't have too many arguments
-					if (pinfo.Length < arguments.Count - 3)
-						return "Expected " + pinfo.Length + " arguments, got " + (arguments.Count - 3) + ".";
-				} else {
-					// Check we don't have too many arguments, we don't need to
-					// provide the avatar
-					if (pinfo.Length - 1 < arguments.Count - 3)
-						return "Expected " + (pinfo.Length - 1) + " arguments, got " + (arguments.Count - 3) + ".";
-					i = 1;
-					jmod = 2;
-				}
-				// ignore last parameter if action uses a callback
-				int lengthModififer = 0;
-				if (action.usesCallback)
-					lengthModififer = 1; 
-				for (; i < pinfo.Length-lengthModififer; i++) {
-					// do type checking and conversion from strings to the expected type
-					// ignore 3 console arguments: the action name, avatar name,
-					//    and the object with the action (from console arguments)
-					int j = i + jmod;
-					if (j >= arguments.Count) {
-						// Not enough arguments, so must be a default argument
-						if (!pinfo [i].IsOptional)
-							return "Missing parameter " + pinfo [i].Name + " is not optional.";
-						args.Add (pinfo [i].DefaultValue);
-					} else {
-						arguments [j] = ((string)arguments [j]).Replace ("\"", "");
-						// Depending on the expected type we convert it differently
-						if (pinfo [i].ParameterType == typeof(GameObject)) {
-							// Parameters that are gameobjects... we just search for
-							// the name.
-							args.Add (GameObject.Find ((string)arguments [j]));
-							if (((GameObject)args [i]) == null) {
-								return "No game object called \"" + (string)arguments [j] + "\".";
-							}
-						} else if (pinfo [i].ParameterType == typeof(Avatar)) {
-							// Parameters that are Avatars... we just search for
-							// the name.
-							args.Add (OCARepository.GetOCA ((string)arguments [j]).GetComponent ("Avatar") as Avatar);
-							if ((Avatar)args [i] == null) {
-								return "No Avatar called \"" + (string)arguments [j] + "\".";
-							}
-						} else if (pinfo [i].ParameterType == typeof(int)) {
-							try {
-								args.Add (System.Int32.Parse ((string)arguments [j]));
-							} catch (System.FormatException ex) {
-								return "Error parsing string as int32: " + (string)arguments [j];
-							}
-						} else if (pinfo [i].ParameterType == typeof(float)) {
-							try {
-								args.Add (float.Parse ((string)arguments [j]));
-							} catch (System.FormatException ex) {
-								return "Error parsing string as float: " + (string)arguments [j];
-							}
-						} else if (pinfo [i].ParameterType == typeof(string)) {
-							args.Add ((string)arguments [j]);
-						} else {
-							return "Method " + actionName + " at slot " + i + " has argument of unsupported type \"" + pinfo [i].ParameterType +
-                            "\". Ask Joel how to implement support or ask him nicely to do it ;-).";
-						}
-					}
-				}
-				// even if this action supports callbacks, we don't pass our actionComplete callback because
-				// it's already called by the global event (which the Console class listens for).
-				AM.doAction (actionObjectID, actionName, args);
-			}
+//			System.Reflection.ParameterInfo[] pinfo = action.pinfo; //getFreeArguments();
+//			
+//			if (pinfo.Length > 0) {
+//				ArrayList args = new ArrayList ();
+//				int i = 0;
+//				int jmod = 3;
+//				if (action.componentType == typeof(Avatar)) {
+//					// Check we don't have too many arguments
+//					if (pinfo.Length < arguments.Count - 3)
+//						return "Expected " + pinfo.Length + " arguments, got " + (arguments.Count - 3) + ".";
+//				} else {
+//					// Check we don't have too many arguments, we don't need to
+//					// provide the avatar
+//					if (pinfo.Length - 1 < arguments.Count - 3)
+//						return "Expected " + (pinfo.Length - 1) + " arguments, got " + (arguments.Count - 3) + ".";
+//					i = 1;
+//					jmod = 2;
+//				}
+//				// ignore last parameter if action uses a callback
+//				int lengthModififer = 0;
+//				if (action.usesCallback)
+//					lengthModififer = 1; 
+//				for (; i < pinfo.Length-lengthModififer; i++) {
+//					// do type checking and conversion from strings to the expected type
+//					// ignore 3 console arguments: the action name, avatar name,
+//					//    and the object with the action (from console arguments)
+//					int j = i + jmod;
+//					if (j >= arguments.Count) {
+//						// Not enough arguments, so must be a default argument
+//						if (!pinfo [i].IsOptional)
+//							return "Missing parameter " + pinfo [i].Name + " is not optional.";
+//						args.Add (pinfo [i].DefaultValue);
+//					} else {
+//						arguments [j] = ((string)arguments [j]).Replace ("\"", "");
+//						// Depending on the expected type we convert it differently
+//						if (pinfo [i].ParameterType == typeof(GameObject)) {
+//							// Parameters that are gameobjects... we just search for
+//							// the name.
+//							args.Add (GameObject.Find ((string)arguments [j]));
+//							if (((GameObject)args [i]) == null) {
+//								return "No game object called \"" + (string)arguments [j] + "\".";
+//							}
+//						} else if (pinfo [i].ParameterType == typeof(Avatar)) {
+//							// Parameters that are Avatars... we just search for
+//							// the name.
+//							args.Add (OCARepository.GetOCA ((string)arguments [j]).GetComponent ("Avatar") as Avatar);
+//							if ((Avatar)args [i] == null) {
+//								return "No Avatar called \"" + (string)arguments [j] + "\".";
+//							}
+//						} else if (pinfo [i].ParameterType == typeof(int)) {
+//							try {
+//								args.Add (System.Int32.Parse ((string)arguments [j]));
+//							} catch (System.FormatException ex) {
+//								return "Error parsing string as int32: " + (string)arguments [j];
+//							}
+//						} else if (pinfo [i].ParameterType == typeof(float)) {
+//							try {
+//								args.Add (float.Parse ((string)arguments [j]));
+//							} catch (System.FormatException ex) {
+//								return "Error parsing string as float: " + (string)arguments [j];
+//							}
+//						} else if (pinfo [i].ParameterType == typeof(string)) {
+//							args.Add ((string)arguments [j]);
+//						} else {
+//							return "Method " + actionName + " at slot " + i + " has argument of unsupported type \"" + pinfo [i].ParameterType +
+//                            "\". Ask Joel how to implement support or ask him nicely to do it ;-).";
+//						}
+//					}
+//				}
+//				// even if this action supports callbacks, we don't pass our actionComplete callback because
+//				// it's already called by the global event (which the Console class listens for).
+//				AM.doAction (actionObjectID, actionName, args);
+//			}
 
-			return "Told avatar \"" + avatarName + "\" to do action \"" + actionName + "\"";
+			return "Told avatar \"" + sourceName + "\" to do action \"" + actionName + "\"";
 		}
 
 		public override ArrayList GetSignature ()

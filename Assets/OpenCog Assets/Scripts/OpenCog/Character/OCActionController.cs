@@ -19,15 +19,16 @@ using System.Collections;
 using System.Collections.Generic;
 using Behave.Runtime;
 using OpenCog.Actions;
-//using OpenCog.Aspects;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
+using OpenCog.Map;
 using ProtoBuf;
 using UnityEngine;
 using ContextType = BLOpenCogCharacterBehaviours.ContextType;
+using OCID = System.Guid;
 using Tree = Behave.Runtime.Tree;
 using TreeType = BLOpenCogCharacterBehaviours.TreeType;
-using OpenCog.Map;
+//using OpenCog.Aspects;
 
 namespace OpenCog
 {
@@ -631,6 +632,16 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		}
 
 		return null;
+	}
+			
+	// TODO: Implement dynamic behaviour tree loading to execute actions
+	public void StartAction(OCAction action, OCID sourceID, OCID targetStartID, OCID targetEndID)
+	{
+	}
+			
+	public Dictionary<string, OCAction> GetCurrentActions()
+	{
+		return new Dictionary<string, OCAction>();
 	}
 
 	//---------------------------------------------------------------------------

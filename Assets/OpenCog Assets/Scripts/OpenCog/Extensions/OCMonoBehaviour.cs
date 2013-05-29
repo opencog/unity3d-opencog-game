@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using OpenCog.Attributes;
 using ProtoBuf;
 using UnityEngine;
+using OCID = System.Guid;
 
 namespace OpenCog.Extensions
 {
@@ -42,7 +43,7 @@ public class OCMonoBehaviour : MonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	protected System.Guid _uniqueEntityID;
+	private OCID _ID;
 
 	//---------------------------------------------------------------------------
 
@@ -54,7 +55,12 @@ public class OCMonoBehaviour : MonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-
+	public OCID ID 
+	{
+		get {return _ID;}
+	}		
+		
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -151,7 +157,7 @@ public class OCMonoBehaviour : MonoBehaviour
 	/// </summary>
 	public OCMonoBehaviour()
 	{
-		_uniqueEntityID = Guid.NewGuid();
+		_ID = Guid.NewGuid();
 	}
 
 	public delegate void Task(float time);

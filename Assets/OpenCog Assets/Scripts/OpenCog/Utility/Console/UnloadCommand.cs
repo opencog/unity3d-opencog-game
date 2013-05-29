@@ -17,8 +17,10 @@
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
+using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
+using GameObject = UnityEngine.GameObject;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
@@ -136,15 +138,15 @@ public class UnloadCommand : Console.ConsoleCommand
             return message;
         }
 
-        string avatarName = (string) arguments[0];
+        string agentName = (string) arguments[0];
         
         // Get Avatar from OCARepository
-        GameObject avatarToDestroy = OCARepository.GetOCA(avatarName);
-		if (avatarToDestroy == null) return "No avatar called " + avatarName;
+				GameObject agentToDestroy = GameObject.Find(agentName);
+				if (agentToDestroy == null) return "No agent called " + agentName;
 
-        avatarToDestroy.SendMessage("saveAndExit");
-        OCARepository.RemoveOCA(avatarToDestroy);
-        message = "Avatar[" + avatarName + "] successfully unloaded.";
+        agentToDestroy.SendMessage("saveAndExit");
+        //OCARepository.RemoveOCA(agentToDestroy);
+        message = "Avatar[" + agentName + "] successfully unloaded.";
         return message;
     }
 

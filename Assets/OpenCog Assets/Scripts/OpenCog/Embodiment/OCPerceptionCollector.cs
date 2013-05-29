@@ -536,53 +536,61 @@ namespace OpenCog.Embodiment
 
 		List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo>();
 		OpenCog.Map.OCMap map = UnityEngine.GameObject.Find("Map").GetComponent<OpenCog.Map.OCMap>() as OpenCog.Map.OCMap;
-
-		foreach(OpenCog.Map.OCChunk chunk in map.Chunks)
+			
+		for(int x = map.Chunks.GetMinX(); x < map.Chunks.GetMaxX(); ++x)
 		{
-			Vector3i viChunkPosition = chunk.GetPosition();
-
-			OCLogger.Info("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
-
-			// Maybe do some empty check here...there will be many empty chunks. But it might be
-			// equally expensive without setting new empty flags while creating chunks.
-
-			Vector3i viChunkStartingCorner = new Vector3i(viChunkPosition.x * Map.OCChunk.SIZE_X, viChunkPosition.y * Map.OCChunk.SIZE_Y & viChunkPosition.z * Map.OCChunk.SIZE_Z);
-			Vector3i viChunkEndingCorner = new Vector3i((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X - 1, (viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y - 1, (viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z - 1);
-
-			OCLogger.Info("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
-			OCLogger.Info("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
-
-			for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
+			for(int y = map.Chunks.GetMinY(); y < map.Chunks.GetMaxY(); ++y)
 			{
-				for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
+				for(int z = map.Chunks.GetMinZ(); z < map.Chunks.GetMaxZ(); ++z)
 				{
-					for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
+					OpenCog.Map.OCChunk chunk = map.Chunks.Get(x, y, z);
+						
+					Vector3i viChunkPosition = chunk.GetPosition();
+			
+					OCLogger.Info("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
+			
+					// Maybe do some empty check here...there will be many empty chunks. But it might be
+					// equally expensive without setting new empty flags while creating chunks.
+			
+					Vector3i viChunkStartingCorner = new Vector3i(viChunkPosition.x * Map.OCChunk.SIZE_X, viChunkPosition.y * Map.OCChunk.SIZE_Y & viChunkPosition.z * Map.OCChunk.SIZE_Z);
+					Vector3i viChunkEndingCorner = new Vector3i((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X - 1, (viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y - 1, (viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z - 1);
+			
+					OCLogger.Info("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
+					OCLogger.Info("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
+			
+					for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
 					{
-						// Ok...now we have some globalz....
-
-						OpenCog.Map.OCBlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
-
-						if(!globalBlock.IsEmpty())
+						for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
 						{
-							OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
-
-							terrainMapinfoList.Add(globalMapInfo);
-
-							// in case there are too many blocks, we send every 5000 blocks per message
-							if(terrainMapinfoList.Count >= 5)
+							for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
 							{
-								_connector.SendTerrainInfoMessage(terrainMapinfoList, true);
-								terrainMapinfoList.Clear();
-							}
-						} // end if (!globalBlock.IsEmpty())
-
-					} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
-
-				} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
-
-			} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
-
-		} // End foreach(Chunk chunk in map.GetChunks())
+								// Ok...now we have some globalz....
+			
+								OpenCog.Map.OCBlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
+			
+								if(!globalBlock.IsEmpty())
+								{
+									OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+			
+									terrainMapinfoList.Add(globalMapInfo);
+			
+									// in case there are too many blocks, we send every 5000 blocks per message
+									if(terrainMapinfoList.Count >= 5)
+									{
+										_connector.SendTerrainInfoMessage(terrainMapinfoList, true);
+										terrainMapinfoList.Clear();
+									}
+								} // end if (!globalBlock.IsEmpty())
+			
+							} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
+			
+						} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
+			
+					} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
+						
+				}
+			}
+		}
 
 		// Check for remaining blocks to report to OpenCog
 		if(terrainMapinfoList.Count > 0)

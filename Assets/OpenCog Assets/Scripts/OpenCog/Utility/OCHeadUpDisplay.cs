@@ -127,7 +127,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 	public float CurrentForceVal
 	{
-			get {return currentForce;}
+			get {return _currentForce;}
 	}
 
 	//---------------------------------------------------------------------------

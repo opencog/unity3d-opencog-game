@@ -21,6 +21,7 @@ using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
+using OCID = System.Guid;
 
 namespace OpenCog
 {
@@ -43,7 +44,7 @@ public class OCScriptableObject : ScriptableObject
 
 	//---------------------------------------------------------------------------
 
-	protected System.Guid _uniqueEntityID;
+	private OCID _ID;
 
 	//---------------------------------------------------------------------------
 
@@ -55,6 +56,12 @@ public class OCScriptableObject : ScriptableObject
 
 	//---------------------------------------------------------------------------
 			
+	public OCID ID 
+	{
+		get {return _ID;}
+	}				
+		
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -67,7 +74,7 @@ public class OCScriptableObject : ScriptableObject
 
 	public OCScriptableObject()
 	{
-		_uniqueEntityID = Guid.NewGuid();
+		_ID = Guid.NewGuid();
 	}
 
 	//---------------------------------------------------------------------------

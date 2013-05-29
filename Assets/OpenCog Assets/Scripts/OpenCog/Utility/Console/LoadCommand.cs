@@ -19,10 +19,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using OpenCog.Attributes;
+using OpenCog.Embodiment;
 using OpenCog.Extensions;
+using GameObject = UnityEngine.GameObject;
 using ImplicitFields = ProtoBuf.ImplicitFields;
+using Math = System.Math;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using Vector3 = UnityEngine.Vector3;
+using Quaternion = UnityEngine.Quaternion;
+using Debug = UnityEngine.Debug;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -50,11 +56,8 @@ public class LoadCommand : Console.ConsoleCommand
 
 		//---------------------------------------------------------------------------
 		
-		/// <summary>
-		/// An example variable.  Don't fall into the trap of making all variables
-		/// public (I know Unity encourages you to do this).  Instead, make use of
-		/// public properties whenever possible.
-		/// </summary>
+		private string _CommandName = "load";
+    private GameObject _NPCAgent;
 
 		//---------------------------------------------------------------------------
 
@@ -66,13 +69,12 @@ public class LoadCommand : Console.ConsoleCommand
 
 		//---------------------------------------------------------------------------
 		
-		/// <summary>
-		/// Gets or sets the example variable.  Includes attribute examples.
-		/// </summary>
-		/// <value>
-		/// The example variable.
-		/// </value>
-			
+		public GameObject NPCAvatar 
+		{
+			get {return _NPCAgent;}
+			set {_NPCAgent = value;}
+		}	
+		
 		//---------------------------------------------------------------------------
 
 	#endregion
@@ -150,7 +152,7 @@ public class LoadCommand : Console.ConsoleCommand
 			if (arguments.Count > 0)
 				avatarName = (string)arguments [0];
 	        
-			StartCoroutine (LoadAvatar (avatarName));
+			StartCoroutine (LoadAgent (avatarName));
 			
 			return "Starting OAC named " + avatarName;
 		}
@@ -193,7 +195,7 @@ public class LoadCommand : Console.ConsoleCommand
 		{
 		}
 		
-		private string CreateRandomAvatarName ()
+		private string CreateRandomAgentName ()
 		{
 			int randomID = UnityEngine.Random.Range (1, 100);
 			string[] baseNames = { "Hazuki", "Bender", "Bozwollocks", "Wolverine", "Bumblebee", "OompaLoompa" };
@@ -201,9 +203,9 @@ public class LoadCommand : Console.ConsoleCommand
 			return baseNames [baseNameIndex] + randomID.ToString ();
 		}
 		
-		private IEnumerator LoadAvatar (string avatarName)
+		private IEnumerator LoadAgent (string agentName)
 		{
-			UnityEngine.GameObject avatarClone;
+			UnityEngine.GameObject agentClone;
 		
 			UnityEngine.GameObject playerObject = GameObject.FindGameObjectWithTag ("Player");
 			if (playerObject == null) {
@@ -220,26 +222,27 @@ public class LoadCommand : Console.ConsoleCommand
 			float xFront = 3.0f * (float)Math.Sin ((eulerAngle.y / 180) * Math.PI);
 
 			// Instantiate an OCAvatar in front of the player.
-			avatarClone = (GameObject)UnityEngine.Object.Instantiate (NPCAvatar,
+			agentClone = (GameObject)UnityEngine.Object.Instantiate (_NPCAgent,
                 new Vector3 (playerPos.x + xFront,
 		                    playerPos.y + 2,
                             playerPos.z + zFront),
                 Quaternion.identity);
 
-			OCConnector connector = avatarClone.GetComponent ("OCConnector") as OCConnector;
+			OCConnector connector = agentClone.GetComponent<OCConnector>();
         
-			if (avatarName == "")
-				avatarName = createRandomAvatarName ();
+			if (agentName == "")
+				agentName = CreateRandomAgentName ();
         
-			avatarClone.name = avatarName;
+			agentClone.name = agentName;
         
-			if (avatarClone != null) {
-				if (!OCARepository.AddOCA (avatarClone)) {
-					// An avatar with given name is already there.
-					yield break;
-				}
-				Debug.Log ("Add avatar[" + avatarName + "] to avatar map.");
-			}
+//			if (agentClone != null) {
+//				if (!OCARepository.AddOCA (agentClone)) {
+//					// An avatar with given name is already there.
+//					yield break;
+//				}
+//				Debug.Log ("Add avatar[" + agentName + "] to avatar map.");
+//			}
+			
 			// Get the player id as the master id of the avatar.
 			// TODO Currently we use the tag "player". However, when there are multiple 
 			// players in the world, we need to figure out a way to identify.
@@ -248,15 +251,15 @@ public class LoadCommand : Console.ConsoleCommand
 		
 			// TODO Set agentType and agentTraits in the future.
 			// leave agentType and agentTraits to null just for test.
-			connector.Init (avatarName, null, null, masterId, masterName);
+			connector.Init (agentName, null, null, masterId, masterName);
 
-			yield return StartCoroutine(connector.connectOAC());
+			yield return StartCoroutine(connector.ConnectOAC());
 		
-			if (!connector.IsInit ()) {
+			if (!connector.IsInitialized) {
 				// OAC is not loaded normally, destroy the avatar instance.
 				Debug.LogError ("Cannot connect to the OAC, avatar loading failed.");
-				connector.saveAndExit ();
-				Destroy (avatarClone);
+				connector.SaveAndExit ();
+				Destroy (agentClone);
 				yield break;
 			} 
 		}

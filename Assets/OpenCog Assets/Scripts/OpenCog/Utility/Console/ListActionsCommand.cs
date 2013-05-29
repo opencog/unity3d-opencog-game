@@ -17,8 +17,13 @@
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using OpenCog.Actions;
 using OpenCog.Attributes;
+using OpenCog.Character;
 using OpenCog.Extensions;
+using GameObject = UnityEngine.GameObject;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
@@ -131,28 +136,31 @@ public class ListActionsCommand : Console.ConsoleCommand
 		
 		public override string Run (ArrayList arguments)
 		{
-			OCObjects = GameObject.Find ("Objects") as GameObject;
+			//OCObjects = GameObject.Find ("Objects") as GameObject;
 			if (arguments.Count != 1)
 				return "Wrong number of arguments";
-			OCObjectRepository OCOR = OCObjectRepository.get ();
-			string avatarName = (string)arguments [0];
-			// Get the appropriate avatar and gameobject
-			GameObject avatarObject = OCARepository.GetOCA (avatarName);
-			Avatar avatarScript = avatarObject.GetComponent ("Avatar") as Avatar;
-			ActionManager am = avatarScript.GetComponent ("ActionManager") as ActionManager;
-			Hashtable currentActions = am.currentActions.Clone () as Hashtable;
-			string result = "";
+
+			string agentName = (string)arguments [0];
+			// Get the appropriate agent's actionController
+			OCActionController actionController = 
+				GameObject.FindSceneObjectsOfType(typeof(OCActionController))
+				.	Where(ac => (ac as OCActionController).gameObject.name == agentName)
+				. Cast<OCActionController>()
+				. FirstOrDefault()
+			;
+			
+			string result = actionController.gameObject.name + "'s actions: ";
 			bool first = true;
-			foreach (ActionKey ak in currentActions.Keys) {
+			
+			List<OCAction> actions = actionController.GetComponentsInChildren<OCAction>().ToList();
+			
+			foreach (OCAction action in actions)
+			{
 				if (!first) {
 					result += "\n";
 				}
 				first = false;
-				GameObject OCObject = OCOR.GetOCObject (ak.objectID);
-				if (OCObject == null) {
-					OCObject = OCARepository.GetOCA (ak.objectID);
-				}
-				result += OCObject.name + " [" + ak.objectID + "]: " + ak.actionName;
+				result += action.ToString();
 			}
         
 			return result;

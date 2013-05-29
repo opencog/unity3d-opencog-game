@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using OpenCog.Map;
 
 
 public class Map3D<I> {

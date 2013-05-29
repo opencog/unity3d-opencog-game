@@ -17,11 +17,14 @@
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
+using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
+using GameObject = UnityEngine.GameObject;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using OpenCog.Map;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -172,7 +175,6 @@ public class SaveMapCommand : Console.ConsoleCommand
 		/// </summary>
 		private void Initialize ()
 		{
-			ExampleVar = 0;
 		}
 	
 		/// <summary>
@@ -187,8 +189,9 @@ public class SaveMapCommand : Console.ConsoleCommand
 			// get the world game object
 			// get the world data
 			// and start the save process
-			return GameObject.Find ("World").GetComponent<WorldGameObject> ().WorldData.saveData (filename);
-		
+			//return GameObject.Find("Map").GetComponent<OCMap>().;
+			//return GameObject.Find ("World").GetComponent<WorldGameObject> ().WorldData.saveData (filename);
+			return false;
 		}
 			
 		//---------------------------------------------------------------------------

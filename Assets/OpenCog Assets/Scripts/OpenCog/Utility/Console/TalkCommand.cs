@@ -17,11 +17,15 @@
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
+using System.Collections.Generic;
 using OpenCog.Attributes;
+using OpenCog.Embodiment;
 using OpenCog.Extensions;
+using GameObject = UnityEngine.GameObject;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using Type = System.Type;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -134,15 +138,17 @@ public class TalkCommand : Console.ConsoleCommand
 		public override string Run(ArrayList arguments) {
         string text = string.Join(" ", arguments.ToArray(typeof(string)) as string[]);
         // Send the message to all avatars.
-        foreach (GameObject go in OCARepository.GetAllOCA()) {
-            // Don't send message to the player
-            if (go.tag == "Player") continue;
-            // Send message to OpenCog avatars
-			OCConnector connection = go.GetComponent<OCConnector>();
-			if (connection != null)
-                connection.sendSpeechContent(text,player);
-            // TODO: send the message to other human players using Unity RPC
-        }
+				//@TODO: Reimplement the talk command...
+//        foreach (GameObject go in OCARepository.GetAllOCA()) 
+//				{
+//            // Don't send message to the player
+//            if (go.tag == "Player") continue;
+//            // Send message to OpenCog avatars
+//						OCConnector connection = go.GetComponent<OCConnector>();
+//						if (connection != null)
+//                connection.SendSpeechContent(text,player);
+//            // TODO: send the message to other human players using Unity RPC
+//        }
         // return Null because sendPredavese updates the log somehow..
         return null;
     }
