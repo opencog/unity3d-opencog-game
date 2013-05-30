@@ -28,6 +28,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -102,7 +103,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 	
 	private static void ReadBlockSet(OCBlockSet blockSet, XmlDocument document) {
-		XmlNode blockSetNode = FindNodeByName(document, "BlockSet");
+		XmlNode blockSetNode = FindNodeByName(document, "OCBlockSet");
 		
 		OCAtlas[] atlases = ReadAtlasList(blockSetNode);
 		blockSet.Atlases = atlases;
@@ -112,7 +113,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 	}
 	
 	private static OCAtlas[] ReadAtlasList(XmlNode blockSetNode) {
-		XmlNode atlasListNode = FindNodeByName(blockSetNode, "AtlasList");
+		XmlNode atlasListNode = FindNodeByName(blockSetNode, "OCAtlasList");
 		List<OCAtlas> list = new List<OCAtlas>();
 		foreach(XmlNode node in atlasListNode.ChildNodes) {
 			OCAtlas atlas = ReadAtlas(node);
@@ -135,7 +136,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 	}
 	
 	private static OpenCog.BlockSet.BaseBlockSet.OCBlock[] ReadBlockList(XmlNode blockSetNode) {
-		XmlNode node = FindNodeByName(blockSetNode, "BlockList");
+		XmlNode node = FindNodeByName(blockSetNode, "OCBlockList");
 		List<BaseBlockSet.OCBlock> list = new List<BaseBlockSet.OCBlock>();
 		foreach(XmlNode childNode in node.ChildNodes) {
 			OpenCog.BlockSet.BaseBlockSet.OCBlock block = ReadBlock(childNode);
@@ -145,8 +146,9 @@ public class OCBlockSetImport : OCMonoBehaviour
 	}
 	
 	private static OpenCog.BlockSet.BaseBlockSet.OCBlock ReadBlock(XmlNode node) {
-		System.Type type = System.Type.GetType(node.Name);
-		OpenCog.BlockSet.BaseBlockSet.OCBlock block = (OpenCog.BlockSet.BaseBlockSet.OCBlock) System.Activator.CreateInstance(type);
+		System.Type type = System.Type.GetType("OpenCog.BlockSet.BaseBlockSet." + node.Name);
+		Debug.Log("Balls: 1, " + node.Name + " 2, " + type);
+		OpenCog.BlockSet.BaseBlockSet.OCBlock block = (OpenCog.BlockSet.BaseBlockSet.OCBlock) ScriptableObject.CreateInstance(type);
 		foreach(XmlNode childNode in node) {
 			ReadField(childNode, block);
 		}
