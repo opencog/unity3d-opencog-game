@@ -70,7 +70,7 @@ public class BlockSetExport {
 	}
 	
 	private static XmlNode WriteBlock(OCBlock block, XmlDocument document) {
-		XmlNode node = document.CreateElement(block.GetType().ToString());
+		XmlNode node = document.CreateElement(block.GetType().Name);
 		FieldInfo[] fields = GetFields(block.GetType());
 		foreach(FieldInfo field in fields) {
 			XmlNode childNode = WriteField(field, block, document);

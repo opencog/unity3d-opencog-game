@@ -93,6 +93,8 @@ public class OCWorldGenerator : MonoBehaviour {
 	private IEnumerator GenerateColumn(int cx, int cz) {
 		if (MapName == string.Empty)
 		{
+			if (terrainGenerator == null)
+				Debug.Log("OMG! terrainGenerator == null!");
 			yield return StartCoroutine( terrainGenerator.Generate(cx, cz) );
 			yield return null;
 			

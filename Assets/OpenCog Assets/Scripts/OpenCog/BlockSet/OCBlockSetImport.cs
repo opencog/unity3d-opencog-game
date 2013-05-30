@@ -147,7 +147,26 @@ public class OCBlockSetImport : OCMonoBehaviour
 	
 	private static OpenCog.BlockSet.BaseBlockSet.OCBlock ReadBlock(XmlNode node) {
 		System.Type type = System.Type.GetType("OpenCog.BlockSet.BaseBlockSet." + node.Name);
-		Debug.Log("Balls: 1, " + node.Name + " 2, " + type);
+
+		if (type == null)
+		{
+			Debug.Log("Failed to get a type for block '" + node.Name + "', attempting lookup with unqualified name...");
+
+			type = System.Type.GetType(node.Name);
+
+			if (type == null)
+				Debug.Log("Nope, that failed too...type is still null...");
+			else
+				Debug.Log("Wahey, that actually worked!");
+		}
+
+
+
+
+		if (type != null)
+			Debug.Log("Reading block, name = " + node.Name + ", type = " + type.ToString());
+		else
+			Debug.Log("Reading block, name = " + node.Name + ", type == null");
 		OpenCog.BlockSet.BaseBlockSet.OCBlock block = (OpenCog.BlockSet.BaseBlockSet.OCBlock) ScriptableObject.CreateInstance(type);
 		foreach(XmlNode childNode in node) {
 			ReadField(childNode, block);
