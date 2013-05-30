@@ -26,7 +26,7 @@ public class BlockSetExport {
 	}
 	
 	private static void WriteBlockSet(OCBlockSet blockSet, XmlDocument document) {
-		XmlNode blockSetNode = document.CreateElement("BlockSet");
+		XmlNode blockSetNode = document.CreateElement("OCBlockSet");
 		document.AppendChild(blockSetNode);
 		
 		XmlNode atlasListNode = WriteAtlasList(blockSet.Atlases, document);
@@ -37,7 +37,7 @@ public class BlockSetExport {
 	}
 	
 	private static XmlNode WriteAtlasList(OCAtlas[] list, XmlDocument document) {
-		XmlNode node = document.CreateElement("AtlasList");
+		XmlNode node = document.CreateElement("OCAtlasList");
 		foreach(OCAtlas atlas in list) {
 			XmlNode childNode = WriteAtlas(atlas, document);
 			node.AppendChild(childNode);
@@ -46,7 +46,7 @@ public class BlockSetExport {
 	}
 	
 	private static XmlNode WriteAtlas(OCAtlas atlas, XmlDocument document) {
-		XmlNode node = document.CreateElement("Atlas");
+		XmlNode node = document.CreateElement("OCAtlas");
 		FieldInfo[] fields = GetFields(atlas.GetType());
 		foreach(FieldInfo field in fields) {
 			if(field.FieldType.IsSubclassOf( typeof(UnityEngine.Object) )) {
@@ -61,7 +61,7 @@ public class BlockSetExport {
 	}
 	
 	private static XmlNode WriteBlockList(OCBlock[] list, XmlDocument document) {
-		XmlNode node = document.CreateElement("BlockList");
+		XmlNode node = document.CreateElement("OCBlockList");
 		foreach(OCBlock block in list) {
 			XmlNode childNode = WriteBlock(block, document);
 			node.AppendChild(childNode);
