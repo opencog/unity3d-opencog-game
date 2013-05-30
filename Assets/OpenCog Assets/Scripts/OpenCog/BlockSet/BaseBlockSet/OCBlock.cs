@@ -42,7 +42,7 @@ namespace OpenCog.BlockSet.BaseBlockSet
 [Serializable]
 	
 #endregion
-public abstract class OCBlock : OCMonoBehaviour
+public abstract class OCBlock : OCScriptableObject
 {
 
 	//---------------------------------------------------------------------------

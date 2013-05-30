@@ -42,7 +42,7 @@ namespace OpenCog.BlockSet
 [Serializable]
 	
 #endregion
-public class OCAtlas : OCMonoBehaviour
+public class OCAtlas
 {
 
 	//---------------------------------------------------------------------------

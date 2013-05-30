@@ -13,7 +13,6 @@ public class BlockEditor {
 	private static int selectedFace = 0;
 
 	public static void DrawBlockEditor(OCBlock block, OCBlockSet blockSet) {
-		//OpenCog.BlockSet.BaseBlockSet.OCBlock balls;
 
 		GUILayout.BeginVertical(GUI.skin.box);
 		{

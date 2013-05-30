@@ -146,10 +146,10 @@ public class BlockSetEditor : Editor {
 		
 		GUILayout.BeginHorizontal();
 		foreach(Type type in blockTypes) {
-			string name = type.ToString();
+			string name = type.Name;
 			if(name.EndsWith("Block")) name = name.Substring(0, name.Length-5);
 			if(GUILayout.Button(name)) {
-				OCBlock newBlock = (OCBlock) System.Activator.CreateInstance(type);
+				OCBlock newBlock = (OCBlock) CreateInstance(type);
 				newBlock.SetName("New "+type.ToString());
 				newBlock.Init(blockSet);
 				

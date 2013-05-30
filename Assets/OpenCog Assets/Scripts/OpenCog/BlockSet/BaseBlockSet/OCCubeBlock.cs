@@ -51,7 +51,9 @@ public class OCCubeBlock : OCBlock
 
 	//---------------------------------------------------------------------------
 	
-	[UnityEngine.SerializeField] private int _front, _back, _right, _left, _top, _bottom;
+	[UnityEngine.SerializeField] 
+	private int _front, _back, _right, _left, _top, _bottom;
+		
 	private UnityEngine.Vector2[][] _texCoords;
 			
 	//---------------------------------------------------------------------------

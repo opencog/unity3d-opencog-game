@@ -54,7 +54,9 @@ public class OCCactusBlock : OCBlock
 
 	//---------------------------------------------------------------------------
 	
-	[SerializeField] private int _side, _top, _bottom;
+	[SerializeField] 
+	private int _side, _top, _bottom;
+		
 	private Vector2[] _sideVectors, _topVectors, _bottomVectors;
 			
 	//---------------------------------------------------------------------------

@@ -51,7 +51,9 @@ public class OCCrossBlock : OCBlock
 
 	//---------------------------------------------------------------------------
 	
-	[UnityEngine.SerializeField] private int _face;
+	[UnityEngine.SerializeField] 
+	private int _face;
+	
 	private UnityEngine.Vector2[] _faceVectors;
 			
 	//---------------------------------------------------------------------------

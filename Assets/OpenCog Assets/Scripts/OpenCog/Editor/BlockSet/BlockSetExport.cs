@@ -100,7 +100,8 @@ public class BlockSetExport {
 	
 	private static XmlNode WriteField(string name, object val, XmlDocument document) {
 		XmlNode node = document.CreateElement(name);
-		node.InnerText = val.ToString();
+		if(val != null)
+			node.InnerText = val.ToString();
 		return node;
 	}
 	
