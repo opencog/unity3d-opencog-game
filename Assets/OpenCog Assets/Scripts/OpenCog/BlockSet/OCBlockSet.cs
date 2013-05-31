@@ -16,10 +16,10 @@
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #region Usings, Namespaces, and Pragmas
-
 using System.Collections;
 using System.Collections.Generic;
 using OpenCog.Attributes;
+using OpenCog.BlockSet.BaseBlockSet;
 using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
@@ -54,9 +54,11 @@ public class OCBlockSet : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 	
-	[UnityEngine.SerializeField] private string _data = "";
+	[UnityEngine.SerializeField] 
+	private string _data;
+		
 	private OCAtlas[] _atlases = new OCAtlas[0];
-	private BaseBlockSet.OCBlock[] _blocks = new BaseBlockSet.OCBlock[0];
+	private OCBlock[] _blocks = new OCBlock[0];
 			
 	//---------------------------------------------------------------------------
 
@@ -78,7 +80,7 @@ public class OCBlockSet : OCScriptableObject
 		set { _atlases = value; }
 	}
 
-	public OpenCog.BlockSet.BaseBlockSet.OCBlock[] Blocks
+	public OCBlock[] Blocks
 	{
 		get { return _blocks; }
 		set {_blocks = value; }
@@ -121,30 +123,30 @@ public class OCBlockSet : OCScriptableObject
 		return materials;
 	}
 
-	public OpenCog.BlockSet.BaseBlockSet.OCBlock GetBlock(int index) {
+	public OCBlock GetBlock(int index) {
 		if(index < 0 || index >= _blocks.Length)
 			return null;
 
 		return _blocks[index];
 	}
 	
-	public OpenCog.BlockSet.BaseBlockSet.OCBlock GetBlock(string name) {
-		foreach(OpenCog.BlockSet.BaseBlockSet.OCBlock block in _blocks) {
+	public OCBlock GetBlock(string name) {
+		foreach(OCBlock block in _blocks) {
 			if(block != null && block.GetName() == name) return block;
 		}
 		return null;
 	}
 	
-	public T GetBlock<T>(string name) where T : OpenCog.BlockSet.BaseBlockSet.OCBlock {
-		foreach(OpenCog.BlockSet.BaseBlockSet.OCBlock block in _blocks) {
+	public T GetBlock<T>(string name) where T : OCBlock {
+		foreach(OCBlock block in _blocks) {
 			if(block != null && block.GetName() == name && block is T) return (T)block;
 		}
 		return null;
 	}
 	
-	public OpenCog.BlockSet.BaseBlockSet.OCBlock[] GetBlocks(string name) {
-		List<OpenCog.BlockSet.BaseBlockSet.OCBlock> list = new List<OpenCog.BlockSet.BaseBlockSet.OCBlock>();
-		foreach(OpenCog.BlockSet.BaseBlockSet.OCBlock block in _blocks) {
+	public OCBlock[] GetBlocks(string name) {
+		List<OCBlock> list = new List<OCBlock>();
+		foreach(OCBlock block in _blocks) {
 			if(block != null && block.GetName() == name) list.Add(block);
 		}
 		return list.ToArray();
