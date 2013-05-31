@@ -29,6 +29,10 @@ public class OCFileTerrainGenerator
 		OpenCog.BlockSet.OCBlockSet blockSet = _map.GetBlockSet();
 				
 		_map.GetSunLightmap().SetSunHeight(3, 3, 3);
+
+		int createCount = 0;
+
+		Debug.Log("In LoadLevel, there are " + blockSet.BlockCount + " blocks available.");
 		
 		foreach( Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager )
 		{
@@ -89,12 +93,21 @@ public class OCFileTerrainGenerator
 											}
 											
 											OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(iBlockID);
-																					
+
+											if (newBlock == null)
+											{
+												OpenCog.BlockSet.OCBlockSetImport.Import(blockSet, blockSet.Data);
+											}
+
+											newBlock = blockSet.GetBlock(iBlockID);
+
 											_map.SetBlock (new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
 											
 											Vector3i chunkPos = OpenCog.Map.OCChunk.ToChunkPosition(blockPos);
 				
-											_map.SetDirty (chunkPos);	
+											_map.SetDirty (chunkPos);
+
+											createCount += 1;
 										}
 									} // End for (int iMCChunkInternalZ = 0; iMCChunkInternalZ < mcChunkRef.Blocks.ZDim; iMCChunkInternalZ++)
 								} // End for (int iMCChunkInternalY = 0; iMCChunkInternalY < mcChunkRef.Blocks.YDim; iMCChunkInternalY++)
@@ -105,7 +118,7 @@ public class OCFileTerrainGenerator
 			} // End for (int iMCChunkX  = 0; iMCChunkX < mcAnvilRegion.XDim; iMCChunkX++)
 		} // End foreach( Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager )
 		
-		Debug.Log ("Loaded level: " + _fullMapPath + ".");
+		Debug.Log ("Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
 		
 		_map.AddColliders ();
 		
