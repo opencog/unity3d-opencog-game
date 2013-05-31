@@ -27,11 +27,24 @@ public class OCTerrainGenerator {
 	
 	public OCTerrainGenerator(OpenCog.Map.OCMap map) {
 		this.map = map;
+		Debug.Log("OCTerrainGenerator is getting the BlockSet from the Map.");
 		OpenCog.BlockSet.OCBlockSet blockSet = map.GetBlockSet();
+		Debug.Log("BlockSet retrieved...");
 		
 		water = blockSet.GetBlock("Water");
-		
+
 		grass = blockSet.GetBlock("Grass");
+
+		if (grass == null)
+		{
+			Debug.Log("We have no Grass! :(");
+
+			for (int i = 0; i < blockSet.Blocks.Length; i++)
+			{
+				Debug.Log("But we have " + blockSet.Blocks[i].GetName());
+
+			}
+		}
 		dirt = blockSet.GetBlock("Dirt");
 		sand = blockSet.GetBlock("Sand");
 		stone = blockSet.GetBlock("Stone");
@@ -46,6 +59,9 @@ public class OCTerrainGenerator {
 		
 		for(int cy=0; true; cy++) {
 			Vector3i worldPos = OpenCog.Map.OCChunk.ToWorldPosition( new Vector3i(cx, cy, cz), Vector3i.zero );
+
+			//OCLogger.Debugging("worldPos = [" + worldPos.x + ", " + worldPos.y + ", " + worldPos.z + "]");
+
 			terrainNoise3D.GenerateNoise(worldPos);
 			islandNoise3D.GenerateNoise(worldPos);
 			caveNoise3D.GenerateNoise(worldPos);
@@ -59,6 +75,14 @@ public class OCTerrainGenerator {
 	}
 	
 	private bool GenerateChunk(Vector3i chunkPos) {
+		bool reportedWater = false;
+		bool reportedTerrain = false;
+		bool reportedIsland = false;
+
+		reportedWater = true;
+		reportedTerrain = true;
+		reportedIsland = true;
+
 		bool generated = false;
 		for(int z=-1; z<OpenCog.Map.OCChunk.SIZE_Z+1; z++) {
 			for(int x=-1; x<OpenCog.Map.OCChunk.SIZE_X+1; x++) {
@@ -67,12 +91,22 @@ public class OCTerrainGenerator {
 					
 					if(worldPos.y <= WATER_LEVEL) {
 						if(map.GetBlock(worldPos).IsEmpty()) map.SetBlock( water, worldPos );
+						if (!reportedWater)
+						{
+							Debug.Log("I made a water block!");
+							reportedWater = true;
+						}
 						generated = true;
 					}
 					
 					int terrainHeight = GetTerrainHeight(worldPos.x, worldPos.z);
 					if( worldPos.y <= terrainHeight ) {
 						GenerateBlockForBaseTerrain(worldPos);
+						if (!reportedTerrain)
+						{
+							Debug.Log("I made a terrain block!");
+							reportedTerrain = true;
+						}
 						generated = true;
 						continue;
 					}
@@ -80,6 +114,11 @@ public class OCTerrainGenerator {
 					int islandHeight = GetIslandHeight(worldPos.x, worldPos.z);
 					if( worldPos.y <= islandHeight ) {
 						GenerateBlockForIsland(worldPos, islandHeight-worldPos.y, islandHeight);
+						if (!reportedIsland)
+						{
+							Debug.Log("I made an island block!");
+							reportedIsland = true;
+						}
 						generated = true;
 						continue;
 					}

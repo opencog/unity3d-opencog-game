@@ -37,16 +37,16 @@ public class BlockSetEditor : Editor {
 	void OnEnable() {
 		blockSet = (OCBlockSet)target;
 
-		bool allBlocksNull = true;
-
-		for (int i = 0; i < blockSet.Blocks.Length; i++)
-		{
-			if (blockSet.Blocks[i] != null)
-				allBlocksNull = false;
-		}
-
-		if (allBlocksNull)
-			OCBlockSetImport.Import(blockSet, blockSet.Data);
+//		bool allBlocksNull = true;
+//
+//		for (int i = 0; i < blockSet.Blocks.Length; i++)
+//		{
+//			if (blockSet.Blocks[i] != null)
+//				allBlocksNull = false;
+//		}
+//
+//		if (allBlocksNull)
+//			OCBlockSetImport.Import(blockSet, blockSet.Data);
 
 		Type[] types = Assembly.GetAssembly(typeof(OCBlock)).GetTypes();
 		List<Type> list = new List<Type>();

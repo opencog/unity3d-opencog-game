@@ -94,13 +94,6 @@ public class OCFileTerrainGenerator
 											
 											OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(iBlockID);
 
-											if (newBlock == null)
-											{
-												OpenCog.BlockSet.OCBlockSetImport.Import(blockSet, blockSet.Data);
-											}
-
-											newBlock = blockSet.GetBlock(iBlockID);
-
 											_map.SetBlock (new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
 											
 											Vector3i chunkPos = OpenCog.Map.OCChunk.ToChunkPosition(blockPos);

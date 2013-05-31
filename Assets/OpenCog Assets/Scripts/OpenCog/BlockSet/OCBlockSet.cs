@@ -124,6 +124,8 @@ public class OCBlockSet : OCScriptableObject
 	}
 
 	public OCBlock GetBlock(int index) {
+		ReloadBlocksIfNecessary();
+
 		if(index < 0 || index >= _blocks.Length)
 			return null;
 
@@ -131,6 +133,8 @@ public class OCBlockSet : OCScriptableObject
 	}
 	
 	public OCBlock GetBlock(string name) {
+		ReloadBlocksIfNecessary();
+
 		foreach(OCBlock block in _blocks) {
 			if(block != null && block.GetName() == name) return block;
 		}
@@ -138,6 +142,8 @@ public class OCBlockSet : OCScriptableObject
 	}
 	
 	public T GetBlock<T>(string name) where T : OCBlock {
+		ReloadBlocksIfNecessary();
+
 		foreach(OCBlock block in _blocks) {
 			if(block != null && block.GetName() == name && block is T) return (T)block;
 		}
@@ -145,6 +151,8 @@ public class OCBlockSet : OCScriptableObject
 	}
 	
 	public OCBlock[] GetBlocks(string name) {
+		ReloadBlocksIfNecessary();
+
 		List<OCBlock> list = new List<OCBlock>();
 		foreach(OCBlock block in _blocks) {
 			if(block != null && block.GetName() == name) list.Add(block);
@@ -162,7 +170,22 @@ public class OCBlockSet : OCScriptableObject
 
 	//---------------------------------------------------------------------------
 	
-	
+	private void ReloadBlocksIfNecessary()
+	{
+		bool allNull = true;
+
+		for (int i = 0; i < _blocks.Length; i ++)
+		{
+			if (_blocks[i] != null)
+				allNull = false;
+		}
+
+		if (allNull)
+		{
+			UnityEngine.Debug.Log("All blocks null, reloading!");
+			OpenCog.BlockSet.OCBlockSetImport.Import(this, _data);
+		}
+	}
 			
 	//---------------------------------------------------------------------------
 

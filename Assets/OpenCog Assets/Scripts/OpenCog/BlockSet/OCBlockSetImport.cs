@@ -105,11 +105,27 @@ public class OCBlockSetImport : OCMonoBehaviour
 	
 	private static void ReadBlockSet(OCBlockSet blockSet, XmlDocument document) {
 		XmlNode blockSetNode = FindNodeByName(document, "OCBlockSet");
-		
+
 		OCAtlas[] atlases = ReadAtlasList(blockSetNode);
 		blockSet.Atlases = atlases;
 		
 		BlockSet.BaseBlockSet.OCBlock[] blocks = ReadBlockList(blockSetNode);
+
+		Debug.Log("Are we setting a bunch of null blocks?");
+
+		bool allNull = true;
+
+		for (int i = 0; i < blocks.Length; i++)
+		{
+			if (blocks[i] != null)
+				allNull = false;
+		}
+
+		if (allNull)
+			Debug.Log("Yep, we're setting a bunch of null blocks!");
+		else
+			Debug.Log("Nope, they're ok!");
+
 		blockSet.Blocks = blocks;
 	}
 	
