@@ -36,14 +36,25 @@ public class BlockSetEditor : Editor {
 	
 	void OnEnable() {
 		blockSet = (OCBlockSet)target;
-		
+
+		bool allBlocksNull = true;
+
+		for (int i = 0; i < blockSet.Blocks.Length; i++)
+		{
+			if (blockSet.Blocks[i] != null)
+				allBlocksNull = false;
+		}
+
+		if (allBlocksNull)
+			OCBlockSetImport.Import(blockSet, blockSet.Data);
+
 		Type[] types = Assembly.GetAssembly(typeof(OCBlock)).GetTypes();
 		List<Type> list = new List<Type>();
 		foreach(Type type in types) {
 			if(type.IsSubclassOf(typeof(OCBlock))) list.Add(type);
 		}
+
 		blockTypes = list.ToArray();
-		
 	}
 	
 	
@@ -136,9 +147,11 @@ public class BlockSetEditor : Editor {
 	}
 	
 	private void DrawBlockSet(OCBlockSet blockSet) {
-		GUILayout.BeginVertical(GUI.skin.box); 
+		GUILayout.BeginVertical(GUI.skin.box);
 		
 		int oldSelectedBlock = selectedBlock;
+
+		// Next line pushes the blockSet to BlockSetViewer
 		selectedBlock = OpenCog.BlockSetViewer.SelectionGrid(blockSet, selectedBlock, GUILayout.MinHeight(200), GUILayout.MaxHeight(300));
 		if(selectedBlock != oldSelectedBlock) GUIUtility.keyboardControl = 0;
 		
@@ -147,6 +160,7 @@ public class BlockSetEditor : Editor {
 		GUILayout.BeginHorizontal();
 		foreach(Type type in blockTypes) {
 			string name = type.Name;
+
 			if(name.EndsWith("Block")) name = name.Substring(0, name.Length-5);
 			if(GUILayout.Button(name)) {
 				OCBlock newBlock = (OCBlock) CreateInstance(type);
