@@ -78,8 +78,8 @@ public class OCGameStateManager : OCMonoBehaviour
 			if(value) Time.timeScale = 1f/10000f;
 			if(!value) Time.timeScale = 1;
 			Screen.showCursor = value;
-			if(value) _manager.SendMessage("OnPause", SendMessageOptions.DontRequireReceiver);
-			if(!value) _manager.SendMessage("OnResume", SendMessageOptions.DontRequireReceiver);
+			if(value) Manager.SendMessage("OnPause", SendMessageOptions.DontRequireReceiver);
+			if(!value) Manager.SendMessage("OnResume", SendMessageOptions.DontRequireReceiver);
 		}
 		get {
 			return Time.timeScale <= 0.0001f;

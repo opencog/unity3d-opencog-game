@@ -102,10 +102,10 @@ public abstract class OCBlock : OCScriptableObject
 	public abstract OpenCog.Builder.OCMeshBuilder Build();
 	
 	public void SetName(string name) {
-		this.name = name;
+		this._name = name;
 	}
 	public string GetName() {
-		return name;
+		return _name;
 	}
 
 	public int AtlasID
