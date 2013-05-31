@@ -130,14 +130,14 @@ public class OCBlockSet : OCScriptableObject
 	
 	public OpenCog.BlockSet.BaseBlockSet.OCBlock GetBlock(string name) {
 		foreach(OpenCog.BlockSet.BaseBlockSet.OCBlock block in _blocks) {
-			if(block.GetName() == name) return block;
+			if(block != null && block.GetName() == name) return block;
 		}
 		return null;
 	}
 	
 	public T GetBlock<T>(string name) where T : OpenCog.BlockSet.BaseBlockSet.OCBlock {
 		foreach(OpenCog.BlockSet.BaseBlockSet.OCBlock block in _blocks) {
-			if(block.GetName() == name && block is T) return (T)block;
+			if(block != null && block.GetName() == name && block is T) return (T)block;
 		}
 		return null;
 	}
@@ -145,7 +145,7 @@ public class OCBlockSet : OCScriptableObject
 	public OpenCog.BlockSet.BaseBlockSet.OCBlock[] GetBlocks(string name) {
 		List<OpenCog.BlockSet.BaseBlockSet.OCBlock> list = new List<OpenCog.BlockSet.BaseBlockSet.OCBlock>();
 		foreach(OpenCog.BlockSet.BaseBlockSet.OCBlock block in _blocks) {
-			if(block.GetName() == name) list.Add(block);
+			if(block != null && block.GetName() == name) list.Add(block);
 		}
 		return list.ToArray();
 	}
