@@ -29,6 +29,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
+using OpenCog.BlockSet.BaseBlockSet;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -145,7 +146,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 		return list.ToArray();
 	}
 	
-	private static OpenCog.BlockSet.BaseBlockSet.OCBlock ReadBlock(XmlNode node) {
+	private static OCBlock ReadBlock(XmlNode node) {
 		System.Type type = System.Type.GetType("OpenCog.BlockSet.BaseBlockSet." + node.Name);
 
 //		if (type == null)
@@ -168,7 +169,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 //		else
 //			Debug.Log("Reading block, name = " + node.Name + ", type == null");
 			
-		OpenCog.BlockSet.BaseBlockSet.OCBlock block = (OpenCog.BlockSet.BaseBlockSet.OCBlock) ScriptableObject.CreateInstance(type);
+		OCBlock block = (OCBlock) ScriptableObject.CreateInstance(type);
 		foreach(XmlNode childNode in node) {
 			ReadField(childNode, block);
 		}
