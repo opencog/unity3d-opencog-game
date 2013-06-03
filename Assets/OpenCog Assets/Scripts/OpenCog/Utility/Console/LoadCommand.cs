@@ -57,7 +57,10 @@ public class LoadCommand : Console.ConsoleCommand
 		//---------------------------------------------------------------------------
 		
 		private string _CommandName = "load";
-    private GameObject _NPCAgent;
+    	private GameObject _NPCAgent;
+
+		// TODO: Replace code below once the (real) property exposition stuff works.
+		public GameObject NPCAvatarMember;
 
 		//---------------------------------------------------------------------------
 
@@ -187,6 +190,11 @@ public class LoadCommand : Console.ConsoleCommand
 		/// </summary>
 		private void Initialize ()
 		{
+			// TODO: Remove stuff below once (real) property exposition components are working.
+			if (_NPCAgent == null)
+			{
+				_NPCAgent = NPCAvatarMember;
+			}
 		}
 	
 		/// <summary>
@@ -229,7 +237,10 @@ public class LoadCommand : Console.ConsoleCommand
                             playerPos.z + zFront),
                 Quaternion.identity);
 
-			OCConnector connector = agentClone.GetComponent<OCConnector>();
+			OCConnectorSingleton connector = OpenCog.Embodiment.OCConnectorSingleton.Instance;
+
+			if (connector == null)
+				Debug.Log("LoadCommand::LoadAgent: connector == null");
         
 			if (agentName == "")
 				agentName = CreateRandomAgentName ();

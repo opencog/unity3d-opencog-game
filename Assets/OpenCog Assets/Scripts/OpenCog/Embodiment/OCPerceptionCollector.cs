@@ -55,7 +55,7 @@ namespace OpenCog.Embodiment
 		
 	private float _updatePerceptionInterval = 0.5f; // Percept 5 times per second.
 	private float _timer = 0.0f; // Reset timer at the end of every interval.
-	private OCConnector _connector; // The OCConnector instance used to send map-info.
+	private OCConnectorSingleton _connector; // The OCConnector instance used to send map-info.
 	private int _id; // A local copy of the game object id that this component attached to.
 	private Dictionary<int, OCObjectMapInfo> _mapInfoCache = new Dictionary<int, OCObjectMapInfo>();
 	
@@ -351,7 +351,7 @@ namespace OpenCog.Embodiment
 	private void Initialize()
 	{
 		// Obtain components of this OCAvatar.
-		_connector = gameObject.GetComponent("OCConnector") as OCConnector;
+		_connector = gameObject.GetComponent("OCConnector") as OCConnectorSingleton;
 		_id = gameObject.GetInstanceID();
 			
 		foreach(OCStateChangesRegister.StateInfo ainfo in OCStateChangesRegister.StateList)

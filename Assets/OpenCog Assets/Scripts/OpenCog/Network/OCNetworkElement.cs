@@ -30,6 +30,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
 
+
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
 
@@ -158,7 +159,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	public void Awake()
 	{
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is awake.");
+		OCLogger.Fine(this.name + " is awake.");
 	}
 
 	/// <summary>
@@ -166,7 +167,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Start()
 	{
-		OCLogger.Fine(gameObject.name + " is started.");
+		OCLogger.Fine(this.name + " is started.");
 	}
 
 	/// <summary>
@@ -174,7 +175,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Update()
 	{
-		OCLogger.Fine(gameObject.name + " is updated.");	
+		OCLogger.Fine(this.name + " is updated.");
 	}
 		
 	/// <summary>
@@ -184,7 +185,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		Uninitialize();
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is reset.");	
+		OCLogger.Fine(this.name + " is reset.");
 	}
 
 	/// <summary>
@@ -192,7 +193,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void OnEnable()
 	{
-		OCLogger.Fine(gameObject.name + " is enabled.");
+		OCLogger.Fine(this.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -200,7 +201,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine(gameObject.name + " is disabled.");
+		OCLogger.Fine(this.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -209,7 +210,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+		OCLogger.Fine(this.name + " is about to be destroyed.");
 	}
 		
 	/// <summary>
@@ -304,7 +305,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		_routerPort = OCConfig.Instance.getInt("ROUTER_PORT", 16312);
 	
 		_listener = new OCServerListener(this);
-	
+
 		StartCoroutine(Connect());
 		StartCoroutine(_listener.Listen());
 		StartCoroutine(RequestMessage(1));

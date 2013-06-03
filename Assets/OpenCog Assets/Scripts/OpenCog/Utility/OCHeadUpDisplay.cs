@@ -102,7 +102,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	// We need to initialize the feeling to texture map at the first time of obtaining the
 	// feeling information.
 
-	private OpenCog.Embodiment.OCConnector _connector;
+	private OpenCog.Embodiment.OCConnectorSingleton _connector;
 
 	private UnityEngine.Rect _panel;
 
@@ -345,7 +345,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
-		_connector = (OpenCog.Embodiment.OCConnector)OpenCog.Embodiment.OCConnector.Instance;
+		_connector = (OpenCog.Embodiment.OCConnectorSingleton)OpenCog.Embodiment.OCConnectorSingleton.Instance;
 	}
 	
 	/// <summary>

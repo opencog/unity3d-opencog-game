@@ -23,7 +23,7 @@ using ProtoBuf;
 using UnityEngine;
 using OpenCog.Serialization;
 
-namespace OpenCog.Utility
+namespace OpenCog
 {
 
 /// <summary>

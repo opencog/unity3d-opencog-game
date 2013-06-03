@@ -46,18 +46,8 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class OCConnector : Network.OCNetworkElement
+public class OCConnectorSingleton : Network.OCNetworkElement
 {
-		//TODO: delete these fake classes.
-//		public class MetaAction
-//		{}
-//
-//		public class ActionResult
-//		{}
-//
-//		public class ActionSummary
-//		{}
-
 	//---------------------------------------------------------------------------
 
 	#region Private Member Data
@@ -196,6 +186,20 @@ public class OCConnector : Network.OCNetworkElement
     {
         get { return _currentDemandName; }
     }
+
+	/// <summary>
+	/// Gets the singleton instance.
+	/// </summary>
+	/// <value>
+	/// The instance of this singleton.
+	/// </value>
+	public static OCConnectorSingleton Instance
+	{
+		get
+		{
+			return (OCConnectorSingleton)OpenCog.Network.OCNetworkElement.Instance;
+		}
+	}
 			
 	//---------------------------------------------------------------------------
 

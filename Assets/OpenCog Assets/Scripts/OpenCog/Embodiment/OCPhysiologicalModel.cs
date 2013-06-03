@@ -120,7 +120,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
      */
 	private Dictionary<string, double> _factorSummaryMap = new Dictionary<string, double>();
 			
-	private OpenCog.Embodiment.OCConnector _connector;
+	private OpenCog.Embodiment.OCConnectorSingleton _connector;
 
 	private AvatarMode _currentMode;
 
@@ -198,7 +198,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 
 		SetupBasicFactors();
 
-		_connector = gameObject.GetComponent<OCConnector>() as OCConnector;
+		_connector = gameObject.GetComponent<OCConnectorSingleton>() as OCConnectorSingleton;
 	}
 
 	void Update()
