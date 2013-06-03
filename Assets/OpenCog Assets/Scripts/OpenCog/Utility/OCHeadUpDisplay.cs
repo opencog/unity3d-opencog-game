@@ -26,6 +26,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Network;
 using UnityEngine;
+using OpenCog.Embodiment;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -102,7 +103,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	// We need to initialize the feeling to texture map at the first time of obtaining the
 	// feeling information.
 
-	private OpenCog.Embodiment.OCConnectorSingleton _connector;
+	private OCConnectorSingleton _connector;
 
 	private UnityEngine.Rect _panel;
 
@@ -345,7 +346,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
-		_connector = (OpenCog.Embodiment.OCConnectorSingleton)OpenCog.Embodiment.OCConnectorSingleton.Instance;
+		_connector = (OCConnectorSingleton)OCConnectorSingleton.Instance;
 	}
 	
 	/// <summary>

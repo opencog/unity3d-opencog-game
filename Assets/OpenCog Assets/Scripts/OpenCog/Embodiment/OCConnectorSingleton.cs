@@ -19,22 +19,26 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using OpenCog.Attributes;
-using OpenCog.Extensions;
-using ImplicitFields = ProtoBuf.ImplicitFields;
-using ProtoContract = ProtoBuf.ProtoContractAttribute;
-using Serializable = System.SerializableAttribute;
 using System.Xml;
 using OpenCog.Actions;
+using OpenCog.Attributes;
 using OpenCog.Character;
+using OpenCog.Embodiment;
+using OpenCog.Extensions;
+using OpenCog.Network;
+using ImplicitFields = ProtoBuf.ImplicitFields;
+using OCEmbodimentXMLTags = OpenCog.OCEmbodimentXMLTags;
+using OCEmotionalExpression = OpenCog.OCEmotionalExpression;
+using ProtoContract = ProtoBuf.ProtoContractAttribute;
+using Serializable = System.SerializableAttribute;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
 
 #endregion
 
-namespace OpenCog.Embodiment
-{
+//namespace OpenCog.Embodiment
+//{
 
 /// <summary>
 /// The OpenCog OCConnector.
@@ -46,7 +50,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class OCConnectorSingleton : Network.OCNetworkElement
+public class OCConnectorSingleton : OCNetworkElement
 {
 	//---------------------------------------------------------------------------
 
@@ -68,7 +72,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 
 	private string _masterID; // Define master's(owner's) information.
 	private string _masterName;
-	private List<Network.OCMessage> _messagesToSend = new List<Network.OCMessage>(); // The queue used to store the messages to be sent to OAC.
+	private List<OCMessage> _messagesToSend = new List<OCMessage>(); // The queue used to store the messages to be sent to OAC.
 	private System.Object _messageSendingLock = new System.Object(); // The lock object used to sync the atomic sequence - get a timestamp, build and enqueue a message
 
 		// Timer to send message in a given interval. We can implement a timer by using unity API - FixedUpdate().
@@ -197,7 +201,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 	{
 		get
 		{
-			return (OCConnectorSingleton)OpenCog.Network.OCNetworkElement.Instance;
+			return (OCConnectorSingleton)OCNetworkElement.Instance;
 		}
 	}
 			
@@ -261,15 +265,15 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 
 		if(_messagesToSend.Count > 0)
 		{
-			List<Network.OCMessage> localMessagesToSend;
+			List<OCMessage> localMessagesToSend;
 			// copy messages to a local queue and clear the global sending queue.
 			lock(_messageSendingLock)
 			{
-				localMessagesToSend = new List<Network.OCMessage>(_messagesToSend);
+				localMessagesToSend = new List<OCMessage>(_messagesToSend);
 				_messagesToSend.Clear();
 			} // lock
 
-			foreach(Network.OCMessage message in localMessagesToSend)
+			foreach(OCMessage message in localMessagesToSend)
 			{
 				// Check if router and destination is available. If so, send the message. 
 				// otherwise just ignore the message
@@ -332,7 +336,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 		}
 		signal.SetAttribute("timestamp",timestamp );
 	
-		Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, OpenCog.Network.OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
         OCLogger.Debugging("sending block structure signal: \n" + BeautifyXmlText(doc));
         
@@ -497,11 +501,11 @@ public class OCConnectorSingleton : Network.OCNetworkElement
    * @return false if not an exit command. (this is obsolete in this unity game, but
    * it is OK to keep it)
    */
-	public override bool ProcessNextMessage(Network.OCMessage message)
+	public override bool ProcessNextMessage(OCMessage message)
 	{
 		OCLogger.Debugging(message.ToString());
     
-		if(message.Type == Network.OCMessage.MessageType.FEEDBACK)
+		if(message.Type == OCMessage.MessageType.FEEDBACK)
 		{
 			// e.g. we can append the information in the console.
 			OCLogger.Error("Feedback " + message.ToString());
@@ -712,7 +716,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 //	    }
 //    }
 //
-//    Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+//    OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
 //
 //    OCLogger.Warn("sending action result from " + ar.avatar + "\n" + BeautifyXmlText(doc));
 //
@@ -765,7 +769,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 		actionElement.SetAttribute("target", objectID);
 		actionElement.SetAttribute("target-type",targetType);		
 		
-   	Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+   	OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
    	
    	OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
    	
@@ -828,7 +832,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 		newVectorElement.SetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE, endPos.y.ToString());
 		newVectorElement.SetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE, endPos.z.ToString());
 		
-		Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+		OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
         
     OCLogger.Debugging("sending move action result: \n" + BeautifyXmlText(doc));
         
@@ -907,7 +911,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 			return;
 		}
 
-    Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, OpenCog.Network.OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+    OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
     OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
@@ -1045,7 +1049,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 		}
 
 
-    Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+    OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
     
     OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
@@ -1114,7 +1118,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 	    actionElement.SetAttribute("available", available ? "true" : "false");
 		}
 
-    Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+    OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
 
     lock (_messageSendingLock)
     {
@@ -1155,8 +1159,8 @@ public class OCConnectorSingleton : Network.OCNetworkElement
           return;
       }
           
-      Network.OCStringMessage message =
-          (Network.OCStringMessage)SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data",isFirstTimePerceptMapObjects);
+      OCStringMessage message =
+          (OCStringMessage)SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data",isFirstTimePerceptMapObjects);
 
       lock (_messageSendingLock)
       {
@@ -1175,8 +1179,8 @@ public class OCConnectorSingleton : Network.OCNetworkElement
       // No new map info to send.
       if (terrainInfoSeq.Count == 0) return;
 
-      Network.OCStringMessage message =
-          (Network.OCStringMessage)SerializeMapInfo(terrainInfoSeq, "terrain-info", "terrain-data",isFirstTimePerceptTerrain);
+      OCStringMessage message =
+          (OCStringMessage)SerializeMapInfo(terrainInfoSeq, "terrain-info", "terrain-data",isFirstTimePerceptTerrain);
 
       lock (_messageSendingLock)
       {
@@ -1204,7 +1208,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
    * @param payloadTag the XML tag for wrapping the payload of message, currently there are "map-data"
    * and "terrain-data".
    */
-  private Network.OCMessage SerializeMapInfo(List<OCObjectMapInfo> mapinfoSeq, string messageTag, string payloadTag, bool isFirstTimePerceptWorld = false)
+  private OCMessage SerializeMapInfo(List<OCObjectMapInfo> mapinfoSeq, string messageTag, string payloadTag, bool isFirstTimePerceptWorld = false)
   {
       string timestamp = GetCurrentTimestamp();
       // Create a xml document
@@ -1239,7 +1243,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 
       data.InnerText = encodedPlainText;
 
-      return new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+      return new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
   }
 	
 	public void SendFinishPerceptTerrain()
@@ -1251,7 +1255,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
         XmlElement signal = (XmlElement) root.AppendChild(doc.CreateElement("finished-first-time-percept-terrian-signal"));
 		signal.SetAttribute("timestamp", timestamp );
 	
-		Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+		OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
         
         OCLogger.Debugging("sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
         
@@ -1307,7 +1311,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
       speechMsg.Append("</communication>");
       speechMsg.Append("</oc:embodiment-msg>");
       
-      Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, Network.OCMessage.MessageType.RAW, speechMsg.ToString());
+      OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.RAW, speechMsg.ToString());
       
       // Add the message to the sending queue.
       lock (_messageSendingLock) {
@@ -1565,9 +1569,9 @@ public class OCConnectorSingleton : Network.OCNetworkElement
         msgCmd.Append(_brainID + WHITESPACE + _masterID + WHITESPACE);
         msgCmd.Append(_type + WHITESPACE + _traits + "\n");
 
-        Network.OCMessage msg = Network.OCMessage.CreateMessage(_ID,
+        OCMessage msg = OCMessage.CreateMessage(_ID,
                                       new OCConfig().get("SPAWNER_ID"),
-                                      Network.OCMessage.MessageType.STRING,
+                                      OCMessage.MessageType.STRING,
                                       msgCmd.ToString());
         SendMessage(msg);
     }
@@ -1582,9 +1586,9 @@ public class OCConnectorSingleton : Network.OCNetworkElement
         System.Text.StringBuilder msgCmd = new System.Text.StringBuilder("UNLOAD_AGENT ");
         msgCmd.Append(_brainID + "\n");
 
-        Network.OCMessage msg = Network.OCMessage.CreateMessage(_ID,
+        OCMessage msg = OCMessage.CreateMessage(_ID,
                                       new OCConfig().get("SPAWNER_ID"),
-                                      Network.OCMessage.MessageType.STRING,
+                                      OCMessage.MessageType.STRING,
                                       msgCmd.ToString());
         if (!SendMessage(msg))
         {
@@ -1631,7 +1635,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
         //OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
             
         // Construct a string message.
-        Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, xmlText);
+        OCStringMessage message = new OCStringMessage(_ID, _brainID, xmlText);
 
         lock (_messageSendingLock)
         {
@@ -1641,7 +1645,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
             // Send a tick message to make OAC start next cycle.
             if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
             {
-                Network.OCMessage tickMessage = Network.OCMessage.CreateMessage(_ID, _brainID, OpenCog.Network.OCMessage.MessageType.TICK, "");
+                OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "");
                 _messagesToSend.Add(tickMessage);
             }
         }
@@ -1705,7 +1709,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
       actionElement.SetAttribute("name", action.Name);
       actionElement.SetAttribute("status", success ? "done" : "error");
 
-      Network.OCStringMessage message = new Network.OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+      OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
 
       lock (_messageSendingLock)
       {
@@ -1739,7 +1743,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
       actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
       actionElement.SetAttribute("status", success ? "done" : "error");
 
-      Network.OCMessage message = Network.OCMessage.CreateMessage(_ID, _brainID, OpenCog.Network.OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+      OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
       lock (_messageSendingLock)
       {
@@ -1769,7 +1773,7 @@ public class OCConnectorSingleton : Network.OCNetworkElement
 
 }// class OCConnector
 
-}// namespace OpenCog.Network
+//}// namespace OpenCog.Network
 
 
 

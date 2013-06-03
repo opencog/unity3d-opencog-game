@@ -120,7 +120,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
      */
 	private Dictionary<string, double> _factorSummaryMap = new Dictionary<string, double>();
 			
-	private OpenCog.Embodiment.OCConnectorSingleton _connector;
+	private OCConnectorSingleton _connector;
 
 	private AvatarMode _currentMode;
 

@@ -237,7 +237,7 @@ public class LoadCommand : Console.ConsoleCommand
                             playerPos.z + zFront),
                 Quaternion.identity);
 
-			OCConnectorSingleton connector = OpenCog.Embodiment.OCConnectorSingleton.Instance;
+			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 
 			if (connector == null)
 				Debug.Log("LoadCommand::LoadAgent: connector == null");
