@@ -63,5 +63,10 @@ public class CharacterInputController : MonoBehaviour {
 			Debug.Log("No map in CharacterInputController.IsInWater()");
 			return false;
 	}
+
+	public void SetCharacterControl(bool trueOrFalse)
+	{
+
+	}
 	
 }

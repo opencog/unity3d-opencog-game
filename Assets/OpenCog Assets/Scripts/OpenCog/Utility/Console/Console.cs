@@ -71,11 +71,18 @@ public class Console : OCMonoBehaviour
 	private string _currentInput = ""; // The text currently being entered.
 	private LinkedList<string> _inputHistory; // A history of input for up arrow support
 	private LinkedListNode<string> _inputHistoryCurrent = null; /// Current inputHistory position
-	OCInputController _inputController; // InputController to capture and return the consumer of input.
+
 	private string _defaultCommand; // Default command??
-	private Hashtable _commandTable = new Hashtable(); // Command history table, relation to _consoleEntries is not yet clear.
+	private Hashtable _commandTable = new Hashtable(); // Command history table, relation to_consoleEntries is not yet clear.
 	private ArrayList _completionPossibilities; // Potential commands to be used in command completion.
 	private bool _isShowingCompletionOptions = false; // Whether we are currently showing completion options
+	private bool _showChat = true;
+
+	// TODO: Search this file for the object below and re-enable all calls to it.
+	OpenCog.Character.OCInputController _inputController; // InputController to capture and return the consumer of input.
+
+
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -85,7 +92,18 @@ public class Console : OCMonoBehaviour
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-		
+
+	public string DefaultCommand
+		{
+			get { return _defaultCommand; }
+			set { _defaultCommand = value; }
+		}
+
+	public bool ShowChat
+		{
+			get { return _showChat; }
+			set { _showChat = value; }
+		}
 			
 	//---------------------------------------------------------------------------
 
@@ -114,7 +132,17 @@ public class Console : OCMonoBehaviour
 		Input.eatKeyPressOnTextFieldFocus = false;
 		
 		_panelHeight = Screen.height * 0.30f;
-		_inputController = (GameObject.FindWithTag("OCInputController") as GameObject).GetComponent<OCInputController>();
+
+
+		// TODO: Re-enable line below
+		//_inputController = (GameObject.FindWithTag("OCInputController") as GameObject).GetComponent<OCInputController>();
+
+		// TODO: Disable line below
+		//_inputController = (GameObject.FindWithTag("CharacterInputController") as GameObject).GetComponent<CharacterInputController>();
+
+		_inputController = OpenCog.Character.OCInputController.Instance;
+
+
 		// Initialise position
 		_currentYPosition = -_panelHeight;
 		_panelRect = new Rect(0, _currentYPosition, Screen.width, _panelHeight);
@@ -168,7 +196,7 @@ public class Console : OCMonoBehaviour
 			else
 			{
 				_isShown = true;
-				_inputController.setCharacterControl(false);
+				_inputController.SetCharacterControl(false);
                 
 				_movementState = Movement.APPEARING;
 			}
@@ -222,7 +250,7 @@ public class Console : OCMonoBehaviour
 		}
 		if(_isShown)
 		{
-			_inputController.setCharacterControl(false);
+			_inputController.SetCharacterControl(false);
 		}
 			
 		OCLogger.Fine(gameObject.name + " is updated.");	
@@ -287,6 +315,8 @@ public class Console : OCMonoBehaviour
 			_commandStyle = _GUISkin.label;
 			_commandStyle.normal.textColor = Color.blue;
 			GUI.skin = _GUISkin;
+
+			Debug.Log("_GUISkin = true");
 		}
 		
 		if(_isShown)
@@ -321,6 +351,8 @@ public class Console : OCMonoBehaviour
 				GUI.FocusWindow(1);
 				FocusControl();
 			}
+
+			Debug.Log("_isShown = true");
 		}
 	}
 		
@@ -452,7 +484,7 @@ public class Console : OCMonoBehaviour
 		this._movementState = Movement.DISAPPEARING;
 		// Re-enable the character controller for player movement
 			
-		_inputController.setCharacterControl(true);
+		//_inputController.SetCharacterControl(true);
 	}
 		
 	private void AddConsoleEntry(string str, string sender, ConsoleEntry.Type type)
@@ -690,6 +722,7 @@ public class Console : OCMonoBehaviour
 	{
 		public void Start()
 		{
+			Debug.Log("ConsoleCommand::Start...");
 			Console.get().AddCommand(this);
 		}
 		/// <summary>
@@ -707,18 +740,6 @@ public class Console : OCMonoBehaviour
 		abstract public string GetName();
 			
 		protected string _commandName = "empty";
-	}
-		
-	// TODO: Replace below with real OCInputController;
-	/// <summary>
-	/// OC input controller. Stub for yet to be designed and implented OCInputController.
-	/// </summary>
-	private class OCInputController : OCMonoBehaviour
-	{
-		public void setCharacterControl(bool bFalseOrTrue)
-		{
-				
-		}
 	}
 		
 	//---------------------------------------------------------------------------

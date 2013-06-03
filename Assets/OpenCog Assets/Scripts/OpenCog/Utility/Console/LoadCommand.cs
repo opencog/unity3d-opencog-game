@@ -99,6 +99,7 @@ public class LoadCommand : Console.ConsoleCommand
 		/// </summary>
 		public void Start ()
 		{
+			base.Start();
 			OCLogger.Fine (gameObject.name + " is started.");
 		}
 
