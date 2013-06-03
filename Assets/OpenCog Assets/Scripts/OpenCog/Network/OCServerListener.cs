@@ -85,8 +85,10 @@ public class OCServerListener : OCScriptableObject
 	public void OnEnable()
 	{
 		//Initialize();
-		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
-			" is enabled.");
+		if (_networkElement != null)
+			OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + " is enabled.");
+		else
+			OCLogger.Debugging("Cannot emit OnEnable message with _networkElement.gameObject.name because _networkElement == null");
 	}
 		
 	/// <summary>
@@ -209,6 +211,15 @@ public class OCServerListener : OCScriptableObject
 	/// </param>
 	public OCServerListener(OCNetworkElement networkElement)
 	{
+			UnityEngine.Debug.Log ("OCNetworkElement::OCNetworkElement");
+			
+			if (networkElement == null)
+				UnityEngine.Debug.Log ("OCServerListener::OCServerListener, constructor parameter networkElement == null");
+			else
+			{
+				_networkElement = networkElement;
+				UnityEngine.Debug.Log ("OCServerListener::OCServerListener, constructor parameter networkElement != null");
+			}
 	}
 
 	//---------------------------------------------------------------------------

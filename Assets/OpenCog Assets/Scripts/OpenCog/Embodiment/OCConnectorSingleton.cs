@@ -103,6 +103,7 @@ public class OCConnectorSingleton : OCNetworkElement
 	private OpenCog.Map.OCMap _map;
 		
 	private OCActionController _actionController;
+	private static OCConnectorSingleton _instance;
 
 
 	//---------------------------------------------------------------------------
@@ -201,7 +202,14 @@ public class OCConnectorSingleton : OCNetworkElement
 	{
 		get
 		{
-			return (OCConnectorSingleton)OCNetworkElement.Instance;
+			if (_instance == null)
+			{
+				UnityEngine.Debug.Log ("OCConnectorSingleton::Instance, _instance == null...creating a new one...");
+				
+				_instance = new OCConnectorSingleton();				
+			}
+			
+			return _instance;
 		}
 	}
 			
