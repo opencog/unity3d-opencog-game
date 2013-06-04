@@ -49,7 +49,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCNetworkElement : OCMonoBehaviour
+public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 {
 
 	//---------------------------------------------------------------------------
