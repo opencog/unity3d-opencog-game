@@ -139,7 +139,7 @@ public class OCSingletonMonoBehaviour<T> : MonoBehaviour
 			GameObject gameObject = 
 				new GameObject(typeof(U).ToString(), typeof(U));
 				
-			_instance = gameObject.GetComponent<U>();				
+			_instance = gameObject.GetComponent<U>();		
 		}
 			
 		return _instance != null;

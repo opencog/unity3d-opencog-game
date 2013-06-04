@@ -115,6 +115,8 @@ public class OCServerListener : OCScriptableObject
 		
 	public IEnumerator Listen()
 	{
+		UnityEngine.Debug.Log("LISTEN!!");
+			
 		try
 		{
 			_listener = new 
@@ -157,14 +159,22 @@ public class OCServerListener : OCScriptableObject
 	public void Stop()
 	{
 		_shouldStop = true;
-		try
+			
+		if (_listener == null)
 		{
-			_listener.Stop();
-			_listener = null;
+			UnityEngine.Debug.Log ("_listener == null, nothing to call Stop on...");
 		}
-		catch(SocketException se)
+		else
 		{
-			OCLogger.Error(se.Message);
+			try
+			{
+				_listener.Stop();
+				_listener = null;
+			}
+			catch(SocketException se)
+			{
+				OCLogger.Error(se.Message);
+			}		
 		}
 	}
 

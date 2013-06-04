@@ -250,7 +250,7 @@ public class Console : OCMonoBehaviour
 		}
 		if(_isShown)
 		{
-			_inputController.SetCharacterControl(false);
+			//_inputController.SetCharacterControl(false);
 		}
 			
 		OCLogger.Fine(gameObject.name + " is updated.");	
@@ -352,7 +352,7 @@ public class Console : OCMonoBehaviour
 				FocusControl();
 			}
 
-			Debug.Log("_isShown = true");
+			//Debug.Log("_isShown = true");
 		}
 	}
 		
@@ -722,7 +722,6 @@ public class Console : OCMonoBehaviour
 	{
 		public void Start()
 		{
-			Debug.Log("ConsoleCommand::Start...");
 			Console.get().AddCommand(this);
 		}
 		/// <summary>
