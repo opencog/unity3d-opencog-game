@@ -49,7 +49,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCNetworkElement : OCMonoBehaviour
+public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 {
 
 	//---------------------------------------------------------------------------
@@ -148,10 +148,7 @@ public class OCNetworkElement : OCMonoBehaviour
 	public static OCNetworkElement Instance
 	{
 		get {
-			if (_instance == null)	
-				_instance = new OCNetworkElement();
-			
-			return _instance;
+			return GetInstance<OCNetworkElement>();
 		}
 	}
 		

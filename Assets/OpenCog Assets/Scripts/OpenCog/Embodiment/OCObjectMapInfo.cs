@@ -360,7 +360,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 
 			if (gameObject.tag == "OCA") {
 				// This is an OC avatar, we will use the brain id instead of unity id.
-				OCConnectorSingleton connector = gameObject.GetComponent<OCConnectorSingleton> () as OCConnectorSingleton;
+				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 
 				if (connector != null)
 					_id = connector.BrainID;
