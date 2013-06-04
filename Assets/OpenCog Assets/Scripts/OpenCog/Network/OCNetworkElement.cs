@@ -148,10 +148,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	public static OCNetworkElement Instance
 	{
 		get {
-			if (_instance == null)	
-				_instance = new OCNetworkElement();
-			
-			return _instance;
+			return GetInstance<OCNetworkElement>();
 		}
 	}
 		

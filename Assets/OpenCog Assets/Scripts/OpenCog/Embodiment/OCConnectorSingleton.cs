@@ -203,7 +203,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	{
 		get
 		{
-			return (OCConnectorSingleton)OCNetworkElement.GetInstance<OCConnectorSingleton>();
+			return GetInstance<OCConnectorSingleton>();
 		}
 	}
 			
