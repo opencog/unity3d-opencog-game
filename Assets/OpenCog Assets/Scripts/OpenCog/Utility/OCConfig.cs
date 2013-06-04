@@ -38,7 +38,7 @@ using OpenCog;
 [OCExposePropertyFields]
 [Serializable]
 #endregion
-public class OCConfig : OCSingletonScriptableObject< OCConfig >
+public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 {
 
 	//---------------------------------------------------------------------------
@@ -59,7 +59,12 @@ public class OCConfig : OCSingletonScriptableObject< OCConfig >
 
 	//---------------------------------------------------------------------------
 
-
+	public static OCConfig Instance
+	{
+		get {
+			return GetInstance<OCConfig>();
+		}
+	}
 			
 	//---------------------------------------------------------------------------
 

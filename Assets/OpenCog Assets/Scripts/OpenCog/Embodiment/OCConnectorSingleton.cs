@@ -50,7 +50,7 @@ using Serializable = System.SerializableAttribute;
 [Serializable]
 	
 #endregion
-public class OCConnectorSingleton : OCNetworkElement
+public sealed class OCConnectorSingleton : OCNetworkElement
 {
 	//---------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ public class OCConnectorSingleton : OCNetworkElement
 		get
 		{
 			if (!_map)
-				_map = UnityEngine.GameObject.Find("OCMap").GetComponent<OpenCog.Map.OCMap>() as OpenCog.Map.OCMap;
+				_map = UnityEngine.GameObject.Find("Map").GetComponent<OpenCog.Map.OCMap>() as OpenCog.Map.OCMap;
 
 			return _map;
 		}
@@ -202,14 +202,7 @@ public class OCConnectorSingleton : OCNetworkElement
 	{
 		get
 		{
-			if (_instance == null)
-			{
-				UnityEngine.Debug.Log ("OCConnectorSingleton::Instance, _instance == null...creating a new one...");
-				
-				_instance = new OCConnectorSingleton();				
-			}
-			
-			return _instance;
+			return (OCConnectorSingleton)OCNetworkElement.GetInstance<OCConnectorSingleton>();
 		}
 	}
 			

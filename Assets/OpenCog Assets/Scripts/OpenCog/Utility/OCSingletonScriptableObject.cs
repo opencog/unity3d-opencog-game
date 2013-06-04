@@ -63,21 +63,35 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 	/// <value>
 	/// The instance of this singleton.
 	/// </value>
-	public static T Instance
+//	public static T Instance
+//	{
+//		get
+//		{
+//			if(_instance == null && !Instantiate())
+//			{
+//				Debug.LogError
+//				( "In OCSingletonScriptableObject.Instance, an instance of singleton " 
+//				+ typeof(T) 
+//				+ " does not exist and could not be instantiated."
+//				);
+//			}
+//				
+//			return _instance;
+//		}
+//	}
+		
+	protected static U GetInstance<U>() where U : T
 	{
-		get
+		if(_instance == null && !Instantiate<U>())
 		{
-			if(_instance == null && !Instantiate())
-			{
-				Debug.LogError
-				( "In OCSingletonScriptableObject.Instance, an instance of singleton " 
-				+ typeof(T) 
-				+ " does not exist and could not be instantiated."
-				);
-			}
-				
-			return _instance;
+			Debug.LogError
+			( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " 
+			+ typeof(U) 
+			+ " does not exist and could not be instantiated."
+			);
 		}
+			
+		return (U)_instance;	
 	}
 			
 	//---------------------------------------------------------------------------
@@ -103,7 +117,7 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 	/// <summary>
 	/// Instantiate this singleton instance.
 	/// </summary>
-	private static bool Instantiate()
+	protected static bool Instantiate<U>() where U : T
 	{
 		//Assert that we're not already instantiated
 		if(_instance != null)
@@ -113,16 +127,16 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 					"we're already instantiated!");
 		}
 
-		_instance = (T)FindObjectOfType(typeof(T));
+		_instance = (T)FindObjectOfType(typeof(U));
 			
 		if(_instance == null)
 		{
-				_instance = (T)ScriptableObject.CreateInstance(typeof(T));
+				_instance = (T)ScriptableObject.CreateInstance(typeof(U));
 		}
 					
 		return _instance != null;
 	}
-					
+		
 					
 	//---------------------------------------------------------------------------
 

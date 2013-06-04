@@ -303,7 +303,7 @@ public class Console : OCMonoBehaviour
 		}
 	}
 		
-	static public Console get()
+	public static Console get()
 	{
 		return _console;
 	}

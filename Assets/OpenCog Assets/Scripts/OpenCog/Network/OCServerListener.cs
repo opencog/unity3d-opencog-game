@@ -211,15 +211,7 @@ public class OCServerListener : OCScriptableObject
 	/// </param>
 	public OCServerListener(OCNetworkElement networkElement)
 	{
-			UnityEngine.Debug.Log ("OCNetworkElement::OCNetworkElement");
-			
-			if (networkElement == null)
-				UnityEngine.Debug.Log ("OCServerListener::OCServerListener, constructor parameter networkElement == null");
-			else
-			{
-				_networkElement = networkElement;
-				UnityEngine.Debug.Log ("OCServerListener::OCServerListener, constructor parameter networkElement != null");
-			}
+		_networkElement = networkElement;
 	}
 
 	//---------------------------------------------------------------------------
