@@ -32,7 +32,7 @@ public class OCFileTerrainGenerator
 
 		int createCount = 0;
 
-		Debug.Log("In LoadLevel, there are " + blockSet.BlockCount + " blocks available.");
+		//Debug.Log("In LoadLevel, there are " + blockSet.BlockCount + " blocks available.");
 		
 		foreach( Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager )
 		{

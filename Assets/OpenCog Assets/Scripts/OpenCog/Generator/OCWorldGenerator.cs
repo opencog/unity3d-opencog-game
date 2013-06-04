@@ -25,7 +25,7 @@ public class OCWorldGenerator : MonoBehaviour {
 		
 		if (MapName != string.Empty)
 		{
-			Debug.Log ("In WorldGenerator, MapName defined");
+			//Debug.Log ("In WorldGenerator, MapName defined");
 			OCFileTerrainGenerator fileTerrainGenerator = new OCFileTerrainGenerator(map, MapName);
 			
 			fileTerrainGenerator.LoadLevel();

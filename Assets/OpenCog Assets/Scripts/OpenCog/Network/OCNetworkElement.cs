@@ -49,7 +49,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
+public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 {
 
 	//---------------------------------------------------------------------------
@@ -207,7 +207,7 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 	/// </summary>
 	public void OnEnable()
 	{
-		OCLogger.Fine(this.name + " is enabled.");
+		//OCLogger.Fine(this.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -320,9 +320,9 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 	
 		_listener = new OCServerListener(OCNetworkElement.Instance);
 
-		StartCoroutine(OCNetworkElement.Instance.Connect());
-		StartCoroutine(OCNetworkElement.Instance._listener.Listen());
-		StartCoroutine(OCNetworkElement.Instance.RequestMessage(1));
+		StartCoroutine(Connect());
+		StartCoroutine(_listener.Listen());
+		StartCoroutine(RequestMessage(1));
 	}
 	
 	/// <summary>
@@ -348,7 +348,7 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 			
 		IPEndPoint ipe = new IPEndPoint(_routerIP, _routerPort);
 			
-		OCLogger.Debugging("Start Connecting to router");
+		UnityEngine.Debug.Log("Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...");
 			
 		// Start the async connection request.
 		System.IAsyncResult ar = asyncSocket
@@ -358,7 +358,11 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 			, asyncSocket
 			);
 			
-		yield return new UnityEngine.WaitForSeconds(0.1f);
+		//UnityEngine.Debug.Log ("Error occurs after this...");
+			
+		yield return new UnityEngine.WaitForSeconds(1.5f);
+			
+		//UnityEngine.Debug.Log ("...but before this.");
 			
 		int retryTimes = CONNECTION_TIMEOUT;
 		while(!ar.IsCompleted)
@@ -366,11 +370,11 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 			retryTimes--;
 			if(retryTimes == 0)
 			{
-				OCLogger.Warn("Connection timed out.");
+				UnityEngine.Debug.LogWarning("Connection timed out.");
 				yield break;
 			}
 				
-			yield return new UnityEngine.WaitForSeconds(0.1f);
+			yield return new UnityEngine.WaitForSeconds(1.5f);
 		}
 	}
 
@@ -400,23 +404,30 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 		{
 			// Retrieve the socket from the state object.
 			_clientSocket = (Socket)ar.AsyncState;
+				
+			UnityEngine.Debug.Log ("Retrieved socket from the state object...");
 			// Complete the connection.
+				
 			_clientSocket.EndConnect(ar);
+				
+			UnityEngine.Debug.Log ("Connection complete...");
 
 			_isEstablished = true;
 
-			OCLogger.Debugging("Socket connected to router.");
+			UnityEngine.Debug.Log("Socket connected to router.");
 			
 			LoginRouter();
 		}
 		catch(System.Exception e)
 		{
-			OCLogger.Warn(e.ToString());
+			UnityEngine.Debug.LogWarning(e.ToString());
 		}
 	}
 		
 	private void LoginRouter()
 	{
+		UnityEngine.Debug.Log ("Starting router login process...");
+			
 		string command = "LOGIN " + _ID + WHITESPACE +
 						_IP.ToString() + WHITESPACE + _port +
                         NEWLINE;
@@ -438,7 +449,7 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 		
 		if(payload.Length == 0)
 		{
-			OCLogger.Error("Invalid empty command given.");
+			UnityEngine.Debug.LogError("Invalid empty command given.");
 			return false;
 		}
 
@@ -457,11 +468,11 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 		
 		if(result)
 		{
-			OCLogger.Fine("Successful.");
+			UnityEngine.Debug.Log("Successful.");
 		}
 		else
 		{
-			OCLogger.Error("Failed to send messsage.");
+			UnityEngine.Debug.LogError("Failed to send messsage.");
 			return false;
 		}
 		
@@ -476,6 +487,8 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 	/// <returns>Send result</returns>
 	private bool Send(string text)
 	{
+		UnityEngine.Debug.Log ("Sending raw text to router: " + text);
+			
 		if(_clientSocket == null)
 		{
 			return false;
@@ -656,7 +669,6 @@ public class OCNetworkElement : OCSingletonScriptableObject<OCNetworkElement>
 	/// </summary>
 	public OCNetworkElement()
 	{
-			UnityEngine.Debug.Log ("OCNetworkElement::OCNetworkElement");
 	}
 		
 	public const int CONNECTION_TIMEOUT = 10;

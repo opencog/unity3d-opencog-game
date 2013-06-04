@@ -114,6 +114,8 @@ namespace OpenCog.Embodiment
 	/// </summary>
 	public void Start()
 	{
+		_connector = OCConnectorSingleton.Instance;
+			
 		OCLogger.Fine(gameObject.name + " is started.");
 	}
 	

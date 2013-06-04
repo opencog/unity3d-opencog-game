@@ -84,11 +84,11 @@ public class OCServerListener : OCScriptableObject
 	/// </summary>
 	public void OnEnable()
 	{
-		//Initialize();
-		if (_networkElement != null)
-			OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + " is enabled.");
-		else
-			OCLogger.Debugging("Cannot emit OnEnable message with _networkElement.gameObject.name because _networkElement == null");
+//		//Initialize();
+//		if (_networkElement != null)
+//			OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + " is enabled.");
+//		else
+//			OCLogger.Debugging("Cannot emit OnEnable message with _networkElement.gameObject.name because _networkElement == null");
 	}
 		
 	/// <summary>
@@ -96,8 +96,8 @@ public class OCServerListener : OCScriptableObject
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
-			" is disabled.");
+//		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
+//			" is disabled.");
 	}
 
 	/// <summary>
@@ -106,12 +106,14 @@ public class OCServerListener : OCScriptableObject
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
-			" is about to be destroyed.");
+//		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
+//			" is about to be destroyed.");
 	}
 		
 	public IEnumerator Listen()
 	{
+		UnityEngine.Debug.Log("LISTEN!!");
+			
 		try
 		{
 			_listener = new 
@@ -154,14 +156,22 @@ public class OCServerListener : OCScriptableObject
 	public void Stop()
 	{
 		_shouldStop = true;
-		try
+			
+		if (_listener == null)
 		{
-			_listener.Stop();
-			_listener = null;
+			UnityEngine.Debug.Log ("_listener == null, nothing to call Stop on...");
 		}
-		catch(SocketException se)
+		else
 		{
-			OCLogger.Error(se.Message);
+			try
+			{
+				_listener.Stop();
+				_listener = null;
+			}
+			catch(SocketException se)
+			{
+				OCLogger.Error(se.Message);
+			}		
 		}
 	}
 

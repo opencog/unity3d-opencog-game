@@ -14,7 +14,6 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
 using System.Collections;
 using OpenCog.Attributes;
@@ -32,37 +31,37 @@ namespace OpenCog
 #region Class Attributes
 
 #endregion
-public class OCSingletonScriptableObject<T> : ScriptableObject
-	where T : ScriptableObject 
-{
+	public class OCSingletonScriptableObject<T> : ScriptableObject
+	where T : ScriptableObject
+	{
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#region Private Member Data
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 		
-	/// <summary>
-	/// The singleton instance.
-	/// </summary>
-	private static T _instance = null;
+		/// <summary>
+		/// The singleton instance.
+		/// </summary>
+		private static T _instance = null;
 		
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#region Accessors and Mutators
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 		
-	/// <summary>
-	/// Gets the singleton instance.
-	/// </summary>
-	/// <value>
-	/// The instance of this singleton.
-	/// </value>
+		/// <summary>
+		/// Gets the singleton instance.
+		/// </summary>
+		/// <value>
+		/// The instance of this singleton.
+		/// </value>
 //	public static T Instance
 //	{
 //		get
@@ -80,81 +79,83 @@ public class OCSingletonScriptableObject<T> : ScriptableObject
 //		}
 //	}
 		
-	protected static U GetInstance<U>() where U : T
-	{
-		if(_instance == null && !Instantiate<U>())
+		protected static U GetInstance<U> () where U : T
 		{
-			Debug.LogError
-			( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " 
-			+ typeof(U) 
-			+ " does not exist and could not be instantiated."
-			);
+			try {
+				if (_instance == null && !Instantiate<U> ()) {
+					Debug.LogError
+				("In OCSingletonMonoBehaviour.Instance, an instance of singleton " 
+				+ typeof(U) 
+				+ " does not exist and could not be instantiated."
+				);
+				}
+			
+			} catch (Exception ex) {
+				UnityEngine.Debug.Log ("Compare exception on object type " + typeof(U));
+			}
+		
+			return (U)_instance;
 		}
 			
-		return (U)_instance;	
-	}
-			
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#region Public Member Functions
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#region Private Member Functions
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 			
-	/// <summary>
-	/// Instantiate this singleton instance.
-	/// </summary>
-	protected static bool Instantiate<U>() where U : T
-	{
-		//Assert that we're not already instantiated
-		if(_instance != null)
+		/// <summary>
+		/// Instantiate this singleton instance.
+		/// </summary>
+		protected static bool Instantiate<U> () where U : T
 		{
-			throw new 
-				OCException("In OCSingletonScriptableObject.Instantiate, " +
+			//Assert that we're not already instantiated
+			if (_instance != null) {
+				throw new 
+				OCException ("In OCSingletonScriptableObject.Instantiate, " +
 					"we're already instantiated!");
-		}
+			}
 
-		_instance = (T)FindObjectOfType(typeof(U));
+			_instance = (T)FindObjectOfType (typeof(U));
 			
-		if(_instance == null)
-		{
-				_instance = (T)ScriptableObject.CreateInstance(typeof(U));
-		}
+			if (_instance == null) {
+				_instance = (T)ScriptableObject.CreateInstance (typeof(U));
+			}
 					
-		return _instance != null;
-	}
+			return _instance != null;
+		}
 		
 					
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#region Member Classes
 
-	//---------------------------------------------------------------------------		
+		//---------------------------------------------------------------------------		
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
-}// class OCSingletonScriptableObject
+	}// class OCSingletonScriptableObject
 
 }// namespace OpenCog.Utility
 
