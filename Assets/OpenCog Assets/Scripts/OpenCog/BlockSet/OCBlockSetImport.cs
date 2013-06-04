@@ -111,7 +111,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 		
 		BlockSet.BaseBlockSet.OCBlock[] blocks = ReadBlockList(blockSetNode);
 
-		Debug.Log("Are we setting a bunch of null blocks?");
+		//Debug.Log("Are we setting a bunch of null blocks?");
 
 		bool allNull = true;
 
@@ -124,7 +124,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 		if (allNull)
 			Debug.Log("Yep, we're setting a bunch of null blocks!");
 		else
-			Debug.Log("Nope, they're ok!");
+			//Debug.Log("Nope, they're ok!");
 
 		blockSet.Blocks = blocks;
 	}

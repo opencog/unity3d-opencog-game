@@ -51,7 +51,7 @@ public class OCInputController : OCSingletonScriptableObject<OCInputController>
 
 	//---------------------------------------------------------------------------
 	
-
+	private static OCInputController _instance;
 			
 	//---------------------------------------------------------------------------
 
@@ -63,7 +63,15 @@ public class OCInputController : OCSingletonScriptableObject<OCInputController>
 
 	//---------------------------------------------------------------------------
 		
-
+	public static OCInputController Instance
+	{
+		get {
+			if (_instance == null)
+				_instance = GetInstance<OCInputController>();
+			
+			return _instance;
+		}
+	}
 			
 	//---------------------------------------------------------------------------
 

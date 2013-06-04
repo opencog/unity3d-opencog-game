@@ -63,6 +63,8 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// Is the logger enabled?
 	/// </summary>
 	private bool _isLogEnabled;
+	
+	
 
 	//---------------------------------------------------------------------------
 
@@ -82,7 +84,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// <value>
 	/// The current log level.
 	/// </value>
-	static public LogLevel CurrentLevel
+	public static LogLevel CurrentLevel
 	{
 		get{ return Instance._currentLevel;}
 		set{ Instance._currentLevel = value;}
@@ -94,11 +96,21 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// <value>
 	/// <c>true</c> if this instance is log enabled; otherwise, <c>false</c>.
 	/// </value>
-	static public bool IsLogEnabled
+	public static bool IsLogEnabled
 	{
 		get{ return Instance._isLogEnabled;}
 		set{ Instance._isLogEnabled = value;}
-	}		
+	}	
+	
+	
+	public static OCLogger Instance
+	{
+		get 
+		{
+			return GetInstance<OCLogger>();	
+		}
+	}
+	
 
 			
 	//---------------------------------------------------------------------------
@@ -138,7 +150,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// <param name='message'>
 	/// Log info object, usually a string.
 	/// </param>
-	static public void Error(System.Object message)
+	public static void Error(System.Object message)
 	{
 		Instance.Log(LogLevel.ERROR, message, true);
 	}
@@ -149,7 +161,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// <param name='message'>
 	/// Log info object, usually a string.
 	/// </param>
-	static public void Warn(System.Object message)
+	public static void Warn(System.Object message)
 	{
 		Instance.Log(LogLevel.WARN, message);
 	}
@@ -160,7 +172,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// <param name='message'>
 	/// Log info object, usually a string.
 	/// </param>
-	static public void Info(System.Object message)
+	public static void Info(System.Object message)
 	{
 		Instance.Log(LogLevel.INFO, message);
 	}
@@ -172,7 +184,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// <param name='message'>
 	/// Log info object, usually a string.
 	/// </param>
-	static public void Debugging(System.Object message)
+	public static void Debugging(System.Object message)
 	{
 		if (Instance != null)
 			Instance.Log(LogLevel.DEBUG, message, true);
@@ -185,7 +197,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// <param name='message'>
 	/// Log info object, usually a string.
 	/// </param>
-	static public void Fine(System.Object message)
+	public static void Fine(System.Object message)
 	{
 		Instance.Log(LogLevel.FINE, message);
 	}

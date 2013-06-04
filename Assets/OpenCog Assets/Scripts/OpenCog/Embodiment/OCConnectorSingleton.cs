@@ -51,7 +51,7 @@ using ScriptableObject = UnityEngine.ScriptableObject;
 [Serializable]
 	
 #endregion
-public class OCConnectorSingleton : OCNetworkElement
+public sealed class OCConnectorSingleton : OCNetworkElement
 {
 	//---------------------------------------------------------------------------
 
@@ -104,6 +104,7 @@ public class OCConnectorSingleton : OCNetworkElement
 	private OpenCog.Map.OCMap _map;
 		
 	private OCActionController _actionController;
+	private static OCConnectorSingleton _instance;
 
 
 	//---------------------------------------------------------------------------
@@ -153,7 +154,7 @@ public class OCConnectorSingleton : OCNetworkElement
 		get
 		{
 			if (!_map)
-				_map = UnityEngine.GameObject.Find("OCMap").GetComponent<OpenCog.Map.OCMap>() as OpenCog.Map.OCMap;
+				_map = UnityEngine.GameObject.Find("Map").GetComponent<OpenCog.Map.OCMap>() as OpenCog.Map.OCMap;
 
 			return _map;
 		}
@@ -202,7 +203,7 @@ public class OCConnectorSingleton : OCNetworkElement
 	{
 		get
 		{
-			return (OCConnectorSingleton)OCNetworkElement.Instance;
+			return (OCConnectorSingleton)OCNetworkElement.GetInstance<OCConnectorSingleton>();
 		}
 	}
 			

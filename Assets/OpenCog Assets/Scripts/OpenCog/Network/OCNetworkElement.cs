@@ -49,7 +49,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
+public class OCNetworkElement : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -106,6 +106,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	protected bool _isEstablished = false;
 	
+		
+	private static OCNetworkElement _instance;
 
 	//---------------------------------------------------------------------------
 
@@ -142,6 +144,21 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		get { return _unreadMessagesCount > 0; }
 	}		
+		
+	public static OCNetworkElement Instance
+	{
+		get {
+			if (_instance == null)	
+				_instance = new OCNetworkElement();
+			
+			return _instance;
+		}
+	}
+		
+	public OCServerListener Listener
+	{
+		get { return _listener; } 
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -304,11 +321,11 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		_routerIP = IPAddress.Parse(strConfigIP);
 		_routerPort = OCConfig.Instance.getInt("ROUTER_PORT", 16312);
 	
-		_listener = new OCServerListener(this);
+		_listener = new OCServerListener(OCNetworkElement.Instance);
 
-		StartCoroutine(Connect());
-		StartCoroutine(_listener.Listen());
-		StartCoroutine(RequestMessage(1));
+		StartCoroutine(OCNetworkElement.Instance.Connect());
+		StartCoroutine(OCNetworkElement.Instance._listener.Listen());
+		StartCoroutine(OCNetworkElement.Instance.RequestMessage(1));
 	}
 	
 	/// <summary>
@@ -642,6 +659,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public OCNetworkElement()
 	{
+			UnityEngine.Debug.Log ("OCNetworkElement::OCNetworkElement");
 	}
 		
 	public const int CONNECTION_TIMEOUT = 10;
