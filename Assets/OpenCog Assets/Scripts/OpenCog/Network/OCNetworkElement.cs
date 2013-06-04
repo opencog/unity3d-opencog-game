@@ -318,7 +318,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		StopCoroutine("Listener.Listen");
 		StopCoroutine("RequestMessage");
-		_listener.Stop();
+		//_listener.Stop();
 		Disconnect();
 		OCPortManager.ReleasePort(_port);
 	}

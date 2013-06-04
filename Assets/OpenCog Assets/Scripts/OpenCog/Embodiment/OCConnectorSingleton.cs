@@ -31,6 +31,7 @@ using OCEmbodimentXMLTags = OpenCog.OCEmbodimentXMLTags;
 using OCEmotionalExpression = OpenCog.OCEmotionalExpression;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using ScriptableObject = UnityEngine.ScriptableObject;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -372,8 +373,9 @@ public class OCConnectorSingleton : OCNetworkElement
     _currentDemandName = "";
     
     // Load settings from file.
-    if (_settingsFilename.Length > 0) {
-        new OCConfig().LoadFromFile(_settingsFilename);
+    if (_settingsFilename.Length > 0) 
+		{
+        ScriptableObject.CreateInstance<OCConfig>().LoadFromFile(_settingsFilename);
     }
     
     // Initialize NetworkElement
