@@ -92,7 +92,7 @@ public class OCEmotionalExpression : OCMonoBehaviour
 
 	void Start()
 	{
-		_face = transform.Find("robot/robotG/mainG/prt_18");
+		_face = transform.Find("robot/robotG/mainG/head_GEO");
 		if(!_face)
 		{
 			OCLogger.Error("Face of the robot is not found");
