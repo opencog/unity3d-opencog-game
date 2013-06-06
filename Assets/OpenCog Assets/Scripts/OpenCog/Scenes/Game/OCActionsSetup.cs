@@ -15,29 +15,39 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
+#region Usings, Namespaces, and Pragmas
+
 using System.Collections;
+using OpenCog.Actions;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
-using ProtoBuf;
-using UnityEngine;
+using ImplicitFields = ProtoBuf.ImplicitFields;
+using ProtoContract = ProtoBuf.ProtoContractAttribute;
+using Serializable = System.SerializableAttribute;
+using Transform = UnityEngine.Transform;
+using GameObject = UnityEngine.GameObject;
+using System.Collections.Generic;
+using System.Linq;
+
+//The private field is assigned but its value is never used
+#pragma warning disable 0414
+
+#endregion
 
 namespace OpenCog
 {
 
-namespace Actions
-{
-
 /// <summary>
-/// The OpenCog OCBasicAnimationAction.
+/// The OpenCog OCActionsSetup.
 /// </summary>
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
+	
 #endregion
-public abstract class OCBasicAnimationAction : OCAction
+public class OCActionsSetup : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -45,10 +55,9 @@ public abstract class OCBasicAnimationAction : OCAction
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
+	
 
-	bool _isTranslation = false;
-	bool _isRotation = false;
-
+			
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -58,30 +67,9 @@ public abstract class OCBasicAnimationAction : OCAction
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-	public bool IsRotation
-	{
-		get { return this._isRotation;}
-		set {	_isRotation = value;}
-	}
-
-	public bool IsTranslation {
-		get {return this._isTranslation;}
-		set {_isTranslation = value;}
-	}
-			
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------	
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
 		
 
-
+			
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -92,54 +80,20 @@ public abstract class OCBasicAnimationAction : OCAction
 
 	//---------------------------------------------------------------------------
 
-	public abstract void Initialize();
-
 	public void Awake()
 	{
-		Initialize();
-	}
-
-	public void Start()
-	{
-		Initialize();
-	}
-
-	public void OnEnable()
-	{
-		Initialize();
-	}
-
-	public virtual void Execute()
-	{
-		if(_isTranslation)
-			AnimationEffect.PlayAndTranslate();
-		else if(_isRotation)
-			AnimationEffect.PlayAndRotate();
-	}
-
-	public virtual bool IsExecuting()
-	{
-		return AnimationEffect.IsPlaying;
-	}
-
-	public virtual void Terminate()
-	{
-		AnimationEffect.Stop();
-	}
-
-	public virtual bool ShouldTerminate()
-	{
-		return AnimationEffect.IsPlayingButNotThis;
-	}
-
-	public void BasicAnimationStart()
-	{
-		AnimationEffect.Start();
-	}
-
-	public void BasicAnimationEnd()
-	{
-		AnimationEffect.End();
+		foreach(Transform child in transform)
+		{
+			List<OCAction> actions = 
+				child.gameObject.GetComponentsInChildren<OCAction>().ToList();
+				
+			//actions.AddRange(child.gameObject.GetComponents<OCAction>().ToList());
+				
+			if(actions == null || actions.Count == 0)
+			{
+				GameObject.Destroy(child.gameObject);
+			}
+		}
 	}
 
 	//---------------------------------------------------------------------------
@@ -151,7 +105,7 @@ public abstract class OCBasicAnimationAction : OCAction
 	#region Private Member Functions
 
 	//---------------------------------------------------------------------------
-			
+	
 	
 			
 	//---------------------------------------------------------------------------
@@ -160,9 +114,11 @@ public abstract class OCBasicAnimationAction : OCAction
 
 	//---------------------------------------------------------------------------
 
-	#region Member Classes
+	#region Other Members
 
 	//---------------------------------------------------------------------------		
+
+	
 
 	//---------------------------------------------------------------------------
 
@@ -170,9 +126,7 @@ public abstract class OCBasicAnimationAction : OCAction
 
 	//---------------------------------------------------------------------------
 
-}// class OCBasicAnimationAction
-
-}// namespace Actions
+}// class OCActionsSetup
 
 }// namespace OpenCog
 

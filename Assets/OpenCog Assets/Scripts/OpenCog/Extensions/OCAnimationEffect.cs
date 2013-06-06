@@ -37,7 +37,7 @@ namespace Extensions
 [OCExposePropertyFields]
 [Serializable]
 #endregion
-public class OCAnimationEffect
+public class OCAnimationEffect : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------

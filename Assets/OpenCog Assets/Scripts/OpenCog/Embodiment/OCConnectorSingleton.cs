@@ -199,7 +199,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	/// <value>
 	/// The instance of this singleton.
 	/// </value>
-	public static OCConnectorSingleton Instance
+	public new static OCConnectorSingleton Instance
 	{
 		get
 		{

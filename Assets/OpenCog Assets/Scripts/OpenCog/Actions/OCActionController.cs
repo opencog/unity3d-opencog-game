@@ -32,7 +32,7 @@ using TreeType = BLOpenCogCharacterBehaviours.TreeType;
 
 namespace OpenCog
 {
-namespace Character
+namespace Actions
 {
 
 /// <summary>

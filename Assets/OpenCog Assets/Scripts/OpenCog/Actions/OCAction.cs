@@ -17,10 +17,13 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
+using OCID = System.Guid;
+using Result = Behave.Runtime.BehaveResult;
 
 namespace OpenCog
 {
@@ -39,7 +42,7 @@ namespace Actions
 [OCExposePropertyFields]
 [Serializable]
 #endregion
-public abstract class OCAction : OCMonoBehaviour
+public class OCAction : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -47,18 +50,33 @@ public abstract class OCAction : OCMonoBehaviour
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
+			
 	/// <summary>
-	/// Indicates whether this action has an associated animation.
+	/// 	All actions are initiated by a source character or game object in the 
+	/// scene with zero, one, or two possible targets.  These OCID's may refer
+	/// to target objects themselves or simply dummy objects like waypoints
+	/// that specify locations (or other properties) for the action to target.
 	/// </summary>
-	private bool _hasAnimation = false;
-
+	private OCID _SourceID;
+	private OCID _StartTargetID;
+	private OCID _EndTargetID;
+			
 	/// <summary>
-	/// The animation associated with this action, if any.
+	/// 	Logically, actions in the game world may have up to one low-, mid-, and
+	/// high-level descriptor.  This is to allow OpenCog to specify plans using
+	/// the highest-level of descriptiveness possible, but technically actions
+	/// have a more discrete meaning.  In the context of the game world, each 
+	/// action is fully-described with exactly one low-, mid-, and high-level 
+	/// descriptor.  Under-described actions are implemented using behaviour
+	/// trees composed of fully-described actions, but OpenCog doesn't need to 
+	/// know all these details.  Since it's possible that OpenCog will request 
+	/// an action which is under-, fully-, or even over-described, we allow 
+	/// actions to have a list of descriptors.  We expect that in the vast
+	/// majority of cases, we'll use exactly three.
 	/// </summary>
-	private OCAnimationEffect _animationEffect = null;
-
-	private System.Guid _sourceID;
+	private List<string> _Descriptors;
+			
+	private bool _IsExecuting = false;
 
 	//---------------------------------------------------------------------------
 
@@ -69,45 +87,58 @@ public abstract class OCAction : OCMonoBehaviour
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-	/// <summary>
-	/// Gets or sets a value indicating whether this action has an associated
-	/// animation.
-	/// </summary>
-	/// <value>
-	/// <c>true</c> if this instance has an animation; otherwise, <c>false</c>.
-	/// </value>
-	public bool HasAnimation
+			
+	public List<string> Descriptors 
 	{
-		get {return _hasAnimation;}
-		set {_hasAnimation = value;}
-	}
-
-	/// <summary>
-	/// Gets or sets the animation associated with this action.
-	/// </summary>
-	/// <value>
-	/// The animation.
-	/// </value>
-	[OCTooltip("The animation to play for this action.")]
-	[OCBoolPropertyToggle("HasAnimation", true)]
-	public OCAnimationEffect AnimationEffect
+		get {return _Descriptors;}
+		set {_Descriptors = value;}
+	}			
+			
+	public bool ShouldStart
 	{
-		get {return _animationEffect;}
-		set {_animationEffect = value;}
+		get
+		{
+			bool shouldStart = true;
+			foreach(OCPrecondition precondition in PreCheck.GetInvocationList())
+			{
+				shouldStart &= precondition(this);
+				if(shouldStart == false)
+					break;
+			}
+			return shouldStart;
+		}
 	}
-
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------	
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
-
-
+			
+	public bool ShouldContinue
+	{
+		get
+		{
+			bool shouldContinue = true;
+			foreach(OCInvariant invariant in ContinueCheck.GetInvocationList())
+			{
+				shouldContinue &= invariant(this);
+				if(shouldContinue == false)
+					break;
+			}
+			return shouldContinue;
+		}
+	}		
+			
+	public bool ShouldEnd
+	{
+		get
+		{
+			bool shouldEnd = true;
+			foreach(OCPostcondition postcondition in PostCheck.GetInvocationList())
+			{
+				shouldEnd &= postcondition(this);
+				if(shouldEnd == false)
+					break;
+			}
+			return shouldEnd;
+		}
+	}			
+			
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -118,13 +149,10 @@ public abstract class OCAction : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	public abstract void Execute();
-
-	public abstract bool IsExecuting();
-
-	public abstract void Terminate();
-
-	public abstract bool ShouldTerminate();
+	public Result ExecuteBehave()
+	{
+		return (Result)Execute();
+	}
 
 	//---------------------------------------------------------------------------
 
@@ -136,7 +164,19 @@ public abstract class OCAction : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 			
-	
+	private ActionStatus Execute()
+	{
+		if(ShouldEnd)
+			return ActionStatus.FAILURE;
+				
+		if(ShouldContinue)
+			return ActionStatus.RUNNING;
+				
+		if(ShouldStart)
+			return ActionStatus.SUCCESS;
+
+		return ActionStatus.FAILURE;
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -147,10 +187,57 @@ public abstract class OCAction : OCMonoBehaviour
 	#region Other Members
 
 	//---------------------------------------------------------------------------
+			
+	/// <summary>
+	/// 	The OpenCog Precondition delegate.  Defines a common interface for 
+	/// testing whether the preconditions for a given action have been met.  For
+	/// example, preconditions for the move action might include the condition 
+	/// that we're not currently at our destination.
+	/// </summary>
+	public delegate bool OCPrecondition(OCAction action);
+			
+	/// <summary>
+	/// 	The OpenCog Invariant delegate.  Note that for actions, we use a 
+	/// slightly different definition for invariance.  An invariant condition for
+	/// an action is true only during execution of that action, unlike an 
+	/// invariant condition for a class which is true for the entire life of the
+	/// instance of that class.  We distinguish between "class invariance" and 
+	/// "action invariance" such that the playing of an animation as the result 
+	/// of an action would be considered action invariant but not class 
+	/// invariant.  Similarly, while an animation may play for the entirety of
+	/// execution for an action, it will not be playing when we check 
+	/// preconditions or postconditions.  This is in contrast to class invariants
+	/// which may change during execution but ultimately retain the same value
+	/// from the start at the end.
+	/// </summary>
+	public delegate bool OCInvariant(OCAction action);
+			
+	/// <summary>
+	/// 	The OpenCog Postcondition delegate.  Defines a common interface for
+	/// testing whether the postconditions for a given action have been met.  For
+	/// example, postconditions for the move action might include the condition
+	/// that we've arrived at our destination.
+	/// </summary>
+	public delegate bool OCPostcondition(OCAction action); 
+			
+	/// <summary>
+	/// 	The Pre-, Continue-, and Post-Check events are raised whenever we check
+	/// for whether we should start, continue, or end an action, respectively.  
+	/// See ShouldStart, ShouldContinue, and ShouldEnd above.
+	/// </summary>
+	public event OCPrecondition PreCheck;
+	public event OCInvariant ContinueCheck;
+	public event OCPostcondition PostCheck;
 
 	// TODO: Code below is a set of stubs that may not be needed in the final implementation.
 
-	public enum ActionStatus { NONE = 0, RUNNING = 1, SUCCESS = 2, FAILURE = 3, EXCEPTION = 4 };
+	public enum ActionStatus 
+	{ NONE
+	, RUNNING = Result.Running
+	, SUCCESS = Result.Success
+	, FAILURE = Result.Failure
+	, EXCEPTION 
+	};
 
 	private ActionStatus _status;
 	public ActionStatus Status
