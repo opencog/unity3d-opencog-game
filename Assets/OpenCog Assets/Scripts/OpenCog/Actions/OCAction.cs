@@ -76,6 +76,7 @@ public class OCAction : OCMonoBehaviour
 	/// actions to have a list of descriptors.  We expect that in the vast
 	/// majority of cases, we'll use exactly three.
 	/// </summary>
+	[SerializeField]
 	private List<string> _Descriptors;
 			
 	private List<OCAnimationEffect> _AnimationEffects;

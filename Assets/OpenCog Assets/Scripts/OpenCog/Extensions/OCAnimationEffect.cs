@@ -36,6 +36,8 @@ namespace Extensions
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
+[ExecuteInEditMode]	
+	
 #endregion
 public class OCAnimationEffect : OCMonoBehaviour
 {
@@ -54,6 +56,7 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// <summary>
 	/// The Unity animation state that we're wrapping.
 	/// </summary>
+	[SerializeField]
 	private AnimationState _State = null;
 
 	/// <summary>
@@ -82,18 +85,18 @@ public class OCAnimationEffect : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	/// <summary>
-	/// Gets or sets the Unity animation state that we're wrapping.
-	/// </summary>
-	/// <value>
-	/// The Unity animation state that we're wrapping.
-	/// </value>
-	[OCTooltip("The Unity animation state that we're wrapping.")]
-	public AnimationState State
-	{
-		get{ return _State;}
-		set{ _State = value;}
-	}
+//	/// <summary>
+//	/// Gets or sets the Unity animation state that we're wrapping.
+//	/// </summary>
+//	/// <value>
+//	/// The Unity animation state that we're wrapping.
+//	/// </value>
+//	[OCTooltip("The Unity animation state that we're wrapping.")]
+//	public AnimationState State
+//	{
+//		get{ return _State;}
+//		set{ _State = value;}
+//	}
 
 	/// <summary>
 	/// Gets or sets the length of the animation's cross fade.
@@ -305,38 +308,16 @@ public class OCAnimationEffect : OCMonoBehaviour
 
 	#endregion
 
-	//---------------------------------------------------------------------------	
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
-
-	/// <summary>
-	/// Initializes a new instance of the
-	/// <see cref="OpenCog.Extensions.OCAnimationEffect"/> class.
-	/// </summary>
-
-	public OCAnimationEffect()
-	{
-	}
-
-	public OCAnimationEffect(OCAnimationEffect anim)
-	{
-		FadeLength = anim.FadeLength;
-		Target = anim.Target;
-		State = anim.State;
-		_iTweenParams = anim._iTweenParams;
-	}
-
-	//---------------------------------------------------------------------------
-
-	#endregion
-
 	//---------------------------------------------------------------------------
 
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+			
+	public void OnEnable()
+	{
+		Initialize();
+	}
 
 	/// <summary>
 	/// Initialize the OpenCog Animation with the specified target and
@@ -348,13 +329,10 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// <param name='animationState'>
 	/// The Unity animation state that corresponds to this OpenCog animation.
 	/// </param>
-	public void Initialize(GameObject target, AnimationState animationState)
+	public void Initialize()
 	{
-
-		Target = target;
-		State = animationState;
 		_iTweenParams = new Hashtable();
-		Time = State.length / State.speed + 0.01f;
+		Time = _State.length / _State.speed + 0.01f;
 		EaseType = "linear";//iTween.EaseType.linear;
 		Delay = 0;
 
@@ -380,7 +358,7 @@ public class OCAnimationEffect : OCMonoBehaviour
 
 	public bool IsPlaying
 	{
-		get { return _Target.animation.IsPlaying(State.name);}
+		get { return _Target.animation.IsPlaying(_State.name);}
 	}
 
 	public bool IsPlayingButNotThis
@@ -391,7 +369,7 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// <summary>
 	/// Call from the function which is the value of OnStart.
 	/// </summary>
-	public void Start()
+	public void StartAnimationEffect()
 	{
 		_Target.animation.CrossFade(_State.name, _FadeLength);
 	}
@@ -399,7 +377,7 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// <summary>
 	/// Call from the function which is the value of OnEnd.
 	/// </summary>
-	public void End()
+	public void EndAnimationEffect()
 	{
 		if(_State.wrapMode != WrapMode.Loop)
 		{

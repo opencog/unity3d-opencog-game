@@ -82,18 +82,7 @@ public class OCActionsSetup : OCMonoBehaviour
 
 	public void Awake()
 	{
-		foreach(Transform child in transform)
-		{
-			List<OCAction> actions = 
-				child.gameObject.GetComponentsInChildren<OCAction>().ToList();
-				
-			//actions.AddRange(child.gameObject.GetComponents<OCAction>().ToList());
-				
-			if(actions == null || actions.Count == 0)
-			{
-				GameObject.Destroy(child.gameObject);
-			}
-		}
+		CullUselessChildren(gameObject);
 	}
 
 	//---------------------------------------------------------------------------
@@ -106,7 +95,26 @@ public class OCActionsSetup : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	
+	private void CullUselessChildren(GameObject parent)
+	{
+		foreach(Transform child in parent.transform)
+		{
+			List<OCAction> actions = 
+				child.gameObject.GetComponentsInChildren<OCAction>(true).ToList();
+				
+			//actions.AddRange(child.gameObject.GetComponents<OCAction>().ToList());
+				
+			if(actions == null || actions.Count == 0)
+			{
+				GameObject.Destroy(child.gameObject);
+			}
+			else
+			{
+				if(child.gameObject.GetComponent<OCAction>() == null)
+					CullUselessChildren(child.gameObject);
+			}
+		}
+	}
 			
 	//---------------------------------------------------------------------------
 
