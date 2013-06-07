@@ -28,7 +28,7 @@ namespace OpenCog
 
 [ExecuteInEditMode]
 [CustomEditor(typeof(OCAnimationEffect))]
-public class OCAnimationEditor : OCDefaultEditor
+public class OCAnimationEffectEditor : OCDefaultEditor
 {
 
 	//---------------------------------------------------------------------------

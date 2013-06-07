@@ -24,6 +24,8 @@ using ProtoBuf;
 using UnityEngine;
 using OCID = System.Guid;
 using Result = Behave.Runtime.BehaveResult;
+using System.Linq;
+using OpenCog.Map;
 
 namespace OpenCog
 {
@@ -57,9 +59,9 @@ public class OCAction : OCMonoBehaviour
 	/// to target objects themselves or simply dummy objects like waypoints
 	/// that specify locations (or other properties) for the action to target.
 	/// </summary>
-	private OCID _SourceID;
-	private OCID _StartTargetID;
-	private OCID _EndTargetID;
+	private GameObject _Source;
+	private GameObject _StartTarget;
+	private GameObject _EndTarget;
 			
 	/// <summary>
 	/// 	Logically, actions in the game world may have up to one low-, mid-, and
@@ -76,7 +78,7 @@ public class OCAction : OCMonoBehaviour
 	/// </summary>
 	private List<string> _Descriptors;
 			
-	private bool _IsExecuting = false;
+	private List<OCAnimationEffect> _AnimationEffects;
 
 	//---------------------------------------------------------------------------
 
@@ -87,6 +89,11 @@ public class OCAction : OCMonoBehaviour
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
+			
+	public string Name
+	{
+		get { return _Descriptors.Aggregate((a, b) => a + b); }
+	}
 			
 	public List<string> Descriptors 
 	{
@@ -149,10 +156,158 @@ public class OCAction : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
+	public void Start()
+	{
+		_AnimationEffects = 
+			gameObject.GetComponentsInChildren<OCAnimationEffect>().ToList();
+				
+		DontDestroyOnLoad(this);
+	}
+			
 	public Result ExecuteBehave()
 	{
 		return (Result)Execute();
 	}
+	
+	
+			
+	//	The following can be used as Precondition, Invariant, or Postcondition
+	//	delegates.
+	
+	
+	public static bool IsSourceGrounded(OCAction action)
+	{
+		return action._Source.GetComponent<CharacterController>().isGrounded;
+	}
+			
+	public static bool IsPathOpenForSourceForwardDrop(OCAction action)
+	{
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+				
+		CharacterController charController = 
+			action._Source.GetComponent<CharacterController>();
+				
+		return 
+			map.IsPathOpen
+			(	action.gameObject.transform
+			, charController.height
+			, OCMap.PathDirection.ForwardDrop
+			)
+		;
+	}
+			
+	public static bool IsPathOpenForSourceForwardClimb(OCAction action)
+	{
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+				
+		CharacterController charController = 
+			action._Source.GetComponent<CharacterController>();
+				
+		return 
+			map.IsPathOpen
+			(	action.gameObject.transform
+			, charController.height
+			, OCMap.PathDirection.ForwardClimb
+			)
+		;
+	}
+			
+	public static bool IsPathOpenForSourceForwardRun(OCAction action)
+	{
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+				
+		CharacterController charController = 
+			action._Source.GetComponent<CharacterController>();
+				
+		return 
+			map.IsPathOpen
+			(	action.gameObject.transform
+			, charController.height
+			, OCMap.PathDirection.ForwardRun
+			)
+		;
+	}			
+			
+	public static bool IsPathOpenForSourceForwardJump(OCAction action)
+	{
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+				
+		CharacterController charController = 
+			action._Source.GetComponent<CharacterController>();
+				
+		return 
+			map.IsPathOpen
+			(	action.gameObject.transform
+			, charController.height
+			, OCMap.PathDirection.ForwardJump
+			)
+		;
+	}						
+			
+	public static bool IsEndTargetCloseForward(OCAction action)
+	{
+		Vector3 sourcePosition = action._Source.gameObject.transform.position;
+		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
+		Vector3 sourceForward = action._Source.gameObject.transform.forward;
+				
+		Vector3 distance = targetPosition - sourcePosition;
+		float projection = Vector3.Dot(distance, sourceForward);
+		return projection >= 0.5f;
+	}
+			
+	public static bool IsEndTargetFarForward(OCAction action)
+	{
+		Vector3 sourcePosition = action._Source.gameObject.transform.position;
+		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
+		Vector3 sourceForward = action._Source.gameObject.transform.forward;
+				
+		Vector3 distance = targetPosition - sourcePosition;
+		float projection = Vector3.Dot(distance, sourceForward);
+		return projection >= 3.5f;
+	}
+			
+	public static bool IsEndTargetFarUp(OCAction action)
+	{
+		Vector3 sourcePosition = action._Source.gameObject.transform.position;
+		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = action._Source.gameObject.transform.up;
+				
+		Vector3 distance = targetPosition - sourcePosition;
+		float projection = Vector3.Dot(distance, sourceUp);
+		return projection >= 1.5f;
+	}		
+			
+	public static bool IsEndTargetMoreLeft(OCAction action)
+	{
+		Vector3 sourcePosition = action._Source.gameObject.transform.position;
+		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
+		Vector3 sourceRight = action._Source.gameObject.transform.right;
+		Vector3 sourceLeft = -action._Source.gameObject.transform.right;
+				
+		Vector3 distance = targetPosition - sourcePosition;
+		float projectionLeft = Vector3.Dot(distance, sourceLeft);
+		float projectionRight = Vector3.Dot(distance, sourceRight);
+				
+		return projectionLeft > projectionRight;
+	}
+			
+	public static bool IsEndTargetMoreRight(OCAction action)
+	{
+		Vector3 sourcePosition = action._Source.gameObject.transform.position;
+		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
+		Vector3 sourceRight = action._Source.gameObject.transform.right;
+		Vector3 sourceLeft = -action._Source.gameObject.transform.right;
+				
+		Vector3 distance = targetPosition - sourcePosition;
+		float projectionLeft = Vector3.Dot(distance, sourceLeft);
+		float projectionRight = Vector3.Dot(distance, sourceRight);
+				
+		return projectionRight > projectionLeft;
+	}			
+			
+	
+			
+	
 
 	//---------------------------------------------------------------------------
 
@@ -166,16 +321,45 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus Execute()
 	{
-		if(ShouldEnd)
-			return ActionStatus.FAILURE;
+		// Checks if all Preconditions are true.
+		if(ShouldEnd)	return EndAction();					
 				
-		if(ShouldContinue)
-			return ActionStatus.RUNNING;
+		// Checks if all Invariants are true.
+		if(ShouldContinue)	return ContinueAction();
 				
-		if(ShouldStart)
-			return ActionStatus.SUCCESS;
+		// Checks if all Postconditions are true.
+		if(ShouldStart)	return StartAction();
 
 		return ActionStatus.FAILURE;
+	}
+			
+	private ActionStatus StartAction()
+	{
+		// Start animation effects
+		foreach(OCAnimationEffect afx in _AnimationEffects)
+		{
+			afx.Play();
+		}
+			
+		return ActionStatus.SUCCESS;
+	}
+			
+	private ActionStatus ContinueAction()
+	{
+		// Animation effects continue automatically
+				
+		return ActionStatus.RUNNING;
+	}
+			
+	private ActionStatus EndAction()
+	{
+		// End animation effects
+		foreach(OCAnimationEffect afx in _AnimationEffects)
+		{
+			afx.Stop();
+		}
+			
+		return ActionStatus.SUCCESS;
 	}
 			
 	//---------------------------------------------------------------------------
@@ -239,29 +423,10 @@ public class OCAction : OCMonoBehaviour
 	, EXCEPTION 
 	};
 
-	private ActionStatus _status;
-	public ActionStatus Status
-	{
-		get { return _status; }
-		set { _status = value; }
-	}
-
-	public class Target
-	{
-
-	}
-
-	private string _name;
-	public string Name
-	{
-		get { return _name; }
-		set { _name = value; }
-	}
-
 	// TODO: Once OCAction is data driven, this function should determine action type from the actionData and create an OCAction with that data.
 	public static OCAction CreateAction(System.Xml.XmlNode actionData, bool adjustCoordinates)
 	{
-				return new OpenCog.Actions.OCIdleAction();
+				return new OpenCog.Actions.OCAction();
 	}
 
 	// TODO: End of stub code

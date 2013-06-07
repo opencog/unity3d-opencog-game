@@ -32,6 +32,7 @@ using TreeType = BLOpenCogCharacterBehaviours.TreeType;
 
 namespace OpenCog
 {
+	
 namespace Actions
 {
 
@@ -172,312 +173,312 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //			return BehaveResult.Success;
 //	}
 
-	public BehaveResult FallAction 
-	{
-		get {
-			OCFallForwardAction action = gameObject.GetComponent<OCFallForwardAction> ();
-
-			BehaveResult ret = DefaultActionTickHandler (action);
-
-			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
-
-			if (ret != BehaveResult.Success)
-				return ret;
-
-			CharacterController charController = gameObject.GetComponent<CharacterController> ();
-
-			Vector3 robotPos = gameObject.transform.position;
-			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
-			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
-			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
-			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
-
-			if (TargetBlockPos != Vector3i.zero
-				&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardDrop)
-//					&& robotForwardDistance <= 2.5f
-			&& robotForwardDistance >= 0.5f
-//					&& robotRightDistance < 0.5f
-//					&& robotLeftDistance < 0.5f
-//					&& charController.isGrounded
-			) {
-				action.Execute ();
-				//Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Success");
-				return BehaveResult.Success;
-			}
-
-			//Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Failure");
-			return BehaveResult.Failure;
-		}
-
-		set {
-		}
-	}
-
-	public BehaveResult IdleAction 
-	{
-	// tick handler
-		get {
-			OCIdleAction action = gameObject.GetComponent<OCIdleAction> ();
-			CharacterController charController = gameObject.GetComponent<CharacterController> ();
-
-			BehaveResult ret = DefaultActionTickHandler (action);
-
-			if (ret != BehaveResult.Success)
-				return ret;
-
-			if (TargetBlockPos == Vector3i.zero && charController.isGrounded) {
-				action.Execute ();
-				//Debug.Log("In OCRobotAgent.IdleAction, " + action.GetType() + " Success");
-				return BehaveResult.Success;
-			}
-
-			//Debug.Log("In OCRobotAgent.IdleAction, " + action.GetType() + " Failure");
-			return BehaveResult.Failure;
-		}
-
-	// reset handler
-		set {
-		}
-	}
-
-	public BehaveResult ClimbAction 
-	{
-	// tick handler
-		get {
-			OCClimbUpAction action = gameObject.GetComponent<OCClimbUpAction> ();
-
-			BehaveResult ret = DefaultActionTickHandler (action);
-
-			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
-
-			if (ret != BehaveResult.Success)
-				return ret;
-
-			CharacterController charController = gameObject.GetComponent<CharacterController> ();
-
-			Vector3 robotPos = gameObject.transform.position;
-			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
-			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
-
-			if (TargetBlockPos != Vector3i.zero
-			//&& robotUpDistance >= 1.5f
-			&& robotForwardDistance >= 0.5f
-			&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardClimb)
-			&& charController.isGrounded) {
-				action.Execute ();
-				//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
-				return BehaveResult.Success;
-			}
-
-			//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Failure");
-			return BehaveResult.Failure;
-		}
-
-	// reset handler
-		set {
-		}
-	}
-
-	public BehaveResult RunAction 
-	{
-	// tick handler
-		get {
-			OCRunForwardAction action = gameObject.GetComponent<OCRunForwardAction> ();
-
-			BehaveResult ret = DefaultActionTickHandler (action);
-
-			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
-
-			if (ret != BehaveResult.Success)
-				return ret;
-
-			CharacterController charController = gameObject.GetComponent<CharacterController> ();
-
-			Vector3 robotPos = gameObject.transform.position;
-			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
-			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
-			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
-			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
-
-			if (TargetBlockPos != Vector3i.zero
-				&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardRun)
-			&& robotForwardDistance > 3.5f
-//					&& robotRightDistance < 1.5f
-//					&& robotLeftDistance < 1.5f
-			&& charController.isGrounded
-			) {
-				action.Execute ();
-				//Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Success");
-				return BehaveResult.Success;
-			}
-
-			//Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Failure");
-			return BehaveResult.Failure;
-		}
-
-	// reset handler
-		set {
-		}
-	}
-
-	public BehaveResult JumpAction 
-	{
-	// tick handler
-		get {
-			OCJumpForwardAction action = gameObject.GetComponent<OCJumpForwardAction> ();
-
-			BehaveResult ret = DefaultActionTickHandler (action);
-
-			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
-
-			if (ret != BehaveResult.Success)
-				return ret;
-
-			CharacterController charController = gameObject.GetComponent<CharacterController> ();
-
-			Vector3 robotPos = gameObject.transform.position;
-			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
-			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
-
-			if (TargetBlockPos != Vector3i.zero
-				&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardJump)
-			&& robotUpDistance >= 1.5f
-			&& robotForwardDistance >= 0.0f
-			&& charController.isGrounded) {
-				action.Execute ();
-				//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Success");
-				return BehaveResult.Success;
-			}
-
-			//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Failure");
-			return BehaveResult.Failure;
-		}
-
-	// reset handler
-		set {
-		}
-	}
-
-	public BehaveResult TurnLeftAction 
-	{
-	// tick handler
-		get {
-			OCTurnLeftAction action = gameObject.GetComponent<OCTurnLeftAction> ();
-
-			BehaveResult ret = DefaultActionTickHandler (action);
-
-			if (ret != BehaveResult.Success)
-				return ret;
-
-			CharacterController charController = gameObject.GetComponent<CharacterController> ();
-
-			Vector3 robotPos = gameObject.transform.position;
-			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
-			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
-			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
-
-			if (TargetBlockPos != Vector3i.zero
-				&& ( robotLeftDistance >= 0.5f || robotForwardDistance < 0.0f)
-				&& charController.isGrounded) {
-				action.Execute ();
-				//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Success");
-				return BehaveResult.Success;
-			}
-
-			//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Failure");
-			return BehaveResult.Failure;
-		}
-
-	// reset handler
-		set {
-		}
-	}
-
-	public BehaveResult TurnRightAction 
-	{
-	// tick handler
-		get {
-			OCTurnRightAction action = gameObject.GetComponent<OCTurnRightAction> ();
-
-			BehaveResult ret = DefaultActionTickHandler (action);
-
-			if (ret != BehaveResult.Success)
-				return ret;
-
-			CharacterController charController = gameObject.GetComponent<CharacterController> ();
-
-			Vector3 robotPos = gameObject.transform.position;
-			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
-			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
-			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
-
-			if (TargetBlockPos != Vector3i.zero
-				&& robotRightDistance >= 0.5f
-				&& charController.isGrounded) {
-				action.Execute ();
-				//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Success");
-				return BehaveResult.Success;
-			}
-
-			//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Failure");
-			return BehaveResult.Failure;
-		}
-
-	// reset handler
-		set {
-		}
-	}
-
-	public BehaveResult WalkAction 
-	{
-	// tick handler
-		get {
-			OCWalkForwardAction action = gameObject.GetComponent<OCWalkForwardAction> ();
-
-			BehaveResult ret = DefaultActionTickHandler (action);
-
-			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
-
-			if (ret != BehaveResult.Success)
-				return ret;
-
-			CharacterController charController = gameObject.GetComponent<CharacterController> ();
-
-			Vector3 robotPos = gameObject.transform.position;
-			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
-			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
-			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
-			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
-
-			if (TargetBlockPos != Vector3i.zero
-				&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardWalk)
-			&& robotForwardDistance <= 3.5f
-			&& robotForwardDistance >= 0.5f
-			&& robotUpDistance <= 1.5f
-//					&& robotRightDistance < 0.5f
-//					&& robotLeftDistance < 0.5f
-			&& charController.isGrounded
-			) {
-				action.Execute ();
-				//Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Success");
-				return BehaveResult.Success;
-			}
-
-			//Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Failure");
-			return BehaveResult.Failure;
-		}
-
-	// reset handler
-		set {
-		}
-	}
+//	public BehaveResult FallAction 
+//	{
+//		get {
+//			OCFallForwardAction action = gameObject.GetComponent<OCFallForwardAction> ();
+//
+//			BehaveResult ret = DefaultActionTickHandler (action);
+//
+//			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
+//
+//			if (ret != BehaveResult.Success)
+//				return ret;
+//
+//			CharacterController charController = gameObject.GetComponent<CharacterController> ();
+//
+//			Vector3 robotPos = gameObject.transform.position;
+//			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+//			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
+//			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
+//			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
+//			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
+//
+//			if (TargetBlockPos != Vector3i.zero
+//				&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardDrop)
+////					&& robotForwardDistance <= 2.5f
+//			&& robotForwardDistance >= 0.5f
+////					&& robotRightDistance < 0.5f
+////					&& robotLeftDistance < 0.5f
+////					&& charController.isGrounded
+//			) {
+//				action.Execute ();
+//				//Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Success");
+//				return BehaveResult.Success;
+//			}
+//
+//			//Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//		set {
+//		}
+//	}
+//
+//	public BehaveResult IdleAction 
+//	{
+//	// tick handler
+//		get {
+//			OCIdleAction action = gameObject.GetComponent<OCIdleAction> ();
+//			CharacterController charController = gameObject.GetComponent<CharacterController> ();
+//
+//			BehaveResult ret = DefaultActionTickHandler (action);
+//
+//			if (ret != BehaveResult.Success)
+//				return ret;
+//
+//			if (TargetBlockPos == Vector3i.zero && charController.isGrounded) {
+//				action.Execute ();
+//				//Debug.Log("In OCRobotAgent.IdleAction, " + action.GetType() + " Success");
+//				return BehaveResult.Success;
+//			}
+//
+//			//Debug.Log("In OCRobotAgent.IdleAction, " + action.GetType() + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//	// reset handler
+//		set {
+//		}
+//	}
+//
+//	public BehaveResult ClimbAction 
+//	{
+//	// tick handler
+//		get {
+//			OCClimbUpAction action = gameObject.GetComponent<OCClimbUpAction> ();
+//
+//			BehaveResult ret = DefaultActionTickHandler (action);
+//
+//			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
+//
+//			if (ret != BehaveResult.Success)
+//				return ret;
+//
+//			CharacterController charController = gameObject.GetComponent<CharacterController> ();
+//
+//			Vector3 robotPos = gameObject.transform.position;
+//			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+//			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
+//			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
+//
+//			if (TargetBlockPos != Vector3i.zero
+//			//&& robotUpDistance >= 1.5f
+//			&& robotForwardDistance >= 0.5f
+//			&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardClimb)
+//			&& charController.isGrounded) {
+//				action.Execute ();
+//				//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
+//				return BehaveResult.Success;
+//			}
+//
+//			//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//	// reset handler
+//		set {
+//		}
+//	}
+//
+//	public BehaveResult RunAction 
+//	{
+//	// tick handler
+//		get {
+//			OCRunForwardAction action = gameObject.GetComponent<OCRunForwardAction> ();
+//
+//			BehaveResult ret = DefaultActionTickHandler (action);
+//
+//			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
+//
+//			if (ret != BehaveResult.Success)
+//				return ret;
+//
+//			CharacterController charController = gameObject.GetComponent<CharacterController> ();
+//
+//			Vector3 robotPos = gameObject.transform.position;
+//			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+//			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
+//			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
+//			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
+//			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
+//
+//			if (TargetBlockPos != Vector3i.zero
+//				&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardRun)
+//			&& robotForwardDistance > 3.5f
+////					&& robotRightDistance < 1.5f
+////					&& robotLeftDistance < 1.5f
+//			&& charController.isGrounded
+//			) {
+//				action.Execute ();
+//				//Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Success");
+//				return BehaveResult.Success;
+//			}
+//
+//			//Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//	// reset handler
+//		set {
+//		}
+//	}
+//
+//	public BehaveResult JumpAction 
+//	{
+//	// tick handler
+//		get {
+//			OCJumpForwardAction action = gameObject.GetComponent<OCJumpForwardAction> ();
+//
+//			BehaveResult ret = DefaultActionTickHandler (action);
+//
+//			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
+//
+//			if (ret != BehaveResult.Success)
+//				return ret;
+//
+//			CharacterController charController = gameObject.GetComponent<CharacterController> ();
+//
+//			Vector3 robotPos = gameObject.transform.position;
+//			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+//			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
+//			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
+//
+//			if (TargetBlockPos != Vector3i.zero
+//				&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardJump)
+//			&& robotUpDistance >= 1.5f
+//			&& robotForwardDistance >= 0.0f
+//			&& charController.isGrounded) {
+//				action.Execute ();
+//				//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Success");
+//				return BehaveResult.Success;
+//			}
+//
+//			//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//	// reset handler
+//		set {
+//		}
+//	}
+//
+//	public BehaveResult TurnLeftAction 
+//	{
+//	// tick handler
+//		get {
+//			OCTurnLeftAction action = gameObject.GetComponent<OCTurnLeftAction> ();
+//
+//			BehaveResult ret = DefaultActionTickHandler (action);
+//
+//			if (ret != BehaveResult.Success)
+//				return ret;
+//
+//			CharacterController charController = gameObject.GetComponent<CharacterController> ();
+//
+//			Vector3 robotPos = gameObject.transform.position;
+//			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+//			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
+//			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
+//			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
+//
+//			if (TargetBlockPos != Vector3i.zero
+//				&& ( robotLeftDistance >= 0.5f || robotForwardDistance < 0.0f)
+//				&& charController.isGrounded) {
+//				action.Execute ();
+//				//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Success");
+//				return BehaveResult.Success;
+//			}
+//
+//			//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//	// reset handler
+//		set {
+//		}
+//	}
+//
+//	public BehaveResult TurnRightAction 
+//	{
+//	// tick handler
+//		get {
+//			OCTurnRightAction action = gameObject.GetComponent<OCTurnRightAction> ();
+//
+//			BehaveResult ret = DefaultActionTickHandler (action);
+//
+//			if (ret != BehaveResult.Success)
+//				return ret;
+//
+//			CharacterController charController = gameObject.GetComponent<CharacterController> ();
+//
+//			Vector3 robotPos = gameObject.transform.position;
+//			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+//			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
+//			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
+//			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
+//
+//			if (TargetBlockPos != Vector3i.zero
+//				&& robotRightDistance >= 0.5f
+//				&& charController.isGrounded) {
+//				action.Execute ();
+//				//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Success");
+//				return BehaveResult.Success;
+//			}
+//
+//			//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//	// reset handler
+//		set {
+//		}
+//	}
+//
+//	public BehaveResult WalkAction 
+//	{
+//	// tick handler
+//		get {
+//			OCWalkForwardAction action = gameObject.GetComponent<OCWalkForwardAction> ();
+//
+//			BehaveResult ret = DefaultActionTickHandler (action);
+//
+//			OpenCog.Map.OCMap map = (OpenCog.Map.OCMap)GameObject.FindObjectOfType (typeof(OpenCog.Map.OCMap));
+//
+//			if (ret != BehaveResult.Success)
+//				return ret;
+//
+//			CharacterController charController = gameObject.GetComponent<CharacterController> ();
+//
+//			Vector3 robotPos = gameObject.transform.position;
+//			Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+//			float robotForwardDistance = Vector3.Dot (distanceVec, gameObject.transform.forward);
+//			float robotUpDistance = Vector3.Dot (distanceVec, gameObject.transform.up);
+//			float robotRightDistance = Vector3.Dot (distanceVec, gameObject.transform.right);
+//			float robotLeftDistance = Vector3.Dot (distanceVec, -gameObject.transform.right);
+//
+//			if (TargetBlockPos != Vector3i.zero
+//				&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardWalk)
+//			&& robotForwardDistance <= 3.5f
+//			&& robotForwardDistance >= 0.5f
+//			&& robotUpDistance <= 1.5f
+////					&& robotRightDistance < 0.5f
+////					&& robotLeftDistance < 0.5f
+//			&& charController.isGrounded
+//			) {
+//				action.Execute ();
+//				//Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Success");
+//				return BehaveResult.Success;
+//			}
+//
+//			//Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//	// reset handler
+//		set {
+//		}
+//	}
 
 	
 	public void UpdateAI ()
@@ -567,31 +568,31 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	//---------------------------------------------------------------------------
 
-	private BehaveResult DefaultActionTickHandler (OCAction action)
-	{
-		Vector3 robotPos = gameObject.transform.position;
-		Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-		
-		if (action == null)
-			return BehaveResult.Failure;
-
-		if (action.ShouldTerminate ()) {
-			//action.Terminate();
-			//Debug.Log ("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType () + " Failure");
-			return BehaveResult.Failure;
-		}
-
-		if (action.IsExecuting ()) {
-			//Debug.Log("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType() + " Running");
-			return BehaveResult.Running;
-		}
-
-		if (TargetBlockPos != Vector3i.zero) {
-			//Debug.Log("In OCRobotAgent.DefaultActionTickHandler, Distance to TNT block is: " + distanceVec.magnitude + ", Vector is: " + distanceVec);
-		}
-
-		return BehaveResult.Success;
-	}
+//	private BehaveResult DefaultActionTickHandler (OCAction action)
+//	{
+//		Vector3 robotPos = gameObject.transform.position;
+//		Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
+//		
+//		if (action == null)
+//			return BehaveResult.Failure;
+//
+//		if (action.ShouldTerminate ()) {
+//			//action.Terminate();
+//			//Debug.Log ("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType () + " Failure");
+//			return BehaveResult.Failure;
+//		}
+//
+//		if (action.IsExecuting ()) {
+//			//Debug.Log("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType() + " Running");
+//			return BehaveResult.Running;
+//		}
+//
+//		if (TargetBlockPos != Vector3i.zero) {
+//			//Debug.Log("In OCRobotAgent.DefaultActionTickHandler, Distance to TNT block is: " + distanceVec.magnitude + ", Vector is: " + distanceVec);
+//		}
+//
+//		return BehaveResult.Success;
+//	}
 	
 	//---------------------------------------------------------------------------
 

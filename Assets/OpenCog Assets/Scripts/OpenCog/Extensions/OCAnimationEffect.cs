@@ -49,12 +49,12 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// <summary>
 	/// The target Unity game object to be animated.
 	/// </summary>
-	private GameObject _target = null;
+	private GameObject _Target = null;
 
 	/// <summary>
 	/// The Unity animation state that we're wrapping.
 	/// </summary>
-	private AnimationState _state = null;
+	private AnimationState _State = null;
 
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
@@ -64,9 +64,11 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// <summary>
 	/// The length of the animation's cross fade.
 	/// </summary>
-	private float _fadeLength = 0.5f;
+	private float _FadeLength = 0.5f;
 
 //	private bool _initialized = false;
+			
+	private bool _IsTranslationVsRotation = true;
 
 
 
@@ -89,8 +91,8 @@ public class OCAnimationEffect : OCMonoBehaviour
 	[OCTooltip("The Unity animation state that we're wrapping.")]
 	public AnimationState State
 	{
-		get{ return _state;}
-		set{ _state = value;}
+		get{ return _State;}
+		set{ _State = value;}
 	}
 
 	/// <summary>
@@ -102,8 +104,8 @@ public class OCAnimationEffect : OCMonoBehaviour
 	[OCTooltip("The length of the animation's cross fade.")]
 	public float FadeLength
 	{
-		get{ return this._fadeLength;}
-		set{ _fadeLength = value;}
+		get{ return _FadeLength;}
+		set{ _FadeLength = value;}
 	}
 
 	/// <summary>
@@ -115,8 +117,8 @@ public class OCAnimationEffect : OCMonoBehaviour
 	[OCTooltip("The target Unity game object to be animated.")]
 	public GameObject Target
 	{
-		get{ return this._target;}
-		set{ _target = value;}
+		get{ return _Target;}
+		set{ _Target = value;}
 	}
 
 //	public bool IsInitialized
@@ -363,29 +365,27 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// <summary>
 	/// Play this animation.
 	/// </summary>
-	public void PlayAndTranslate()
+	public void Play()
 	{
-		iTween.MoveBy(_target, _iTweenParams);
-	}
-
-	public void PlayAndRotate()
-	{
-		iTween.RotateBy(_target, _iTweenParams);
+		if(_IsTranslationVsRotation)
+			iTween.MoveBy(_Target, _iTweenParams);
+		else
+			iTween.RotateBy(_Target, _iTweenParams);
 	}
 
 	public void Stop()
 	{
-		iTween.Stop(_target);
+		iTween.Stop(_Target);
 	}
 
 	public bool IsPlaying
 	{
-		get { return _target.animation.IsPlaying(State.name);}
+		get { return _Target.animation.IsPlaying(State.name);}
 	}
 
 	public bool IsPlayingButNotThis
 	{
-		get { return _target.animation.isPlaying && !IsPlaying;}
+		get { return _Target.animation.isPlaying && !IsPlaying;}
 	}
 
 	/// <summary>
@@ -393,7 +393,7 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// </summary>
 	public void Start()
 	{
-		_target.animation.CrossFade(_state.name, _fadeLength);
+		_Target.animation.CrossFade(_State.name, _FadeLength);
 	}
 
 	/// <summary>
@@ -401,9 +401,9 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// </summary>
 	public void End()
 	{
-		if(_state.wrapMode != WrapMode.Loop)
+		if(_State.wrapMode != WrapMode.Loop)
 		{
-			_target.animation.Stop();
+			_Target.animation.Stop();
 		}
 	}
 
