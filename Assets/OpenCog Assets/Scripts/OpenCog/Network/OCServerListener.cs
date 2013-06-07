@@ -115,7 +115,7 @@ public class OCServerListener : OCScriptableObject
 		
 	public IEnumerator Listen()
 	{
-		UnityEngine.Debug.Log("LISTEN!!");
+		//UnityEngine.Debug.Log("LISTEN!!");
 			
 		try
 		{
