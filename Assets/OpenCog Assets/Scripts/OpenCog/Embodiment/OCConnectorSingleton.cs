@@ -104,8 +104,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private OpenCog.Map.OCMap _map;
 		
 	private OCActionController _actionController;
-	private static OCConnectorSingleton _instance;
-
+	
+	private bool _firstRun = true;
 
 	//---------------------------------------------------------------------------
 
@@ -451,48 +451,53 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	public IEnumerator ConnectOAC()
 	{
-        // First step, connect to the router.
-        int timeout = 100;
-        while (!base._isEstablished && timeout > 0)
-        {
-            StartCoroutine(base.Connect());
-
-            yield return new UnityEngine.WaitForSeconds(1.0f);
-            timeout--;
-        }
-
-        if (timeout == 0)
-        {
-            OCLogger.Error("Breaking");
-            yield break;
-        }
-
-        // Second step, check if spawner is available to spawn an OAC instance.
-        bool isSpawnerAlive = IsElementAvailable(new OCConfig().get("SPAWNER_ID"));
-        timeout = 60;
-        while (!isSpawnerAlive && timeout > 0)
-        {
-            OCLogger.Info("Waiting for spawner...");
-            yield return new UnityEngine.WaitForSeconds(1f);
-            isSpawnerAlive = IsElementAvailable(new OCConfig().get("SPAWNER_ID"));
-            timeout--;
-        }
-
-        if (!isSpawnerAlive)
-        {
-            OCLogger.Error("Spawner is not available, OAC can not be launched.");
-            yield break;
-        }
-
-        // Finally, load the OAC by sending "load agent" command to spawner.
-        LoadOAC();
-        timeout = 100;
-        // Wait some time for OAC to be ready.
-        while (!_isInitialized && timeout > 0)
-        {
-            yield return new UnityEngine.WaitForSeconds(1f);
-            timeout--;
-        }
+		if (_firstRun)
+		{
+			_firstRun = false;
+			
+			 // First step, connect to the router.
+	        int timeout = 100;
+	        while (!base._isEstablished && timeout > 0)
+	        {
+	            StartCoroutine(base.Connect());
+	
+	            yield return new UnityEngine.WaitForSeconds(0.5f);
+	            timeout--;
+	        }
+	
+	        if (timeout == 0)
+	        {
+	            OCLogger.Error("Breaking");
+	            yield break;
+	        }
+	
+	        // Second step, check if spawner is available to spawn an OAC instance.
+	        bool isSpawnerAlive = IsElementAvailable(new OCConfig().get("SPAWNER_ID"));
+	        timeout = 60;
+	        while (!isSpawnerAlive && timeout > 0)
+	        {
+	            OCLogger.Info("Waiting for spawner...");
+	            yield return new UnityEngine.WaitForSeconds(1f);
+	            isSpawnerAlive = IsElementAvailable(new OCConfig().get("SPAWNER_ID"));
+	            timeout--;
+	        }
+	
+	        if (!isSpawnerAlive)
+	        {
+	            OCLogger.Error("Spawner is not available, OAC can not be launched.");
+	            yield break;
+	        }
+	
+	        // Finally, load the OAC by sending "load agent" command to spawner.
+	        LoadOAC();
+	        timeout = 100;
+	        // Wait some time for OAC to be ready.
+	        while (!_isInitialized && timeout > 0)
+	        {
+	            yield return new UnityEngine.WaitForSeconds(1f);
+	            timeout--;
+	        }
+		}
 	}
 
 	/**
