@@ -24,10 +24,10 @@ using OpenCog.Extensions;
 using OpenCog.Map;
 using ProtoBuf;
 using UnityEngine;
-using ContextType = BLOpenCogCharacterBehaviours.ContextType;
+using ContextType = BLOCBehaviours.ContextType;
 using OCID = System.Guid;
 using Tree = Behave.Runtime.Tree;
-using TreeType = BLOpenCogCharacterBehaviours.TreeType;
+using TreeType = BLOCBehaviours.TreeType;
 //using OpenCog.Aspects;
 
 namespace OpenCog
@@ -52,7 +52,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-
+			
+	[SerializeField]
+	private TreeType _TreeType;
 	private Tree _tree;
 	private Hashtable _idleParams;
 	private Vector3i _targetBlockPos = Vector3i.zero;
@@ -69,11 +71,18 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	//---------------------------------------------------------------------------
 
-	public Vector3i TargetBlockPos {
+	public Vector3i TargetBlockPos 
+	{
 		get { return _targetBlockPos;}
 		set { _targetBlockPos = value;}
 	}
-	
+
+	public TreeType TreeType 
+	{
+		get { return this._TreeType;}
+		set {	_TreeType = value;}
+	}	
+			
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -105,10 +114,18 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	public IEnumerator Start ()
 	{
 		_tree =
-		BLOpenCogCharacterBehaviours.InstantiateTree
-		(TreeType.CharacterBehaviours_TrivialExploreBehaviour
+		BLOCBehaviours.InstantiateTree
+		(_TreeType
 		, this
 		);
+				
+		OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>(true);
+				
+		foreach( OCAction action in actions)
+		{
+			int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
+			_tree.SetTickForward( actionTypeID, action.ExecuteBehave );
+		}
 
 		while (Application.isPlaying && _tree != null) {
 			yield return new WaitForSeconds (1.0f / _tree.Frequency);

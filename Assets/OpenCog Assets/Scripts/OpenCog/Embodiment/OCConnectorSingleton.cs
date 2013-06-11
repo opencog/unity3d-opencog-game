@@ -1089,7 +1089,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     foreach (OCAction action in actionList)
 		{
 			// Set the action name
-	    string ocActionName = OCActionController.GetOCActionNameFromMap(action.Name);
+	    string ocActionName = OCActionController.GetOCActionNameFromMap(action.FullName);
 
 			// check if the method name has a mapping to opencog action name.
 			if (ocActionName == null) continue;
@@ -1709,7 +1709,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		// TODO: Fix the Sequence attribute on Action which is currently missing.
       	//actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, action.Sequence.ToString());
-      actionElement.SetAttribute("name", action.Name);
+      actionElement.SetAttribute("name", action.FullName);
       actionElement.SetAttribute("status", success ? "done" : "error");
 
       OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));

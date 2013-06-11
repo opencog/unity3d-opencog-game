@@ -59,8 +59,11 @@ public class OCAction : OCMonoBehaviour
 	/// to target objects themselves or simply dummy objects like waypoints
 	/// that specify locations (or other properties) for the action to target.
 	/// </summary>
+	[SerializeField]
 	private GameObject _Source;
+	[SerializeField]
 	private GameObject _StartTarget;
+	[SerializeField]		
 	private GameObject _EndTarget;
 			
 	/// <summary>
@@ -91,7 +94,7 @@ public class OCAction : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 			
-	public string Name
+	public string FullName
 	{
 		get { return _Descriptors.Aggregate((a, b) => a + b); }
 	}
@@ -162,6 +165,10 @@ public class OCAction : OCMonoBehaviour
 		_AnimationEffects = 
 			gameObject.GetComponentsInChildren<OCAnimationEffect>().ToList();
 				
+		PreCheck += IsSourceGrounded;
+		ContinueCheck += IsPlayingAnimation;
+		PostCheck += IsInput;
+				
 		DontDestroyOnLoad(this);
 	}
 			
@@ -175,10 +182,26 @@ public class OCAction : OCMonoBehaviour
 	//	The following can be used as Precondition, Invariant, or Postcondition
 	//	delegates.
 	
+	public static bool IsInput(OCAction action)
+	{
+		return UnityEngine.Input.anyKey;
+	}
 	
 	public static bool IsSourceGrounded(OCAction action)
 	{
 		return action._Source.GetComponent<CharacterController>().isGrounded;
+	}
+			
+	public static bool IsPlayingAnimation(OCAction action)
+	{
+		bool isPlayingAnimation = false;
+				
+		foreach(OCAnimationEffect afx in action._AnimationEffects)
+		{
+			isPlayingAnimation |= afx.Target.animation.isPlaying;
+		}
+				
+		return isPlayingAnimation;
 	}
 			
 	public static bool IsPathOpenForSourceForwardDrop(OCAction action)

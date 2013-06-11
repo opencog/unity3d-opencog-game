@@ -51,23 +51,35 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// <summary>
 	/// The target Unity game object to be animated.
 	/// </summary>
-	private GameObject _Target = null;
+	[SerializeField]
+	private GameObject _Target;// = null;
 
 	/// <summary>
 	/// The Unity animation state that we're wrapping.
 	/// </summary>
 	[SerializeField]
-	private AnimationState _State = null;
+	private AnimationState _State;// = null;
+			
+	[SerializeField]
+	private WrapMode _Wrap;// = WrapMode.Default;
+	
+	[SerializeField]
+	private int _Layer;// = -1;
+			
+	[SerializeField]
+	private string _StateName;// = "";
 
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
 	/// </summary>
+	[SerializeField]	
 	private Hashtable _iTweenParams;
 
 	/// <summary>
 	/// The length of the animation's cross fade.
 	/// </summary>
-	private float _FadeLength = 0.5f;
+	[SerializeField]
+	private float _FadeLength;// = 0.5f;
 
 //	private bool _initialized = false;
 			
@@ -85,19 +97,37 @@ public class OCAnimationEffect : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-//	/// <summary>
-//	/// Gets or sets the Unity animation state that we're wrapping.
-//	/// </summary>
-//	/// <value>
-//	/// The Unity animation state that we're wrapping.
-//	/// </value>
-//	[OCTooltip("The Unity animation state that we're wrapping.")]
-//	public AnimationState State
-//	{
-//		get{ return _State;}
-//		set{ _State = value;}
-//	}
+	/// <summary>
+	/// Gets or sets the Unity animation state that we're wrapping.
+	/// </summary>
+	/// <value>
+	/// The Unity animation state that we're wrapping.
+	/// </value>
+	[OCTooltip("The Unity animation state that we're wrapping.")]
+	public AnimationState State
+	{
+		get{ return _State;}
+		set{ _State = value;}
+	}
 
+	public string StateName
+	{
+		get{ return _StateName;}
+		set{ _StateName = value;}
+	}
+			
+	public WrapMode Wrap
+	{
+		get{ return _Wrap;}
+		set{ _Wrap = value;}
+	}
+			
+	public int Layer
+	{
+		get{ return _Layer;}
+		set{ _Layer = value;}
+	}
+			
 	/// <summary>
 	/// Gets or sets the length of the animation's cross fade.
 	/// </summary>
@@ -167,9 +197,9 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// </value>
 	[	OCTooltip
 		("The time in seconds that the animation will wait before beginning.") ]
-	public int Delay
+	public float Delay
 	{
-		get{ return ValueOrDefault<int>(iT.MoveBy.delay);}
+		get{ return ValueOrDefault<float>(iT.MoveBy.delay);}
 		set{ _iTweenParams[iT.MoveBy.delay] = value;}
 	}
 
@@ -331,10 +361,21 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// </param>
 	public void Initialize()
 	{
-		_iTweenParams = new Hashtable();
-		Time = _State.length / _State.speed + 0.01f;
+		if(_iTweenParams == null) _iTweenParams = new Hashtable();
+		if(_Target != null)
+		{
+			_State = _Target.animation[_StateName];
+			Time = _State.length / _State.speed + 0.01f;
+			_State.wrapMode = _Wrap;
+			_State.layer = _Layer;		
+		}
 		EaseType = "linear";//iTween.EaseType.linear;
-		Delay = 0;
+		Delay = 0.0f; 
+		OnStart = "StartAnimationEffect";
+		OnEnd = "EndAnimationEffect";
+				
+		_iTweenParams["OnStartTarget"] = gameObject;
+		_iTweenParams["OnEndTarget"] = gameObject;
 
 		//_initialized = true;
 		//DontDestroyOnLoad(this);

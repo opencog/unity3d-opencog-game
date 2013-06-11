@@ -1,0 +1,22 @@
+Library class:
+BLOCBehaviours
+
+Trees:
+	Character_ShowIdle
+	Character_Show
+	Unknown
+
+Contexts:
+	Unknown
+
+Branch priority groups:
+	Unknown
+
+Actions (1: 1 - 2):
+	StandIdleShow (1)
+	Unknown (2)
+
+Decorators (0: 3 - 3):
+	Unknown (3)
+
+Agent classes:
