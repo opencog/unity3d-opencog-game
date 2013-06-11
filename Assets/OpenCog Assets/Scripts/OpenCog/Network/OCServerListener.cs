@@ -44,7 +44,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCServerListener : OCScriptableObject
+public class OCServerListener : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ public class OCServerListener : OCScriptableObject
 		
 	public IEnumerator Listen()
 	{
-		//UnityEngine.Debug.Log("LISTEN!!");
+		UnityEngine.Debug.Log ("OCServerListener::Listen has a networkelement with GUID " + _networkElement.VerificationGuid);
 			
 		try
 		{
@@ -125,33 +125,48 @@ public class OCServerListener : OCScriptableObject
 				, _networkElement.Port
 				)
 			;
-			
+				
 			_listener.Start();
 		}
 		catch(SocketException se)
 		{
-			OCLogger.Error(se.Message);
+			UnityEngine.Debug.Log ("Whoops, something went wrong making a TCPListener: " + se.Message);
+			//OCLogger.Error(se.Message);
 			yield break;
 		}
-			
+		
 		while(!_shouldStop)
 		{
+			//UnityEngine.Debug.Log ("_listener.Pending?");
 			if(!_listener.Pending())
 			{
+				//UnityEngine.Debug.Log ("Nope, not pending...");
 				// If listener is pending, sleep for a while to relax the CPU.
 				yield return new UnityEngine.WaitForSeconds(0.05f);
 			}
 			else
 			{
-				try
-				{
+				UnityEngine.Debug.Log ("Yep, pending!");
+					
+//				try
+//				{
+					UnityEngine.Debug.Log ("Accepting socket from listener...");
+						
 					Socket workSocket = _listener.AcceptSocket();
-					new OCMessageHandler(_networkElement, workSocket).Start();
-				}
-				catch( SocketException se )
-				{
-					OCLogger.Error(se.Message);
-				}
+						
+					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
+						
+					OCMessageHandler myHandler = new OCMessageHandler(_networkElement, workSocket);
+						
+					yield return myHandler.StartProcessing();
+						
+					UnityEngine.Debug.Log ("Well...did anything happen?");
+//				}
+//				catch( SocketException se )
+//				{
+//					//OCLogger.Error(se.Message);
+//						UnityEngine.Debug.Log (se.Message);
+//				}
 			}
 		}
 	}

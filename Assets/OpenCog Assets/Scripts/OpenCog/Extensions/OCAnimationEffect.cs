@@ -332,7 +332,13 @@ public class OCAnimationEffect : OCMonoBehaviour
 	public void Initialize()
 	{
 		_iTweenParams = new Hashtable();
-		Time = _State.length / _State.speed + 0.01f;
+		try {
+			Time = _State.length / _State.speed + 0.01f;
+		} catch (Exception ex) {
+			Debug.Log ("_State == null, but doing a nullcheck on it gives a nullreferenceexception...");
+		}
+		
+			
 		EaseType = "linear";//iTween.EaseType.linear;
 		Delay = 0;
 
@@ -341,7 +347,7 @@ public class OCAnimationEffect : OCMonoBehaviour
 	}
 
 	/// <summary>
-	/// Play this animation.
+	/// Play this animation. 
 	/// </summary>
 	public void Play()
 	{

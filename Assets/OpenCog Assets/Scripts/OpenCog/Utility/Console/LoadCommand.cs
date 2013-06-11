@@ -218,43 +218,45 @@ public class LoadCommand : Console.ConsoleCommand
 		
 			UnityEngine.GameObject playerObject = GameObject.FindGameObjectWithTag ("Player");
 			if (playerObject == null) {
-				Debug.Log ("No object tagget with player.");
+				Debug.Log ("No object tagged with player.");
 				yield return "No object tagged with player.";
 			}
 
 			// Record the player's position and make the OCAvatar spawn near it.
 			UnityEngine.Vector3 playerPos = playerObject.transform.position;
 			
-			Debug.Log ("PlayerPos = [" + playerPos.x + ", " + playerPos.y + ", " + playerPos.z + "]");
+			//Debug.Log ("PlayerPos = [" + playerPos.x + ", " + playerPos.y + ", " + playerPos.z + "]");
 
 			// Calculate the player's forward direction
 			UnityEngine.Vector3 eulerAngle = playerObject.transform.rotation.eulerAngles;
 			
-			Debug.Log ("eulerAngle = [" + eulerAngle.x + ", " + eulerAngle.y + ", " + eulerAngle.z + "]");
+			//Debug.Log ("eulerAngle = [" + eulerAngle.x + ", " + eulerAngle.y + ", " + eulerAngle.z + "]");
 
 			float zFront = 3.0f * (float)Math.Cos ((eulerAngle.y / 180) * Math.PI);
 			float xFront = 3.0f * (float)Math.Sin ((eulerAngle.y / 180) * Math.PI);
 			
 			UnityEngine.Vector3 spawnPosition = new UnityEngine.Vector3(playerPos.x + xFront, playerPos.y + 2, playerPos.z + zFront);
 			
-			Debug.Log ("spawnPosition = [" + spawnPosition.x + ", " + spawnPosition.y + ", " + spawnPosition.z + "]");
+			//Debug.Log ("spawnPosition = [" + spawnPosition.x + ", " + spawnPosition.y + ", " + spawnPosition.z + "]");
 
 			// Instantiate an OCAvatar in front of the player.
 			
-			Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
+			//Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
 			
 			agentClone = (GameObject)UnityEngine.Object.Instantiate (_NPCAgent, spawnPosition, Quaternion.identity);
 			
-			Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
+			//Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
 
 			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 			
-			Debug.Log ("connector is" + (connector == null ? " null " : " not null"));
+			UnityEngine.Debug.Log ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
+			
+			//Debug.Log ("connector is" + (connector == null ? " null " : " not null"));
 
 			if (agentName == "")
 				agentName = CreateRandomAgentName ();
 			
-			Debug.Log("We shall name him '" + agentName + "'");
+			//Debug.Log("We shall name him '" + agentName + "'");
         
 			agentClone.name = agentName;
         

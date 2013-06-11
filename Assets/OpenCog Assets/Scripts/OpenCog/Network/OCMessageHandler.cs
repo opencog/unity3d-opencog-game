@@ -108,15 +108,17 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+	
 
-	public IEnumerator Start()
+	public IEnumerator StartProcessing()
 	{
+		UnityEngine.Debug.Log ("OCMessageHandler::StartProcessing");
 		yield return StartCoroutine(UpdateMessages());
 	}
 		
 	public IEnumerator UpdateMessages()
 	{
-		OCLogger.Info("Start handling socket connection.");
+		UnityEngine.Debug.Log ("OCMessageHandler::UpdateMessages");
 		
 		StreamReader reader = null;
 		StreamWriter writer = null;
@@ -153,7 +155,7 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 			}
 			catch( IOException ioe )
 			{
-				OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+				UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.Message + "].");
 				endInput = true;
 			}
 			yield return null;
@@ -167,9 +169,12 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 		}
 		catch( IOException ioe )
 		{
-			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			UnityEngine.Debug.Log ("Something went wrong: " + ioe.Message);
+			//OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
 			endInput = true;
 		}
+			
+		yield return null;
 	}
 
 	//---------------------------------------------------------------------------
@@ -184,15 +189,25 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 	
 	private void Initialize(OCNetworkElement networkElement, Socket socket)
 	{
-		_networkElement = networkElement;
-		_socket = socket;	
-		_lineCount = 0;
-		_state = DOING_NOTHING;
+		UnityEngine.Debug.Log ("OCMessageHandler::Initialize");
 			
-		_messageTo = null;
-		_messageFrom = null;
-		_message = new StringBuilder();
-		_messageBuffer = new List<OCMessage>();
+		UnityEngine.Debug.Log ("networkElement == null? I wonder..." + ((networkElement == null) ? "yes...it is..." : "no...it isn't" ));
+			
+		try {
+			_networkElement = networkElement;
+			_socket = socket;	
+			_lineCount = 0;
+			_state = DOING_NOTHING;
+				
+			_messageTo = null;
+			_messageFrom = null;
+			_message = new StringBuilder();
+			_messageBuffer = new List<OCMessage>();	
+		} catch (System.Exception ex) {
+			UnityEngine.Debug.Log ("OCMessageHandler::Initialize, something went wrong: " + ex.ToString());
+		}
+			
+		
 	}
 		
 	/// <summary>
@@ -208,6 +223,7 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 	/// </returns> 
 	private string Parse(string inputLine)
 	{
+		UnityEngine.Debug.Log ("OCMessageHandler::Parse");
 		string answer = null;
 			
 		char selector = inputLine[0];
@@ -446,6 +462,7 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 
 	public OCMessageHandler(OCNetworkElement networkElement, Socket socket)
 	{
+		UnityEngine.Debug.Log ("OCMessageHandler::OCMessageHandler");
 		Initialize(networkElement, socket);
 	}
 
