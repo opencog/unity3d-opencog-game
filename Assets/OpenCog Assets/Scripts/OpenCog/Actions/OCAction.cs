@@ -26,6 +26,8 @@ using OCID = System.Guid;
 using Result = Behave.Runtime.BehaveResult;
 using System.Linq;
 using OpenCog.Map;
+using System.Reflection;
+using OpenCog.Utility;
 
 namespace OpenCog
 {
@@ -54,19 +56,6 @@ public class OCAction : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 			
 	/// <summary>
-	/// 	All actions are initiated by a source character or game object in the 
-	/// scene with zero, one, or two possible targets.  These OCID's may refer
-	/// to target objects themselves or simply dummy objects like waypoints
-	/// that specify locations (or other properties) for the action to target.
-	/// </summary>
-	[SerializeField]
-	private GameObject _Source;
-	[SerializeField]
-	private GameObject _StartTarget;
-	[SerializeField]		
-	private GameObject _EndTarget;
-			
-	/// <summary>
 	/// 	Logically, actions in the game world may have up to one low-, mid-, and
 	/// high-level descriptor.  This is to allow OpenCog to specify plans using
 	/// the highest-level of descriptiveness possible, but technically actions
@@ -81,8 +70,32 @@ public class OCAction : OCMonoBehaviour
 	/// </summary>
 	[SerializeField]
 	private List<string> _Descriptors;
+
+	[SerializeField]
+	private List<string> _Preconditions;
+
+	[SerializeField]
+	private List<string> _Invariants;
+
+	[SerializeField]
+	private List<string> _Postconditions;
+
+	[SerializeField]
+	private GameObject _Source;
+
+	[SerializeField]
+	private GameObject _StartTarget;
+
+	[SerializeField]
+	private GameObject _EndTarget;
 			
 	private List<OCAnimationEffect> _AnimationEffects;
+	private List<OCCreateBlockEffect> _CreateBlockEffects;
+	private List<OCDestroyBlockEffect> _DestroyBlockEffects;
+
+	private OCActionController _ActionController;
+
+	private OCMap _Map;
 
 	//---------------------------------------------------------------------------
 
@@ -110,9 +123,9 @@ public class OCAction : OCMonoBehaviour
 		get
 		{
 			bool shouldStart = true;
-			foreach(OCPrecondition precondition in PreCheck.GetInvocationList())
+			foreach(OCActionCondition precondition in PreCondition.GetInvocationList())
 			{
-				shouldStart &= precondition(this);
+				shouldStart &= precondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldStart == false)
 					break;
 			}
@@ -125,9 +138,9 @@ public class OCAction : OCMonoBehaviour
 		get
 		{
 			bool shouldContinue = true;
-			foreach(OCInvariant invariant in ContinueCheck.GetInvocationList())
+			foreach(OCActionCondition invariant in InvariantCondition.GetInvocationList())
 			{
-				shouldContinue &= invariant(this);
+				shouldContinue &= invariant(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldContinue == false)
 					break;
 			}
@@ -140,16 +153,52 @@ public class OCAction : OCMonoBehaviour
 		get
 		{
 			bool shouldEnd = true;
-			foreach(OCPostcondition postcondition in PostCheck.GetInvocationList())
+			foreach(OCActionCondition postcondition in PostCondition.GetInvocationList())
 			{
-				shouldEnd &= postcondition(this);
+				shouldEnd &= postcondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldEnd == false)
 					break;
 			}
 			return shouldEnd;
 		}
-	}			
-			
+	}
+
+	public GameObject EndTarget
+	{
+		get
+		{
+			return this._EndTarget;
+		}
+		set
+		{
+			_EndTarget = value;
+		}
+	}
+
+	public GameObject Source
+	{
+		get
+		{
+			return this._Source;
+		}
+		set
+		{
+			_Source = value;
+		}
+	}
+
+	public GameObject StartTarget
+	{
+		get
+		{
+			return this._StartTarget;
+		}
+		set
+		{
+			_StartTarget = value;
+		}
+	}
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -164,10 +213,51 @@ public class OCAction : OCMonoBehaviour
 	{
 		_AnimationEffects = 
 			gameObject.GetComponentsInChildren<OCAnimationEffect>().ToList();
-				
-		PreCheck += IsSourceGrounded;
-		ContinueCheck += IsPlayingAnimation;
-		PostCheck += IsInput;
+
+		_CreateBlockEffects =
+			gameObject.GetComponentsInChildren<OCCreateBlockEffect>().ToList();
+
+		_DestroyBlockEffects =
+			gameObject.GetComponentsInChildren<OCDestroyBlockEffect>().ToList();
+
+		_Map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).LastOrDefault();
+
+		_ActionController = _Source.GetComponent<OCActionController>();
+
+//		foreach(OCDelegate del in _Preconditions)
+//		{
+//			PreCondition += (OCActionCondition)del.Delegate;
+//		}
+//
+//		foreach(OCDelegate del in _Invariants)
+//		{
+//			InvariantCondition += (OCActionCondition)del.Delegate;
+//		}
+//
+//		foreach(OCDelegate del in _Postconditions)
+//		{
+//			PostCondition += (OCActionCondition)del.Delegate;
+//		}
+
+		foreach(string condition in _Preconditions)
+		{
+			PreCondition += (OCActionCondition)Delegate.CreateDelegate(typeof(OCActionCondition), typeof(OCAction).GetMethod(condition));
+		}
+
+		foreach(string condition in _Invariants)
+		{
+			InvariantCondition += (OCActionCondition)Delegate.CreateDelegate(typeof(OCActionCondition), typeof(OCAction).GetMethod(condition));
+		}
+
+		foreach(string condition in _Postconditions)
+		{
+			PostCondition += (OCActionCondition)Delegate.CreateDelegate(typeof(OCActionCondition), typeof(OCAction).GetMethod(condition));
+		}
+
+//		PreCondition += IsEndTarget;
+//		InvariantCondition += IsSourceAnimating;
+//		InvariantCondition += IsSourceNotRunningOtherActionsIgnoreIdle;
+//		PostCondition += IsSourceRunningOtherActionsIgnoreIdle;
 				
 		DontDestroyOnLoad(this);
 	}
@@ -182,34 +272,92 @@ public class OCAction : OCMonoBehaviour
 	//	The following can be used as Precondition, Invariant, or Postcondition
 	//	delegates.
 	
-	public static bool IsInput(OCAction action)
+	public static bool IsNoCondition(OCAction action, OCActionArgs args)
+	{
+		return true;
+	}
+
+	public static bool IsGlobalInput(OCAction action, OCActionArgs args)
 	{
 		return UnityEngine.Input.anyKey;
 	}
-	
-	public static bool IsSourceGrounded(OCAction action)
+
+	public static bool IsNoGlobalInput(OCAction action, OCActionArgs args)
 	{
-		return action._Source.GetComponent<CharacterController>().isGrounded;
+		return !IsGlobalInput(action, args);
+	}
+	
+	public static bool IsSourceGrounded(OCAction action, OCActionArgs args)
+	{
+		return args.Source.GetComponent<CharacterController>().isGrounded;
 	}
 			
-	public static bool IsPlayingAnimation(OCAction action)
+	public static bool IsLocalAnimating(OCAction action, OCActionArgs args)
 	{
-		bool isPlayingAnimation = false;
+		bool isAnimating = false;
 				
 		foreach(OCAnimationEffect afx in action._AnimationEffects)
 		{
-			isPlayingAnimation |= afx.Target.animation.isPlaying;
+			isAnimating |= afx.Target.animation.IsPlaying(afx.StateName);
 		}
 				
-		return isPlayingAnimation;
+		return isAnimating;
+	}
+
+	public static bool IsLocalNotAnimating(OCAction action, OCActionArgs args)
+	{
+		return !IsLocalAnimating(action, args);
+	}
+
+	public static bool IsLocalAnimatingAnythingElse(OCAction action, OCActionArgs args)
+	{
+		bool isAnimatingAnythingElse = false;
+
+		foreach(OCAnimationEffect afx in action._AnimationEffects)
+		{
+			isAnimatingAnythingElse |= afx.IsPlayingButNotThis;
+		}
+
+		return isAnimatingAnythingElse;
+	}
+
+	public static bool IsLocalNotAnimatingAnythingElse(OCAction action, OCActionArgs args)
+	{
+		return !IsLocalAnimatingAnythingElse(action, args);
+	}
+
+	public static bool IsNotAnimatingAnything(OCAction action, OCActionArgs args)
+	{
+		return !args.Source.animation.isPlaying;
+	}
+
+	public static bool IsSourceAnimating(OCAction action, OCActionArgs args)
+	{
+		iTween itween = args.Source.GetComponent<iTween>();
+		return itween != null && itween.isRunning;
+	}
+
+	public static bool IsSourceNotAnimating(OCAction action, OCActionArgs args)
+	{
+		return !args.Source.animation.isPlaying;
+	}
+
+	public static bool IsSourceNotIdlingAnimation(OCAction action, OCActionArgs args)
+	{
+		return IsSourceIdlingAnimation(action, args);
+	}
+
+	public static bool IsSourceIdlingAnimation(OCAction action, OCActionArgs args)
+	{
+		return !args.Source.animation.isPlaying || args.Source.animation.IsPlaying("idle");
 	}
 			
-	public static bool IsPathOpenForSourceForwardDrop(OCAction action)
+	public static bool IsPathOpenForSourceForwardDrop(OCAction action, OCActionArgs args)
 	{
 		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
 				
 		CharacterController charController = 
-			action._Source.GetComponent<CharacterController>();
+			args.Source.GetComponent<CharacterController>();
 				
 		return 
 			map.IsPathOpen
@@ -220,12 +368,12 @@ public class OCAction : OCMonoBehaviour
 		;
 	}
 			
-	public static bool IsPathOpenForSourceForwardClimb(OCAction action)
+	public static bool IsPathOpenForSourceForwardClimb(OCAction action, OCActionArgs args)
 	{
 		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
 				
 		CharacterController charController = 
-			action._Source.GetComponent<CharacterController>();
+			args.Source.GetComponent<CharacterController>();
 				
 		return 
 			map.IsPathOpen
@@ -236,12 +384,12 @@ public class OCAction : OCMonoBehaviour
 		;
 	}
 			
-	public static bool IsPathOpenForSourceForwardRun(OCAction action)
+	public static bool IsPathOpenForSourceForwardRun(OCAction action, OCActionArgs args)
 	{
 		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
 				
 		CharacterController charController = 
-			action._Source.GetComponent<CharacterController>();
+			args.Source.GetComponent<CharacterController>();
 				
 		return 
 			map.IsPathOpen
@@ -252,12 +400,12 @@ public class OCAction : OCMonoBehaviour
 		;
 	}			
 			
-	public static bool IsPathOpenForSourceForwardJump(OCAction action)
+	public static bool IsPathOpenForSourceForwardJump(OCAction action, OCActionArgs args)
 	{
 		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
 				
 		CharacterController charController = 
-			action._Source.GetComponent<CharacterController>();
+			args.Source.GetComponent<CharacterController>();
 				
 		return 
 			map.IsPathOpen
@@ -266,72 +414,197 @@ public class OCAction : OCMonoBehaviour
 			, OCMap.PathDirection.ForwardJump
 			)
 		;
-	}						
-			
-	public static bool IsEndTargetCloseForward(OCAction action)
+	}
+
+	public static bool IsPathOpenForSourceForwardWalk(OCAction action, OCActionArgs args)
 	{
-		Vector3 sourcePosition = action._Source.gameObject.transform.position;
-		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
-		Vector3 sourceForward = action._Source.gameObject.transform.forward;
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+				
+		CharacterController charController = 
+			args.Source.GetComponent<CharacterController>();
+				
+		return 
+			map.IsPathOpen
+			(	action.gameObject.transform
+			, charController.height
+			, OCMap.PathDirection.ForwardWalk
+			)
+		;
+	}
+
+	public static bool IsPathOpenForSourceForwardBlock(OCAction action, OCActionArgs args)
+	{
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+				
+		CharacterController charController = 
+			args.Source.GetComponent<CharacterController>();
+				
+		return 
+			map.IsPathOpen
+			(	action.gameObject.transform
+			, charController.height
+			, OCMap.PathDirection.ForwardBlock
+			)
+		;
+	}
+
+	public static bool IsPathNotOpenForSourceForwardBlock(OCAction action, OCActionArgs args)
+	{
+		return !IsPathOpenForSourceForwardBlock(action, args);
+	}
+			
+	public static bool IsEndTargetCloseForward(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceForward = args.Source.gameObject.transform.forward;
 				
 		Vector3 distance = targetPosition - sourcePosition;
 		float projection = Vector3.Dot(distance, sourceForward);
 		return projection >= 0.5f;
 	}
 			
-	public static bool IsEndTargetFarForward(OCAction action)
+	public static bool IsEndTargetFarForward(OCAction action, OCActionArgs args)
 	{
-		Vector3 sourcePosition = action._Source.gameObject.transform.position;
-		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
-		Vector3 sourceForward = action._Source.gameObject.transform.forward;
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceForward = args.Source.gameObject.transform.forward;
 				
 		Vector3 distance = targetPosition - sourcePosition;
 		float projection = Vector3.Dot(distance, sourceForward);
 		return projection >= 3.5f;
 	}
 			
-	public static bool IsEndTargetFarUp(OCAction action)
+	public static bool IsEndTargetFarUp(OCAction action, OCActionArgs args)
 	{
-		Vector3 sourcePosition = action._Source.gameObject.transform.position;
-		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
-		Vector3 sourceUp = action._Source.gameObject.transform.up;
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = args.Source.gameObject.transform.up;
 				
 		Vector3 distance = targetPosition - sourcePosition;
 		float projection = Vector3.Dot(distance, sourceUp);
-		return projection >= 1.5f;
-	}		
-			
-	public static bool IsEndTargetMoreLeft(OCAction action)
+		return projection >= 4.5f;
+	}
+
+	public static bool IsEndTargetCloseUp(OCAction action, OCActionArgs args)
 	{
-		Vector3 sourcePosition = action._Source.gameObject.transform.position;
-		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
-		Vector3 sourceRight = action._Source.gameObject.transform.right;
-		Vector3 sourceLeft = -action._Source.gameObject.transform.right;
-				
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = args.Source.gameObject.transform.up;
+
 		Vector3 distance = targetPosition - sourcePosition;
-		float projectionLeft = Vector3.Dot(distance, sourceLeft);
-		float projectionRight = Vector3.Dot(distance, sourceRight);
-				
-		return projectionLeft > projectionRight;
+		float projection = Vector3.Dot(distance, sourceUp);
+		return projection >= 1.5f && projection < 4.5f;
+	}
+
+	public static bool IsEndTargetNotCloseUp(OCAction action, OCActionArgs args)
+	{
+		return !IsEndTargetCloseUp(action, args);
+	}
+
+	public static bool IsEndTargetNotAboveOrBelow(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = args.Source.transform.up;
+		Vector3 sourceForward = args.Source.transform.forward;
+		Vector3 sourceRight = args.Source.transform.right;
+
+		Vector3 distance = targetPosition - sourcePosition;
+		float projUp = Vector3.Dot(distance, sourceUp);
+		float projForward = Vector3.Dot(distance, sourceForward);
+		float projRight = Vector3.Dot(distance, sourceRight);
+
+		return Math.Abs(projUp) <= 1.5f && Math.Abs(projForward) > 0.5f && Math.Abs(projRight) > 0.5f;
 	}
 			
-	public static bool IsEndTargetMoreRight(OCAction action)
+	public static bool IsEndTargetMoreLeft(OCAction action, OCActionArgs args)
 	{
-		Vector3 sourcePosition = action._Source.gameObject.transform.position;
-		Vector3 targetPosition = action._EndTarget.gameObject.transform.position;
-		Vector3 sourceRight = action._Source.gameObject.transform.right;
-		Vector3 sourceLeft = -action._Source.gameObject.transform.right;
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceRight = args.Source.gameObject.transform.right;
+		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
 				
 		Vector3 distance = targetPosition - sourcePosition;
 		float projectionLeft = Vector3.Dot(distance, sourceLeft);
 		float projectionRight = Vector3.Dot(distance, sourceRight);
 				
-		return projectionRight > projectionLeft;
-	}			
+		return (projectionLeft + 0.0f) > projectionRight;
+	}
 			
-	
+	public static bool IsEndTargetMoreRight(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceRight = args.Source.gameObject.transform.right;
+		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
+				
+		Vector3 distance = targetPosition - sourcePosition;
+		float projectionLeft = Vector3.Dot(distance, sourceLeft);
+		float projectionRight = Vector3.Dot(distance, sourceRight);
+				
+		return projectionRight > (projectionLeft + 0.0f);
+	}
+
+	public static bool IsNoEndTarget(OCAction action, OCActionArgs args)
+	{
+		return args.EndTarget.transform.position == Vector3.zero;
+	}
+
+	public static bool IsEndTarget(OCAction action, OCActionArgs args)
+	{
+		return args.EndTarget.transform.position != Vector3.zero;
+	}
+
+	public static bool IsSourceRunningAction(OCAction action, OCActionArgs args)
+	{
+		return action._ActionController.RunningActions.Contains(action.FullName);
+	}
 			
-	
+	public static bool IsSourceNotRunningAction(OCAction action, OCActionArgs args)
+	{
+		return !IsSourceRunningAction(action, args);
+	}
+
+	public static bool IsSourceIdling(OCAction action, OCActionArgs args)
+	{
+		return action._ActionController.RunningActions.Contains("StandIdleShow");
+	}
+			
+	public static bool IsSourceNotIdling(OCAction action, OCActionArgs args)
+	{
+		return !IsSourceIdling(action, args);
+	}
+
+	public static bool IsSourceRunningOtherActions(OCAction action, OCActionArgs args)
+	{
+		return action._ActionController.RunningActions.Where(s => s != action.FullName).Count() > 0;
+	}
+
+	public static bool IsSourceNotRunningOtherActions(OCAction action, OCActionArgs args)
+	{
+		return !IsSourceRunningOtherActions(action, args);
+	}
+
+	public static bool IsSourceOnlyIdling(OCAction action, OCActionArgs args)
+	{
+		return action._ActionController.RunningActions.Where(s => s != "StandIdleShow").Count() == 0;
+	}
+
+	public static bool IsSourceNotOnlyIdling(OCAction action, OCActionArgs args)
+	{
+		return !IsSourceOnlyIdling(action, args);
+	}
+
+	public static bool IsSourceRunningOtherActionsIgnoreIdle(OCAction action, OCActionArgs args)
+	{
+		return action._ActionController.RunningActions.Where(s => s != action.FullName && s != "StandIdleShow").Count() > 0;
+	}
+
+	public static bool IsSourceNotRunningOtherActionsIgnoreIdle(OCAction action, OCActionArgs args)
+	{
+		return !IsSourceRunningOtherActionsIgnoreIdle(action, args);
+	}
 
 	//---------------------------------------------------------------------------
 
@@ -346,23 +619,40 @@ public class OCAction : OCMonoBehaviour
 	private ActionStatus Execute()
 	{
 		// Checks if all Preconditions are true.
-		if(ShouldEnd)	return EndAction();					
+		if(ShouldStart)
+			return StartAction();
 				
 		// Checks if all Invariants are true.
-		if(ShouldContinue)	return ContinueAction();
-				
+		if(ShouldContinue)
+			return ContinueAction();
+
 		// Checks if all Postconditions are true.
-		if(ShouldStart)	return StartAction();
+		if(ShouldEnd)
+			return EndAction();
 
 		return ActionStatus.FAILURE;
 	}
 			
 	private ActionStatus StartAction()
 	{
+		OCLogger.Debugging("Starting the " + FullName + " Action.");
+
+		_ActionController.RunningActions.Add(FullName);
+
 		// Start animation effects
 		foreach(OCAnimationEffect afx in _AnimationEffects)
 		{
 			afx.Play();
+		}
+
+		foreach(OCCreateBlockEffect cbfx in _CreateBlockEffects)
+		{
+			cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward));
+		}
+
+		foreach(OCDestroyBlockEffect dbfx in _DestroyBlockEffects)
+		{
+			dbfx.DestroyBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward));
 		}
 			
 		return ActionStatus.SUCCESS;
@@ -370,13 +660,18 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus ContinueAction()
 	{
+		OCLogger.Fine("Continuing the " + FullName + " Action.");
+
 		// Animation effects continue automatically
-				
 		return ActionStatus.RUNNING;
 	}
 			
 	private ActionStatus EndAction()
 	{
+		OCLogger.Debugging("Ending the " + FullName + " Action.");
+
+		_ActionController.RunningActions.Remove(FullName);
+
 		// End animation effects
 		foreach(OCAnimationEffect afx in _AnimationEffects)
 		{
@@ -395,15 +690,63 @@ public class OCAction : OCMonoBehaviour
 	#region Other Members
 
 	//---------------------------------------------------------------------------
-			
+
+	public class OCActionArgs : EventArgs
+	{
+		/// <summary>
+		/// 	All actions are initiated by a source character or game object in the
+		/// scene with zero, one, or two possible targets.  These OCID's may refer
+		/// to target objects themselves or simply dummy objects like waypoints
+		/// that specify locations (or other properties) for the action to target.
+		/// </summary>
+		private readonly GameObject _Source;
+		private readonly GameObject _StartTarget;
+		private readonly GameObject _EndTarget;
+
+		public OCActionArgs(GameObject source, GameObject startTarget, GameObject endTarget)
+		{
+			_Source = source;
+			_StartTarget = startTarget;
+			_EndTarget = endTarget;
+		}
+
+		public GameObject EndTarget
+		{
+			get { return _EndTarget;}
+		}
+
+	
+		public GameObject Source
+		{
+			get { return _Source;}
+		}
+
+
+		public GameObject StartTarget
+		{
+			get { return _StartTarget;}
+		}
+	}
+
+	/// <summary>
+	/// The OpenCog Action Condition.
+	/// </summary>
+	public delegate bool OCActionCondition(OCAction action, OCActionArgs args);
+
+	/// <summary>
+	/// 	The Pre-, Continue-, and Post-Conditiona events are raised whenever we check
+	/// for whether we should start, continue, or end an action, respectively.  
+	/// See ShouldStart, ShouldContinue, and ShouldEnd above.
+	/// </summary>
+
 	/// <summary>
 	/// 	The OpenCog Precondition delegate.  Defines a common interface for 
 	/// testing whether the preconditions for a given action have been met.  For
 	/// example, preconditions for the move action might include the condition 
 	/// that we're not currently at our destination.
 	/// </summary>
-	public delegate bool OCPrecondition(OCAction action);
-			
+	public event OCActionCondition PreCondition;
+
 	/// <summary>
 	/// 	The OpenCog Invariant delegate.  Note that for actions, we use a 
 	/// slightly different definition for invariance.  An invariant condition for
@@ -418,24 +761,15 @@ public class OCAction : OCMonoBehaviour
 	/// which may change during execution but ultimately retain the same value
 	/// from the start at the end.
 	/// </summary>
-	public delegate bool OCInvariant(OCAction action);
-			
+	public event OCActionCondition InvariantCondition;
+
 	/// <summary>
 	/// 	The OpenCog Postcondition delegate.  Defines a common interface for
 	/// testing whether the postconditions for a given action have been met.  For
 	/// example, postconditions for the move action might include the condition
 	/// that we've arrived at our destination.
 	/// </summary>
-	public delegate bool OCPostcondition(OCAction action); 
-			
-	/// <summary>
-	/// 	The Pre-, Continue-, and Post-Check events are raised whenever we check
-	/// for whether we should start, continue, or end an action, respectively.  
-	/// See ShouldStart, ShouldContinue, and ShouldEnd above.
-	/// </summary>
-	public event OCPrecondition PreCheck;
-	public event OCInvariant ContinueCheck;
-	public event OCPostcondition PostCheck;
+	public event OCActionCondition PostCondition;
 
 	// TODO: Code below is a set of stubs that may not be needed in the final implementation.
 

@@ -81,7 +81,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	{
 		get { return this._TreeType;}
 		set {	_TreeType = value;}
-	}	
+	}
+
+	public HashSet<string> RunningActions;
 			
 	//---------------------------------------------------------------------------
 
@@ -118,6 +120,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		(_TreeType
 		, this
 		);
+
+		RunningActions = new HashSet<string>();
+		RunningActions.Add("StandIdleShow");
 				
 		OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>(true);
 				
@@ -514,6 +519,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			Debug.Log ("We've arrived at our goal TNT block...");
 			map.SetBlockAndRecompute (new OCBlockData (), TargetBlockPos);
 			TargetBlockPos = Vector3i.zero;
+
+			OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
+
+			foreach(OCAction action in actions)
+			{
+				action.EndTarget.transform.position = Vector3.zero;
+				action.StartTarget.transform.position = Vector3.zero;
+			}
 		}
 		
 		if (_dtLastTNTSearchTime == new DateTime())
@@ -539,11 +552,22 @@ public class OCActionController : OCMonoBehaviour, IAgent
 										OCBlockData blockData = chunk.GetBlock (localPos);
 										Vector3i candidatePos = OCChunk.ToWorldPosition (chunk.GetPosition (), localPos);
 										Vector3 candidateVec = ((Vector3)candidatePos) - robotPos;
-										if (!blockData.IsEmpty () && blockData.block.GetName () == "TNT") {
+										if (!blockData.IsEmpty () && blockData.block.GetName () == "TNT")
+										{
 											doesTNTExist = true;
-											if (candidateVec.sqrMagnitude < distanceVec.sqrMagnitude) {
+											if (candidateVec.sqrMagnitude < distanceVec.sqrMagnitude)
+											{
 												TargetBlockPos = candidatePos;
 												distanceVec = candidateVec;
+
+												OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
+
+												foreach(OCAction action in actions)
+												{
+													action.EndTarget.transform.position = new Vector3(TargetBlockPos.x, TargetBlockPos.y, TargetBlockPos.z);
+													action.StartTarget.transform.position = gameObject.transform.position;
+												}
+
 												Debug.Log ("We found some TNT nearby: " + TargetBlockPos + "!");
 											}
 										}
@@ -558,6 +582,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			if (TargetBlockPos != Vector3i.zero && (!doesTNTExist || map.GetBlock(TargetBlockPos).IsEmpty())) {
 				Debug.Log ("No more TNT... :(");
 				TargetBlockPos = Vector3i.zero;
+
+				OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
+
+				foreach(OCAction action in actions)
+				{
+					action.EndTarget.transform.position = Vector3.zero;
+					action.StartTarget.transform.position = Vector3.zero;
+				}
 			}
 			
 			_dtLastTNTSearchTime = DateTime.Now;

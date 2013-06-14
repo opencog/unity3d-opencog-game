@@ -306,6 +306,10 @@ public class OCMap : OCMonoBehaviour
 			if (GetBlock (viOneAboveHead).IsEmpty () && GetBlock (viTwoAboveHead).IsEmpty () && GetBlock (viForwardOneAboveHead).IsEmpty () && GetBlock (viForwardTwoAboveHead).IsEmpty ())
 				bPathIsOpen = true;
 			break;
+		case PathDirection.ForwardBlock:
+			if(GetBlock(viForwardChestHigh).IsEmpty() && GetBlock(viForwardKneeHigh).IsEmpty())
+				bPathIsOpen = true;
+			break;
 		default:
 			Debug.Log ("Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
 			break;
@@ -586,7 +590,8 @@ public class OCMap : OCMonoBehaviour
 		ForwardRun,
 		ForwardClimb,
 		ForwardJump,
-		ForwardDrop
+		ForwardDrop,
+		ForwardBlock
 	};
 
 	//---------------------------------------------------------------------------

@@ -69,11 +69,20 @@ public class OCAnimationEffect : OCMonoBehaviour
 	[SerializeField]
 	private string _StateName;// = "";
 
+	[SerializeField]
+	private float _Speed = 1.0f;
+
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
 	/// </summary>
 	[SerializeField]	
 	private Hashtable _iTweenParams;
+
+	[SerializeField]
+	private Vector3 _Translation;
+
+	[SerializeField]
+	private Vector3 _Rotation;
 
 	/// <summary>
 	/// The length of the animation's cross fade.
@@ -82,7 +91,8 @@ public class OCAnimationEffect : OCMonoBehaviour
 	private float _FadeLength;// = 0.5f;
 
 //	private bool _initialized = false;
-			
+
+	[SerializeField]
 	private bool _IsTranslationVsRotation = true;
 
 
@@ -365,6 +375,7 @@ public class OCAnimationEffect : OCMonoBehaviour
 		if(_Target != null)
 		{
 			_State = _Target.animation[_StateName];
+			_State.speed = _Speed;
 			Time = _State.length / _State.speed + 0.01f;
 			_State.wrapMode = _Wrap;
 			_State.layer = _Layer;		
@@ -377,6 +388,20 @@ public class OCAnimationEffect : OCMonoBehaviour
 		_iTweenParams["OnStartTarget"] = gameObject;
 		_iTweenParams["OnEndTarget"] = gameObject;
 
+
+		//TODO: Remove _Translation and _Rotation and find a way to serialize Hashtables directly.
+		if(_IsTranslationVsRotation)
+		{
+			MoveByX = _Translation.x;
+			MoveByY = _Translation.y;
+			MoveByZ = _Translation.z;
+		}
+		else
+		{
+			RotateByX = _Rotation.x;
+			RotateByY = _Rotation.y;
+			RotateByZ = _Rotation.z;
+		}
 		//_initialized = true;
 		//DontDestroyOnLoad(this);
 	}
