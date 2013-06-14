@@ -445,6 +445,9 @@ public class OCAnimationEffect : OCMonoBehaviour
 	/// </summary>
 	public void EndAnimationEffect()
 	{
+		OCCharacterMotor motor = _Target.GetComponent<OCCharacterMotor>();
+		motor.enabled = true;
+
 		if(_State.wrapMode != WrapMode.Loop)
 		{
 			_Target.animation.Stop();

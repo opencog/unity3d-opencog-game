@@ -86,9 +86,9 @@ public class OCCreateBlockEffect : OCMonoBehaviour
 				{
 					OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
 
-					OCBlock block = new OCCubeBlock();
+					OCBlock block = map.GetBlockSet().GetBlock("Wood");
 
-					block.SetName("topsoil");
+					//block.SetDirection(GetDirection(-gameObject.transform.forward));
 
 					OCBlockData blockData = new OCBlockData(block, VectorUtil.Vector3ToVector3i(point.Value));
 					map.SetBlockAndRecompute(blockData, point.Value);

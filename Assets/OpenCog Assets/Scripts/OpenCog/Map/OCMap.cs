@@ -301,9 +301,14 @@ public class OCMap : OCMonoBehaviour
 			if (GetBlock (viForwardKneeHigh).IsEmpty() && GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneUnder).IsEmpty ())
 				bPathIsOpen = true;
 			break;
+		case PathDirection.UpwardJump:
+			// Requires two empty blocks above
+			if (GetBlock (viOneAboveHead).IsEmpty () && GetBlock (viTwoAboveHead).IsEmpty ())
+				bPathIsOpen = true;
+			break;
 		case PathDirection.ForwardJump:
-			// Requires two empty blocks above, and two empty blocks in front of those
-			if (GetBlock (viOneAboveHead).IsEmpty () && GetBlock (viTwoAboveHead).IsEmpty () && GetBlock (viForwardOneAboveHead).IsEmpty () && GetBlock (viForwardTwoAboveHead).IsEmpty ())
+			// Requires two empty blocks above, and one empty blocks in front of the higher of those
+			if (GetBlock (viOneAboveHead).IsEmpty () && GetBlock (viTwoAboveHead).IsEmpty () && GetBlock (viForwardTwoAboveHead).IsEmpty ())
 				bPathIsOpen = true;
 			break;
 		case PathDirection.ForwardBlock:
@@ -589,6 +594,7 @@ public class OCMap : OCMonoBehaviour
 		ForwardWalk,
 		ForwardRun,
 		ForwardClimb,
+		UpwardJump,
 		ForwardJump,
 		ForwardDrop,
 		ForwardBlock

@@ -371,7 +371,7 @@ public class OCAction : OCMonoBehaviour
 	public static bool IsPathOpenForSourceForwardClimb(OCAction action, OCActionArgs args)
 	{
 		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
-				
+
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
 				
@@ -461,7 +461,7 @@ public class OCAction : OCMonoBehaviour
 				
 		Vector3 distance = targetPosition - sourcePosition;
 		float projection = Vector3.Dot(distance, sourceForward);
-		return projection >= 0.5f;
+		return projection >= 0.5f && projection < 3.5;
 	}
 			
 	public static bool IsEndTargetFarForward(OCAction action, OCActionArgs args)
@@ -474,6 +474,11 @@ public class OCAction : OCMonoBehaviour
 		float projection = Vector3.Dot(distance, sourceForward);
 		return projection >= 3.5f;
 	}
+
+	public static bool IsEndTargetNotFarForward(OCAction action, OCActionArgs args)
+	{
+		return !IsEndTargetFarForward(action, args);
+	}
 			
 	public static bool IsEndTargetFarUp(OCAction action, OCActionArgs args)
 	{
@@ -483,7 +488,12 @@ public class OCAction : OCMonoBehaviour
 				
 		Vector3 distance = targetPosition - sourcePosition;
 		float projection = Vector3.Dot(distance, sourceUp);
-		return projection >= 4.5f;
+		return projection >= 2.5f;
+	}
+
+	public static bool IsEndTargetNotFarUp(OCAction action, OCActionArgs args)
+	{
+		return !IsEndTargetFarUp(action, args);
 	}
 
 	public static bool IsEndTargetCloseUp(OCAction action, OCActionArgs args)
@@ -494,7 +504,7 @@ public class OCAction : OCMonoBehaviour
 
 		Vector3 distance = targetPosition - sourcePosition;
 		float projection = Vector3.Dot(distance, sourceUp);
-		return projection >= 1.5f && projection < 4.5f;
+		return projection >= 0.5f && projection < 2.5f;
 	}
 
 	public static bool IsEndTargetNotCloseUp(OCAction action, OCActionArgs args)
@@ -516,6 +526,22 @@ public class OCAction : OCMonoBehaviour
 		float projRight = Vector3.Dot(distance, sourceRight);
 
 		return Math.Abs(projUp) <= 1.5f && Math.Abs(projForward) > 0.5f && Math.Abs(projRight) > 0.5f;
+	}
+
+	public static bool IsEndTargetAboveOrBelow(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = args.Source.transform.up;
+		Vector3 sourceForward = args.Source.transform.forward;
+		Vector3 sourceRight = args.Source.transform.right;
+
+		Vector3 distance = targetPosition - sourcePosition;
+		float projUp = Vector3.Dot(distance, sourceUp);
+		float projForward = Vector3.Dot(distance, sourceForward);
+		float projRight = Vector3.Dot(distance, sourceRight);
+
+		return Math.Abs(projUp) >= 1.5f && Math.Abs(projForward) < 0.5f && Math.Abs(projRight) < 0.5f;
 	}
 			
 	public static bool IsEndTargetMoreLeft(OCAction action, OCActionArgs args)
@@ -645,14 +671,11 @@ public class OCAction : OCMonoBehaviour
 			afx.Play();
 		}
 
-		foreach(OCCreateBlockEffect cbfx in _CreateBlockEffects)
+		//@TODO: Fix this hack...
+		if(Descriptors.Contains("Jump") || Descriptors.Contains("Climb"))
 		{
-			cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward));
-		}
-
-		foreach(OCDestroyBlockEffect dbfx in _DestroyBlockEffects)
-		{
-			dbfx.DestroyBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward));
+			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
+			motor.enabled = false;
 		}
 			
 		return ActionStatus.SUCCESS;
@@ -676,6 +699,26 @@ public class OCAction : OCMonoBehaviour
 		foreach(OCAnimationEffect afx in _AnimationEffects)
 		{
 			afx.Stop();
+		}
+
+		foreach(OCCreateBlockEffect cbfx in _CreateBlockEffects)
+		{
+			cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward));
+		}
+
+		foreach(OCDestroyBlockEffect dbfx in _DestroyBlockEffects)
+		{
+			Vector3i forward = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward);
+			Vector3i forwardUp = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + _Source.transform.up);
+			dbfx.DestroyBlock(forward);
+			dbfx.DestroyBlock(forwardUp);
+		}
+
+		//@TODO: Fix this hack...
+		if(Descriptors.Contains("Jump") || Descriptors.Contains("Climb"))
+		{
+			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
+			motor.enabled = true;
 		}
 			
 		return ActionStatus.SUCCESS;
