@@ -1,0 +1,56 @@
+Library class:
+BLOCBehaviours
+
+Trees:
+	Character_IdleShow
+	Character_Show
+	Character_RobotBehaviour
+	Character_Create
+	Character_Activate
+	Character_Move
+	Character_Destroy
+	Character_Morph
+	Character_Transfer
+	Character_Release
+	Character_Tell
+	Character_UpMove
+	Character_ForwardMove
+	Character_BackwardMove
+	Character_DownMove
+	Character_EmoteShow
+	Character_FaceShow
+	Character_KickActivate
+	Character_LeftMove
+	Character_LeftHandActivate
+	Character_RightMove
+	Character_RightHandActivate
+	Character_TurnLeftMove
+	Character_TurnRightMove
+	Character_RightHandCreate
+	Character_LeftHandDestroy
+	Unknown
+
+Contexts:
+	Unknown
+
+Branch priority groups:
+	Unknown
+
+Actions (11: 1 - 12):
+	StandIdleShow (1)
+	WalkForwardMove (2)
+	JumpForwardMove (3)
+	ClimbForwardMove (4)
+	RunForwardMove (5)
+	FallForwardMove (6)
+	StandTurnLeftMove (7)
+	StandTurnRightMove (8)
+	JumpUpMove (9)
+	HoldRightHandCreate (10)
+	StrikeLeftHandDestroy (11)
+	Unknown (12)
+
+Decorators (0: 13 - 13):
+	Unknown (13)
+
+Agent classes:
