@@ -258,9 +258,13 @@ public class OCMap : OCMonoBehaviour
 		
 		Vector3i viTwoForwardKneeHigh = viForwardKneeHigh + vCharForward; // The block two steps ahead, in front of the lower body
 		Vector3i viTwoForwardChestHigh = viForwardChestHigh + vCharForward; // The block two steps ahead, in front of the upper body
-		
+		Vector3i viTwoForwardOneAboveHead = viTwoForwardChestHigh + Vector3i.up; // The block one above the block in front of the upper body
+		Vector3i viTwoForwardTwoAboveHead = viTwoForwardOneAboveHead + Vector3i.up; // The block two above the block in front of the upper body
+
 		Vector3i viThreeForwardKneeHigh = viTwoForwardKneeHigh + vCharForward; // The block three steps ahead, in front of the lower body
 		Vector3i viThreeForwardChestHigh = viTwoForwardChestHigh + vCharForward; // The block three steps ahead, in front of the upper body
+		Vector3i viThreeForwardOneAboveHead = viThreeForwardChestHigh + Vector3i.up; // The block one above the block in front of the upper body
+		Vector3i viThreeForwardTwoAboveHead = viThreeForwardOneAboveHead + Vector3i.up; // The block two above the block in front of the upper body
 		
 		Vector3i viTwoForwardOneUnder = viStandingOnForward + vCharForward; // The block two steps ahead, one down
 		Vector3i viThreeForwardOneUnder = viTwoForwardOneUnder + vCharForward; // The block three steps ahead, one down
@@ -311,8 +315,12 @@ public class OCMap : OCMonoBehaviour
 			if (GetBlock (viOneAboveHead).IsEmpty () && GetBlock (viTwoAboveHead).IsEmpty () && GetBlock (viForwardTwoAboveHead).IsEmpty ())
 				bPathIsOpen = true;
 			break;
-		case PathDirection.ForwardBlock:
-			if(GetBlock(viForwardChestHigh).IsEmpty() && GetBlock(viForwardKneeHigh).IsEmpty())
+		case PathDirection.ForwardBlockEmpty:
+			if(GetBlock(viForwardChestHigh).IsEmpty() && GetBlock(viForwardKneeHigh).IsEmpty() && GetBlock(viForwardOneAboveHead).IsEmpty())
+				bPathIsOpen = true;
+			break;
+		case PathDirection.ForwardBlockSolid:
+			if(GetBlock(viForwardChestHigh).IsSolid() && GetBlock(viForwardKneeHigh).IsSolid() && GetBlock(viForwardOneAboveHead).IsSolid())
 				bPathIsOpen = true;
 			break;
 		default:
@@ -597,7 +605,8 @@ public class OCMap : OCMonoBehaviour
 		UpwardJump,
 		ForwardJump,
 		ForwardDrop,
-		ForwardBlock
+		ForwardBlockEmpty,
+		ForwardBlockSolid
 	};
 
 	//---------------------------------------------------------------------------

@@ -28,7 +28,6 @@ Trees:
 	Character_TurnRightMove
 	Character_RightHandCreate
 	Character_LeftHandDestroy
-	Character_RobotBehaviourDemo
 	Unknown
 
 Contexts:
@@ -37,20 +36,21 @@ Contexts:
 Branch priority groups:
 	Unknown
 
-Actions (10: 1 - 11):
+Actions (11: 1 - 12):
 	StandIdleShow (1)
 	WalkForwardMove (2)
 	JumpForwardMove (3)
 	ClimbForwardMove (4)
 	RunForwardMove (5)
-	StandTurnLeftMove (6)
-	StandTurnRightMove (7)
-	JumpUpMove (8)
-	HoldRightHandCreate (9)
-	StrikeLeftHandDestroy (10)
-	Unknown (11)
-
-Decorators (0: 12 - 12):
+	FallForwardMove (6)
+	StandTurnLeftMove (7)
+	StandTurnRightMove (8)
+	JumpUpMove (9)
+	HoldRightHandCreate (10)
+	StrikeLeftHandDestroy (11)
 	Unknown (12)
+
+Decorators (0: 13 - 13):
+	Unknown (13)
 
 Agent classes:
