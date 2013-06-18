@@ -36,7 +36,7 @@ namespace OpenCog.Embodiment
 /// The OpenCog OCObjectMapInfo.
 /// </summary>
 #region Class Attributes
-	[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[ProtoContract]
 [OCExposePropertyFields]
 [Serializable]
 	
@@ -251,22 +251,25 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
 		}
 		
-		public Embodiment.OCTag CheckTagExists (string keyStr)
+		public bool CheckTagExists (string keyStr)
 		{
-			Embodiment.OCTag tagToCheck = _tags[keyStr];
-
-			return tagToCheck;
+			UnityEngine.Debug.Log ("Checking for tag '" + keyStr + "'.");
+			
+			return _tags.ContainsKey(keyStr);
+			
+//			Embodiment.OCTag tagToCheck = _tags[keyStr];
+//
+//			return tagToCheck;
 		}
 
 		public void AddTag (string keyStr, string valueStr, System.Type type)
 		{
-			// Check if property existing
-			Embodiment.OCTag tagToAdd = CheckTagExists(keyStr);
-
+			// Check if property exists
 			if (_tags.ContainsKey(keyStr)) {
 				_tags.Remove (keyStr);
 			}
-
+			
+			//UnityEngine.Debug.Log ("Adding tag '" + keyStr + "'");
 			_tags.Add(keyStr, new OCTag(valueStr, type));
 		}
 
@@ -329,6 +332,8 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		
 		public OCObjectMapInfo (UnityEngine.GameObject gameObject)
 		{
+			UnityEngine.Debug.Log ("OCObjectMapInfo::OCObjectMapInfo, passed object is of type: " + gameObject.GetType().ToString ());
+			
 			// Get id of a game object
 			_id = gameObject.GetInstanceID ().ToString ();
 			// Get name

@@ -56,6 +56,7 @@ public class OCServerListener : OCMonoBehaviour
 	private bool _shouldStop;
 	private TcpListener _listener;
 	private OCNetworkElement _networkElement;
+	private OCMessageHandler _messageHandler;
 			
 	//---------------------------------------------------------------------------
 
@@ -156,12 +157,14 @@ public class OCServerListener : OCMonoBehaviour
 						
 					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
 						
-					OCMessageHandler myHandler = OCMessageHandler.Instance;
+					if (_messageHandler == null)
+						_messageHandler = OCMessageHandler.Instance;
 					
-					if (myHandler == null)
+					if (_messageHandler == null)
 						UnityEngine.Debug.Log ("No handler?? I just made it!!");
 					
-					myHandler.UpdateMessagesSync(workSocket);
+					_messageHandler.UpdateMessagesSync(workSocket);
+					//_messageHandler.UpdateMessages(workSocket);
 						
 					UnityEngine.Debug.Log ("Well...did anything happen?");
 //				}

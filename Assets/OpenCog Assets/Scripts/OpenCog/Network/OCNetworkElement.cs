@@ -555,7 +555,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 		lock(_clientSocket)
 		{
-			UnityEngine.Debug.Log ("Are we even connected, we need to be connected to send something right...");
+			//UnityEngine.Debug.Log ("Are we even connected, we need to be connected to send something right...");
 			if(!_clientSocket.Connected)
 			{
 				UnityEngine.Debug.Log ("We're not connected OMG!");
@@ -564,7 +564,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				return false;
 			}
 			else
-				UnityEngine.Debug.Log ("Seems we're connected...");
+				//UnityEngine.Debug.Log ("Seems we're connected...");
 
 			
 			try
@@ -631,6 +631,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				messagesToProcess = new Queue<OCMessage>(_messageQueue);
 				_messageQueue.Clear();
 			}
+				
 			foreach(OCMessage msg in messagesToProcess)
 			{
 				if(msg == null)
@@ -638,11 +639,13 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 					OCLogger.Error("Null message to process.");
 				}
 
-				OCLogger.Fine("Handle message from [" + msg.SourceID +
-				          "]. Content: " + msg.ToString());
+				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
+				
 				bool mustExit = ProcessNextMessage(msg);
+				
 				if(mustExit)
 				{
+					UnityEngine.Debug.Log ("Must....EXIT.....");
 					break;
 				}
 			}
@@ -678,8 +681,11 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="id">Network element id</param>
 	public void MarkAsAvailable(string id)
 	{
+		UnityEngine.Debug.Log ("Marking element '" + id + "' as available.");
+			
 		if(!IsElementAvailable(id))
 		{
+			UnityEngine.Debug.Log ("Removing element '" + id + "' from unavailable elements.");
 			_unavailableElements.Remove(id);
 		}
 	}
