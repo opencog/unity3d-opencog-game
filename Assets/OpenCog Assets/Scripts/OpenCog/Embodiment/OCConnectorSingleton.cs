@@ -106,6 +106,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private OCActionController _actionController;
 	
 	private bool _firstRun = true;
+	
+	private System.DateTime _lastUpdate = System.DateTime.Now;
 
 	//---------------------------------------------------------------------------
 
@@ -230,7 +232,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     {
         // Invoke base network element function to do networking stuffs in 
         // every frame.
-        Pulse();
+		if (System.DateTime.Now.Subtract (_lastUpdate).TotalMilliseconds > 1000)
+		{
+			base.Update();	
+			
+			_lastUpdate = System.DateTime.Now;
+		}
+        
 
         //isOacAlive = isElementAvailable(myBrainId);
     }

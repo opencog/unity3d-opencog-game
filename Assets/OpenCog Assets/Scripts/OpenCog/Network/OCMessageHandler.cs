@@ -49,7 +49,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCMessageHandler : UnityEngine.MonoBehaviour
+public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 {
 
 	//---------------------------------------------------------------------------
@@ -58,12 +58,9 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private OCNetworkElement _networkElement;
-		
 	/// <summary>
 	/// The TCP socket where the connection is being handled.
 	/// </summary>
-	private Socket _socket;
 			
 	/// <summary>
 	/// The global state.
@@ -96,7 +93,13 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-		
+	
+	public static OCMessageHandler Instance
+	{
+		get {
+			return GetInstance<OCMessageHandler>();
+		}
+	}
 
 			
 	//---------------------------------------------------------------------------
@@ -110,13 +113,15 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 	//---------------------------------------------------------------------------
 	
 
-	public IEnumerator StartProcessing()
+	public IEnumerator StartProcessing(System.Net.Sockets.Socket workSocket)
 	{
-		UnityEngine.Debug.Log ("OCMessageHandler::StartProcessing");
-		yield return StartCoroutine(UpdateMessages());
+//		UnityEngine.Debug.Log ("OCMessageHandler::StartProcessing");
+//		yield return StartCoroutine(UpdateMessages(workSocket));
+		UnityEngine.Debug.Log ("BALLS!");
+		yield return null;
 	}
 		
-	public IEnumerator UpdateMessages()
+	public IEnumerator UpdateMessages(System.Net.Sockets.Socket workSocket)
 	{
 		UnityEngine.Debug.Log ("OCMessageHandler::UpdateMessages");
 		
@@ -125,13 +130,13 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 			
 		try
 		{
-			Stream s = new NetworkStream(_socket);
+			Stream s = new NetworkStream(workSocket);
 			reader = new StreamReader(s);
 			writer = new StreamWriter(s);
 		}
 		catch( IOException ioe )
 		{
-			_socket.Close();
+			workSocket.Close();
 			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
 		}
 			
@@ -165,7 +170,7 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 		{
 			reader.Close();
 			writer.Close();
-			_socket.Close();
+			workSocket.Close();
 		}
 		catch( IOException ioe )
 		{
@@ -175,6 +180,66 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 		}
 			
 		yield return null;
+	}
+		
+	public void UpdateMessagesSync(System.Net.Sockets.Socket workSocket)
+	{
+		UnityEngine.Debug.Log ("OCMessageHandler::UpdateMessagesSync");
+		
+		StreamReader reader = null;
+		StreamWriter writer = null;
+			
+		try
+		{
+			Stream s = new NetworkStream(workSocket);
+			reader = new StreamReader(s);
+			writer = new StreamWriter(s);
+		}
+		catch( IOException ioe )
+		{
+			workSocket.Close();
+			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+		}
+			
+		bool endInput = false;
+			
+		while( !endInput )
+		{
+			try
+			{
+				//@TODO Make some tests to judge the read time.
+				string line = reader.ReadLine();
+					
+				if(line != null)
+				{
+					UnityEngine.Debug.Log ("Parsing line: " + line);
+						
+					string answer = Parse(line);
+				}
+				else
+				{
+					endInput = true;
+				}
+			}
+			catch( IOException ioe )
+			{
+				UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.Message + "].");
+				endInput = true;
+			}
+		}
+			
+		try
+		{
+			reader.Close();
+			writer.Close();
+			workSocket.Close();
+		}
+		catch( IOException ioe )
+		{
+			UnityEngine.Debug.Log ("Something went wrong: " + ioe.Message);
+			//OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			endInput = true;
+		}
 	}
 
 	//---------------------------------------------------------------------------
@@ -187,15 +252,11 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private void Initialize(OCNetworkElement networkElement, Socket socket)
+	private void Initialize()
 	{
 		UnityEngine.Debug.Log ("OCMessageHandler::Initialize");
 			
-		UnityEngine.Debug.Log ("networkElement == null? I wonder..." + ((networkElement == null) ? "yes...it is..." : "no...it isn't" ));
-			
 		try {
-			_networkElement = networkElement;
-			_socket = socket;	
 			_lineCount = 0;
 			_state = DOING_NOTHING;
 				
@@ -223,8 +284,18 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 	/// </returns> 
 	private string Parse(string inputLine)
 	{
-		UnityEngine.Debug.Log ("OCMessageHandler::Parse");
 		string answer = null;
+		UnityEngine.Debug.Log ("OCMessageHandler::Parse");
+			
+		OCNetworkElement _networkElement = OCNetworkElement.Instance;
+			
+		UnityEngine.Debug.Log ("_networkElement == null? I wonder..." + ((_networkElement == null) ? "yes...it is..." : "no...it isn't" ));		
+			
+		if (_networkElement != null)
+			UnityEngine.Debug.Log ("OCMessageHandler is using a NetworkElement with ID " + _networkElement.VerificationGuid + "...");
+		else {
+			UnityEngine.Debug.Log("_networkElement == null");
+		}
 			
 		char selector = inputLine[0];
 		string contents = inputLine.Substring(1);
@@ -460,10 +531,10 @@ public class OCMessageHandler : UnityEngine.MonoBehaviour
 
 	//---------------------------------------------------------------------------		
 
-	public OCMessageHandler(OCNetworkElement networkElement, Socket socket)
+	public OCMessageHandler()
 	{
 		UnityEngine.Debug.Log ("OCMessageHandler::OCMessageHandler");
-		Initialize(networkElement, socket);
+		Initialize();
 	}
 
 	//---------------------------------------------------------------------------

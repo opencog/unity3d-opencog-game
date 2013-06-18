@@ -105,6 +105,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// has been established.
 	/// </summary>
 	protected bool _isEstablished = false;
+	protected bool _isLoggedIn = false;
+	protected bool _isListening = false;
 	
 	protected string _verificationGuid ;
 		
@@ -201,6 +203,11 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Update()
 	{
+		if (!_isListening)
+			StartListening();
+		else
+			Pulse();
+			
 		OCLogger.Fine(this.name + " is updated.");
 	}
 		
@@ -318,6 +325,18 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 
 	}
+		
+	private void StartListening()
+	{
+		if (_isLoggedIn)
+		{
+			UnityEngine.Debug.Log ("StartCoroutine(_listener.Listen())");
+	
+			_isListening = true;
+				
+			StartCoroutine(_listener.Listen());		
+		}
+	}
 
 	protected void InitializeNetworkElement(string id)
 	{
@@ -337,11 +356,10 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 		StartCoroutine(Connect());
 		
-		// THE SOLUTION!! MAKE IT WAIT!!
-		System.Threading.Thread.Sleep (1000);
-		
-		StartCoroutine(_listener.Listen());
-		StartCoroutine(RequestMessage(1));
+		UnityEngine.Debug.Log ("StartCoroutine(_listener.Listen())");
+				
+		//StartCoroutine(_listener.Listen());
+		//StartCoroutine(RequestMessage(1));
 	}
 	
 	/// <summary>
@@ -349,7 +367,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	protected void Uninitialize()
 	{
-		StopCoroutine("Listener.Listen");
+		StopCoroutine("_listener.Listen");
 		StopCoroutine("RequestMessage");
 		//_listener.Stop();
 		Disconnect();
@@ -471,6 +489,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		UnityEngine.Debug.Log ("Starting router login process...sending command: " + command);
 			
 		Send(command);
+		
+		_isLoggedIn = true;
 	}
 
 	/// <summary>
@@ -627,8 +647,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				}
 			}
 		}
-		//else
-			//UnityEngine.Debug.Log ("_messageQueue.Count == 0");
+//		else
+//			UnityEngine.Debug.Log ("_messageQueue.Count == 0");
 	}
 
 	public void MarkAsUnavailable(string id)

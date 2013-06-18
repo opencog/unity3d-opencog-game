@@ -119,14 +119,15 @@ public class OCServerListener : OCMonoBehaviour
 			
 		try
 		{
-			_listener = new 
-				TcpListener
-				(	_networkElement.IP
-				, _networkElement.Port
-				)
-			;
+			if (_listener == null)
+			{
+				_listener = new TcpListener(_networkElement.IP, _networkElement.Port);
 				
-			_listener.Start();
+				_listener.Start();	
+					
+				UnityEngine.Debug.Log ("Now listening on " + _networkElement.IP + ":" + _networkElement.Port + "...");
+			}
+			
 		}
 		catch(SocketException se)
 		{
@@ -137,12 +138,11 @@ public class OCServerListener : OCMonoBehaviour
 		
 		while(!_shouldStop)
 		{
-			//UnityEngine.Debug.Log ("_listener.Pending?");
 			if(!_listener.Pending())
 			{
-				//UnityEngine.Debug.Log ("Nope, not pending...");
-				// If listener is pending, sleep for a while to relax the CPU.
-				yield return new UnityEngine.WaitForSeconds(0.05f);
+				UnityEngine.Debug.Log (System.DateTime.Now.ToString ("HH:mm:ss.fff") + ": Nope, not pending...");
+				// If listener is not pending, sleep for a while to relax the CPU.
+				yield return new UnityEngine.WaitForSeconds(0.5f);
 			}
 			else
 			{
@@ -156,9 +156,12 @@ public class OCServerListener : OCMonoBehaviour
 						
 					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
 						
-					OCMessageHandler myHandler = new OCMessageHandler(_networkElement, workSocket);
-						
-					yield return myHandler.StartProcessing();
+					OCMessageHandler myHandler = OCMessageHandler.Instance;
+					
+					if (myHandler == null)
+						UnityEngine.Debug.Log ("No handler?? I just made it!!");
+					
+					myHandler.UpdateMessagesSync(workSocket);
 						
 					UnityEngine.Debug.Log ("Well...did anything happen?");
 //				}

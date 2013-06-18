@@ -704,7 +704,7 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus StartAction()
 	{
-		OCLogger.Debugging("Starting the " + FullName + " Action.");
+		//OCLogger.Debugging("Starting the " + FullName + " Action.");
 
 		_ActionController.RunningActions.Add(FullName);
 
@@ -731,7 +731,7 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus ContinueAction()
 	{
-		OCLogger.Fine("Continuing the " + FullName + " Action.");
+		//OCLogger.Fine("Continuing the " + FullName + " Action.");
 
 		// Animation effects continue automatically
 		return ActionStatus.RUNNING;
@@ -739,7 +739,7 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus EndAction()
 	{
-		OCLogger.Debugging("Ending the " + FullName + " Action.");
+		//OCLogger.Debugging("Ending the " + FullName + " Action.");
 
 		_ActionController.RunningActions.Remove(FullName);
 
