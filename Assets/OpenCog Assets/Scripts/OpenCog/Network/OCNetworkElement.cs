@@ -107,10 +107,13 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	protected bool _isEstablished = false;
 	protected bool _isLoggedIn = false;
 	protected bool _isListening = false;
+	private bool _isHandlingMessages = false;
 	
 	protected string _verificationGuid ;
 		
 	protected ConnectionState _connectionState = ConnectionState.Disconnected;
+		
+	private OCMessageHandler _messageHandler;
 
 	//---------------------------------------------------------------------------
 
@@ -205,8 +208,10 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		if (!_isListening)
 			StartListening();
-		else
+		else if (_listener.IsReady && !_isHandlingMessages) {
+			StartHandling();
 			Pulse();
+		}
 			
 		OCLogger.Fine(this.name + " is updated.");
 	}
@@ -324,6 +329,23 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	private void Initialize()
 	{
 
+	}
+		
+	private void StartHandling()
+	{
+		UnityEngine.Debug.Log ("StartCoroutine(_messageHandler.UpdateMessage())");
+			
+		if (!_isHandlingMessages)
+		{
+			_isHandlingMessages = true;	
+				
+			if (_messageHandler == null)
+				_messageHandler = OCMessageHandler.Instance;		
+				
+			StartCoroutine(_messageHandler.UpdateMessages(_listener.WorkSocket));
+		}
+			
+		
 	}
 		
 	private void StartListening()

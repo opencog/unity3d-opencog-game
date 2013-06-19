@@ -57,6 +57,8 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 	private TcpListener _listener;
 	private OCNetworkElement _networkElement;
 	private OCMessageHandler _messageHandler;
+	private System.Net.Sockets.Socket _workSocket;
+	private bool _isReady;
 			
 	//---------------------------------------------------------------------------
 
@@ -73,6 +75,17 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		get {
 			return GetInstance<OCServerListener>();
 		}
+	}
+		
+	public bool IsReady
+	{
+		get { return _isReady; }
+		set { _isReady = value; }
+	}
+		
+	public System.Net.Sockets.Socket WorkSocket
+	{
+		get { return _workSocket; }	
 	}
 			
 	//---------------------------------------------------------------------------
@@ -158,20 +171,21 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 //				{
 					UnityEngine.Debug.Log ("Accepting socket from listener...");
 						
-					Socket workSocket = _listener.AcceptSocket();
-						
-					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
-						
-					if (_messageHandler == null)
-						_messageHandler = OCMessageHandler.Instance;
-					
-					if (_messageHandler == null)
-						UnityEngine.Debug.Log ("No handler?? I just made it!!");
-					
-					_messageHandler.UpdateMessagesSync(workSocket);
+					_workSocket = _listener.AcceptSocket();
+
+					_isReady = true;
+//					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
+//						
+//					if (_messageHandler == null)
+//						_messageHandler = OCMessageHandler.Instance;
+//					
+//					if (_messageHandler == null)
+//						UnityEngine.Debug.Log ("No handler?? I just made it!!");
+//					
+//					_messageHandler.UpdateMessagesSync(workSocket);
 					//_messageHandler.UpdateMessages(workSocket);
 						
-					UnityEngine.Debug.Log ("Well...did anything happen?");
+//					UnityEngine.Debug.Log ("Well...did anything happen?");
 //				}
 //				catch( SocketException se )
 //				{

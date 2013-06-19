@@ -148,10 +148,10 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			{
 				//@TODO Make some tests to judge the read time.
 				string line = reader.ReadLine();
-					
+				
 				if(line != null)
 				{
-					string answer = Parse(line);
+					//string answer = Parse(line);
 				}
 				else
 				{
@@ -163,6 +163,12 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 				UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.Message + "].");
 				endInput = true;
 			}
+			catch (System.Exception ex)
+			{
+				UnityEngine.Debug.Log ("A general error occured.  [" + ex.Message + "].");
+				endInput = true;
+			}
+				
 			yield return new UnityEngine.WaitForSeconds(0.1f);
 		}
 			
