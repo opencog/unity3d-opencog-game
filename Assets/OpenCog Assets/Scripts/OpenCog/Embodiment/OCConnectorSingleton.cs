@@ -32,6 +32,7 @@ using OCEmotionalExpression = OpenCog.OCEmotionalExpression;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using ScriptableObject = UnityEngine.ScriptableObject;
+using OCID = System.Guid;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -134,13 +135,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		get { return _isInitialized; }
 	}
 
-	/**
-     * Accessor to this avatar's id. (a.k.a AVATAR_xxx)
-     */
-    public string ID
-    {
-        get { return _ID; }
-    }
+//		/**
+//     * Accessor to this avatar's id. (a.k.a AVATAR_xxx)
+//     */
+//    public string ID
+//    {
+//        get { return _ID; }
+//    }
 
 		 /**
      * Accessor to this avatar's name. 
@@ -218,17 +219,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
-
-    /// <summary>
-    /// A unity API function inherited from MonoBehavior.
-    /// Initialization work would be done in Init() for we need some parameters
-    /// for this instance.
-    /// </summary>
-    void Awake()
-    {
-    }
-    
-    void Update()
+   
+    new void Update()
     {
         // Invoke base network element function to do networking stuffs in 
         // every frame.
@@ -480,13 +472,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        }
 	
 	        // Second step, check if spawner is available to spawn an OAC instance.
-	        bool isSpawnerAlive = IsElementAvailable(new OCConfig().get("SPAWNER_ID"));
+	        bool isSpawnerAlive = IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID"));
 	        timeout = 60;
 	        while (!isSpawnerAlive && timeout > 0)
 	        {
 	            OCLogger.Info("Waiting for spawner...");
 	            yield return new UnityEngine.WaitForSeconds(1f);
-	            isSpawnerAlive = IsElementAvailable(new OCConfig().get("SPAWNER_ID"));
+	            isSpawnerAlive = IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID"));
 	            timeout--;
 	        }
 	
@@ -744,9 +736,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 	
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
-	public void HandleObjectAppearOrDisappear(string objectID, string objectType, bool isAppear)
+	public void HandleObjectAppearOrDisappear(OCID objectID, string objectType, bool isAppear)
 	{
-		if (objectID == gameObject.GetInstanceID().ToString())
+		if (objectID == ID)
 			return;
 		
 	  string timestamp = GetCurrentTimestamp();
@@ -754,7 +746,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     XmlElement root = MakeXMLElementRoot(doc);
 		
     XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-    agentSignal.SetAttribute("id", objectID);
+    agentSignal.SetAttribute("id", objectID.ToString());
 		
 		string targetType;
 
@@ -782,7 +774,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		actionElement.SetAttribute("result-state", "true"); 
 		
-		actionElement.SetAttribute("target", objectID);
+		actionElement.SetAttribute("target", objectID.ToString());
 		actionElement.SetAttribute("target-type",targetType);		
 		
    	OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
@@ -1603,7 +1595,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         msgCmd.Append(_brainID + "\n");
 
         OCMessage msg = OCMessage.CreateMessage(_ID,
-                                      new OCConfig().get("SPAWNER_ID"),
+                                      OCConfig.Instance.get("SPAWNER_ID"),
                                       OCMessage.MessageType.STRING,
                                       msgCmd.ToString());
         if (!SendMessage(msg))

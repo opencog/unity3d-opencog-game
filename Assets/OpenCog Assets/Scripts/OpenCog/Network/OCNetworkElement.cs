@@ -352,7 +352,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		_routerIP = IPAddress.Parse(strConfigIP);
 		_routerPort = OCConfig.Instance.getInt("ROUTER_PORT", 16312);
 	
-		_listener = new OCServerListener(this);
+		OCServerListener.Instance.Initialize(this);
+		_listener = OCServerListener.Instance;
 
 		StartCoroutine(Connect());
 		
@@ -564,7 +565,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				return false;
 			}
 			else
-				//UnityEngine.Debug.Log ("Seems we're connected...");
+				UnityEngine.Debug.Log ("Seems we're connected...");
 
 			
 			try

@@ -47,7 +47,7 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 
 	//---------------------------------------------------------------------------
 
-	protected static Hashtable _settings = new Hashtable();
+	private static Hashtable _settings = new Hashtable();
 
 	//---------------------------------------------------------------------------
 

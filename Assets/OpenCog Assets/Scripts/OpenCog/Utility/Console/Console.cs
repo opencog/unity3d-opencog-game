@@ -131,6 +131,7 @@ public class Console : OCMonoBehaviour
 	{
 		Input.eatKeyPressOnTextFieldFocus = false;
 		
+		
 		_panelHeight = Screen.height * 0.30f;
 
 

@@ -170,8 +170,8 @@ where OCType : MonoBehaviour
 			EditorUtility.SetDirty(target);
 	}
 
-	public void DrawInspector<OCType>(OCType target)
-		where OCType : new()
+	public void DrawInspector<OCNewType>(OCNewType target)
+		where OCNewType : new()
 	{
 		if(target == null)
 		{

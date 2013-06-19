@@ -33,8 +33,8 @@ namespace OpenCog
 #region Class Attributes
 
 #endregion
-public class OCSingletonMonoBehaviour<T> : MonoBehaviour
-	where T : MonoBehaviour 
+public class OCSingletonMonoBehaviour<T> : OCMonoBehaviour
+	where T : OCMonoBehaviour 
 {
 
 	//---------------------------------------------------------------------------

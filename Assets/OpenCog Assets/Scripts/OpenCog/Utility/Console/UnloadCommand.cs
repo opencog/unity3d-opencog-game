@@ -83,8 +83,9 @@ public class UnloadCommand : Console.ConsoleCommand
 		/// <summary>
 		/// Use this for initialization
 		/// </summary>
-		public void Start ()
+		public new void Start ()
 		{
+			base.Start();
 			OCLogger.Fine (gameObject.name + " is started.");
 		}
 

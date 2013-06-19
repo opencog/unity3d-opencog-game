@@ -44,8 +44,8 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCServerListener : OCMonoBehaviour
-{
+public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
+{ 
 
 	//---------------------------------------------------------------------------
 
@@ -68,7 +68,12 @@ public class OCServerListener : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-
+	public static OCServerListener Instance
+	{
+		get {
+			return GetInstance<OCServerListener>();
+		}
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -177,6 +182,22 @@ public class OCServerListener : OCMonoBehaviour
 		}
 	}
 		
+	/// <summary>
+	/// Initializes this instance.  Set default values here.
+	/// </summary>
+	public void Initialize(OCNetworkElement networkElement)
+	{
+		_networkElement = networkElement;
+		_shouldStop = false;			
+	}
+	
+	/// <summary>
+	/// Uninitializes this instance.  Cleanup refernces here.
+	/// </summary>
+	public void Uninitialize()
+	{
+	}			
+		
 	public void Stop()
 	{
 		_shouldStop = true;
@@ -209,21 +230,7 @@ public class OCServerListener : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	/// <summary>
-	/// Initializes this instance.  Set default values here.
-	/// </summary>
-	private void Initialize(OCNetworkElement networkElement)
-	{
-		_networkElement = networkElement;
-		_shouldStop = false;			
-	}
-	
-	/// <summary>
-	/// Uninitializes this instance.  Cleanup refernces here.
-	/// </summary>
-	private void Uninitialize()
-	{
-	}	
+
 		
 	//---------------------------------------------------------------------------
 
@@ -243,10 +250,10 @@ public class OCServerListener : OCMonoBehaviour
 	/// <param name='networkElement'>
 	/// Network element.
 	/// </param>
-	public OCServerListener(OCNetworkElement networkElement)
-	{
-		_networkElement = networkElement;
-	}
+//	public OCServerListener(OCNetworkElement networkElement)
+//	{
+//		_networkElement = networkElement;
+//	}
 
 	//---------------------------------------------------------------------------
 

@@ -91,7 +91,7 @@ namespace OpenCog
 				}
 			
 			} catch (Exception ex) {
-				UnityEngine.Debug.Log ("Compare exception on object type " + typeof(U));
+				UnityEngine.Debug.Log ("Compare exception on object type " + typeof(U) + " Message: " + ex.Message);
 			}
 		
 			return (U)_instance;

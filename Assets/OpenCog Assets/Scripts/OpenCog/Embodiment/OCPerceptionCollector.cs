@@ -67,7 +67,7 @@ namespace OpenCog.Embodiment
 		private OpenCog.Map.OCMap _map;
 		private Dictionary<string, bool> _chunkStatusMap = new Dictionary<string, bool> (); // A map to mark if current chunk needs to be percepted. True means perception in need.
 		private int _floorHeight; // Currently, just percept the block above the horizon.
-		private bool _hasPerceivedTerrainForFirstTime = false;
+		private bool _hasPerceivedTerrainForFirstTime = true;
 		private bool _perceptStateChangesFirstTime = true;
 			
 		//---------------------------------------------------------------------------

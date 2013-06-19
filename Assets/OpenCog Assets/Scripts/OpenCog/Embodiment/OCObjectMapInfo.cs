@@ -36,7 +36,7 @@ namespace OpenCog.Embodiment
 /// The OpenCog OCObjectMapInfo.
 /// </summary>
 #region Class Attributes
-[ProtoContract]
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
 	
@@ -91,10 +91,10 @@ public class OCObjectMapInfo : OCMonoBehaviour
 
 		//---------------------------------------------------------------------------
 		
-		public string ID {
-			get { return _id; }
-			set { _id = value; }
-		}
+//		public string ID {
+//			get { return _id; }
+//			set { _id = value; }
+//		}
 
 		public string Name {
 			get { return _name; }
@@ -334,8 +334,8 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		{
 			UnityEngine.Debug.Log ("OCObjectMapInfo::OCObjectMapInfo, passed object is of type: " + gameObject.GetType().ToString ());
 			
-			// Get id of a game object
-			_id = gameObject.GetInstanceID ().ToString ();
+//			// Get id of a game object
+//			_id = gameObject.GetInstanceID ().ToString ();
 			// Get name
 			_name = gameObject.name;
 			// TODO: By default, we are using object type.
@@ -414,7 +414,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			mapinfo.Width = 1;
 			mapinfo.Length = 1;
 			mapinfo.Type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
-			mapinfo.ID = blockName;
+//			mapinfo.ID = blockName;
 			mapinfo.Name = blockName;
 			mapinfo.Velocity = UnityEngine.Vector3.zero;
 			mapinfo.Position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
