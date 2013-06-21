@@ -1578,7 +1578,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         msgCmd.Append(_type + WHITESPACE + _traits + "\n");
 
         OCMessage msg = OCMessage.CreateMessage(_ID,
-                                      new OCConfig().get("SPAWNER_ID"),
+                                      OCConfig.Instance.get("SPAWNER_ID"),
                                       OCMessage.MessageType.STRING,
                                       msgCmd.ToString());
         SendMessage(msg);
