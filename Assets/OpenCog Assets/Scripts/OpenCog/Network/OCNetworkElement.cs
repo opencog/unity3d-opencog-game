@@ -173,6 +173,13 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		get { return _listener; } 
 	}
+		
+	public bool IsHandlingMessages
+	{
+		get { return _isHandlingMessages; }
+	 	set { _isHandlingMessages = value; }
+			
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -210,6 +217,9 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			StartListening();
 		else if (_listener.IsReady && !_isHandlingMessages) {
 			StartHandling();
+			Pulse();
+		}
+		else {
 			Pulse();
 		}
 			
@@ -294,11 +304,13 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
 		lock(_messageQueue)
 		{
+			UnityEngine.Debug.Log ("Enqueueing a message (I hate this code!!)");
 			_messageQueue.Enqueue(message);	
 		}
 		
 		lock(_unreadMessagesLock)
 		{
+			UnityEngine.Debug.Log ("Taking unreadMessagesCount from " + _unreadMessagesCount + " to " + (_unreadMessagesCount - 1).ToString() + ".");
 			_unreadMessagesCount--;
 		}
 	}
@@ -343,6 +355,9 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				_messageHandler = OCMessageHandler.Instance;		
 				
 			StartCoroutine(_messageHandler.UpdateMessages(_listener.WorkSocket));
+			
+			// In the old code, this function is NEVER fully executed, since haveUnreadMessages is ALWAYS false anyway.
+			//StartCoroutine(RequestMessage (1));
 		}
 			
 		
@@ -500,7 +515,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		}
 		catch(System.Exception e)
 		{
-			UnityEngine.Debug.LogWarning(e.ToString());
+			UnityEngine.Debug.Log(e.ToString());
 		}
 	}
 		
@@ -642,7 +657,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	protected void Pulse()
 	{
-		//UnityEngine.Debug.Log ("Pulsing...");
+		UnityEngine.Debug.Log ("Pulsing...");
 			
 		if(_messageQueue.Count > 0)
 		{
@@ -655,11 +670,13 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				_messageQueue.Clear();
 			}
 				
+			UnityEngine.Debug.Log ("Weird copy from _messageQueue to messagesToProcess is complete! Time to get loopy!");
+				
 			foreach(OCMessage msg in messagesToProcess)
 			{
 				if(msg == null)
 				{
-					OCLogger.Error("Null message to process.");
+					UnityEngine.Debug.Log("Null message to process.");
 				}
 
 				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
@@ -735,19 +752,19 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// Should be invoked in some Update() function to make it check messages
 	/// in certain interval.
 	/// </summary>
-	protected IEnumerator RequestMessage(int limit)
-	{
-		while(true)
-		{
-			if(_unreadMessagesCount > 0)
-			{	
-				string command = "REQUEST_UNREAD_MESSAGES " + _ID +
-                                 WHITESPACE + limit + NEWLINE;
-				Send(command);
-			}
-			yield return new UnityEngine.WaitForSeconds(0.1f);
-		}
-	}
+//	protected IEnumerator RequestMessage(int limit)
+//	{
+//		while(true)
+//		{
+//			if(_unreadMessagesCount > 0)
+//			{	
+//				string command = "REQUEST_UNREAD_MESSAGES " + _ID +
+//                                 WHITESPACE + limit + NEWLINE;
+//				Send(command);
+//			}
+//			yield return new UnityEngine.WaitForSeconds(0.1f);
+//		}
+//	}
 
 
 			

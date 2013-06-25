@@ -174,6 +174,8 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 					_workSocket = _listener.AcceptSocket();
 
 					_isReady = true;
+					
+					_shouldStop = true;
 //					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
 //						
 //					if (_messageHandler == null)
