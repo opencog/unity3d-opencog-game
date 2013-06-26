@@ -542,6 +542,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		}
 		else
 		{
+			UnityEngine.Debug.Log ("Processing an interesting message type!");
 			// Get the plain text of this message(in XML format) and parse it.
 			if(_isInitialized)
 			{

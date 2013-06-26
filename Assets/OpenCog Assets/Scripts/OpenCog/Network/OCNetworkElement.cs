@@ -322,6 +322,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <returns>True if the message is an "exit" command.</returns>
 	public virtual bool ProcessNextMessage(OCMessage message)
 	{
+		UnityEngine.Debug.Log ("OCNetworkElement::ProcessNextMessage (I DON'T WANT TO BE HERE!!)");
+			
 		return false;
 	}
 

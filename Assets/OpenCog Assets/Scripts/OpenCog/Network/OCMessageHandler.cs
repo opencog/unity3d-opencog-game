@@ -142,42 +142,52 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			
 		bool endInput = false;
 			
-		while( !endInput )
+		while (true)
 		{
-			try
+			while( !endInput )
 			{
-				//@TODO Make some tests to judge the read time.
-				string line = reader.ReadLine();
-				
-				if(line != null)
+				try
 				{
-					string answer = Parse(line);
-						
-					UnityEngine.Debug.Log ("Just parsed '" + line + "'");
+					//@TODO Make some tests to judge the read time.
+					string line = reader.ReadLine();
+					
+					if(line != null)
+					{
+						string answer = Parse(line);
+							
+						UnityEngine.Debug.Log ("Just parsed '" + line + "'");
+					}
+					else
+					{
+						UnityEngine.Debug.Log ("No more input, line == null");
+							
+						endInput = true;
+							
+	//					UnityEngine.Debug.Log ("Setting OCNetworkElement.IsHandling to false...");
+	//						
+	//					OCNetworkElement.Instance.IsHandlingMessages = false;
+					}
 				}
-				else
+				catch( IOException ioe )
 				{
-					UnityEngine.Debug.Log ("No more input, line == null");
-						
+					UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.Message + "].");
 					endInput = true;
-						
-//					UnityEngine.Debug.Log ("Setting OCNetworkElement.IsHandling to false...");
-//						
-//					OCNetworkElement.Instance.IsHandlingMessages = false;
 				}
-			}
-			catch( IOException ioe )
-			{
-				UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.Message + "].");
-				endInput = true;
-			}
-			catch (System.Exception ex)
-			{
-				UnityEngine.Debug.Log ("A general error occured.  [" + ex.Message + "].");
-				endInput = true;
+				catch (System.Exception ex)
+				{
+					UnityEngine.Debug.Log ("A general error occured.  [" + ex.Message + "].");
+					endInput = true;
+				}
+				
+				yield return new UnityEngine.WaitForSeconds(0.1f);
 			}
 				
-			yield return new UnityEngine.WaitForSeconds(0.1f);
+			if (endInput)
+			{
+				yield return new UnityEngine.WaitForSeconds(0.5f);
+				
+				endInput = false;	
+			}
 		}
 			
 		try
@@ -506,35 +516,36 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		string answer = null;
 			
 		string[] tokenArr = contents.Split(' ');
-			IEnumerator token = tokenArr.GetEnumerator();
-			token.MoveNext();
-			string command = token.Current.ToString();
+		IEnumerator token = tokenArr.GetEnumerator();
+		token.MoveNext();
+		string command = token.Current.ToString();
+		
+		if(command.Equals("NOTIFY_NEW_MESSAGE"))
+		{
+			answer = ParseNotifyNewMessage (token);
+		}
+		else if(command.Equals("UNAVAILABLE_ELEMENT"))
+		{
+			answer = ParseUnavailableElement(token);
+		}
+		else if(command.Equals("AVAILABLE_ELEMENT"))
+		{
+			answer = ParseAvailableElement(token);
+		}
+		else if(command.Equals("START_MESSAGE")) // Parse a common message
+		{
+			answer = ParseStartMessage (inputLine, command, token);
+		}
+		else if(command.Equals("NO_MORE_MESSAGES"))
+		{
+			answer = ParseNoMoreMessages(inputLine, command, token);	
+		}
+		else
+		{
+			OCLogger.Error("onLine: Unexpected command [" + command + "]. Discarding line [" + inputLine + "]");
+			answer = OCNetworkElement.FAILED_MESSAGE;
+		} // end processing command.
 			
-			if(command.Equals("NOTIFY_NEW_MESSAGE"))
-			{
-				answer = ParseNotifyNewMessage (token);
-			}
-			else if(command.Equals("UNAVAILABLE_ELEMENT"))
-			{
-				answer = ParseUnavailableElement(token);
-			}
-			else if(command.Equals("AVAILABLE_ELEMENT"))
-			{
-				answer = ParseAvailableElement(token);
-			}
-			else if(command.Equals("START_MESSAGE")) // Parse a common message
-			{
-				answer = ParseStartMessage (inputLine, command, token);
-			}
-			else if(command.Equals("NO_MORE_MESSAGES"))
-			{
-				answer = ParseNoMoreMessages(inputLine, command, token);	
-			}
-			else
-			{
-				OCLogger.Error("onLine: Unexpected command [" + command + "]. Discarding line [" + inputLine + "]");
-				answer = OCNetworkElement.FAILED_MESSAGE;
-			} // end processing command.
 		return answer;
 	}
 		
@@ -580,7 +591,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 	/// </returns> 
 	private string Parse(string inputLine)
 	{
-		UnityEngine.Debug.Log ("OCMessageHandler::Parse");
+		UnityEngine.Debug.Log ("OCMessageHandler::Parse (" + inputLine + ")");
 		
 		string answer = null;
 					
@@ -616,7 +627,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 		return answer;
 	}
-			
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
