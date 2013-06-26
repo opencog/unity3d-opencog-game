@@ -83,10 +83,6 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private int _lineCount;
 	private int _state;
-		
-	private NetworkStream _networkStream;
-	private StreamReader _streamReader;
-	private bool _streamsReady = false;
 			
 	//---------------------------------------------------------------------------
 
@@ -125,91 +121,79 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 ////		yield return null;
 //	}
 		
-	private void InitStreams(System.Net.Sockets.Socket workSocket)
+	public IEnumerator UpdateMessages(System.Net.Sockets.Socket workSocket)
 	{
-		UnityEngine.Debug.Log ("Initializing streams...");
+		UnityEngine.Debug.Log ("OCMessageHandler::UpdateMessages");
+		
+		StreamReader reader = null;
+		StreamWriter writer = null;
 			
 		try
 		{
-			_networkStream = new NetworkStream(workSocket);
-			_streamReader = new StreamReader(_networkStream);
-				
-			_networkStream.ReadTimeout = 100;
-				
-			_streamsReady = true;
+			Stream s = new NetworkStream(workSocket);
+			reader = new StreamReader(s);
+			writer = new StreamWriter(s);
 		}
 		catch( IOException ioe )
 		{
 			workSocket.Close();
 			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
 		}
-	}
-		
-	public IEnumerator UpdateMessages(System.Net.Sockets.Socket workSocket)
-	{
-		UnityEngine.Debug.Log ("OCMessageHandler::UpdateMessages");
-		
+			
 		bool endInput = false;
 			
-		if (!_streamsReady)
+		while (true)
 		{
-			InitStreams(workSocket);	
-		}
-			
-		while( !endInput )
-		{
-			try
+			while( !endInput )
 			{
-				//@TODO Make some tests to judge the read time.
-				string line = _streamReader.ReadLine();
-				
-				if(line != null)
+				try
 				{
-					string answer = Parse(line);
-						
-					UnityEngine.Debug.Log ("Just parsed '" + line + "'");
+					//@TODO Make some tests to judge the read time.
+					string line = reader.ReadLine();
+					
+					if(line != null)
+					{
+						string answer = Parse(line);
+							
+						UnityEngine.Debug.Log ("Just parsed '" + line + "'");
+					}
+					else
+					{
+						UnityEngine.Debug.Log ("No more input, line == null");
+							
+						endInput = true;
+							
+	//					UnityEngine.Debug.Log ("Setting OCNetworkElement.IsHandling to false...");
+	//						
+	//					OCNetworkElement.Instance.IsHandlingMessages = false;
+					}
 				}
-				else
+				catch( IOException ioe )
 				{
-					UnityEngine.Debug.Log ("No more input, line == null");
-						
+					UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.Message + "].");
 					endInput = true;
 				}
-				//System.Threading.Thread.Sleep (1000);
-			}
-			catch( IOException ioe )
-			{
-				UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.ToString() + "].");
-				if (workSocket.Connected)
-					UnityEngine.Debug.Log ("It is connected though...");
-				else
-					UnityEngine.Debug.Log ("worksocket isn't connected damnit!");
+				catch (System.Exception ex)
+				{
+					UnityEngine.Debug.Log ("A general error occured.  [" + ex.Message + "].");
+					endInput = true;
+				}
 				
-				endInput = true;
-			}
-			catch (System.Exception ex)
-			{
-				UnityEngine.Debug.Log ("A general error occured.  [" + ex.Message + "].");
-				endInput = true;
+				yield return new UnityEngine.WaitForSeconds(0.1f);
 			}
 				
-			yield return new UnityEngine.WaitForSeconds(0.3f);
+			if (endInput)
+			{
+				yield return new UnityEngine.WaitForSeconds(0.5f);
+				
+				endInput = false;	
+			}
 		}
-			
-//		if (endInput)
-//		{
-//			yield return new UnityEngine.WaitForSeconds(0.1f);
-//				
-//			endInput = false;	
-//		}
-			
-		yield return new UnityEngine.WaitForSeconds(0.1f);
 			
 		try
 		{
-			UnityEngine.Debug.Log ("Closing streamreader and worksocket...");
-			_streamReader.Close();
-			//writer.Close();
+			reader.Close();
+			writer.Close();
 			workSocket.Close();
 		}
 		catch( IOException ioe )

@@ -215,7 +215,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		if (!_isListening)
 			StartListening();
-		else if (_listener.IsConnected && !_isHandlingMessages) {
+		else if (_listener.IsReady && !_isHandlingMessages) {
 			StartHandling();
 			Pulse();
 		}
@@ -304,9 +304,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
 		lock(_messageQueue)
 		{
-			_messageQueue.Enqueue(message);	
-			
 			UnityEngine.Debug.Log ("Enqueueing a message (I hate this code!!)");
+			_messageQueue.Enqueue(message);	
 		}
 		
 		lock(_unreadMessagesLock)
@@ -353,8 +352,6 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		if (!_isHandlingMessages)
 		{
 			_isHandlingMessages = true;	
-
-			// Disable all lines below to use old messagehandler. Also see OCServerListener.Listen
 				
 			if (_messageHandler == null)
 				_messageHandler = OCMessageHandler.Instance;		
@@ -731,7 +728,6 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		if(!IsElementAvailable(id))
 		{
 			UnityEngine.Debug.Log ("Removing element '" + id + "' from unavailable elements.");
-			
 			_unavailableElements.Remove(id);
 		}
 	}

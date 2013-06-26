@@ -58,9 +58,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 	private OCNetworkElement _networkElement;
 	private OCMessageHandler _messageHandler;
 	private System.Net.Sockets.Socket _workSocket;
-	private bool _isConnected;
-		
-//	public static ManualResetEvent clientConnected = new ManualResetEvent(false);
+	private bool _isReady;
 			
 	//---------------------------------------------------------------------------
 
@@ -79,10 +77,10 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		}
 	}
 		
-	public bool IsConnected
+	public bool IsReady
 	{
-		get { return _isConnected; }
-		set { _isConnected = value; }
+		get { return _isReady; }
+		set { _isReady = value; }
 	}
 		
 	public System.Net.Sockets.Socket WorkSocket
@@ -134,50 +132,9 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 //			" is about to be destroyed.");
 	}
 		
-	private void AcceptSocketCallback(System.IAsyncResult ar)
-	{
-		try
-		{
-			TcpListener listener = (TcpListener) ar.AsyncState;
-			
-			_workSocket = listener.EndAcceptSocket(ar);
-				
-			_isConnected = true;
-			
-			UnityEngine.Debug.Log ("AcceptSocketCallback complete.");
-				
-			if (_workSocket == null)
-				UnityEngine.Debug.Log ("But _workSocket == null....");
-				
-//				// Retrieve the socket from the state object.
-//			_clientSocket = (Socket)ar.AsyncState;
-//				
-//			UnityEngine.Debug.Log ("Retrieved socket from the state object...");
-//			// Complete the connection.
-//				
-//			_clientSocket.EndConnect(ar);
-//				
-//			UnityEngine.Debug.Log ("Connection complete...");
-//
-//			_isEstablished = true;
-//				
-//			_connectionState = ConnectionState.Connected;
-//
-//			UnityEngine.Debug.Log("Socket connected to router.");
-//			
-//			LoginRouter();
-		}
-		catch(System.Exception e)
-		{
-			UnityEngine.Debug.Log(e.ToString());
-		}
-	}
-		
 	public IEnumerator Listen()
 	{
 		UnityEngine.Debug.Log ("OCServerListener::Listen has a networkelement with GUID " + _networkElement.VerificationGuid);
-			
-		//clientConnected.Reset();
 			
 		try
 		{
@@ -212,15 +169,13 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 					
 //				try
 //				{
-					UnityEngine.Debug.Log ("Begin accepting socket from listener...");
+					UnityEngine.Debug.Log ("Accepting socket from listener...");
 						
-					_listener.BeginAcceptSocket(new System.AsyncCallback(AcceptSocketCallback), _listener);
-					
-					// Enable below to enable old messagehandler. Also see OCNetworkElement.StartHandling
-					//new OldMessageHandler(OCNetworkElement.Instance, workSocket).start();
+					_workSocket = _listener.AcceptSocket();
+
+					_isReady = true;
 					
 					_shouldStop = true;
-					yield break;
 //					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
 //						
 //					if (_messageHandler == null)
