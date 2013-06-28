@@ -109,6 +109,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private bool _firstRun = true;
 	
 	private System.DateTime _lastUpdate = System.DateTime.Now;
+	
+	private bool _actionStatusesUpdated = false;
 
 	//---------------------------------------------------------------------------
 
@@ -228,6 +230,17 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			base.Update();	
 			
+			if (_actionStatusesUpdated == false)
+			{
+				UpdateActionStatuses();
+				
+				_actionStatusesUpdated = true;	
+			}
+			
+			Dictionary<string, double> basicFactorMap = new Dictionary<string, double>();
+				
+			SendAvatarSignalsAndTick(basicFactorMap);
+			
 			_lastUpdate = System.DateTime.Now;
 		}
         
@@ -241,9 +254,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
      */
     void FixedUpdate()
     {
+		
         _messageSendingTimer += UnityEngine.Time.fixedDeltaTime;
         
         if (_messageSendingTimer >= _messageSendingInterval) {
+			//UnityEngine.Debug.Log ("OCConnectorSingleton::FixedUpdate sending messages at " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
             SendMessages();
             _messageSendingTimer = 0.0f;
         }
@@ -262,48 +277,70 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	{
 		if(!_isInitialized)
 		{
+			UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: not initialized!!");
 			return;
 		}
-
+		else
+		{
+			//UnityEngine.Debug.Log ("OCConnectorSingletong::SendMessages: initialized!");
+		}
+		
 		if(_messagesToSend.Count > 0)
 		{
+			UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: " + _messagesToSend.Count + " to send.");
 			List<OCMessage> localMessagesToSend;
 			// copy messages to a local queue and clear the global sending queue.
-			lock(_messageSendingLock)
+			lock(_messagesToSend)
 			{
 				localMessagesToSend = new List<OCMessage>(_messagesToSend);
 				_messagesToSend.Clear();
 			} // lock
-
+			
+			int iMessageIndex = 1;
+			
 			foreach(OCMessage message in localMessagesToSend)
 			{
-				// Check if router and destination is available. If so, send the message. 
-				// otherwise just ignore the message
-				string routerId = new OCConfig().get("ROUTER_ID", "ROUTER");
-				if(!IsElementAvailable(routerId))
+				UnityEngine.Debug.Log ("Processing message " + iMessageIndex + " of " + localMessagesToSend.Count + "...");
+				
+				if (message != null)
 				{
-					OCLogger.Warn("Router not available. Discarding message to '" +
-                                 message.TargetID + "' of type '" + message.Type + "'.");
-					continue;
-				}
-				if(!IsElementAvailable(message.TargetID))
-				{
-					OCLogger.Warn("Destination not available. Discarding message to '" +
-                                 message.TargetID + "' of type '" + message.Type + "'.");
-					continue;
-				}
-				if(SendMessage(message))
-				{
-					OCLogger.Debugging("Message from '" + message.SourceID + "' to '" +
-                                 message.TargetID + "' of type '" + message.Type + "'.");
+					// Check if router and destination is available. If so, send the message. 
+					// otherwise just ignore the message
+					string routerId = new OCConfig().get("ROUTER_ID", "ROUTER");
+					if(!IsElementAvailable(routerId))
+					{
+						UnityEngine.Debug.Log("Router not available. Discarding message to '" +
+	                                 message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+						continue;
+					}
+					if(!IsElementAvailable(message.TargetID))
+					{
+						UnityEngine.Debug.Log("Destination not available. Discarding message to '" +
+	                                 message.TargetID + "' of type '" + message.Type +"': " + message.ToString());
+						continue;
+					}
+					if(SendMessage(message))
+					{
+						UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" +
+	                                 message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+					}
+					else
+					{
+						UnityEngine.Debug.Log("Error sending message from '" + message.SourceID + "' to '" +
+	                                 message.TargetID + "' type '" + message.Type + "': " + message.ToString());
+					}
 				}
 				else
 				{
-					OCLogger.Warn("Error sending message from '" + message.SourceID + "' to '" +
-                                 message.TargetID + "' type '" + message.Type + "'.");
+					UnityEngine.Debug.Log ("A null message...great...");
 				}
+				
+				iMessageIndex += 1;
+				
 			} // foreach
 		}
+//		else
+//			UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: Nothing to send.");
         
 	}
 
@@ -511,7 +548,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public override bool ProcessNextMessage(OCMessage message)
 	{
-		OCLogger.Debugging(message.ToString());
+		UnityEngine.Debug.Log("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
     
 		if(message.Type == OCMessage.MessageType.FEEDBACK)
 		{
@@ -537,11 +574,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 			// Format: SUCCESS UNLOAD NetworkElement_id avatar_id
 			string neId = tokens[2];
-			OCLogger.Info("Successfully unloaded '" + neId + "'.");
+			UnityEngine.Debug.Log ("!!! Successfully unloaded '" + neId + "'.");
 			_isInitialized = false;
 		}
 		else
 		{
+			UnityEngine.Debug.Log ("Processing an interesting message type!");
 			// Get the plain text of this message(in XML format) and parse it.
 			if(_isInitialized)
 			{
@@ -574,9 +612,57 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// Call GetAndClearAllActions on ActionControlles in the new situation
 
 			// Loop through Actions...or clones of them...or data structures for them...
+	
+		UnityEngine.Debug.Log ("Queuing message to update action statuses.");
+	string timestamp = GetCurrentTimestamp();
+        // Create a xml document
+        XmlDocument doc = new XmlDocument();
+        XmlElement root = MakeXMLElementRoot(doc);
 
+        XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
+        avatarSignal.SetAttribute("id", this.BrainID);
+        avatarSignal.SetAttribute("timestamp", timestamp);
+        
+        // Extract actions from action list
+//        foreach (ActionSummary action in actionList)
+//		{
+//			// Set the action name
+//	        string ocActionName = ActionManager.getOCActionNameFromMap(action.actionName);
+//	        
+//			// check if the method name has a mapping to opencog action name.
+//			if (ocActionName == null) continue;
+//			
+//	        XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(EmbodimentXMLTags.ACTION_AVAILABILITY_ELEMENT));
+//	        
+//	        actionElement.SetAttribute("name", ocActionName);
+//	        
+//	        // Actions like "walk", "jump" are built-in naturally, they don't need an external target to act on.
+//	        if (action.objectID != gameObject.GetInstanceID())
+//			{
+//		        // Set the action target
+//		        actionElement.SetAttribute("target", action.objectID.ToString());
+//		        
+//		        // Set the action target type
+//				// currently we only process the avatar and ocobject type, other types in EmbodimentXMLTages can is to be added when needed.
+//				// if you add other types such as BLOCK_OBJECT_TYPE, you should also modify PAI::processAgentAvailability in opencog
+//				string targetType = action.actionObject.tag;
+//				if (targetType == "OCA" || targetType == "Player")// it's an avatar
+//					actionElement.SetAttribute("target-type", EmbodimentXMLTags.AVATAR_OBJECT_TYPE);
+//				else if (targetType == "OCObject") // it's an object
+//					actionElement.SetAttribute("target-type", EmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
+//				else
+//					Debug.LogError("Error target type: " + targetType + " in action: " + action.actionName);
+//			}
+//							
+//	        actionElement.SetAttribute("available", available ? "true" : "false");
+//		}
 
+        OCMessage message = OCMessage.CreateMessage (this.ID.ToString(), this.BrainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
+        lock (_messageSendingLock)
+        {
+            _messagesToSend.Add(message);
+        }
 
 		}
   
@@ -736,9 +822,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 	
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
-	public void HandleObjectAppearOrDisappear(OCID objectID, string objectType, bool isAppear)
+	public void HandleObjectAppearOrDisappear(string objectID, string objectType, bool isAppear)
 	{
-		if (objectID == ID)
+		if (objectID == ID.ToString())
 			return;
 		
 	  string timestamp = GetCurrentTimestamp();
@@ -1190,7 +1276,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       OCStringMessage message =
           (OCStringMessage)SerializeMapInfo(terrainInfoSeq, "terrain-info", "terrain-data",isFirstTimePerceptTerrain);
 
-      lock (_messageSendingLock)
+      lock (_messagesToSend)
       {
           _messagesToSend.Add(message);
 		SendMessages();
@@ -1250,8 +1336,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       XmlElement data = (XmlElement)mapInfo.AppendChild(doc.CreateElement(payloadTag));
 
       data.InnerText = encodedPlainText;
-
-      return new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+		
+		return OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+		
+      //return new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
   }
 	
 	public void SendFinishPerceptTerrain()
@@ -1629,6 +1717,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         avatarSignal.SetAttribute("id", _brainID);
         
         avatarSignal.SetAttribute("timestamp", timestamp);
+		
+		avatarSignal.SetAttribute("type-of-message", "tick-message-really");
         
         // Append all physiological factors onto the message content.
         foreach (string factor in physiologicalInfo.Keys)
@@ -1643,9 +1733,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         //OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
             
         // Construct a string message.
-        OCStringMessage message = new OCStringMessage(_ID, _brainID, xmlText);
-
-        lock (_messageSendingLock)
+        //OCStringMessage message = new OCStringMessage(_ID, _brainID, xmlText);
+		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);
+		
+        lock (_messagesToSend)
         {
             // Add physiological information to message sending queue.
             _messagesToSend.Add(message);
@@ -1654,6 +1745,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
             if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
             {
                 OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "");
+				
+				if (tickMessage == null)
+					UnityEngine.Debug.Log ("Its the tick!");
+				
                 _messagesToSend.Add(tickMessage);
             }
         }
