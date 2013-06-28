@@ -143,6 +143,8 @@ public abstract class OCMessage : IConvertible
 				return new OCFeedbackMessage(sourceID, targetID, message);				
 			case MessageType.RAW:
 				return new OCRawMessage(sourceID, targetID, message);
+			case MessageType.TICK:
+				return new OCTickMessage(sourceID, targetID);
 			default:
 				return null;
 		}

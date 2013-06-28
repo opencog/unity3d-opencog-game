@@ -36,12 +36,12 @@ namespace OpenCog.Embodiment
 /// The OpenCog OCObjectMapInfo.
 /// </summary>
 #region Class Attributes
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[ProtoContract]
 [OCExposePropertyFields]
 [Serializable]
 	
 #endregion
-public class OCObjectMapInfo : OCMonoBehaviour
+public class OCObjectMapInfo
 	{
 
 		//---------------------------------------------------------------------------
@@ -96,7 +96,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 //			set { _id = value; }
 //		}
 
-		public string Name {
+		public string name {
 			get { return _name; }
 			set { _name = value; }
 		}
@@ -110,15 +110,21 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		// Do not invoke this explicitly.
 		public Vector3Wrapper PositionWrapper {
 			get { return _positionWrapper; }
-			set { Position = value.ToVector3 (); }
+			set { position = value.ToVector3 (); }
 		}
 
-		public UnityEngine.Vector3 Position {
+		public UnityEngine.Vector3 position {
 			get { return _position; }
 			set {
 				_position = value;
 				_positionWrapper = new Vector3Wrapper (_position);
 			}
+		}
+		
+		public string ID 
+		{ 
+			get { return _id; }
+			set { _id = value; }
 		}
 
 		// Will be called implicitly when serialized by protobuf-net.
@@ -136,7 +142,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			}
 		}
 
-		public Utility.Rotation Rotation {
+		public Utility.Rotation rotation {
 			get { return _rotation; }
 			set { _rotation = value; }
 		}
@@ -197,7 +203,6 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		public void Awake ()
 		{
 			Initialize ();
-			OCLogger.Fine (gameObject.name + " is awake.");
 		}
 
 		/// <summary>
@@ -205,7 +210,6 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		/// </summary>
 		public void Start ()
 		{
-			OCLogger.Fine (gameObject.name + " is started.");
 		}
 
 		/// <summary>
@@ -213,7 +217,6 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		/// </summary>
 		public void Update ()
 		{
-			OCLogger.Fine (gameObject.name + " is updated.");	
 		}
 		
 		/// <summary>
@@ -223,7 +226,6 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		{
 			Uninitialize ();
 			Initialize ();
-			OCLogger.Fine (gameObject.name + " is reset.");	
 		}
 
 		/// <summary>
@@ -231,7 +233,6 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		/// </summary>
 		public void OnEnable ()
 		{
-			OCLogger.Fine (gameObject.name + " is enabled.");
 		}
 
 		/// <summary>
@@ -239,7 +240,6 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		/// </summary>
 		public void OnDisable ()
 		{
-			OCLogger.Fine (gameObject.name + " is disabled.");
 		}
 
 		/// <summary>
@@ -248,7 +248,6 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		public void OnDestroy ()
 		{
 			Uninitialize ();
-			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
 		}
 		
 		public bool CheckTagExists (string keyStr)
@@ -414,10 +413,10 @@ public class OCObjectMapInfo : OCMonoBehaviour
 			mapinfo.Width = 1;
 			mapinfo.Length = 1;
 			mapinfo.Type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
-//			mapinfo.ID = blockName;
-			mapinfo.Name = blockName;
+			mapinfo.ID = blockName;
+			mapinfo.name = blockName;
 			mapinfo.Velocity = UnityEngine.Vector3.zero;
-			mapinfo.Position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
+			mapinfo.position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
 
 			// Add block properties
 			mapinfo.AddTag ("class", "block", System.Type.GetType("System.String"));
@@ -462,6 +461,7 @@ public class OCObjectMapInfo : OCMonoBehaviour
 		/// class that are to be serialized, we need to wrap the built-in types of
 		/// Unity3D with manual data contract declaration.
 		/// </summary>
+		[ProtoContract]
 	    public class Vector3Wrapper
 		{
 			public float x;

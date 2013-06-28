@@ -67,7 +67,7 @@ namespace OpenCog.Embodiment
 		private OpenCog.Map.OCMap _map;
 		private Dictionary<string, bool> _chunkStatusMap = new Dictionary<string, bool> (); // A map to mark if current chunk needs to be percepted. True means perception in need.
 		private int _floorHeight; // Currently, just percept the block above the horizon.
-		private bool _hasPerceivedTerrainForFirstTime = true;
+		private bool _hasPerceivedTerrainForFirstTime = false;
 		private bool _perceptStateChangesFirstTime = true;
 			
 		//---------------------------------------------------------------------------
@@ -126,7 +126,9 @@ namespace OpenCog.Embodiment
 			// Percept the world once in each interval.
 			if (_timer >= _updatePerceptionInterval) {
 				this.PerceptWorld ();
-				this.PerceiveTerrain ();
+				if (!_hasPerceivedTerrainForFirstTime)
+					StartCoroutine(this.PerceiveTerrain());
+					//this.PerceiveTerrain ();
 				PerceiveStateChanges ();
 				_timer = 0.0f;
 			}
@@ -390,7 +392,7 @@ namespace OpenCog.Embodiment
 				//currentPos.z += mapInfo.Height * 0.5f;
 			}
 	
-			UnityEngine.Vector3 cachedPos = mapInfo.Position;
+			UnityEngine.Vector3 cachedPos = mapInfo.position;
 			UnityEngine.Vector3 cachedVelocity = mapInfo.Velocity;
 			bool hasMoved = false;
 			
@@ -398,7 +400,7 @@ namespace OpenCog.Embodiment
 	            UnityEngine.Vector3.Distance (cachedPos, currentPos) > OCObjectMapInfo.POSITION_DISTANCE_THRESHOLD) {
 				hasMoved = true;
 				isUpdated = true;
-				mapInfo.Position = currentPos;
+				mapInfo.position = currentPos;
 				// Update the velocity
 				mapInfo.Velocity = CalculateVelocity (cachedPos, currentPos);
 			}
@@ -415,11 +417,11 @@ namespace OpenCog.Embodiment
 	
 			// Rotation
 			Utility.Rotation currentRot = new Utility.Rotation (go.transform.rotation);
-			Utility.Rotation cachedRot = mapInfo.Rotation;
+			Utility.Rotation cachedRot = mapInfo.rotation;
 	
 			if (!currentRot.Equals (cachedRot)) {
 				isUpdated = true;
-				mapInfo.Rotation = currentRot;
+				mapInfo.rotation = currentRot;
 			}
 	
 			return isUpdated;
@@ -490,10 +492,10 @@ namespace OpenCog.Embodiment
 		
 		}
 	
-		private void PerceiveTerrain ()
+		private IEnumerator PerceiveTerrain ()
 		{
 			if (_hasPerceivedTerrainForFirstTime) {
-				return;
+				yield return null;
 			}
 
 			List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo> ();
@@ -530,21 +532,31 @@ namespace OpenCog.Embodiment
 											OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
 			
 											terrainMapinfoList.Add (globalMapInfo);
+											
+											if (globalMapInfo == null)
+												UnityEngine.Debug.Log ("globalMapInfo == null");
 			
 											// in case there are too many blocks, we send every 5000 blocks per message
-											if (terrainMapinfoList.Count >= 5000) {
+											if (terrainMapinfoList.Count >= 4) {
 												UnityEngine.Debug.Log ("Sending terrain info...");
 												_connector.SendTerrainInfoMessage (terrainMapinfoList, true);
 												terrainMapinfoList.Clear ();
+												
+												yield return new UnityEngine.WaitForSeconds(10f);
 											}
 										} // end if (!globalBlock.IsEmpty())
 										
 										blocksProcessed += 1;
 										
 										if (blocksProcessed % 250 == 0)
+										{
 											UnityEngine.Debug.Log ("Processed " + blocksProcessed + "blocks.");
+											yield return null;	
+										}
 			
 									} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
+									
+									//yield return new UnityEngine.WaitForSeconds(0.1f);
 			
 								} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
 			
@@ -569,6 +581,8 @@ namespace OpenCog.Embodiment
 				_connector.SendFinishPerceptTerrain ();
 				_hasPerceivedTerrainForFirstTime = true;
 			}
+			
+			yield return null;
 		}
 
 		private void PerceiveStateChanges ()

@@ -114,6 +114,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	protected ConnectionState _connectionState = ConnectionState.Disconnected;
 		
 	private OCMessageHandler _messageHandler;
+		
+	
 
 	//---------------------------------------------------------------------------
 
@@ -347,16 +349,16 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		
 	private void StartHandling()
 	{
-		UnityEngine.Debug.Log ("StartCoroutine(_messageHandler.UpdateMessage())");
+		UnityEngine.Debug.Log ("OCNetworkElement::StartHandling");
 			
 		if (!_isHandlingMessages)
 		{
 			_isHandlingMessages = true;	
 				
-			if (_messageHandler == null)
-				_messageHandler = OCMessageHandler.Instance;		
-				
-			StartCoroutine(_messageHandler.UpdateMessages(_listener.WorkSocket));
+//			if (_messageHandler == null)
+//				_messageHandler = OCMessageHandler.Instance;		
+//				
+//			StartCoroutine(_messageHandler.UpdateMessages(_listener.WorkSocket));
 			
 			// In the old code, this function is NEVER fully executed, since haveUnreadMessages is ALWAYS false anyway.
 			//StartCoroutine(RequestMessage (1));
@@ -397,6 +399,9 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		StartCoroutine(Connect());
 		
 		UnityEngine.Debug.Log ("StartCoroutine(_listener.Listen())");
+			
+		if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
+			UnityEngine.Debug.Log ("Generation of tick messages is enabled.");
 				
 		//StartCoroutine(_listener.Listen());
 		//StartCoroutine(RequestMessage(1));
@@ -659,11 +664,22 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	protected void Pulse()
 	{
-		UnityEngine.Debug.Log ("Pulsing...");
+		//UnityEngine.Debug.Log ("Pulsing...");
 			
 		if(_messageQueue.Count > 0)
 		{
 			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
+				
+			lock(_messageQueue)
+			{
+				int messageNumer = 0;
+					
+				foreach (OCMessage aMessage in _messageQueue)
+				{
+					UnityEngine.Debug.Log ("Message number " + messageNumer + " contains: " + aMessage.ToString());
+				}
+			}
+				
 			//long startTime = DateTime.Now.Ticks;
 			Queue<OCMessage> messagesToProcess;
 			lock(_messageQueue)
