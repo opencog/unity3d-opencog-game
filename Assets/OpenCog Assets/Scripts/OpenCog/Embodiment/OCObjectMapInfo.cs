@@ -20,8 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
-using ImplicitFields = ProtoBuf.ImplicitFields;
-using ProtoContract = ProtoBuf.ProtoContractAttribute;
+using ProtoBuf;
 using Serializable = System.SerializableAttribute;
 
 //The private field is assigned but its value is never used
@@ -37,8 +36,8 @@ namespace OpenCog.Embodiment
 /// </summary>
 #region Class Attributes
 [ProtoContract]
-[OCExposePropertyFields]
-[Serializable]
+//[OCExposePropertyFields]
+//[Serializable]
 	
 #endregion
 public class OCObjectMapInfo
@@ -72,7 +71,7 @@ public class OCObjectMapInfo
 		private string _type;
 		private UnityEngine.Vector3 _position; // Position of object
 		private Vector3Wrapper _positionWrapper;
-		private Utility.Rotation _rotation = new Utility.Rotation(0, 0, 0); // Rotation of object
+		private Utility.Rotation _rotation; //= new Utility.Rotation(0, 0, 0); // Rotation of object
 		private UnityEngine.Vector3 _velocity; // Velocity of an object, if it is moving.
 		private Vector3Wrapper _velocityWrapper;
 		private float _length, _width, _height; // Size of an object.
@@ -95,12 +94,13 @@ public class OCObjectMapInfo
 //			get { return _id; }
 //			set { _id = value; }
 //		}
-
+		[ProtoMember(2)]
 		public string name {
 			get { return _name; }
 			set { _name = value; }
 		}
-
+		
+		[ProtoMember(3)]
 		public string Type {
 			get { return _type; }
 			set { _type = value; }
@@ -108,6 +108,7 @@ public class OCObjectMapInfo
 
 		// Will be called implicitly when serialized by protobuf-net.
 		// Do not invoke this explicitly.
+		[ProtoMember(4)]
 		public Vector3Wrapper PositionWrapper {
 			get { return _positionWrapper; }
 			set { position = value.ToVector3 (); }
@@ -121,6 +122,7 @@ public class OCObjectMapInfo
 			}
 		}
 		
+		[ProtoMember(1)]
 		public string ID 
 		{ 
 			get { return _id; }
@@ -129,6 +131,7 @@ public class OCObjectMapInfo
 
 		// Will be called implicitly when serialized by protobuf-net.
 		// Do not invoke this explicitly.
+		[ProtoMember(5)]
 		public Vector3Wrapper VelocityWrapper {
 			get { return _velocityWrapper; }
 			set { Velocity = value.ToVector3 ();  }
@@ -141,22 +144,26 @@ public class OCObjectMapInfo
 				_velocityWrapper = new Vector3Wrapper (_velocity);
 			}
 		}
-
+		
+		[ProtoMember(6)]
 		public Utility.Rotation rotation {
 			get { return _rotation; }
 			set { _rotation = value; }
 		}
-
+		
+		[ProtoMember(7)]
 		public float Length {
 			get { return _length; }
 			set { _length = value; }
 		}
-
+		
+		[ProtoMember(8)]
 		public float Width {
 			get { return _width; }
 			set { _width = value; }
 		}
-
+		
+		[ProtoMember(9)]
 		public float Height {
 			get { return _height; }
 			set { _height = value; }
@@ -166,12 +173,14 @@ public class OCObjectMapInfo
 			get { return _visibility; }
 			set { _visibility = value; }
 		}
-
+		
+		[ProtoMember(10)]
 		public Dictionary<string, Embodiment.OCTag> Properties {
 			get { return _tags; }
 			set { _tags = value; }
 		}
-
+		
+		[ProtoMember(11)]
 		public float Weight {
 			get { return _weight; }
 			set { _weight = value; }
@@ -417,6 +426,7 @@ public class OCObjectMapInfo
 			mapinfo.name = blockName;
 			mapinfo.Velocity = UnityEngine.Vector3.zero;
 			mapinfo.position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
+			mapinfo.rotation = new OpenCog.Utility.Rotation(0, 0, 0);
 
 			// Add block properties
 			mapinfo.AddTag ("class", "block", System.Type.GetType("System.String"));
@@ -464,30 +474,33 @@ public class OCObjectMapInfo
 		[ProtoContract]
 	    public class Vector3Wrapper
 		{
-			public float x;
-			public float y;
-			public float z;
-
-			// Constructor from a Unity3D Vector3
-			public Vector3Wrapper (UnityEngine.Vector3 vec)
-			{
-				x = vec.x;
-				y = vec.y;
-				z = vec.z;
-			}
-
-			// Dummy constructor
-			public Vector3Wrapper ()
-			{
-				x = 0.0f;
-				y = 0.0f;
-				z = 0.0f;
-			}
-
-			public UnityEngine.Vector3 ToVector3 ()
-			{
-				return new UnityEngine.Vector3 (x, y, z);
-			}
+			[ProtoMember(1, IsRequired=true)]
+	        public float x;
+	        [ProtoMember(2, IsRequired=true)]
+	        public float y;
+	        [ProtoMember(3, IsRequired=true)]
+	        public float z;
+	
+	        // Constructor from a Unity3D Vector3
+	        public Vector3Wrapper(UnityEngine.Vector3 vec)
+	        {
+	            x = vec.x;
+	            y = vec.y;
+	            z = vec.z;
+	        }
+	
+	        // Dummy constructor
+	        public Vector3Wrapper()
+	        {
+	            x = 0.0f;
+	            y = 0.0f;
+	            z = 0.0f;
+	        }
+	
+	        public UnityEngine.Vector3 ToVector3()
+	        {
+	            return new UnityEngine.Vector3(x, y, z);
+	        }
 		}
 
 		public enum VISIBLE_STATUS

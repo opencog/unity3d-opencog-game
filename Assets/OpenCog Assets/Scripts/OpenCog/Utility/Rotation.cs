@@ -20,8 +20,7 @@
 using System.Collections;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
-using ImplicitFields = ProtoBuf.ImplicitFields;
-using ProtoContract = ProtoBuf.ProtoContractAttribute;
+using ProtoBuf;
 using Serializable = System.SerializableAttribute;
 
 //The private field is assigned but its value is never used
@@ -37,10 +36,10 @@ namespace OpenCog.Utility
 /// </summary>
 #region Class Attributes
 
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+
 [OCExposePropertyFields]
 [Serializable]
-	
+[ProtoContract]
 #endregion
 public class Rotation : OCMonoBehaviour
 {
@@ -67,21 +66,21 @@ public class Rotation : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	//[ProtoMember(1, IsRequired=true)]
+	[ProtoMember(1, IsRequired=true)]
 	public float Pitch
 	{
 		get { return this.pitch; }
 		set { this.pitch = value; }
 	}
 
-	//[ProtoMember(2, IsRequired = true)]
+	[ProtoMember(2, IsRequired = true)]
 	public float Roll
 	{
 		get { return this.roll; }
 		set { this.roll = value; }
 	}
 
-	//[ProtoMember(3, IsRequired = true)]
+	[ProtoMember(3, IsRequired = true)]
 	public float Yaw
 	{
 		get { return this.yaw; }
