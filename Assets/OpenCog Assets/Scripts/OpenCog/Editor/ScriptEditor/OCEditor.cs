@@ -25,7 +25,6 @@ using ProtoBuf;
 using UnityEditor;
 using UnityEngine;
 using Enum = System.Enum;
-using OCExposure = OpenCog.Serialization.OCPropertyField.OCExposure;
 using Type = System.Type;
 using TypeCode = System.TypeCode;
 
@@ -182,7 +181,7 @@ where OCType : MonoBehaviour
 		Type exposePropertiesType =
 			typeof(OCExposePropertyFieldsAttribute);
 
-		OCExposure exposure = OCExposure.None;
+		OCExposePropertyFieldsAttribute.OCExposure exposure = OCExposePropertyFieldsAttribute.OCExposure.None;
 
 		if(exposePropertiesType != null)
 		{
@@ -401,7 +400,7 @@ where OCType : MonoBehaviour
 						nestedPropertiesAndFields = OCPropertyField.GetAllPropertiesAndFields
 						( propertyField.Instance
 						, propertyField.UnityPropertyField
-						, OCExposure.PropertiesAndFields
+						, OCExposePropertyFieldsAttribute.OCExposure.PropertiesAndFields
 						);
 
 						Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
@@ -458,7 +457,7 @@ where OCType : MonoBehaviour
 							nestedPropertiesAndFields = OCPropertyField.GetAllPropertiesAndFields
 							( propertyField.GetValue()
 							, propertyField.UnityPropertyField
-							, OCExposure.PropertiesAndFields
+							, OCExposePropertyFieldsAttribute.OCExposure.PropertiesAndFields
 							);
 
 							//EditorGUILayout.Separator();

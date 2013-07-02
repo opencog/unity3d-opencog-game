@@ -179,7 +179,7 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 						OCPropertyField.GetAllPropertiesAndFields
 						( objects[0]
 						, null
-						, OCPropertyField.OCExposure.PropertiesAndFields
+						, OCExposePropertyFieldsAttribute.OCExposure.PropertiesAndFields
 						);
 			}
 		}

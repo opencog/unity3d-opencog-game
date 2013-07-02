@@ -6,14 +6,27 @@ public class OCFileTerrainGenerator
 {
 	private string _fullMapPath;
 	private OpenCog.Map.OCMap _map;
-	private const string _baseMapFolder = "Assets\\Maps";
+	private const string _baseMapFolder = "Assets\\Maps\\Resources";
 	
 	public OCFileTerrainGenerator (OpenCog.Map.OCMap map, string mapName)
 	{
 		map.MapName = mapName;
 
 		_map = map;
-		_fullMapPath = System.IO.Path.Combine (_baseMapFolder, mapName);
+		
+		UnityEngine.Object[] objects = Resources.LoadAll(mapName + "/level");
+		
+		Debug.Log("Objects Loaded: ");
+		foreach(UnityEngine.Object obj in objects)
+		{
+			Debug.Log(obj.ToString());
+		}
+		
+		string dataPath = UnityEngine.Application.dataPath;
+		//dataPath = dataPath.Remove(dataPath.IndexOf("/Assets"));
+		dataPath = dataPath + "/Maps/Resources";
+		Debug.Log(dataPath);
+		_fullMapPath = System.IO.Path.Combine (dataPath, mapName);
 	}
 	
 	public void LoadLevel()

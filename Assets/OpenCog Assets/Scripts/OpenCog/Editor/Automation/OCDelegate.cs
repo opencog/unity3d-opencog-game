@@ -131,7 +131,7 @@ public class OCDelegate : OCScriptableObject, ISerializable
 		return this;
 	}
 
-	[MenuItem("Assets/Create/OpenCog/Delegates")]
+//	[MenuItem("Assets/Create/OpenCog/Delegates")]
 	public static void CreateAssets()
 	{
 		List<OCDelegate> delegates = new List<OCDelegate>();

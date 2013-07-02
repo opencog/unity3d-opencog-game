@@ -669,7 +669,7 @@ public class OCPropertyField
 	public static List<OCPropertyField> GetAllPropertiesAndFields
 	( object obj = null
 	, SerializedProperty unityPropertyField = null
-	, OCExposure exposure = OCExposure.None
+	, OCExposePropertyFieldsAttribute.OCExposure exposure = OCExposePropertyFieldsAttribute.OCExposure.None
 	)
 	{
 		List<OCPropertyField> allPropertyFields = new List<OCPropertyField>();
@@ -1064,15 +1064,7 @@ public class OCPropertyField
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	public enum OCExposure
-	{
-		None
-	, PublicFieldsOnly
-	, FieldsOnly
-	, PropertiesOnly
-	, PublicPropertiesOnly
-	, PropertiesAndFields
-	};
+
 
 	/////////////////////////////////////////////////////////////////////////////
 
