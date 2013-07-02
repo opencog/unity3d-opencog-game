@@ -69,7 +69,7 @@ namespace OpenCog.Embodiment
 		private int _floorHeight; // Currently, just percept the block above the horizon.
 		private bool _hasPerceivedTerrainForFirstTime = false;
 		private bool _hasStartedPerceivingTerrainForTheFirstTime = false;
-		private bool _perceptStateChangesFirstTime = true;
+		private bool _isPerceivingStateChangesForTheFirstTime = true;
 			
 		//---------------------------------------------------------------------------
 	
@@ -127,7 +127,7 @@ namespace OpenCog.Embodiment
 			// Percept the world once in each interval.
 			if (_timer >= _updatePerceptionInterval) {
 				// I'm not sure what this does...
-				this.PerceptWorld ();
+				this.PerceiveWorld ();
 				
 				if (!_hasStartedPerceivingTerrainForTheFirstTime)
 					StartCoroutine (this.PerceiveTerrain ());
@@ -188,59 +188,74 @@ namespace OpenCog.Embodiment
 		/// <summary>
 		/// Percept and check map info of all available objects.
 		/// </summary>
-		public void PerceptWorld ()
+		public void PerceiveWorld ()
 		{
-			HashSet<int> updatedObjects = null;
-			HashSet<int> disappearedObjects = null;
+			// Ok...so we want to keep track of some list of updated / disappeared objects...seems reasonable...
+			// I didn't get why this got nulled...and instantiated later...so I'm instantiating here...
+			HashSet<int> updatedObjects = new HashSet<int>();
+			HashSet<int> disappearedObjects = new HashSet<int>();
 	
+			// I'm still worried if we're communicating the right id's on both sides...
 			List<int> cacheIdList = new List<int> ();
+			
+			// Oh and we fill it straight away...with some key cache...wonder what that is...it appearts
+			// to be a collection of gameobject id's...maybe stuff that has been deemed relevant in previous loops?
+			// The values are objectMapInfo objects...so could be blocks, characters..but if they are gameobjects, I would guess characters.
 			cacheIdList.AddRange (_mapInfoCache.Keys);
+			
 			// Before performing the perception task, set the all map info caches' updated status to false.
 			// An object's updated status will be changed while building its map info.
+			// This is another dictionary...also containing ints (probably gameobject id's again) and booleans, to indicate if the status has been updated?
+			// Yep, the boolean indicates if the status has been updated (in the last cycle (?))
 			foreach (int oid in cacheIdList) {
 				_mapInfoCacheStatus [oid] = false;
 			}
 	
-			// Update the map info of all avatar in the repository(including player avatar).
-			// TODO: This should loop through a certain set of game objects, but I'm not sure which. So I'm disabling it for now.
-//		foreach(UnityEngine.GameObject oca in OCARepository.GetAllOCA())
-//		{
-//			if(this.buildMapInfo(oca))
-//			{
-//				if(updatedObjects == null)
-//				{
-//					updatedObjects = new HashSet<int>();
-//				}
-//				updatedObjects.Add(oca.GetInstanceID());
-//			}
-//		}
+			// I'll write some code here that we need to call later...but I don't know what will replace the OCARepository
+			// Looks like we need to build a mapinfo object for each one....
 			
-			// Update the map info of all OCObjects in repository.
-//		foreach(UnityEngine.GameObject go in UnityEngine.GameObject.FindGameObjectsWithTag("OCObject"))
-//		{
-//			if(this.BuildMapInfo(go))
-//			{
-//				if(updatedObjects == null)
-//				{
-//					updatedObjects = new HashSet<int>();
-//				}
-//				updatedObjects.Add(go.GetInstanceID());
-//			}
-//		}
+			// Old comment: Update the map info of all avatar in the repository(including player avatar).
+			for (int oca = 0; oca < 0; oca++)
+			{
+				UnityEngine.GameObject someAvatarGameObject = null;
+				
+				if (this.BuildMapInfo (someAvatarGameObject))
+					updatedObjects.Add (someAvatarGameObject.GetInstanceID());
+			}
+			
+			// Ok, so that was everything in the OCA (OpenCog Avatar?) Repository. Next come the OCObjects...
+			for (int ocObject = 0; ocObject < 0; ocObject++)
+			{
+				UnityEngine.GameObject someGameObject = null;
+				
+				// Seems this function always tries to build a mapinfo...but returns false if it wasn't updated or something? Or maybe if it was the first time too?
+				if (this.BuildMapInfo(someGameObject))
+					updatedObjects.Add (someGameObject.GetInstanceID());
+			}
 	
+			// Ok...here we're determining which objects have disappeared. It seems that cacheIdList contains objects that existed before.
+			// We then look for these objects in _mapInfoCacheStatus (by gameobjectID it seems) to see if their boolean is false...not sure why yet.
+			// Oh...I just found out it means that it's status has not been updated in the last cycle...weird...why would it not complete....?
 			// Handle all objects that disappeared in this cycle.
 			foreach (int oid in cacheIdList) {
 				if (!_mapInfoCacheStatus [oid]) {
-					if (disappearedObjects == null) {
-						disappearedObjects = new HashSet<int> ();
-					}
+					// So...if the game object's boolean is false...
+					
 					// The updated flag of the map info cache is false, meaning it has not been updated in last cycle.
+					// Why do we remove the visibility status tag??
+					// Anyway, we look up the object based on object id...so we get an objectMapInfo...and remove the visibility tag
 					_mapInfoCache [oid].RemoveTag ("visibility-status");
+					// And we add a 'remove' tag...guess that means removed = true!
 					_mapInfoCache [oid].AddTag ("remove", "true", System.Type.GetType ("System.Boolean"));
+					// Finally we add it's gameobject id to a hashset of disappeared objects...
 					disappearedObjects.Add (oid);
 				}
 			}
 	
+			
+			// Next...we make a list of ObjectMapInfo's...and pipe the updatedobjects into it...
+			// but...we're just piping all OCARepository and OCObject tagged objects into it...that doesn't 
+			// mean they were updated. It seems that buildMapInfo actually does some kind of 'isupdated' analysis...
 			List<OCObjectMapInfo> latestMapInfoSeq = new List<OCObjectMapInfo> ();
 			if (updatedObjects != null) {
 				OCLogger.Info ("PerceptionCollector: global map info has been updated");
@@ -249,16 +264,23 @@ namespace OpenCog.Embodiment
 				}
 			}
 	
+			// Next we go through the hashset of disappeared objects...
 			if (disappearedObjects != null) {
+				// Looptie-dooptie-doo....
 				foreach (int oid in disappearedObjects) {
+					// Report disappearance to the OCConnector...
 					_connector.HandleObjectAppearOrDisappear (_mapInfoCache [oid].ID, _mapInfoCache [oid].Type, false);
+					
+					// AND add it to latestMapInfoSeq? That's weird...seems redundant to me now...
 					latestMapInfoSeq.Add (this._mapInfoCache [oid]);
 					// Remove disappeared object from cache.
-					this._mapInfoCache.Remove (oid);
-					this._mapInfoCacheStatus.Remove (oid);
+					_mapInfoCache.Remove (oid); // The dictionary of game object id's and objectmapinfo's
+					_mapInfoCacheStatus.Remove (oid); // The dictionary of game object id's and booleans (updated yes / no)
 				}
 			}
 	
+			// So if we have updated objects we send them to OpenCog. This is different from sendTerrainInfoMessage. Oh loo, it indicates if it was
+			// the first time too.
 			if (latestMapInfoSeq.Count > 0) {
 				// Append latest map info sequence to OC connector's sending queue.
 				_connector.SendMapInfoMessage (latestMapInfoSeq, _perceptWorldFirstTime);
@@ -360,21 +382,24 @@ namespace OpenCog.Embodiment
 		/// </returns>
 		private bool BuildMapInfo (UnityEngine.GameObject go)
 		{
+			if (go == null)
+				return false;
+			
 			// The flag to mark if the map info of a game object has been updated.
 			bool isUpdated = false;
 			OCObjectMapInfo mapInfo;
-			int goId = go.GetInstanceID ();
+			int gameObjectID = go.GetInstanceID ();
 	
-			this._mapInfoCacheStatus [goId] = true;
+			this._mapInfoCacheStatus [gameObjectID] = true;
 	
-			if (this._mapInfoCache.ContainsKey (goId)) {
+			if (this._mapInfoCache.ContainsKey (gameObjectID)) {
 				// Read cache
-				mapInfo = _mapInfoCache [goId];
+				mapInfo = _mapInfoCache [gameObjectID];
 			} else {
 				// Create a new map info and cache it.
 				mapInfo = new OCObjectMapInfo (go);
 				lock (_cacheLock) {
-					_mapInfoCache [goId] = mapInfo;
+					_mapInfoCache [gameObjectID] = mapInfo;
 				}
 				
 				// We don't send all the existing objects as appear actions to the opencog at the time the robot is loaded.
@@ -499,20 +524,32 @@ namespace OpenCog.Embodiment
 	
 		private IEnumerator PerceiveTerrain ()
 		{
+			UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveTerrain");
+			
 			if (_hasPerceivedTerrainForFirstTime) {
+				UnityEngine.Debug.Log ("I've seen this terrain before...I'm out of here...");
 				yield return null;
 			} else {
+				UnityEngine.Debug.Log ("Terra incognita...better start perceiving it...");
 				_hasStartedPerceivingTerrainForTheFirstTime = true;
 				
 				List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo> ();
 				OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
+				if (map == null)
+					UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveTerrain: map == null");
+				
 				int blocksProcessed = 0;
+				int emptyBlocksProcessed = 0;
+				int blocksPerTransmission = 1024;
+				int blocksPerDebugEntry = 512;
+				
+				System.DateTime dtStartProcessing = System.DateTime.Now;
 			
 				for (int x = map.Chunks.GetMinX(); x < map.Chunks.GetMaxX(); ++x) {
 					for (int y = map.Chunks.GetMinY(); y < map.Chunks.GetMaxY(); ++y) {
 						for (int z = map.Chunks.GetMinZ(); z < map.Chunks.GetMaxZ(); ++z) {
-							OpenCog.Map.OCChunk chunk = map.Chunks.SafeGet (x, y, z);
+							OpenCog.Map.OCChunk chunk = map.Chunks.Get (x, y, z);
 						
 							if (chunk != null) {
 								// chunk position is the coordinates of the chunk.
@@ -522,9 +559,6 @@ namespace OpenCog.Embodiment
 			
 								// Maybe do some empty check here...there will be many empty chunks. But it might be
 								// equally expensive without setting new empty flags while creating chunks.
-								
-//								Vector3i viChunkStartingCorner = new Vector3i (viChunkPosition.x * Map.OCChunk.SIZE_X, viChunkPosition.y * Map.OCChunk.SIZE_Y & viChunkPosition.z * Map.OCChunk.SIZE_Z);
-//								Vector3i viChunkEndingCorner = new Vector3i ((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X - 1, (viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y - 1, (viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z - 1);
 								
 								int startX = viChunkPosition.x * Map.OCChunk.SIZE_X;
 								int startY = viChunkPosition.y * Map.OCChunk.SIZE_Y;
@@ -556,24 +590,36 @@ namespace OpenCog.Embodiment
 //													UnityEngine.Debug.Log ("globalMapInfo == null");
 				
 												// in case there are too many blocks, we send every 5000 blocks per message
-												if (terrainMapinfoList.Count >= 1024) {
+												if (terrainMapinfoList.Count >= blocksPerTransmission) {
 													UnityEngine.Debug.Log ("Sending terrain info...");
 													//_connector.SendTerrainInfoMessage (terrainMapinfoList, true);
 													terrainMapinfoList.Clear ();
 													
-													yield return new UnityEngine.WaitForSeconds(0.1f);
+													yield return null;
 												}
 											} // end if (!globalBlock.IsEmpty())
+											else
+											{
+												emptyBlocksProcessed += 1;	
+											}
+												
+												
 											
 											blocksProcessed += 1;
 											
-											if (blocksProcessed % 128 == 0) {
-												UnityEngine.Debug.Log ("Processed " + blocksProcessed + "blocks.");
+											if (blocksProcessed % blocksPerDebugEntry == 0) {
+												System.DateTime dtProcessingTick = System.DateTime.Now;
+													
+												UnityEngine.Debug.Log ("Processed " + blocksPerDebugEntry + " blocks (" + (blocksProcessed - blocksPerDebugEntry) + " - " + blocksProcessed + ") in " + dtProcessingTick.Subtract (dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
+														
+												emptyBlocksProcessed = 0;
+												
+												dtStartProcessing = System.DateTime.Now;
 											}
 				
 										} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
 										
-										yield return new UnityEngine.WaitForSeconds(0.01f);
+										yield return null;
 				
 									} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
 				
@@ -614,42 +660,73 @@ namespace OpenCog.Embodiment
 				}
 			}
 		}
-
+		
+		// This function is only relevant in terms of the state changes of:
+		// FoodStuff
+		// Lift
+		// LiftButton
+		// Picker
+		// PutOnAbleObject
+		// StoveButton
+		// So it appears we don't need it right now! Guess the interesting one is then PerceiveWorld.
 		private void PerceiveStateChanges ()
 		{
-			foreach (OpenCog.Embodiment.OCStateChangesRegister.StateInfo stateInfo in OpenCog.Embodiment.OCStateChangesRegister.StateList) {
+			// Loop through the states that have previously been registered. A stateInfo contains an gameobject, a behaviour and a statename.
+			foreach (OpenCog.Embodiment.OCStateChangesRegister.StateInfo stateInfo in OpenCog.Embodiment.OCStateChangesRegister.StateList) 
+			{
+				// In some cases a stateinfo object is not relevant, _statesToDelete is a local arraylist of states that should later be deleted
+				// from _stateInfoCache (a local dictionary of stateInfo's) as well as from the StateChangesRegister.
 				if (stateInfo.gameObject == null || stateInfo.behaviour == null) {
 					// The state doesn't exist anymore, add it to _statesToDelete for deletion later and continue to the next iteration through the loop.
 					_statesToDelete.Add (stateInfo);
 					continue;
 				}
-
+				
+				// This is strange to me, bit too much reflection.
+				
+				// They get some fieldinfo about the stateInfo's stateName field. Which is just a string...
 				System.Reflection.FieldInfo stateValInfo = stateInfo.behaviour.GetType ().GetField (stateInfo.stateName);
+				// Then they retrieve the value of the behaviour property of the stateInfo, which also appears to be directly accessible, and put it in an object.
 				System.Object valObj = stateValInfo.GetValue (stateInfo.behaviour);
 				
+				// Now I'm lost...we query what kind of field type the stateName field has...which is a STRING WARGSRLBSLL!!
 				string type = stateValInfo.FieldType.ToString ();
 	
 				if (stateValInfo.FieldType.IsEnum) {
 					type = "Enum";
+					UnityEngine.Debug.Log ("0.00001 BitCoins says this never happens!! IT'S A STRING FFS WAARHEHFSHJKSJKSH!");
 				}
-						
-
+				
+				// Now we query the local _stateInfoCache (a dictionary with stateInfo objects as the key...and a vague object as the value...
 				System.Object old = _stateInfoCache [stateInfo];
-				if (!System.Object.Equals (_stateInfoCache [stateInfo], valObj)) {
-					// send state changes as a "stateChange" action
+				
+				// And we compare that vague object to...the behaviour...in the form of an object...
+				if (!System.Object.Equals (_stateInfoCache [stateInfo], valObj)) 
+				{
+					// If they are the same...
+					// ...send state changes as a "stateChange" action
+					
+					// If it's an Enum (NEVAH!! NEVAH EVAH EVAH!!")
 					if (type == "Enum") {
-						// the opencog does not process enum type, we change it into string
+						// the opencog does not process enum types, so we change it into a string
 						_connector.HandleObjectStateChange (stateInfo.gameObject, stateInfo.stateName, "System.String",
 						                                  _stateInfoCache [stateInfo].ToString (), valObj.ToString ());
 					} else {
+						// And here we revert to using the nicely typed objects WE COULD HAVE STARTED WITH IN THE FIRST PLACE!
 						_connector.HandleObjectStateChange (stateInfo.gameObject, stateInfo.stateName, type, _stateInfoCache [stateInfo], valObj);
 					}
 					
-					
+					// Then we update the local stateInfoCache's item (found by searching by stateInfo object) with...the stateInfo's (new?) behaviour.
 					_stateInfoCache [stateInfo] = valObj;
-				} else if (_perceptStateChangesFirstTime) {
+				} 
+				// Now this is kind of strange...the first if checks if the cached (old) behaviour is the same as the new behaviour...
+				// ... oh I see...if it's perceiving the states for the first time then of course they will always be different...or not exist in the cache...
+				// ... or something...
+				else if (_isPerceivingStateChangesForTheFirstTime) 
+				{
 					// send this existing state to the opencog first time
 					if (type == "Enum") {
+						// WAARGAARBLL!L!L!L?!?
 						// the opencog does not process enum type, we change it into string
 						_connector.SendExistingStates (stateInfo.gameObject, stateInfo.stateName, "System.String", valObj.ToString ());
 					} else {
@@ -657,16 +734,19 @@ namespace OpenCog.Embodiment
 					}
 			
 				}
-			}
+			} // end foreach (OpenCog.Embodiment.OCStateChangesRegister.StateInfo stateInfo in OpenCog.Embodiment.OCStateChangesRegister.StateList) 
+			
+			// Ok...so _statesToDelete is a bunch of stateInfo's where either gameobject or behaviour is null...
 			foreach (OCStateChangesRegister.StateInfo stateInfo in _statesToDelete) {
 				// the state doesn't exist any more, remove it;
 				_stateInfoCache.Remove (stateInfo);
 				OCStateChangesRegister.UnregisterState (stateInfo);
 
 			}
+			
 			_statesToDelete.Clear ();
 
-			_perceptStateChangesFirstTime = false;
+			_isPerceivingStateChangesForTheFirstTime = false;
 		}
 
 		protected UnityEngine.Vector3 CalculateVelocity (UnityEngine.Vector3 oldPos, UnityEngine.Vector3 newPos)

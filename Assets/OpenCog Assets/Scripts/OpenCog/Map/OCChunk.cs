@@ -9,9 +9,9 @@ namespace OpenCog.Map
 		public const int SIZE_Y_BITS = 4;
 		public const int SIZE_Z_BITS = 4;
 		
-		public const int SIZE_X = 1 << SIZE_X_BITS;
-		public const int SIZE_Y = 1 << SIZE_Y_BITS;
-		public const int SIZE_Z = 1 << SIZE_Z_BITS;
+		public const int SIZE_X = 16; //<< SIZE_X_BITS;
+		public const int SIZE_Y = 16; //<< SIZE_Y_BITS;
+		public const int SIZE_Z = 16; //<< SIZE_Z_BITS;
 	
 		private OCBlockData[,,] blocks = new OCBlockData[OCChunk.SIZE_Z, OCChunk.SIZE_Y, OCChunk.SIZE_X];
 		private OpenCog.Map.OCMap map;

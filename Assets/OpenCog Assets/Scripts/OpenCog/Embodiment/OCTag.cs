@@ -42,7 +42,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class OCTag : OCMonoBehaviour
+public class OCTag 
 {
 
 	//---------------------------------------------------------------------------

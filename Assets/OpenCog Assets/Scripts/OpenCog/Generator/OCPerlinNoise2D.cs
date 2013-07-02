@@ -128,9 +128,23 @@ public class NoiseArray2D {
     }
 	
 	public float GetNoise(int x, int y) {
+		//UnityEngine.Debug.Log ("OCPerlinNoise2D::GetNoise(" + x + ", " + y + ")");
 		x -= offset.x;
 		y -= offset.y;
-		return map[x+1, y+1];
+		//UnityEngine.Debug.Log ("Returning noise from map at index [" + (x + 1) + ", " + (y + 1) + "]");
+		 
+		int xDim = map.GetLength(0);
+		int yDim = map.GetLength(1);
+		
+		//UnityEngine.Debug.Log ("The dimensions of map are [" + xDim + ", " + yDim + "]");
+		
+		try {
+			return map[x+1, y+1];	
+		} catch (System.Exception ex) {
+			UnityEngine.Debug.Log ("Array miss at [" + x + "," + y + "]");
+			return 0.5f;
+		}
+		
 	}
 	
 }

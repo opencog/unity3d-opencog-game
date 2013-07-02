@@ -41,7 +41,7 @@ namespace OpenCog.Utility
 [Serializable]
 [ProtoContract]
 #endregion
-public class Rotation : OCMonoBehaviour
+public class Rotation 
 {
 
 	//---------------------------------------------------------------------------

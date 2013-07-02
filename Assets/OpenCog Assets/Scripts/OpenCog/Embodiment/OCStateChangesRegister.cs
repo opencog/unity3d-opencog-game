@@ -80,6 +80,7 @@ public class OCStateChangesRegister : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
+	// This is where states get registered... 
 	public static void RegisterState(UnityEngine.GameObject go, UnityEngine.Behaviour bh, string stateName)
 	{
 		System.Diagnostics.Debug.Assert(go != null && bh != null && stateName != null);
@@ -89,9 +90,10 @@ public class OCStateChangesRegister : OCMonoBehaviour
 		aInfo.behaviour = bh;
 		aInfo.stateName = stateName;
 			
-		StateList.Add(aInfo);
-			
+		_stateList.Add(aInfo);
 			 
+		// I'm guessing the perception collector is owned by the AI controlled agent. So we're telling it here that is has perceived a state change...
+		// ...so that it can tell OpenCog...i.e. the agent in the cogserver...
 		UnityEngine.GameObject[] OCAs = UnityEngine.GameObject.FindGameObjectsWithTag("OCA");
 		foreach(UnityEngine.GameObject OCA in OCAs)
 		{

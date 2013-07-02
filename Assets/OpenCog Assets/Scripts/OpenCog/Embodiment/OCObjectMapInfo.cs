@@ -53,7 +53,7 @@ public class OCObjectMapInfo
 		/// An example variable.  Don't fall into the trap of making all variables
 		/// public (I know Unity encourages you to do this).  Instead, make use of
 		/// public properties whenever possible.
-		/// </summary>
+		/// </summary>	
 		private int _exampleVar;
 		
 		 #region Constants
@@ -72,7 +72,7 @@ public class OCObjectMapInfo
 		private UnityEngine.Vector3 _position; // Position of object
 		private Vector3Wrapper _positionWrapper;
 		private Utility.Rotation _rotation; //= new Utility.Rotation(0, 0, 0); // Rotation of object
-		private UnityEngine.Vector3 _velocity; // Velocity of an object, if it is moving.
+		private UnityEngine.Vector3 _velocity = UnityEngine.Vector3.zero; // Velocity of an object, if it is moving.
 		private Vector3Wrapper _velocityWrapper;
 		private float _length, _width, _height; // Size of an object.
 		private float _weight; // weight of an object
@@ -273,12 +273,13 @@ public class OCObjectMapInfo
 		public void AddTag (string keyStr, string valueStr, System.Type type)
 		{
 			// Check if property exists
-			if (_tags.ContainsKey(keyStr)) {
-				_tags.Remove (keyStr);
-			}
+//			if (_tags.ContainsKey(keyStr)) {
+//				_tags.Remove (keyStr);
+//			}
 			
 			//UnityEngine.Debug.Log ("Adding tag '" + keyStr + "'");
-			_tags.Add(keyStr, new OCTag(valueStr, type));
+			if (!_tags.ContainsKey(keyStr))
+				_tags.Add(keyStr, new OCTag(valueStr, type));
 		}
 
 		public void RemoveTag (string keyStr)
@@ -417,14 +418,14 @@ public class OCObjectMapInfo
 		public OCObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
 		{
 			string blockName = "BLOCK_" + blockData.GetHashCode();
-			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();
+			
 			_height = 1;
 			_width = 1;
 			_length = 1;
 			_type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
 			_id = blockName;
 			_name = blockName;
-			_velocity = UnityEngine.Vector3.zero;
+			//this.Velocity = UnityEngine.Vector3.zero;
 			this.position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
 			_rotation = new OpenCog.Utility.Rotation(0, 0, 0);
 
