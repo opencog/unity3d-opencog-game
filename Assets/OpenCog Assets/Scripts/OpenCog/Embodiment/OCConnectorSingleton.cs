@@ -287,7 +287,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		if(_messagesToSend.Count > 0)
 		{
-			UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: " + _messagesToSend.Count + " to send.");
+			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: " + _messagesToSend.Count + " to send.");
 			List<OCMessage> localMessagesToSend;
 			// copy messages to a local queue and clear the global sending queue.
 			lock(_messagesToSend)
@@ -300,13 +300,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			
 			foreach(OCMessage message in localMessagesToSend)
 			{
-				UnityEngine.Debug.Log ("Processing message " + iMessageIndex + " of " + localMessagesToSend.Count + "...");
+				//UnityEngine.Debug.Log ("Processing message " + iMessageIndex + " of " + localMessagesToSend.Count + "...");
 				
 				if (message != null)
 				{
 					// Check if router and destination is available. If so, send the message. 
 					// otherwise just ignore the message
-					string routerId = new OCConfig().get("ROUTER_ID", "ROUTER");
+					string routerId = OCConfig.Instance.get("ROUTER_ID", "ROUTER");
 					if(!IsElementAvailable(routerId))
 					{
 						UnityEngine.Debug.Log("Router not available. Discarding message to '" +
@@ -321,8 +321,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					}
 					if(SendMessage(message))
 					{
-						UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" +
-	                                 message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+						//UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 					}
 					else
 					{
@@ -1278,7 +1277,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
       lock (_messagesToSend)
       {
-          _messagesToSend.Add(message);
+        _messagesToSend.Add(message);
 		SendMessages();
       } // lock
   }
@@ -1351,11 +1350,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         XmlElement signal = (XmlElement) root.AppendChild(doc.CreateElement("finished-first-time-percept-terrian-signal"));
 		signal.SetAttribute("timestamp", timestamp );
 	
-		OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+		//OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+		
+		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
         OCLogger.Debugging("sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
         
-        lock (_messageSendingLock)
+        lock (_messagesToSend)
         {
             _messagesToSend.Add(message);
         }

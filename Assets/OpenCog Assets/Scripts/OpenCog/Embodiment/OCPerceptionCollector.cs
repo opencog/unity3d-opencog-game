@@ -68,6 +68,7 @@ namespace OpenCog.Embodiment
 		private Dictionary<string, bool> _chunkStatusMap = new Dictionary<string, bool> (); // A map to mark if current chunk needs to be percepted. True means perception in need.
 		private int _floorHeight; // Currently, just percept the block above the horizon.
 		private bool _hasPerceivedTerrainForFirstTime = false;
+		private bool _hasStartedPerceivingTerrainForTheFirstTime = false;
 		private bool _perceptStateChangesFirstTime = true;
 			
 		//---------------------------------------------------------------------------
@@ -108,7 +109,7 @@ namespace OpenCog.Embodiment
 		{
 			_connector = OCConnectorSingleton.Instance;
 			
-			OCLogger.Fine (gameObject.name + " is started.");
+			UnityEngine.Debug.Log (gameObject.name + " is started.");
 		}
 	
 		/// <summary>
@@ -125,11 +126,15 @@ namespace OpenCog.Embodiment
 			
 			// Percept the world once in each interval.
 			if (_timer >= _updatePerceptionInterval) {
+				// I'm not sure what this does...
 				this.PerceptWorld ();
-				if (!_hasPerceivedTerrainForFirstTime)
-					StartCoroutine(this.PerceiveTerrain());
-					//this.PerceiveTerrain ();
-				PerceiveStateChanges ();
+				
+				if (!_hasStartedPerceivingTerrainForTheFirstTime)
+					StartCoroutine (this.PerceiveTerrain ());
+				
+				if (_hasPerceivedTerrainForFirstTime)					
+					PerceiveStateChanges ();
+				
 				_timer = 0.0f;
 			}
 				
@@ -496,93 +501,118 @@ namespace OpenCog.Embodiment
 		{
 			if (_hasPerceivedTerrainForFirstTime) {
 				yield return null;
-			}
-
-			List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo> ();
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			} else {
+				_hasStartedPerceivingTerrainForTheFirstTime = true;
+				
+				List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo> ();
+				OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
-			int blocksProcessed = 0;
+				int blocksProcessed = 0;
 			
-			for (int x = map.Chunks.GetMinX(); x < map.Chunks.GetMaxX(); ++x) {
-				for (int y = map.Chunks.GetMinY(); y < map.Chunks.GetMaxY(); ++y) {
-					for (int z = map.Chunks.GetMinZ(); z < map.Chunks.GetMaxZ(); ++z) {
-						OpenCog.Map.OCChunk chunk = map.Chunks.Get (x, y, z);
-					
-						if (chunk != null) {
-							Vector3i viChunkPosition = chunk.GetPosition ();
-			
-							UnityEngine.Debug.Log ("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
-		
-							// Maybe do some empty check here...there will be many empty chunks. But it might be
-							// equally expensive without setting new empty flags while creating chunks.
-							
-							Vector3i viChunkStartingCorner = new Vector3i (viChunkPosition.x * Map.OCChunk.SIZE_X, viChunkPosition.y * Map.OCChunk.SIZE_Y & viChunkPosition.z * Map.OCChunk.SIZE_Z);
-							Vector3i viChunkEndingCorner = new Vector3i ((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X - 1, (viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y - 1, (viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z - 1);
-			
-							UnityEngine.Debug.Log ("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
-							UnityEngine.Debug.Log ("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
-			
-							for (int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++) {
-								for (int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++) {
-									for (int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++) {
-										// Ok...now we have some globalz....
-										OpenCog.Map.OCBlockData globalBlock = map.GetBlock (iGlobalX, iGlobalY, iGlobalZ);
-			
-										if (!globalBlock.IsEmpty ()) {
-											OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
-			
-											terrainMapinfoList.Add (globalMapInfo);
-											
-											if (globalMapInfo == null)
-												UnityEngine.Debug.Log ("globalMapInfo == null");
-			
-											// in case there are too many blocks, we send every 5000 blocks per message
-											if (terrainMapinfoList.Count >= 4) {
-												UnityEngine.Debug.Log ("Sending terrain info...");
-												_connector.SendTerrainInfoMessage (terrainMapinfoList, true);
-												terrainMapinfoList.Clear ();
-												
-												yield return new UnityEngine.WaitForSeconds(10f);
-											}
-										} // end if (!globalBlock.IsEmpty())
-										
-										blocksProcessed += 1;
-										
-										if (blocksProcessed % 250 == 0)
-										{
-											UnityEngine.Debug.Log ("Processed " + blocksProcessed + "blocks.");
-											yield return null;	
-										}
-			
-									} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
-									
-									//yield return new UnityEngine.WaitForSeconds(0.1f);
-			
-								} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
-			
-							} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
-						} else {
-							//UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is null.");	
-						}
-					
+				for (int x = map.Chunks.GetMinX(); x < map.Chunks.GetMaxX(); ++x) {
+					for (int y = map.Chunks.GetMinY(); y < map.Chunks.GetMaxY(); ++y) {
+						for (int z = map.Chunks.GetMinZ(); z < map.Chunks.GetMaxZ(); ++z) {
+							OpenCog.Map.OCChunk chunk = map.Chunks.SafeGet (x, y, z);
 						
+							if (chunk != null) {
+								// chunk position is the coordinates of the chunk.
+								Vector3i viChunkPosition = chunk.GetPosition ();
+				
+								UnityEngine.Debug.Log ("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
+			
+								// Maybe do some empty check here...there will be many empty chunks. But it might be
+								// equally expensive without setting new empty flags while creating chunks.
+								
+//								Vector3i viChunkStartingCorner = new Vector3i (viChunkPosition.x * Map.OCChunk.SIZE_X, viChunkPosition.y * Map.OCChunk.SIZE_Y & viChunkPosition.z * Map.OCChunk.SIZE_Z);
+//								Vector3i viChunkEndingCorner = new Vector3i ((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X - 1, (viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y - 1, (viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z - 1);
+								
+								int startX = viChunkPosition.x * Map.OCChunk.SIZE_X;
+								int startY = viChunkPosition.y * Map.OCChunk.SIZE_Y;
+								int startZ = viChunkPosition.z * Map.OCChunk.SIZE_Z;
+								
+								int endX = ((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X) - 1;
+								int endY = ((viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y) - 1;
+								int endZ = ((viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z) - 1;
+								
+								Vector3i viChunkStartingCorner = new Vector3i(startX, startY, startZ);
+								Vector3i viChunkEndingCorner = new Vector3i(endX, endY, endZ);
+				
+								UnityEngine.Debug.Log ("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
+								UnityEngine.Debug.Log ("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
+				
+								for (int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++) {
+									for (int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++) {
+										for (int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++) {
+											// Ok...now we have some globalz....
+											OpenCog.Map.OCBlockData globalBlock = map.GetBlock (iGlobalX, iGlobalY, iGlobalZ);
+				
+											if (!globalBlock.IsEmpty ()) {
+												//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+												OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+				
+												terrainMapinfoList.Add (globalMapInfo);
+												
+//												if (globalMapInfo == null)
+//													UnityEngine.Debug.Log ("globalMapInfo == null");
+				
+												// in case there are too many blocks, we send every 5000 blocks per message
+												if (terrainMapinfoList.Count >= 1024) {
+													UnityEngine.Debug.Log ("Sending terrain info...");
+													//_connector.SendTerrainInfoMessage (terrainMapinfoList, true);
+													terrainMapinfoList.Clear ();
+													
+													yield return new UnityEngine.WaitForSeconds(0.1f);
+												}
+											} // end if (!globalBlock.IsEmpty())
+											
+											blocksProcessed += 1;
+											
+											if (blocksProcessed % 128 == 0) {
+												UnityEngine.Debug.Log ("Processed " + blocksProcessed + "blocks.");
+											}
+				
+										} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
+										
+										yield return new UnityEngine.WaitForSeconds(0.01f);
+				
+									} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
+				
+								} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
+							} else {
+								//UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is null.");	
+							}
+						
+						
+						}
 					}
 				}
-			}
 
-			// Check for remaining blocks to report to OpenCog
-			if (terrainMapinfoList.Count > 0) {
-				_connector.SendTerrainInfoMessage (terrainMapinfoList, ! _hasPerceivedTerrainForFirstTime);
-				terrainMapinfoList.Clear ();
-			}
+				// Check for remaining blocks to report to OpenCog
+				UnityEngine.Debug.Log ("Let's check if there are any blocks left to report in our terrainMapinfoList...");
+				if (terrainMapinfoList.Count > 0) {
+					UnityEngine.Debug.Log ("   Yep, looks like there are...");
+					_connector.SendTerrainInfoMessage (terrainMapinfoList, ! _hasPerceivedTerrainForFirstTime);
+					UnityEngine.Debug.Log ("   Ok, all blocks have been sent now...");
+					terrainMapinfoList.Clear ();
+				}
+				else
+				{
+					UnityEngine.Debug.Log ("   Nope, looks like we already sent everything!");	
+				}
+					
+					
 
-			// Communicate completion of initial terrain perception
-			if (! _hasPerceivedTerrainForFirstTime) {
-				_connector.SendFinishPerceptTerrain ();
-				_hasPerceivedTerrainForFirstTime = true;
+				// Communicate completion of initial terrain perception
+				if (!_hasPerceivedTerrainForFirstTime) {
+					UnityEngine.Debug.Log ("Time to send the 'finished perceiving terrain' message!");
+					_connector.SendFinishPerceptTerrain ();
+					_hasPerceivedTerrainForFirstTime = true;
+				}
+				else
+				{
+					UnityEngine.Debug.Log ("That's weird...it thinks _hasPerceivedTerrainForFirstTime is true already...");	
+				}
 			}
-			
-			yield return null;
 		}
 
 		private void PerceiveStateChanges ()

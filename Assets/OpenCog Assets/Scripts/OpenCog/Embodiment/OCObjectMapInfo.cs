@@ -413,6 +413,28 @@ public class OCObjectMapInfo
 
 			this.AddTag ("class", gameObjectName, System.Type.GetType("System.String"));
 		}
+		
+		public OCObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
+		{
+			string blockName = "BLOCK_" + blockData.GetHashCode();
+			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();
+			_height = 1;
+			_width = 1;
+			_length = 1;
+			_type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
+			_id = blockName;
+			_name = blockName;
+			_velocity = UnityEngine.Vector3.zero;
+			this.position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
+			_rotation = new OpenCog.Utility.Rotation(0, 0, 0);
+
+			// Add block properties
+			AddTag ("class", "block", System.Type.GetType("System.String"));
+			AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
+			AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
+			AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.GetType().ToString(), System.Type.GetType("System.String"));
+			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
+		}
 
 		public static OCObjectMapInfo CreateObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
 		{

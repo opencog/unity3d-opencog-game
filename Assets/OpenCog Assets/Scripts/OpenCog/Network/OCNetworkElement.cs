@@ -572,7 +572,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		
 		if(result)
 		{
-			UnityEngine.Debug.Log("Successful.");
+			//UnityEngine.Debug.Log("Successful.");
 		}
 		else
 		{
@@ -591,7 +591,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <returns>Send result</returns>
 	private bool Send(string text)
 	{
-		UnityEngine.Debug.Log ("Sending raw text to router: " + text);
+		//UnityEngine.Debug.Log ("Sending raw text to router: " + text);
 			
 		if(_clientSocket == null)
 		{
@@ -609,7 +609,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				return false;
 			}
 			else
-				UnityEngine.Debug.Log ("Seems we're connected...");
+				//UnityEngine.Debug.Log ("Seems we're connected...");
 
 			
 			try
@@ -628,7 +628,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				sw.Close();
 				s.Close();
 					
-				UnityEngine.Debug.Log ("OCNetworkElement::Send was succesful!");
+				//UnityEngine.Debug.Log ("OCNetworkElement::Send was succesful!");
 			}
 			catch(System.Exception e)
 			{

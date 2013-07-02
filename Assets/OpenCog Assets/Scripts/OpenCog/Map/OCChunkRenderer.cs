@@ -80,6 +80,12 @@ public class OCChunkRenderer : OCMonoBehaviour
 			get { return _chunk; }
 			set { _chunk = value; }
 		}
+		
+		public bool IsDirty
+		{
+			get { return _dirty; }
+			set { _dirty = true; }
+		}
 
 	//---------------------------------------------------------------------------
 
@@ -178,7 +184,11 @@ public class OCChunkRenderer : OCMonoBehaviour
 	}
 
 	public void SetDirty() {
-		_dirty = true;
+		if (!_dirty)
+		{
+			_dirty = true;
+			UnityEngine.Debug.Log ("I just made the chunk at [" + _chunk.GetPosition().x + ", " + _chunk.GetPosition().y + ", " + _chunk.GetPosition().z + "] dirty.");	
+		}
 	}
 	public void SetLightDirty() {
 		_lightDirty = true;

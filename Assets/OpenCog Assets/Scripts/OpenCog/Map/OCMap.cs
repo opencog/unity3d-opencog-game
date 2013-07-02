@@ -77,6 +77,8 @@ public class OCMap : OCMonoBehaviour
 	private int _maxChunkX;
 	private int _maxChunkY;
 	private int _maxChunkZ;
+		
+	private OCChunk _lastRequestedChunk;
 
 	//---------------------------------------------------------------------------
 
@@ -409,7 +411,23 @@ public class OCMap : OCMonoBehaviour
 
 	public OCBlockData GetBlock (int x, int y, int z)
 	{
-		OCChunk chunk = GetChunk (OCChunk.ToChunkPosition (x, y, z));
+		OCChunk chunk = null;
+			
+		if (_lastRequestedChunk != null)
+		{
+			Vector3i requestedChunkPosition = OCChunk.ToChunkPosition (x, y, z);
+			if (requestedChunkPosition.x == _lastRequestedChunk.GetPosition().x)
+				if (requestedChunkPosition.y == _lastRequestedChunk.GetPosition().y)
+					if (requestedChunkPosition.z == _lastRequestedChunk.GetPosition().z)
+						chunk = _lastRequestedChunk;
+		}
+				
+		if (chunk == null)
+		{
+			chunk = GetChunk (OCChunk.ToChunkPosition (x, y, z));
+			_lastRequestedChunk = chunk;		
+		}
+			
 		if (chunk == null)
 			return default(OCBlockData);
 		return chunk.GetBlock (OCChunk.ToLocalPosition (x, y, z));
