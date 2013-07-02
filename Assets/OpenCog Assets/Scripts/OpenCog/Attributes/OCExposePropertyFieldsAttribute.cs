@@ -21,9 +21,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using OpenCog.Serialization;
 using ProtoBuf;
-using UnityEditor;
 using UnityEngine;
-using OCExposure = OpenCog.Serialization.OCPropertyField.OCExposure;
 
 namespace OpenCog
 {
@@ -103,7 +101,15 @@ public class OCExposePropertyFieldsAttribute : Attribute
 
 	/////////////////////////////////////////////////////////////////////////////
 
-
+	public enum OCExposure
+	{
+		None
+	, PublicFieldsOnly
+	, FieldsOnly
+	, PropertiesOnly
+	, PublicPropertiesOnly
+	, PropertiesAndFields
+	};
 
 	/////////////////////////////////////////////////////////////////////////////
 
