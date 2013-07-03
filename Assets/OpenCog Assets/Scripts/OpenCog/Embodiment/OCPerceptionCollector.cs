@@ -61,7 +61,7 @@ namespace OpenCog.Embodiment
 		private ArrayList _statesToDelete = new ArrayList ();
 		private System.Object _cacheLock = new System.Object ();
 		private List<OCObjectMapInfo> _removedObjects = new List<OCObjectMapInfo> (); // A list of objects recently removed. This is a temporary data structure, cleared whenever it is processed.
-		private bool _perceptWorldFirstTime = true;
+		private bool _hasPerceivedWorldFirstTime = true;
 
 		//private WorldData _worldData; // Reference to the world data.
 		private OpenCog.Map.OCMap _map;
@@ -283,10 +283,10 @@ namespace OpenCog.Embodiment
 			// the first time too.
 			if (latestMapInfoSeq.Count > 0) {
 				// Append latest map info sequence to OC connector's sending queue.
-				_connector.SendMapInfoMessage (latestMapInfoSeq, _perceptWorldFirstTime);
+				_connector.SendMapInfoMessage (latestMapInfoSeq, _hasPerceivedWorldFirstTime);
 			}
 			
-			_perceptWorldFirstTime = false;
+			_hasPerceivedWorldFirstTime = false;
 		}
 			
 		/// <summary>
@@ -390,20 +390,24 @@ namespace OpenCog.Embodiment
 			OCObjectMapInfo mapInfo;
 			int gameObjectID = go.GetInstanceID ();
 	
-			this._mapInfoCacheStatus [gameObjectID] = true;
+			// So here we register the fact that this gameobject has already been updated in the previous (or current?) cycle.
+			_mapInfoCacheStatus [gameObjectID] = true;
 	
-			if (this._mapInfoCache.ContainsKey (gameObjectID)) {
+			// Check if it's in our list of previously existing objects...?
+			if (_mapInfoCache.ContainsKey (gameObjectID)) {
 				// Read cache
 				mapInfo = _mapInfoCache [gameObjectID];
 			} else {
-				// Create a new map info and cache it.
+				/// If it's not in our list of previously existing objects...we should create a mapinfo, add it, and send it to opencog as an 'appeared' object.
 				mapInfo = new OCObjectMapInfo (go);
-				lock (_cacheLock) {
+				
+				lock (_mapInfoCache) {
 					_mapInfoCache [gameObjectID] = mapInfo;
 				}
 				
 				// We don't send all the existing objects as appear actions to the opencog at the time the robot is loaded.
-				if (! _perceptWorldFirstTime) {
+				// If it hasn't perceived the world for the first time yet, we inform OpenCog. Otherwise...we don't!
+				if (! _hasPerceivedWorldFirstTime) {
 					_connector.HandleObjectAppearOrDisappear (mapInfo.ID, mapInfo.Type, true);
 				}
 				

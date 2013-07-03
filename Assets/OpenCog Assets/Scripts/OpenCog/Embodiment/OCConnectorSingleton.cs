@@ -237,9 +237,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 				_actionStatusesUpdated = true;	
 			}
 			
-			Dictionary<string, double> basicFactorMap = new Dictionary<string, double>();
-				
-			SendAvatarSignalsAndTick(basicFactorMap);
+			// Code below SHOULD be handled by physiologicalmodel in the future...it will also send the tickmessages, so it should be ok...
+			// If not, uncomment the two lines below.
+//			Dictionary<string, double> basicFactorMap = new Dictionary<string, double>();
+//			SendAvatarSignalsAndTick(basicFactorMap);
 			
 			_lastUpdate = System.DateTime.Now;
 		}
@@ -277,7 +278,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	{
 		if(!_isInitialized)
 		{
-			UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: not initialized!!");
+			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: not initialized!!");
 			return;
 		}
 		else
@@ -354,7 +355,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	*/
 	public void SetDemandValue(string demandName, float demandValue)
 	{
-	  _demandValueMap[demandName] = demandValue;
+		if (_demandValueMap != null)
+			_demandValueMap[demandName] = demandValue;
 	}
 
 	public void sendBlockStructure(OpenCog.Map.OCBlockData startBlock, bool isToRecognize)
@@ -397,9 +399,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    * 
    * @return Result of the initialization action.
    */
-  public bool Init(string agentName, string agentTraits, string agentType,
-                  string masterId, string masterName)
+  public bool Init(string agentName, string agentTraits, string agentType, string masterId, string masterName)
   {
+	UnityEngine.Debug.Log ("OCConnectorSingletong::Init(tons of parameters)");
     // Initialize basic attributes.
     _baseID = agentName;//gameObject.GetInstanceID().ToString();
     _ID = "AVATAR_" + _baseID;
@@ -426,10 +428,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     _actionsList = new LinkedList<OCAction>();
 
     _isFirstSentMapInfo = true;
-    
 
     _feelingValueMap = new Dictionary<string, float>();
     _demandValueMap = new Dictionary<string, float>();
+	UnityEngine.Debug.Log ("_demandValueMap instantiated...");
     _perceptedAgents = new Dictionary<int, string>();
 
     if (Map != null)
@@ -823,27 +825,28 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
 	public void HandleObjectAppearOrDisappear(string objectID, string objectType, bool isAppear)
 	{
+		// TODO: Figure out what this is...why would we report an object that is our ID...or maybe that's the agent ID...
 		if (objectID == ID.ToString())
 			return;
 		
-	  string timestamp = GetCurrentTimestamp();
-    XmlDocument doc = new XmlDocument();
-    XmlElement root = MakeXMLElementRoot(doc);
-		
-    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-    agentSignal.SetAttribute("id", objectID.ToString());
-		
+	  	string timestamp = GetCurrentTimestamp();
+	    XmlDocument doc = new XmlDocument();
+	    XmlElement root = MakeXMLElementRoot(doc);
+			
+	    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
+	    agentSignal.SetAttribute("id", objectID.ToString());
+			
 		string targetType;
 
 		if (objectType == "OCA" || objectType == "Player")// it's an avatar
 			targetType = OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE;
 		else // it's an object
 			targetType = OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
-		
-    agentSignal.SetAttribute("type", "object");
-    agentSignal.SetAttribute("timestamp", timestamp);
-    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
-        
+			
+	    agentSignal.SetAttribute("type", "object");
+	    agentSignal.SetAttribute("timestamp", timestamp);
+	    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+	        
 		// note that the name and the action-instance-name are different
 		// ie: name = kick , while action-instance-name = kick2342
 		if (isAppear)
@@ -856,20 +859,20 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			actionElement.SetAttribute("name", "disappear");
 			actionElement.SetAttribute("action-instance-name", "disappear"+ (++_disappearActionCount).ToString());
 		}
-
+	
 		actionElement.SetAttribute("result-state", "true"); 
 		
 		actionElement.SetAttribute("target", objectID.ToString());
 		actionElement.SetAttribute("target-type",targetType);		
-		
-   	OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
-   	
-   	OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
-   	
-   	lock (_messageSendingLock)
-   	{
-   	    _messagesToSend.Add(message);
-   	}		
+			
+	   	OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+	   	
+	   	OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
+	   	
+	   	lock (_messagesToSend)
+	   	{
+	   	    _messagesToSend.Add(message);
+	   	}		
 		
 	}
 	
@@ -1707,52 +1710,60 @@ public sealed class OCConnectorSingleton : OCNetworkElement
      * for OAC to handle it.
      * This method would be invoked by physiological model.
      */
-    private void SendAvatarSignalsAndTick(Dictionary<string, double> physiologicalInfo)
+    public void SendAvatarSignalsAndTick(Dictionary<string, double> physiologicalInfo)
     {
-        string timestamp = GetCurrentTimestamp();
-        XmlDocument doc = new XmlDocument();
-        XmlElement root = MakeXMLElementRoot(doc);
-        
-        // (currently this is avatar-signal, but should be changed...)
-        XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
-        avatarSignal.SetAttribute("id", _brainID);
-        
-        avatarSignal.SetAttribute("timestamp", timestamp);
-		
-		avatarSignal.SetAttribute("type-of-message", "tick-message-really");
-        
-        // Append all physiological factors onto the message content.
-        foreach (string factor in physiologicalInfo.Keys)
-        {
-            // <physiology-level name="hunger" value="0.3"/>   
-            XmlElement p = (XmlElement)avatarSignal.AppendChild(doc.CreateElement("physiology-level"));
-            p.SetAttribute("name", factor);
-            p.SetAttribute("value", physiologicalInfo[factor].ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat));
-        }
-        
-        string xmlText = BeautifyXmlText(doc);
-        //OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
-            
-        // Construct a string message.
-        //OCStringMessage message = new OCStringMessage(_ID, _brainID, xmlText);
-		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);
-		
-        lock (_messagesToSend)
-        {
-            // Add physiological information to message sending queue.
-            _messagesToSend.Add(message);
-
-            // Send a tick message to make OAC start next cycle.
-            if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
-            {
-                OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "");
-				
-				if (tickMessage == null)
-					UnityEngine.Debug.Log ("Its the tick!");
-				
-                _messagesToSend.Add(tickMessage);
-            }
-        }
+		if (_isEstablished)
+		{
+			UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: _isEstablished -> Sending tick message and phys info.");
+	        string timestamp = GetCurrentTimestamp();
+	        XmlDocument doc = new XmlDocument();
+	        XmlElement root = MakeXMLElementRoot(doc);
+	        
+	        // (currently this is avatar-signal, but should be changed...)
+	        XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
+	        avatarSignal.SetAttribute("id", _brainID);
+	        
+	        avatarSignal.SetAttribute("timestamp", timestamp);
+			
+			avatarSignal.SetAttribute("type-of-message", "tick-message-really");
+	        
+	        // Append all physiological factors onto the message content.
+	        foreach (string factor in physiologicalInfo.Keys)
+	        {
+	            // <physiology-level name="hunger" value="0.3"/>   
+	            XmlElement p = (XmlElement)avatarSignal.AppendChild(doc.CreateElement("physiology-level"));
+	            p.SetAttribute("name", factor);
+	            p.SetAttribute("value", physiologicalInfo[factor].ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat));
+	        }
+	        
+	        string xmlText = BeautifyXmlText(doc);
+	        //OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
+	            
+	        // Construct a string message.
+	        //OCStringMessage message = new OCStringMessage(_ID, _brainID, xmlText);
+			OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);
+			
+	        lock (_messagesToSend)
+	        {
+	            // Add physiological information to message sending queue.
+	            _messagesToSend.Add(message);
+	
+	            // Send a tick message to make OAC start next cycle.
+	            if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
+	            {
+	                OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "");
+					
+					if (tickMessage == null)
+						UnityEngine.Debug.Log ("Its the tick!");
+					
+	                _messagesToSend.Add(tickMessage);
+	            }
+	        }
+		}
+		else
+		{
+			UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: !isEstablished -> Not sending a tick message / phys info.");	
+		}
     }
 
 	private void MakeEntityElement(UnityEngine.GameObject obj, XmlElement entityElement)
