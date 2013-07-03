@@ -33,6 +33,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using ScriptableObject = UnityEngine.ScriptableObject;
 using OCID = System.Guid;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -70,7 +71,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private string _type;		/** "pet" type by default. */
 	private string _traits;	/** "princess" by default. */
 
-	private string _settingsFilename = "Assets/embodiment.config";
+	private string _settingsFilename = "embodiment";
 
 	private string _masterID; // Define master's(owner's) information.
 	private string _masterName;
@@ -414,7 +415,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     // Load settings from file.
     if (_settingsFilename.Length > 0) 
 		{
-        ScriptableObject.CreateInstance<OCConfig>().LoadFromFile(_settingsFilename);
+				TextAsset configFile = (TextAsset)Resources.Load(_settingsFilename);
+        if(configFile != null) OCConfig.Instance.LoadFromTextAsset(configFile);
     }
     
     // Initialize NetworkElement

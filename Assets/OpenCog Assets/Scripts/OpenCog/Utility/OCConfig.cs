@@ -197,6 +197,38 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 			
 		reader.Close();  
 	}
+
+	public void LoadFromTextAsset (TextAsset configFile)
+	{
+		string[] lines = configFile.text.Split(new string[]{ "\r\n", "\n"}, StringSplitOptions.None);
+		int linenumber = 0;
+		char[] separator = {'=',' '};
+      
+		foreach(string line in lines)
+		{
+			linenumber++;
+			
+	    // not a commentary or an empty line
+	    if(line.Length > 0 && line[0] != '#'){
+	        string[] tokens = line.Split(separator,StringSplitOptions.RemoveEmptyEntries);
+	        if (tokens.Length < 2)
+	        {
+	            if (Debug.isDebugBuild)
+	                  Debug.LogError("Invalid format at line " + linenumber +": '" + line + "'");
+	        }
+	        if (_settings.ContainsKey(tokens[0])) 
+	        {
+	            //if (Debug.isDebugBuild) Debug.Log(tokens[0] + "=" + tokens[1]);
+	            _settings[tokens[0]] = tokens[1];
+	        }
+	        else
+	        {
+	              Debug.LogWarning("Ignoring unknown parameter name '" + tokens[0] + "' at line "
+	                      + linenumber + ".");
+	    	}           
+	    }
+		}
+	}
 		
 	/// <summary>
 	/// Return current value of a given parameter.
