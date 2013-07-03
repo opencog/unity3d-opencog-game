@@ -1755,15 +1755,15 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	            _messagesToSend.Add(message);
 	
 	            // Send a tick message to make OAC start next cycle.
-	            if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
-	            {
-	                OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "");
-					
-//					if (tickMessage == null)
-//						UnityEngine.Debug.Log ("Its the tick!");
-					
-	                _messagesToSend.Add(tickMessage);
-	            }
+//	            if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
+//	            {
+//	                OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "");
+//					
+////					if (tickMessage == null)
+////						UnityEngine.Debug.Log ("Its the tick!");
+//					
+//	                _messagesToSend.Add(tickMessage);
+//	            }
 	        }
 		}
 		else

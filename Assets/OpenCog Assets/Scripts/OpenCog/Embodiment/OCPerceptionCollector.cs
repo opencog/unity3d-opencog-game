@@ -545,8 +545,8 @@ namespace OpenCog.Embodiment
 				
 				int blocksProcessed = 0;
 				int emptyBlocksProcessed = 0;
-				int blocksPerTransmission = 1024;
-				int blocksPerDebugEntry = 512;
+				int blocksPerTransmission = 4096;
+				int blocksPerDebugEntry = 4096;
 				
 				System.DateTime dtStartProcessing = System.DateTime.Now;
 			
@@ -675,7 +675,7 @@ namespace OpenCog.Embodiment
 		// So it appears we don't need it right now! Guess the interesting one is then PerceiveWorld.
 		private void PerceiveStateChanges ()
 		{
-			UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveStateChanges");
+			//UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveStateChanges");
 			// Loop through the states that have previously been registered. A stateInfo contains an gameobject, a behaviour and a statename.
 			foreach (OpenCog.Embodiment.OCStateChangesRegister.StateInfo stateInfo in OpenCog.Embodiment.OCStateChangesRegister.StateList) 
 			{

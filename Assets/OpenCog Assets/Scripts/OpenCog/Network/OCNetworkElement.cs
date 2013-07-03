@@ -695,7 +695,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				_messageQueue.Clear();
 			}
 				
-			UnityEngine.Debug.Log ("Weird copy from _messageQueue to messagesToProcess is complete! Time to get loopy!");
+			//UnityEngine.Debug.Log ("Weird copy from _messageQueue to messagesToProcess is complete! Time to get loopy!");
 				
 			foreach(OCMessage msg in messagesToProcess)
 			{
