@@ -400,7 +400,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		
 		UnityEngine.Debug.Log ("StartCoroutine(_listener.Listen())");
 			
-		if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
+		if (bool.Parse(OCConfig.Instance.get("GENERATE_TICK_MESSAGE")))
 			UnityEngine.Debug.Log ("Generation of tick messages is enabled.");
 				
 		//StartCoroutine(_listener.Listen());
