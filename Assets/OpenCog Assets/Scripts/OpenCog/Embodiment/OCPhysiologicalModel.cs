@@ -237,7 +237,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 
 	public void TimeTick()
 	{
-		UnityEngine.Debug.Log ("OCPhysiologicalModel::TimeTick!");
+		//UnityEngine.Debug.Log ("OCPhysiologicalModel::TimeTick!");
 		UpdateBasicFactors();
 		UpdateFitness();
 		UpdateEnergy();

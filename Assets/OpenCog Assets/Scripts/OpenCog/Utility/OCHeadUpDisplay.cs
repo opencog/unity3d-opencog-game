@@ -85,7 +85,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	private UnityEngine.Vector2 _currentScrollPosition = new UnityEngine.Vector2(0.0f, 0.0f);
 
 	// the skin panel will use
-	private UnityEngine.GUISkin _panelSkin;
+	public UnityEngine.GUISkin panelSkin;
     
 	// style for label
 	private UnityEngine.GUIStyle _boxStyle;
@@ -108,6 +108,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	private UnityEngine.Rect _panel;
 
 	private UnityEngine.Vector2 _panelScrollPosition;
+		
 
 
 
@@ -261,36 +262,52 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 			// Psi (feeling, demand etc.) panel controlling section
 			// TODO: Figure out when / if to display the emotion panel.
-//			if(_selectedAvatar.tag == "OCA")
+//		if(_selectedAvatar.tag == "OCA")
+//		{
+//			if (_connector == null)
+//				_connector = OCConnectorSingleton.Instance;
+//			
+//			if(_connector != null)
 //			{
-//				_connector = selectedAvatar.GetComponent<OCConnector>() as OCConnector;
-//				if(_connector != null)
-//				{
-//					ShowPsiPanel();
-//				}
-//				// If the avatar has no connector it's a puppet Avatar controlled by the console only
-//				if(_panelSkin != null)
-//				{
-//					GUI.skin = _panelSkin;
-//				}
+//				ShowPsiPanel();
 //			}
-//			else
+//			// If the avatar has no connector it's a puppet Avatar controlled by the console only
+//			if(_panelSkin != null)
 //			{
-//				HidePsiPanel();
-//				_connector = null;
+//				GUI.skin = _panelSkin;
 //			}
-//            
-//			if(_showPsiPanel)
-//			{
-//				if(_connector != null)
-//				{
-//					float theWidth = Screen.width * 0.25f;
-//					float theHeight = Screen.height / 3;
-//					_panel = new Rect(Screen.width - theWidth - inset, Screen.height - theHeight - inset, theWidth, theHeight);
-//					GUILayout.Window(3, _panel, PsiPanel, _selectedAvatar.gameObject.transform.name + "'s Psi States Panel",
-//                                     GUILayout.MinWidth(theWidth), GUILayout.MinHeight(theHeight));
-//				}
-//			}
+//		}
+//		else
+//		{
+//			HidePsiPanel();
+//			_connector = null;
+//		}
+			
+			if (_connector == null)
+				_connector = OCConnectorSingleton.Instance;
+			
+			if(_connector != null)
+			{
+				if (_connector.IsEstablished)
+					ShowPsiPanel();
+			}
+			// If the avatar has no connector it's a puppet Avatar controlled by the console only
+			if(panelSkin != null)
+			{
+				GUI.skin = panelSkin;
+			}
+            
+			if(_showPsiPanel)
+			{
+				if(_connector != null)
+				{
+					float theWidth = Screen.width * 0.25f;
+					float theHeight = Screen.height / 3;
+					_panel = new Rect(Screen.width - theWidth - inset, Screen.height - theHeight - inset, theWidth, theHeight);
+					GUILayout.Window(3, _panel, PsiPanel, _connector.Name + "'s Psi States Panel",
+                                     GUILayout.MinWidth(theWidth), GUILayout.MinHeight(theHeight));
+				}
+			}
             
 //  	}// if
 
@@ -358,11 +375,13 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 	private void ShowPsiPanel()
 	{
+		//UnityEngine.Debug.Log ("OCHeadUpDisplay::ShowPsiPanel");
 		_showPsiPanel = true;
 	}
 
 	private void HidePsiPanel()
 	{
+		UnityEngine.Debug.Log ("OCHeadUpDisplay::HidePsiPanel");
 		_showPsiPanel = false;
 	}
 
@@ -377,58 +396,63 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	private void ShowFeelings()
 	{
 		Dictionary<string, float> feelingValueMap = _connector.FeelingValueMap;
-        
-		//panelScrollPosition = GUILayout.BeginScrollView(scrollPosition);
-		_feelingBoxWidth = _panel.width * 0.58f;
-
-		// Display feeling levels
-		if(feelingValueMap.Count == 0)
+			
+		if (feelingValueMap != null)
 		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("Waiting for feeling update...", GUILayout.MaxWidth(_panel.width));
-			GUILayout.EndHorizontal();
-		}
-		else
-		{
-			lock(feelingValueMap)
+			//panelScrollPosition = GUILayout.BeginScrollView(scrollPosition);
+			_feelingBoxWidth = _panel.width * 0.58f;
+	
+			// Display feeling levels
+			if(feelingValueMap.Count == 0)
 			{
-				foreach(string feeling in feelingValueMap.Keys)
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Waiting for feeling update...", GUILayout.MaxWidth(_panel.width));
+				GUILayout.EndHorizontal();
+			}
+			else
+			{
+				lock(feelingValueMap)
 				{
-					float value = feelingValueMap[feeling];
-					// Dark color is for a contrast to the actual feeling level
-					Color dark = new Color(0, 0, 0, 0.6f);
-
-					// Just use green for now. Perhaps later we should
-					// have a configurable color for each feeling
-					Color c = new Color(0, 255, 0, 0.6f);
-					
-					// Remove old bar texture and create a new one, because each frame, 
-					// the unity will rearrange size and position of everytning shown on the screen
-					if(_feelingTextureMap.ContainsKey(feeling))
+					foreach(string feeling in feelingValueMap.Keys)
 					{
-						Destroy(_feelingTextureMap[feeling]);
-					}
-					_feelingTextureMap[feeling] = ConstructBarTexture(value, (int)_feelingBoxWidth, c, dark);
+						float value = feelingValueMap[feeling];
+						// Dark color is for a contrast to the actual feeling level
+						Color dark = new Color(0, 0, 0, 0.6f);
+	
+						// Just use green for now. Perhaps later we should
+						// have a configurable color for each feeling
+						Color c = new Color(0, 255, 0, 0.6f);
+						
+						// Remove old bar texture and create a new one, because each frame, 
+						// the unity will rearrange size and position of everytning shown on the screen
+						if(_feelingTextureMap.ContainsKey(feeling))
+						{
+							Destroy(_feelingTextureMap[feeling]);
+						}
+						_feelingTextureMap[feeling] = ConstructBarTexture(value, (int)_feelingBoxWidth, c, dark);
+						
+						// Set the texture of background.
+						_boxStyle.normal.background = _feelingTextureMap[feeling];
 					
-					// Set the texture of background.
-					_boxStyle.normal.background = _feelingTextureMap[feeling];
+						// Show the label and bar for the feeling
+						GUILayout.BeginHorizontal();
+						GUILayout.Label(feeling + ": ", panelSkin.label, GUILayout.MaxWidth(_panel.width * 0.4f));
+						GUILayout.Box("", _boxStyle, GUILayout.Width(_feelingBoxWidth), GUILayout.Height(16));
+						GUILayout.EndHorizontal();
+					}
+					
+					GUILayout.Space(16f);
+					
+					// We only need to initialize the map at the first time.
+					if(!_isFeelingTextureMapInitialized)
+					{
+						_isFeelingTextureMapInitialized = true;
+					}
+				}// lock
+			}// if	
+		}
+        
 				
-					// Show the label and bar for the feeling
-					GUILayout.BeginHorizontal();
-					GUILayout.Label(feeling + ": ", _panelSkin.label, GUILayout.MaxWidth(_panel.width * 0.4f));
-					GUILayout.Box("", _boxStyle, GUILayout.Width(_feelingBoxWidth), GUILayout.Height(16));
-					GUILayout.EndHorizontal();
-				}
-				
-				GUILayout.Space(16f);
-				
-				// We only need to initialize the map at the first time.
-				if(!_isFeelingTextureMapInitialized)
-				{
-					_isFeelingTextureMapInitialized = true;
-				}
-			}// lock
-		}// if			
 	}
 
 	/**
@@ -437,65 +461,70 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	private void ShowDemands()
 	{
 		Dictionary<string, float> demandValueMap = _connector.DemandValueMap;
-		string currentDemandName = _connector.CurrentDemandName;
+			
+		if (demandValueMap != null)
+		{
+			string currentDemandName = _connector.CurrentDemandName;
         
-		_demandBoxWidth = _panel.width * 0.58f;
-
-		// Display demand satisfactions (i.e. truth values)
-		if(demandValueMap.Count == 0)
-		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("Waiting for demand update...", GUILayout.MaxWidth(_panel.width));
-			GUILayout.EndHorizontal();
-		}
-		else
-		{
-			lock(demandValueMap)
+			_demandBoxWidth = _panel.width * 0.58f;
+	
+			// Display demand satisfactions (i.e. truth values)
+			if(demandValueMap.Count == 0)
 			{
-				foreach(string demand in demandValueMap.Keys)
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Waiting for demand update...", GUILayout.MaxWidth(_panel.width));
+				GUILayout.EndHorizontal();
+			}
+			else
+			{
+				lock(demandValueMap)
 				{
-					float value = demandValueMap[demand];
-					// Dark color is for a contrast to the actual feeling level
-					Color dark = new Color(0, 0, 0, 0.6f);
-
-					// Just use blue for now. Perhaps later we should
-					// have a configurable color for each demand					
-					Color c = (currentDemandName == demand) ? new Color(255, 0, 0, 0.6f) : 
-                                                           new Color(0, 0, 255, 0.6f);
-                    
-					if(_demandTextureMap.ContainsKey(demand))
+					foreach(string demand in demandValueMap.Keys)
 					{
-						Destroy(_demandTextureMap[demand]);
+						float value = demandValueMap[demand];
+						// Dark color is for a contrast to the actual feeling level
+						Color dark = new Color(0, 0, 0, 0.6f);
+	
+						// Just use blue for now. Perhaps later we should
+						// have a configurable color for each demand					
+						Color c = (currentDemandName == demand) ? new Color(255, 0, 0, 0.6f) : 
+	                                                           new Color(0, 0, 255, 0.6f);
+	                    
+						if(_demandTextureMap.ContainsKey(demand))
+						{
+							Destroy(_demandTextureMap[demand]);
+						}
+						_demandTextureMap[demand] = ConstructBarTexture(value, (int)_demandBoxWidth, c, dark);
+	
+						// Set the texture of background.
+						_boxStyle.normal.background = _demandTextureMap[demand];
+	                    
+						// Draw the label and bar for the demand
+						GUILayout.BeginHorizontal();
+						GUILayout.Label(demand + ": ", panelSkin.label, GUILayout.MaxWidth(_panel.width * 0.4f));
+						GUILayout.Box("", _boxStyle, GUILayout.Width(_demandBoxWidth), GUILayout.Height(16));
+						GUILayout.EndHorizontal();
 					}
-					_demandTextureMap[demand] = ConstructBarTexture(value, (int)_demandBoxWidth, c, dark);
-
-					// Set the texture of background.
-					_boxStyle.normal.background = _demandTextureMap[demand];
-                    
-					// Draw the label and bar for the demand
-					GUILayout.BeginHorizontal();
-					GUILayout.Label(demand + ": ", _panelSkin.label, GUILayout.MaxWidth(_panel.width * 0.4f));
-					GUILayout.Box("", _boxStyle, GUILayout.Width(_demandBoxWidth), GUILayout.Height(16));
-					GUILayout.EndHorizontal();
-				}
-                
-				GUILayout.Space(16f); 
-                
-				// We only need to initialize the map at the first time.
-				if(!_isDemandTextureMapInitialized)
-				{
-					_isDemandTextureMapInitialized = true;
-				}
-			}// lock
-		}// if
+	                
+					GUILayout.Space(16f); 
+	                
+					// We only need to initialize the map at the first time.
+					if(!_isDemandTextureMapInitialized)
+					{
+						_isDemandTextureMapInitialized = true;
+					}
+				}// lock
+			}// if
+		}
+		
 	}
     
 	private void PsiPanel(int id)
 	{		
 		// Set box style based on skin
-		if(_panelSkin != null)
+		if(panelSkin != null)
 		{
-			_boxStyle = _panelSkin.box;
+			_boxStyle = panelSkin.box;
 		}
 		else
 		{

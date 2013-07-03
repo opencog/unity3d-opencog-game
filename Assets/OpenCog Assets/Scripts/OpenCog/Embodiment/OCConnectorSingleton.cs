@@ -239,8 +239,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			
 			// Code below SHOULD be handled by physiologicalmodel in the future...it will also send the tickmessages, so it should be ok...
 			// If not, uncomment the two lines below.
-//			Dictionary<string, double> basicFactorMap = new Dictionary<string, double>();
-//			SendAvatarSignalsAndTick(basicFactorMap);
+			Dictionary<string, double> basicFactorMap = new Dictionary<string, double>();
+			SendAvatarSignalsAndTick(basicFactorMap);
 			
 			_lastUpdate = System.DateTime.Now;
 		}
@@ -1465,7 +1465,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         ParseDOMDocument(document);
     }
 
-		private void ParsePsiDemandElement(XmlElement element)
+	private void ParsePsiDemandElement(XmlElement element)
     {
         string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
 
@@ -1484,8 +1484,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         }
     }
 
-		private void ParseEmotionalFeelingElement(XmlElement element)
+	private void ParseEmotionalFeelingElement(XmlElement element)
     {
+		UnityEngine.Debug.Log ("OCConnectorSingleton::ParseEmotionalFeelingElement");
         string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
 
         // Parse all feelings and add them to a map.
@@ -1519,10 +1520,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	private void ParseDOMDocument(XmlDocument document)
     {
+		UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument");
         // Handles action-plans
         XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
         for (int i = 0; i < list.Count; i++)
         {
+			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
             ParseActionPlanElement((XmlElement)list.Item(i));
         }
 
@@ -1530,6 +1533,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         XmlNodeList feelingsList = document.GetElementsByTagName(OCEmbodimentXMLTags.EMOTIONAL_FEELING_ELEMENT);
         for (int i = 0; i < feelingsList.Count; i++)
         {
+			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseEmotionalFeelingElement");
             ParseEmotionalFeelingElement((XmlElement)feelingsList.Item(i));
         }
         
@@ -1537,6 +1541,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         XmlNodeList demandsList = document.GetElementsByTagName(OCEmbodimentXMLTags.PSI_DEMAND_ELEMENT);
         for (int i = 0; i< demandsList.Count; i++)
         {
+			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParsePsiDemandElement");
             ParsePsiDemandElement((XmlElement)demandsList.Item(i));
         }
 		
@@ -1544,6 +1549,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	    XmlNodeList singleActionList = document.GetElementsByTagName(OCEmbodimentXMLTags.SINGLE_ACTION_COMMAND_ELEMENT);
         for (int i = 0; i< singleActionList.Count; i++)
         {
+			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseSingleActionElement");
             ParseSingleActionElement((XmlElement)singleActionList.Item(i));
         }
     }
@@ -1714,7 +1720,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     {
 		if (_isEstablished)
 		{
-			UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: _isEstablished -> Sending tick message and phys info.");
+			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: _isEstablished -> Sending tick message and phys info.");
 	        string timestamp = GetCurrentTimestamp();
 	        XmlDocument doc = new XmlDocument();
 	        XmlElement root = MakeXMLElementRoot(doc);
@@ -1725,7 +1731,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        
 	        avatarSignal.SetAttribute("timestamp", timestamp);
 			
-			avatarSignal.SetAttribute("type-of-message", "tick-message-really");
+			//avatarSignal.SetAttribute("type-of-message", "tick-message-really");
 	        
 	        // Append all physiological factors onto the message content.
 	        foreach (string factor in physiologicalInfo.Keys)
@@ -1753,8 +1759,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	            {
 	                OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "");
 					
-					if (tickMessage == null)
-						UnityEngine.Debug.Log ("Its the tick!");
+//					if (tickMessage == null)
+//						UnityEngine.Debug.Log ("Its the tick!");
 					
 	                _messagesToSend.Add(tickMessage);
 	            }
@@ -1762,7 +1768,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		}
 		else
 		{
-			UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: !isEstablished -> Not sending a tick message / phys info.");	
+			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: !isEstablished -> Not sending a tick message / phys info.");	
 		}
     }
 

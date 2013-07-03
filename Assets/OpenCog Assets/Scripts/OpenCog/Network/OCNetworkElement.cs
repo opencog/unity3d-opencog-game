@@ -393,13 +393,12 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		_routerIP = IPAddress.Parse(strConfigIP);
 		_routerPort = OCConfig.Instance.getInt("ROUTER_PORT", 16312);
 			
-		if (_routerIP.ToString() == string.Empty)
-		{
-			_routerIP = IPAddress.Parse ("158.132.219.182");
-			_routerPort = 16312;
-			UnityEngine.Debug.Log ("Using hardcoded IP: " + _routerIP.ToString() + ":" + _routerPort);
-		}
-				
+//		if (_routerIP.ToString() == string.Empty)
+//		{
+//			_routerIP = IPAddress.Parse ("158.132.219.182");
+//			_routerPort = 16312;
+//			UnityEngine.Debug.Log ("Using hardcoded IP: " + _routerIP.ToString() + ":" + _routerPort);
+//		}
 	
 		OCServerListener.Instance.Initialize(this);
 		_listener = OCServerListener.Instance;

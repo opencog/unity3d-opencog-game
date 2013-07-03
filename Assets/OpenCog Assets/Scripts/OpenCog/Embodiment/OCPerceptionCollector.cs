@@ -61,7 +61,7 @@ namespace OpenCog.Embodiment
 		private ArrayList _statesToDelete = new ArrayList ();
 		private System.Object _cacheLock = new System.Object ();
 		private List<OCObjectMapInfo> _removedObjects = new List<OCObjectMapInfo> (); // A list of objects recently removed. This is a temporary data structure, cleared whenever it is processed.
-		private bool _hasPerceivedWorldFirstTime = true;
+		private bool _isPerceivingWorldForTheFirstTime = true;
 
 		//private WorldData _worldData; // Reference to the world data.
 		private OpenCog.Map.OCMap _map;
@@ -258,7 +258,7 @@ namespace OpenCog.Embodiment
 			// mean they were updated. It seems that buildMapInfo actually does some kind of 'isupdated' analysis...
 			List<OCObjectMapInfo> latestMapInfoSeq = new List<OCObjectMapInfo> ();
 			if (updatedObjects != null) {
-				OCLogger.Info ("PerceptionCollector: global map info has been updated");
+				//UnityEngine.Debug.Log ("PerceptionCollector: global map info has been updated");
 				foreach (int oid in updatedObjects) {
 					latestMapInfoSeq.Add (this._mapInfoCache [oid]);
 				}
@@ -283,10 +283,10 @@ namespace OpenCog.Embodiment
 			// the first time too.
 			if (latestMapInfoSeq.Count > 0) {
 				// Append latest map info sequence to OC connector's sending queue.
-				_connector.SendMapInfoMessage (latestMapInfoSeq, _hasPerceivedWorldFirstTime);
+				_connector.SendMapInfoMessage (latestMapInfoSeq, _isPerceivingWorldForTheFirstTime);
 			}
 			
-			_hasPerceivedWorldFirstTime = false;
+			_isPerceivingWorldForTheFirstTime = false;
 		}
 			
 		/// <summary>
@@ -406,8 +406,8 @@ namespace OpenCog.Embodiment
 				}
 				
 				// We don't send all the existing objects as appear actions to the opencog at the time the robot is loaded.
-				// If it hasn't perceived the world for the first time yet, we inform OpenCog. Otherwise...we don't!
-				if (! _hasPerceivedWorldFirstTime) {
+				// If it isn't perceiving the world for the first time, we inform OpenCog. Otherwise...we don't!
+				if (! _isPerceivingWorldForTheFirstTime) {
 					_connector.HandleObjectAppearOrDisappear (mapInfo.ID, mapInfo.Type, true);
 				}
 				
@@ -675,6 +675,7 @@ namespace OpenCog.Embodiment
 		// So it appears we don't need it right now! Guess the interesting one is then PerceiveWorld.
 		private void PerceiveStateChanges ()
 		{
+			UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveStateChanges");
 			// Loop through the states that have previously been registered. A stateInfo contains an gameobject, a behaviour and a statename.
 			foreach (OpenCog.Embodiment.OCStateChangesRegister.StateInfo stateInfo in OpenCog.Embodiment.OCStateChangesRegister.StateList) 
 			{
