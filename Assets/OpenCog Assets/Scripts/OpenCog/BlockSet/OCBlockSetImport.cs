@@ -30,6 +30,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using OpenCog.BlockSet.BaseBlockSet;
+using System.Linq;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -220,6 +221,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 		if(type == typeof(float)) return float.Parse(val);
 		if(type == typeof(double)) return double.Parse(val);
 		if(type == typeof(string)) return val;
+		if(type == typeof(UnityEngine.GameObject)) return GameObject.FindObjectsOfTypeIncludingAssets(typeof(GameObject)).Where(i => i.name == val).LastOrDefault();
 		
 		throw new System.Exception("Unsupported type: "+type.ToString());
 	}

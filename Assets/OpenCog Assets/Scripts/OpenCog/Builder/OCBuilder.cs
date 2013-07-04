@@ -23,6 +23,8 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
+using System.Linq;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -157,6 +159,14 @@ public class OCBuilder : OCMonoBehaviour
 					OpenCog.Map.OCBlockData block = new OpenCog.Map.OCBlockData(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
 					block.SetDirection(GetDirection(-transform.forward));
 					_map.SetBlockAndRecompute(block, point.Value);
+						
+					if(_selectedBlock.GetName() == "Battery")
+					{
+						GameObject batteryPrefab = (GameObject)GameObject.FindObjectsOfTypeIncludingAssets(typeof(GameObject)).Where(o => o.name == "Battery_Prefab").LastOrDefault();
+						GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
+						battery.transform.position = point.Value;
+						battery.name = "Battery";
+					}
 				}
 			}
 		}

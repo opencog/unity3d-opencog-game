@@ -178,6 +178,23 @@ public class OCMeshBuilder
 		
 		return mesh;
 	}
+		
+	public OCMeshBuilder FromMesh(UnityEngine.Mesh mesh) {
+
+		if(mesh == null) return this;
+			
+		_vertices.AddRange(mesh.vertices);
+		_colors.AddRange(mesh.colors);
+		_normals.AddRange(mesh.normals);
+		_uv.AddRange(mesh.uv);
+		
+		for(int i = 0; i < mesh.subMeshCount; ++i)
+		{
+			AddIndices(0, mesh.GetTriangles(i));
+		}
+		
+		return this;
+	}		
 
 	//---------------------------------------------------------------------------
 
