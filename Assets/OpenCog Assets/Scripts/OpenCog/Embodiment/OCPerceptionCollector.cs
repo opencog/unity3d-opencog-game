@@ -25,6 +25,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
+using System.Linq;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -224,14 +225,23 @@ namespace OpenCog.Embodiment
 			}
 			
 			// Ok, so that was everything in the OCA (OpenCog Avatar?) Repository. Next come the OCObjects...
-			for (int ocObject = 0; ocObject < 0; ocObject++)
+			
+			List<UnityEngine.GameObject> batteryObjects = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery").ToList();
+			
+			foreach (UnityEngine.GameObject batteryObject in batteryObjects)
 			{
-				UnityEngine.GameObject someGameObject = null;
-				
-				// Seems this function always tries to build a mapinfo...but returns false if it wasn't updated or something? Or maybe if it was the first time too?
-				if (this.BuildMapInfo(someGameObject))
-					updatedObjects.Add (someGameObject.GetInstanceID());
+				if (this.BuildMapInfo(batteryObject))
+					updatedObjects.Add (batteryObject.GetInstanceID());
 			}
+			
+//			for (int ocObject = 0; ocObject < 0; ocObject++)
+//			{
+//				UnityEngine.GameObject someGameObject = null;
+//				
+//				// Seems this function always tries to build a mapinfo...but returns false if it wasn't updated or something? Or maybe if it was the first time too?
+//				if (this.BuildMapInfo(someGameObject))
+//					updatedObjects.Add (someGameObject.GetInstanceID());
+//			}
 	
 			// Ok...here we're determining which objects have disappeared. It seems that cacheIdList contains objects that existed before.
 			// We then look for these objects in _mapInfoCacheStatus (by gameobjectID it seems) to see if their boolean is false...not sure why yet.

@@ -45,7 +45,7 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public abstract class OCMessage : IConvertible 
+public class OCMessage : IConvertible 
 {
 
 	//---------------------------------------------------------------------------
@@ -69,7 +69,7 @@ public abstract class OCMessage : IConvertible
 	/// </summary>
 	private MessageType _type;
 		
-		
+	private string _content;
 			
 	//---------------------------------------------------------------------------
 
@@ -97,6 +97,12 @@ public abstract class OCMessage : IConvertible
 	{
 		get { return this._type;}
 		set { _type = value;}
+	}
+		
+	public string MessageContent
+	{
+		get{ return _content; }
+		set{ _content = value; }
 	}
 			
 	//---------------------------------------------------------------------------
@@ -127,34 +133,20 @@ public abstract class OCMessage : IConvertible
 	/// <param name='message'>
 	/// Message.
 	/// </param>
-	public static OCMessage 
-	CreateMessage
-	(	string sourceID
-	, string targetID
-	, MessageType type
-	, string message
-	)
+	public static OCMessage CreateMessage(string sourceID, string targetID, MessageType type, string message = "")
 	{
-		switch(type)
-		{
-			case MessageType.STRING:
-				return new OCStringMessage(sourceID, targetID, message);
-			case MessageType.FEEDBACK:
-				return new OCFeedbackMessage(sourceID, targetID, message);				
-			case MessageType.RAW:
-				return new OCRawMessage(sourceID, targetID, message);
-			case MessageType.TICK:
-				return new OCTickMessage(sourceID, targetID);
-			default:
-				return null;
-		}
+		return new OCMessage(sourceID, targetID, type, message);
 	}
 
-	// new version of getPlainTextRepresentation
-	public new abstract string ToString();
-
-	// new version of loadPlainTextRepresentation
-	public abstract void FromString(string message);
+	public string ToString()
+	{
+		return _content;
+	}
+	
+	public void FromString(string message)
+	{
+		_content = message;
+	}
 
 	#region IConvertible implementation
 	public System.TypeCode GetTypeCode ()
@@ -265,11 +257,12 @@ public abstract class OCMessage : IConvertible
 
 	//---------------------------------------------------------------------------		
 		
-	public OCMessage (string sourceID, string targetID, MessageType type)
+	public OCMessage (string sourceID, string targetID, MessageType type, string messageContents)
 	{
 		_sourceID = sourceID;
 		_targetID = targetID;
 		_type = type;
+		_content = messageContents;
 	}
 		
 	/// <summary>

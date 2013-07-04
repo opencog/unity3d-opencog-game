@@ -108,6 +108,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	protected bool _isLoggedIn = false;
 	protected bool _isListening = false;
 	private bool _isHandlingMessages = false;
+	protected bool _firstSendOfPhysiologicalFactors = true;
 	
 	protected string _verificationGuid ;
 		
@@ -574,6 +575,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		command.Append(numberOfLines + NEWLINE);
 
 		command.Append(payload + NEWLINE);
+			
+		UnityEngine.Debug.Log ("Sending: " + command.ToString ());
 		
 		bool result = Send(command.ToString());
 		

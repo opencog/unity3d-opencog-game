@@ -380,14 +380,13 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 		}
 
 		/**
-     * Update the value of physiological factor.
-     */
+     	* Update the value of physiological factor.
+     	*/
 		public void UpdateValue()
 		{
 			// (MILLISECONDS_PER_DAY / frequency) means how long the urgency will increase to 1
 			double delta = this.millisecondsPerTick / (MILLISECONDS_PER_DAY / frequency);
 			this.value = NumberUtil.zeroOneCut(this.value + delta);
-			//Debug.Log("Physiological: " + this.name + " " + this.value);
 		}
 
 		public void Increase(double delta)

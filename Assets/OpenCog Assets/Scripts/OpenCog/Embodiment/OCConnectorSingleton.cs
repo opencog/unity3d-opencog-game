@@ -240,8 +240,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			
 			// Code below SHOULD be handled by physiologicalmodel in the future...it will also send the tickmessages, so it should be ok...
 			// If not, uncomment the two lines below.
-			Dictionary<string, double> basicFactorMap = new Dictionary<string, double>();
-			SendAvatarSignalsAndTick(basicFactorMap);
+//			Dictionary<string, double> basicFactorMap = new Dictionary<string, double>();
+//			SendAvatarSignalsAndTick(basicFactorMap);
 			
 			_lastUpdate = System.DateTime.Now;
 		}
@@ -867,7 +867,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		actionElement.SetAttribute("target", objectID.ToString());
 		actionElement.SetAttribute("target-type",targetType);		
 			
-	   	OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+	   	OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 	   	
 	   	OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
 	   	
@@ -930,7 +930,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		newVectorElement.SetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE, endPos.y.ToString());
 		newVectorElement.SetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE, endPos.z.ToString());
 		
-		OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+		OCMessage message = OCMessage.CreateMessage (_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
     OCLogger.Debugging("sending move action result: \n" + BeautifyXmlText(doc));
         
@@ -1146,8 +1146,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			OCLogger.Warn("Unexcepted type: " + valueType + " in OCConnector::handleObjectStateChange!" );
 		}
 
-
-    OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+	OCMessage message = OCMessage.CreateMessage (_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
     OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
@@ -1215,8 +1214,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							
 	    actionElement.SetAttribute("available", available ? "true" : "false");
 		}
-
-    OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+		
+	OCMessage message = OCMessage.CreateMessage (_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
     lock (_messageSendingLock)
     {
@@ -1256,9 +1255,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
                    "does not contain info about the avatar itself!");
           return;
       }
-          
-      OCStringMessage message =
-          (OCStringMessage)SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data",isFirstTimePerceptMapObjects);
+         
+	OCMessage message = SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data",isFirstTimePerceptMapObjects);
 
       lock (_messageSendingLock)
       {
@@ -1276,9 +1274,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
   {
       // No new map info to send.
       if (terrainInfoSeq.Count == 0) return;
-
-      OCStringMessage message =
-          (OCStringMessage)SerializeMapInfo(terrainInfoSeq, "terrain-info", "terrain-data",isFirstTimePerceptTerrain);
+		
+	OCMessage message = SerializeMapInfo(terrainInfoSeq, "terrain-info", "terrain-data",isFirstTimePerceptTerrain);
 
       lock (_messagesToSend)
       {
@@ -1736,13 +1733,23 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			//avatarSignal.SetAttribute("type-of-message", "tick-message-really");
 	        
 	        // Append all physiological factors onto the message content.
-	        foreach (string factor in physiologicalInfo.Keys)
-	        {
-	            // <physiology-level name="hunger" value="0.3"/>   
-	            XmlElement p = (XmlElement)avatarSignal.AppendChild(doc.CreateElement("physiology-level"));
-	            p.SetAttribute("name", factor);
-	            p.SetAttribute("value", physiologicalInfo[factor].ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat));
-	        }
+			if (_firstSendOfPhysiologicalFactors)
+			{
+				// First time it seems to want an empty message...
+				_firstSendOfPhysiologicalFactors = false;
+				
+			}
+			else
+			{
+				foreach (string factor in physiologicalInfo.Keys)
+		        {
+		            // <physiology-level name="hunger" value="0.3"/>   
+		            XmlElement p = (XmlElement)avatarSignal.AppendChild(doc.CreateElement("physiology-level"));
+		            p.SetAttribute("name", factor);
+		            p.SetAttribute("value", physiologicalInfo[factor].ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat));
+		        }	
+			}	
+	        
 	        
 	        string xmlText = BeautifyXmlText(doc);
 	        //OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
@@ -1757,15 +1764,15 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	            _messagesToSend.Add(message);
 	
 	            // Send a tick message to make OAC start next cycle.
-//	            if (bool.Parse(new OCConfig().get("GENERATE_TICK_MESSAGE")))
-//	            {
-//	                OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "");
-//					
-////					if (tickMessage == null)
-////						UnityEngine.Debug.Log ("Its the tick!");
-//					
-//	                _messagesToSend.Add(tickMessage);
-//	            }
+	            if (bool.Parse(OCConfig.Instance.get("GENERATE_TICK_MESSAGE")))
+	            {
+	                OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "TICK_MESSAGE");
+					
+//					if (tickMessage == null)
+//						UnityEngine.Debug.Log ("Its the tick!");
+					
+	                _messagesToSend.Add(tickMessage);
+	            }
 	        }
 		}
 		else
@@ -1832,7 +1839,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       actionElement.SetAttribute("name", action.FullName);
       actionElement.SetAttribute("status", success ? "done" : "error");
 
-      OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+      OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
       lock (_messageSendingLock)
       {
