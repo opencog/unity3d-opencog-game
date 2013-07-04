@@ -100,8 +100,19 @@ public class BlockSetExport {
 	
 	private static XmlNode WriteField(string name, object val, XmlDocument document) {
 		XmlNode node = document.CreateElement(name);
+		
 		if(val != null)
-			node.InnerText = val.ToString();
+		{
+			if(val is GameObject)
+			{
+				node.InnerText = (val as GameObject).name;
+			}
+			else
+			{
+				node.InnerText = val.ToString();
+			}
+		}
+		
 		return node;
 	}
 	

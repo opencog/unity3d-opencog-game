@@ -18,6 +18,13 @@ public class BlockEditor {
 		{
 			string name = EditorGUILayout.TextField("Name", block.GetName());
 			block.SetName( FixNameString(name) );
+			
+			if(block is OCGlassBlock)
+			{
+				OCGlassBlock glass = (OCGlassBlock)block;
+				GameObject interior = (GameObject)EditorGUILayout.ObjectField("Interior", glass.GetInterior(), typeof(GameObject), true, null);
+				glass.SetInterior( interior );
+			}
 
 			int atlas = EditorGUIUtils.Popup( "Atlas", block.AtlasID, blockSet.Atlases );
 			block.AtlasID = atlas;
