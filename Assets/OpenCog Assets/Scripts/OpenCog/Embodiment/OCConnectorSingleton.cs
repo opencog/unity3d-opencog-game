@@ -415,6 +415,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 				TextAsset configFile = (TextAsset)Resources.Load(_settingsFilename);
         if(configFile != null) OCConfig.Instance.LoadFromTextAsset(configFile);
+				OCConfig.Instance.LoadFromCommandLine();
     }
     
     // Initialize NetworkElement

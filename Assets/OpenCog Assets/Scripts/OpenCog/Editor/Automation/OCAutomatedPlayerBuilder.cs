@@ -17,6 +17,7 @@
 using UnityEngine;
 using System.Collections;
 using ProtoBuf;
+using UnityEditor;
 
 namespace OpenCog
 {
@@ -25,14 +26,14 @@ namespace Automation
 {
 
 /// <summary>
-/// The OpenCog OCAutomatedPlayerBuilder.
+/// The OpenCog Automated Player Builder.  Builds standalone players and allows for unit testing.
+/// Example commandline usage:
+/// "C:\Program Files (x86)\Unity\Editor\Unity.exe" -batchMode -quit -nographics -projectPath C:\project -executeMethod OCAutomatedPlayerBuilder.BuildAll
 /// </summary>
 #region Class Attributes
 
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[ExecuteInEditMode]
 #endregion
-public class OCAutomatedPlayerBuilder : MonoBehaviour
+public class OCAutomatedPlayerBuilder
 {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ public class OCAutomatedPlayerBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
-  private int _examplePrivateVar = 0;
+  
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -53,18 +54,7 @@ public class OCAutomatedPlayerBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
-  public int ExamplePublicVar
-  {
-    get
-    {
-      return _examplePrivateVar;
-    }
-
-    set
-    {
-      _examplePrivateVar = value;
-    }
-  }
+  
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -76,78 +66,54 @@ public class OCAutomatedPlayerBuilder : MonoBehaviour
 
   /////////////////////////////////////////////////////////////////////////////
 
-  /// <summary>
-  /// Called when the script instance is being loaded.
-  /// </summary>
-  void Awake()
-  {
-  }
-
-  /// <summary>
-  /// Use this for initialization
-  /// </summary>
-  void Start()
-  {
-  }
-
-  /// <summary>
-  /// Update is called once per frame.
-  /// </summary>
-  void Update()
-  {
-  }
-
-  /// <summary>
-  /// Called once per frame after all Update calls
-  /// </summary>
-  void LateUpdate()
-  {
-  }
-
-  /// <summary>
-  /// Raises the enable event when OCAutomatedPlayerBuilder is loaded.
-  /// </summary>
-  void OnEnable()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnEnable"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
-
-  /// <summary>
-  /// Raises the disable event when OCAutomatedPlayerBuilder goes out of scope.
-  /// </summary>
-  void OnDisable()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnDisable"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
-
-  /// <summary>
-  /// Raises the destroy event when OCAutomatedPlayerBuilder is about to be destroyed.
-  /// </summary>
-  void OnDestroy()
-  {
-    Debug.Log
-    (
-      string.Format
-      (
-        "MonoBehaviour[{0}].OnDestroy"
-      , gameObject.name + "\\" + GetType().Name
-      )
-    );
-  }
+  [MenuItem ("Build/BuildAll")]
+	static void BuildAll()
+	{
+		BuildStandaloneLinuxPlayer();
+		BuildStandaloneLinux64Player();
+		BuildStandaloneWindowsPlayer();
+		BuildStandaloneWindows64Player();
+	}
+	
+	[MenuItem ("Build/BuildStandaloneLinux64Player")]
+	static void BuildStandaloneLinux64Player()
+	{
+		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux64);
+		BuildPipeline.BuildPlayer(scenes
+								  , "../Players/Unity3DGameWorldPlayer_Linux64"
+								  , BuildTarget.StandaloneLinux64, BuildOptions.None );
+	}
+	
+	[MenuItem ("Build/BuildStandaloneLinuxPlayer")]
+	static void BuildStandaloneLinuxPlayer()
+	{
+		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux);
+		BuildPipeline.BuildPlayer(scenes
+								  , "../Players/Unity3DGameWorldPlayer_Linux"
+								  , BuildTarget.StandaloneLinux, BuildOptions.None );
+	}
+	
+	[MenuItem ("Build/BuildStandaloneWindowsPlayer")]
+	static void BuildStandaloneWindowsPlayer()
+	{
+		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows);
+		BuildPipeline.BuildPlayer(scenes
+								  , "../Players/Unity3DGameWorldPlayer_Windows.exe"
+								  , BuildTarget.StandaloneWindows, BuildOptions.None );
+	}
+	
+	[MenuItem ("Build/BuildStandaloneWindows64Player")]
+	static void BuildStandaloneWindows64Player()
+	{
+		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows64);
+		BuildPipeline.BuildPlayer(scenes
+								  , "../Players/Unity3DGameWorldPlayer_Windows64.exe"
+								  , BuildTarget.StandaloneWindows64, BuildOptions.None );
+	}
 
   /////////////////////////////////////////////////////////////////////////////
 
