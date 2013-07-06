@@ -25,6 +25,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using System.Linq;
+using OpenCog.Map;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -162,7 +163,7 @@ public class OCBuilder : OCMonoBehaviour
 						
 					if(_selectedBlock.GetName() == "Battery")
 					{
-						GameObject batteryPrefab = (GameObject)GameObject.FindObjectsOfTypeIncludingAssets(typeof(GameObject)).Where(o => o.name == "Battery_Prefab").LastOrDefault();
+						GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
 						if (batteryPrefab == null)
 						{
 							UnityEngine.Debug.Log ("OCBuilder::Update: (GameObject)GameObject.FindObjectsOfTypeIncludingAssets(typeof(GameObject)).Where(o => o.name == Battery_Prefab).LastOrDefault() failed, batteryPrefab == null");

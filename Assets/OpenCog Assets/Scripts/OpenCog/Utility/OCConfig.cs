@@ -229,6 +229,25 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 	    }
 		}
 	}
+	
+	public void LoadFromCommandLine()
+	{
+		string[] args = System.Environment.GetCommandLineArgs();
+		Debug.Log("GetCommandLineArgs: {0}" +  String.Join(", ", args));
+		
+		foreach(string arg in args)
+		{
+			string[] keyValuePair = arg.Split(':');
+			if(keyValuePair != null && _settings.ContainsKey(keyValuePair[0]))
+			{
+				_settings[keyValuePair[0]] = keyValuePair[1];
+			}
+			else
+			{
+				Debug.LogWarning("Ignoring unknown command-line argument '" + arg + "'.");
+			}
+		}
+	}
 		
 	/// <summary>
 	/// Return current value of a given parameter.

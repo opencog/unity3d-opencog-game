@@ -22,10 +22,19 @@ public class OCFileTerrainGenerator
 			Debug.Log(obj.ToString());
 		}
 		
-		string dataPath = UnityEngine.Application.dataPath;
-		//dataPath = dataPath.Remove(dataPath.IndexOf("/Assets"));
-		dataPath = dataPath + "/Maps/Resources";
+		string dataPath;
+
+//		if(Application.isEditor)
+//		{
+//			dataPath = UnityEngine.Application.dataPath + "/OpenCog Assets/Maps/StreamingAssets/";
+//		}
+//		else
+		{
+			dataPath = Application.streamingAssetsPath;
+		}
+		
 		Debug.Log(dataPath);
+		
 		_fullMapPath = System.IO.Path.Combine (dataPath, mapName);
 	}
 	

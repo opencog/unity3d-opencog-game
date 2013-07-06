@@ -416,6 +416,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 				TextAsset configFile = (TextAsset)Resources.Load(_settingsFilename);
         if(configFile != null) OCConfig.Instance.LoadFromTextAsset(configFile);
+				OCConfig.Instance.LoadFromCommandLine();
     }
     
     // Initialize NetworkElement
@@ -1245,14 +1246,14 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			if (objMapInfo.ID.Equals(_brainID))
 	        {
-				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), breaking in a bit...");
+				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), moving its objectmapinfo to first position...");
 	        	localMapInfo.Remove(objMapInfo);
 	        	localMapInfo.AddFirst(objMapInfo);
 	         	foundAvatarId = true;
 	         	break;
 	        }		
-			else
-				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID) == false");
+//			else
+//				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID) == false");
 		}
       } // foreach
       
@@ -1673,7 +1674,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
             }
         
         // Ask action scheduler to stop all current actions.
-        _actionController.SendMessage("cancelCurrentActionPlan");
+		if (_actionController != null)
+			_actionController.SendMessage("cancelCurrentActionPlan");
+		else
+			UnityEngine.Debug.Log ("Cannot cancel current action plan, _actionController == null");
+		
         SendActionStatus(_currentPlanId, false);
     }
 
@@ -1767,7 +1772,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        //OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
 	            
 	        // Construct a string message.
-	        //OCStringMessage message = new OCStringMessage(_ID, _brainID, xmlText);
 			OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);
 			
 	        lock (_messagesToSend)

@@ -78,6 +78,7 @@ public class OCObjectMapInfo
 		private float _weight; // weight of an object
 		private UnityEngine.Vector3 _startMovePos; // the lastest time start to move position
 		private Dictionary<string, Embodiment.OCTag> _tags = new Dictionary<string, Embodiment.OCTag>();
+		private List<OCTag> _properties = new List<OCTag>();
 		private VISIBLE_STATUS _visibility = VISIBLE_STATUS.VISIBLE; // Set the visibility of an object to visible by default.
 
 		//---------------------------------------------------------------------------
@@ -174,11 +175,18 @@ public class OCObjectMapInfo
 			set { _visibility = value; }
 		}
 		
+//		[ProtoMember(10)]
+//		public Dictionary<string, Embodiment.OCTag> Properties {
+//			get { return _tags; }
+//			set { _tags = value; }
+//		}
+		
 		[ProtoMember(10)]
-		public Dictionary<string, Embodiment.OCTag> Properties {
-			get { return _tags; }
-			set { _tags = value; }
-		}
+        public List<OCTag> Properties
+        {
+            get { return _properties; }
+            set { _properties = value; }
+        }
 		
 		[ProtoMember(11)]
 		public float Weight {
@@ -259,6 +267,37 @@ public class OCObjectMapInfo
 			Uninitialize ();
 		}
 		
+		public OCTag CheckPropertyExist(string keyStr)
+        {
+            foreach (OCTag oct in _properties)
+            {
+                if (oct.key == keyStr)
+                    return oct;
+            }
+            return null;
+        }
+
+        public void AddProperty(string keyStr, string valueStr, System.Type type)
+        {
+            // Check if property existing
+            OCTag oct = CheckPropertyExist(keyStr);
+            if (oct != null)
+            {
+                _properties.Remove(oct);
+            }
+            _properties.Add(new OCTag(keyStr, valueStr, type));
+        }
+
+        public void RemoveProperty(string keyStr)
+        {
+            // Check if property existing
+            OCTag oct = CheckPropertyExist(keyStr);
+            if (oct != null)
+            {
+                _properties.Remove(oct);
+            }
+        }
+		
 		public bool CheckTagExists (string keyStr)
 		{
 			UnityEngine.Debug.Log ("Checking for tag '" + keyStr + "'.");
@@ -280,6 +319,7 @@ public class OCObjectMapInfo
 			//UnityEngine.Debug.Log ("Adding tag '" + keyStr + "'");
 			if (!_tags.ContainsKey(keyStr))
 				_tags.Add(keyStr, new OCTag(keyStr, valueStr, type));
+			
 		}
 
 		public void RemoveTag (string keyStr)
@@ -402,8 +442,8 @@ public class OCObjectMapInfo
 			if (gameObject.GetComponent<OpenCog.Extensions.OCConsumableData>() != null)
 			{
 				UnityEngine.Debug.Log ("Adding edible and foodbowl tags to battery with ID " + gameObject.GetInstanceID());
-				this.AddTag ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
-				this.AddTag ("foodbowl", "TRUE", System.Type.GetType ("System.Boolean"));
+				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
+				this.AddProperty ("foodbowl", "TRUE", System.Type.GetType ("System.Boolean"));
 			}
 
 			// Get a property manager instance

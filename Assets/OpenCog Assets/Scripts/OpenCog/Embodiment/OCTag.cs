@@ -64,7 +64,7 @@ public class OCTag
 	//---------------------------------------------------------------------------
 		
 	[ProtoMember(1)]
-    public string Key
+    public string key
     {
         get { return _key; }
         set { _key = value; }

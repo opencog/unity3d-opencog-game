@@ -71,6 +71,7 @@ namespace OpenCog.Embodiment
 		private bool _hasPerceivedTerrainForFirstTime = false;
 		private bool _hasStartedPerceivingTerrainForTheFirstTime = false;
 		private bool _isPerceivingStateChangesForTheFirstTime = true;
+		private bool _hasPerceivedWorldForTheFirstTime = false;
 			
 		//---------------------------------------------------------------------------
 	
@@ -128,12 +129,15 @@ namespace OpenCog.Embodiment
 			// Percept the world once in each interval.
 			if (_timer >= _updatePerceptionInterval) {
 				// I'm not sure what this does...
-				this.PerceiveWorld ();
+				
 				
 				if (!_hasStartedPerceivingTerrainForTheFirstTime)
 					StartCoroutine (this.PerceiveTerrain ());
 				
 				if (_hasPerceivedTerrainForFirstTime)					
+					this.PerceiveWorld ();
+				
+				if (_hasPerceivedWorldForTheFirstTime)
 					PerceiveStateChanges ();
 				
 				_timer = 0.0f;
@@ -225,13 +229,13 @@ namespace OpenCog.Embodiment
 				if (this.BuildMapInfo(npcObject))
 				{
 					updatedObjects.Add (npcObject.GetInstanceID());					
+					
+					UnityEngine.Debug.Log ("Added NPC with ID '" + npcObject.GetInstanceID() + "' to updatedObjects");
 				}
 				else
 				{
 					UnityEngine.Debug.Log ("NPC with ID '" + npcObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
-				
-				UnityEngine.Debug.Log ("Added NPC with ID '" + npcObject.GetInstanceID() + "' to updatedObjects");
 			}
 			
 			UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
@@ -243,13 +247,13 @@ namespace OpenCog.Embodiment
 				if (this.BuildMapInfo(agiObject))
 				{
 					updatedObjects.Add (agiObject.GetInstanceID());
+					
+					UnityEngine.Debug.Log ("Added AGI with ID '" + agiObject.GetInstanceID() + "' to updatedObjects");
 				}
 				else
 				{
 					UnityEngine.Debug.Log ("AGI with ID '" + agiObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
-				
-				UnityEngine.Debug.Log ("Added AGI with ID '" + agiObject.GetInstanceID() + "' to updatedObjects");
 			}
 			
 			// Ok, so that was everything in the OCA (OpenCog Avatar?) Repository. Next come the OCObjects...
@@ -270,13 +274,13 @@ namespace OpenCog.Embodiment
 				if (this.BuildMapInfo (batteryObject))
 				{
 					updatedObjects.Add (batteryObject.GetInstanceID());
+					
 					UnityEngine.Debug.Log ("Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
 				}
 				else
 				{
 					UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
-				
 			}
 			
 			
@@ -343,6 +347,7 @@ namespace OpenCog.Embodiment
 			}
 			
 			_isPerceivingWorldForTheFirstTime = false;
+			_hasPerceivedWorldForTheFirstTime = true;
 		}
 			
 		/// <summary>
