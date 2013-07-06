@@ -61,7 +61,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	//---------------------------------------------------------------------------
 
-	private string _myBrainID;   /** For example "OAC_NPC" */
 	private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
 
 	// Basic attributes of this avatar.
@@ -128,7 +127,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
      */
 	public string BrainID
 	{
-		get { return _myBrainID; }
+		get { return _brainID; }
 	}
 
 
@@ -481,8 +480,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		}
     
     // Get action scheduler component.
-		// TODO: old classes here.
-    _actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
+		// TODO: old classes here. Lake needs to fix this.
+    //_actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
 	// TODO: Removed due to new call structure for updating action statuses. Nothing to do really..just needs remembering.
     //OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
 
@@ -1238,13 +1237,23 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       bool foundAvatarId = false;
       foreach (OCObjectMapInfo objMapInfo in localMapInfo)
       {
-          if (objMapInfo.ID.Equals(_brainID))
-          {
-              localMapInfo.Remove(objMapInfo);
-              localMapInfo.AddFirst(objMapInfo);
-              foundAvatarId = true;
-              break;
-          }
+		if (objMapInfo.ID == null)
+		{
+			UnityEngine.Debug.Log ("Damn, objectMapInfo with ID == null....");
+		}
+		else
+		{
+			if (objMapInfo.ID.Equals(_brainID))
+	        {
+				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), breaking in a bit...");
+	        	localMapInfo.Remove(objMapInfo);
+	        	localMapInfo.AddFirst(objMapInfo);
+	         	foundAvatarId = true;
+	         	break;
+	        }		
+			else
+				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID) == false");
+		}
       } // foreach
       
       if (!foundAvatarId && _isFirstSentMapInfo)
@@ -1256,7 +1265,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
           return;
       }
          
-	OCMessage message = SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data",isFirstTimePerceptMapObjects);
+		OCMessage message = SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data",isFirstTimePerceptMapObjects);
 
       lock (_messageSendingLock)
       {
@@ -1485,7 +1494,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	private void ParseEmotionalFeelingElement(XmlElement element)
     {
-		UnityEngine.Debug.Log ("OCConnectorSingleton::ParseEmotionalFeelingElement");
+//		UnityEngine.Debug.Log ("OCConnectorSingleton::ParseEmotionalFeelingElement");
         string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
 
         // Parse all feelings and add them to a map.
@@ -1499,7 +1508,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
             // group all feelings to be updates only once
             _feelingValueMap[feeling] = value;
 
-            OCLogger.Debugging("Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
+            //OCLogger.Debugging("Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
         }
 
         // Update feelings of this avatar.
@@ -1512,14 +1521,15 @@ public sealed class OCConnectorSingleton : OCNetworkElement
      */
     private void UpdateEmotionFeelings()
     {
-        OCEmotionalExpression emotionalExpression = gameObject.GetComponent<OCEmotionalExpression>() as OCEmotionalExpression;
-        emotionalExpression.showEmotionExpression(this.FeelingValueMap);
-
+		// TODO: Update this, I don't know if we still want to use these components?
+		
+//        OCEmotionalExpression emotionalExpression = gameObject.GetComponent<OCEmotionalExpression>() as OCEmotionalExpression;
+//        emotionalExpression.showEmotionExpression(this.FeelingValueMap);
     }
 
 	private void ParseDOMDocument(XmlDocument document)
     {
-		UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument");
+		//UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument");
         // Handles action-plans
         XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
         for (int i = 0; i < list.Count; i++)
@@ -1532,7 +1542,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         XmlNodeList feelingsList = document.GetElementsByTagName(OCEmbodimentXMLTags.EMOTIONAL_FEELING_ELEMENT);
         for (int i = 0; i < feelingsList.Count; i++)
         {
-			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseEmotionalFeelingElement");
+			//UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseEmotionalFeelingElement");
             ParseEmotionalFeelingElement((XmlElement)feelingsList.Item(i));
         }
         
@@ -1646,7 +1656,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
             _actionsList = actionPlan;
         }
         // Start to perform an action in front of the action list.
-        _actionController.SendMessage("receiveActionPlan", actionPlan);
+		// TODO: re-enable, is null
+		if (_actionController != null)
+			_actionController.SendMessage("receiveActionPlan", actionPlan);
         //processNextAvatarAction();
     }
 	/**
@@ -1761,7 +1773,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        lock (_messagesToSend)
 	        {
 	            // Add physiological information to message sending queue.
-	            _messagesToSend.Add(message);
+				// TODO: Re-enable this, was just getting sick of the tons of output on the Opencog side.
+	            //_messagesToSend.Add(message);
 	
 	            // Send a tick message to make OAC start next cycle.
 	            if (bool.Parse(OCConfig.Instance.get("GENERATE_TICK_MESSAGE")))

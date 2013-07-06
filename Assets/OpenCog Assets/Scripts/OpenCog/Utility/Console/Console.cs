@@ -586,6 +586,21 @@ public class Console : OCMonoBehaviour
 					args.RemoveAt(0); // remove actual command name
 					string result = cc.Run(args);
 					AddConsoleEntry(result, null, ConsoleEntry.Type.RESULT);
+						
+					AddConsoleEntry("Printing command line arguments...", "CommandLineArgumentor", ConsoleEntry.Type.COMMAND);
+						
+					try {
+						string[] commandLineArgs = System.Environment.GetCommandLineArgs();
+						
+						for (int iString = 0; iString < commandLineArgs.Length; iString++)
+						{
+							UnityEngine.Debug.Log ("Command line arg[" + iString + "] = " + commandLineArgs[iString]);
+								
+							AddConsoleEntry("Command line arg[" + iString + "] = " + commandLineArgs[iString], "CommandLineArgumentor", ConsoleEntry.Type.SAY);
+						}
+					} catch (System.Exception ex) {
+						UnityEngine.Debug.Log ("OCWorldGenerator::Awake: An error occurred while parsing commandline args: " + ex.ToString());
+					}
 				}
 			}
 		}

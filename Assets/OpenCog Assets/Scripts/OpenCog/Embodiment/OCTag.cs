@@ -20,8 +20,7 @@
 using System.Collections;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
-using ImplicitFields = ProtoBuf.ImplicitFields;
-using ProtoContract = ProtoBuf.ProtoContractAttribute;
+using ProtoBuf;
 using Serializable = System.SerializableAttribute;
 
 //The private field is assigned but its value is never used
@@ -37,10 +36,9 @@ namespace OpenCog.Embodiment
 /// </summary>
 #region Class Attributes
 
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
-	
+[ProtoContract]
 #endregion
 public class OCTag 
 {
@@ -51,7 +49,9 @@ public class OCTag
 
 	//---------------------------------------------------------------------------
 	
-	
+	private string _key;
+	private string _value;
+	private System.Type _propertyType;
 			
 	//---------------------------------------------------------------------------
 
@@ -63,7 +63,19 @@ public class OCTag
 
 	//---------------------------------------------------------------------------
 		
-
+	[ProtoMember(1)]
+    public string Key
+    {
+        get { return _key; }
+        set { _key = value; }
+    }
+		
+	[ProtoMember(2)]
+    public string value
+	{
+		get { return _value; }
+		set { _value = value; }
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -99,10 +111,12 @@ public class OCTag
 
 	//---------------------------------------------------------------------------		
 
-	public OCTag(string propertyValue, System.Type propertyType)
-		{
-
-		}
+	public OCTag(string key, string propertyValue, System.Type propertyType)
+	{
+		_key = key;
+		_value = propertyValue.ToString();
+		_propertyType = propertyType;
+	}
 
 	//---------------------------------------------------------------------------
 

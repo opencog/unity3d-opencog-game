@@ -576,7 +576,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 		command.Append(payload + NEWLINE);
 			
-		UnityEngine.Debug.Log ("Sending: " + command.ToString ());
+		if (message.Type != OCMessage.MessageType.TICK)
+			UnityEngine.Debug.Log ("Sending: " + command.ToString ());
 		
 		bool result = Send(command.ToString());
 		
@@ -680,15 +681,15 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		{
 			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
 				
-			lock(_messageQueue)
-			{
-				int messageNumer = 0;
-					
-				foreach (OCMessage aMessage in _messageQueue)
-				{
-					UnityEngine.Debug.Log ("Message number " + messageNumer + " contains: " + aMessage.ToString());
-				}
-			}
+//			lock(_messageQueue)
+//			{
+//				int messageNumer = 0;
+//					
+//				foreach (OCMessage aMessage in _messageQueue)
+//				{
+//					UnityEngine.Debug.Log ("Message number " + messageNumer + " contains: " + aMessage.ToString());
+//				}
+//			}
 				
 			//long startTime = DateTime.Now.Ticks;
 			Queue<OCMessage> messagesToProcess;

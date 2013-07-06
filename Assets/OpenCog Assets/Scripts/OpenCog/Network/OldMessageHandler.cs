@@ -95,7 +95,7 @@ namespace OpenCog.Network
 					{
 						string answer = this.parse(line);
 						
-						UnityEngine.Debug.Log ("Just parsed '" + line + "'");
+						//UnityEngine.Debug.Log ("Just parsed '" + line + "'");
 					}
 					else
 					{
@@ -111,7 +111,7 @@ namespace OpenCog.Network
 					endInput = true;
 				}
 				
-				UnityEngine.Debug.Log ("Still not ending input! I'm still here!");
+				//UnityEngine.Debug.Log ("Still not ending input! I'm still here!");
 			} // while
 			
 			UnityEngine.Debug.Log ("Hey! Who set endInput to tru!?!?");

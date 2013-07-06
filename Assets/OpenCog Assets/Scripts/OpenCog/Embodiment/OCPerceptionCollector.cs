@@ -216,23 +216,69 @@ namespace OpenCog.Embodiment
 			// Looks like we need to build a mapinfo object for each one....
 			
 			// Old comment: Update the map info of all avatar in the repository(including player avatar).
-			for (int oca = 0; oca < 0; oca++)
+			UnityEngine.GameObject[] npcArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCNPC");
+			
+			for (int iNPC = 0; iNPC < npcArray.Length; iNPC++)
 			{
-				UnityEngine.GameObject someAvatarGameObject = null;
+				UnityEngine.GameObject npcObject = npcArray[iNPC];
 				
-				if (this.BuildMapInfo (someAvatarGameObject))
-					updatedObjects.Add (someAvatarGameObject.GetInstanceID());
+				if (this.BuildMapInfo(npcObject))
+				{
+					updatedObjects.Add (npcObject.GetInstanceID());					
+				}
+				else
+				{
+					UnityEngine.Debug.Log ("NPC with ID '" + npcObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
+				
+				UnityEngine.Debug.Log ("Added NPC with ID '" + npcObject.GetInstanceID() + "' to updatedObjects");
+			}
+			
+			UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
+			
+			for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+			{
+				UnityEngine.GameObject agiObject = agiArray[iAGI];
+				
+				if (this.BuildMapInfo(agiObject))
+				{
+					updatedObjects.Add (agiObject.GetInstanceID());
+				}
+				else
+				{
+					UnityEngine.Debug.Log ("AGI with ID '" + agiObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
+				
+				UnityEngine.Debug.Log ("Added AGI with ID '" + agiObject.GetInstanceID() + "' to updatedObjects");
 			}
 			
 			// Ok, so that was everything in the OCA (OpenCog Avatar?) Repository. Next come the OCObjects...
 			
-			List<UnityEngine.GameObject> batteryObjects = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery").ToList();
+			//List<UnityEngine.GameObject> batteryObjects = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery").ToList();
+//			foreach (UnityEngine.GameObject batteryObject in batteryObjects)
+//			{
+//				if (this.BuildMapInfo(batteryObject))
+//					updatedObjects.Add (batteryObject.GetInstanceID());
+//			}
 			
-			foreach (UnityEngine.GameObject batteryObject in batteryObjects)
+			UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
+			
+			for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
 			{
-				if (this.BuildMapInfo(batteryObject))
+				UnityEngine.GameObject batteryObject = batteryArray[iBattery];
+				
+				if (this.BuildMapInfo (batteryObject))
+				{
 					updatedObjects.Add (batteryObject.GetInstanceID());
+					UnityEngine.Debug.Log ("Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
+				}
+				else
+				{
+					UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
+				
 			}
+			
 			
 //			for (int ocObject = 0; ocObject < 0; ocObject++)
 //			{

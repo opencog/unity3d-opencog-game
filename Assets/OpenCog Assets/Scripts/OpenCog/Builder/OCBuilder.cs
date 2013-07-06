@@ -163,9 +163,17 @@ public class OCBuilder : OCMonoBehaviour
 					if(_selectedBlock.GetName() == "Battery")
 					{
 						GameObject batteryPrefab = (GameObject)GameObject.FindObjectsOfTypeIncludingAssets(typeof(GameObject)).Where(o => o.name == "Battery_Prefab").LastOrDefault();
-						GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
-						battery.transform.position = point.Value;
-						battery.name = "Battery";
+						if (batteryPrefab == null)
+						{
+							UnityEngine.Debug.Log ("OCBuilder::Update: (GameObject)GameObject.FindObjectsOfTypeIncludingAssets(typeof(GameObject)).Where(o => o.name == Battery_Prefab).LastOrDefault() failed, batteryPrefab == null");
+						}
+						else
+						{
+							GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
+							battery.transform.position = point.Value;
+							battery.name = "Battery";		
+						}
+						
 					}
 				}
 			}
