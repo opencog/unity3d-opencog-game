@@ -50,7 +50,7 @@ namespace OpenCog.Map
 [AddComponentMenu("VoxelEngine/Map")]
 
 #endregion
-public class OCMap : OCMonoBehaviour
+public class OCMap : OCSingletonMonoBehaviour<OCMap>
 {
 
 	//---------------------------------------------------------------------------
@@ -79,6 +79,9 @@ public class OCMap : OCMonoBehaviour
 	private int _maxChunkZ;
 		
 	private OCChunk _lastRequestedChunk;
+		
+	[SerializeField]
+	private GameObject _BatteryPrefab;
 
 	//---------------------------------------------------------------------------
 
@@ -156,6 +159,19 @@ public class OCMap : OCMonoBehaviour
 		get { return _chunks; }
 		set { _chunks = value; }
 	}
+		
+	public GameObject BatteryPrefab
+	{
+		get {return _BatteryPrefab;}
+	}
+		
+	public new static OCMap Instance
+	{
+		get
+		{
+			return GetInstance<OCMap>();
+		}
+	}		
 			
 	//---------------------------------------------------------------------------
 
