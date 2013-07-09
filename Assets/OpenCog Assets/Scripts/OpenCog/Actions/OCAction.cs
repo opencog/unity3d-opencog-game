@@ -726,7 +726,7 @@ public class OCAction : OCMonoBehaviour
 			motor.enabled = false;
 		}
 			
-		return ActionStatus.SUCCESS;
+		return ActionStatus.RUNNING;
 	}
 			
 	private ActionStatus ContinueAction()
