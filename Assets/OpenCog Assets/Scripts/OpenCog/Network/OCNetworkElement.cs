@@ -448,6 +448,19 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				
 			UnityEngine.Debug.Log("Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...");
 				
+			// I'd kinda like to display this in the console...so people can see how it's connecting.
+				
+			OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+				
+			if (console == null)
+				UnityEngine.Debug.Log ("Nope, grabbing the console didn't work...");		
+			else
+			{
+				UnityEngine.Debug.Log ("Awesome grabbing the console worked...");		
+			
+				console.AddConsoleEntry("Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.COMMAND);
+			}
+				
 			// Start the async connection request.
 			System.IAsyncResult ar = asyncSocket
 			.	BeginConnect

@@ -233,6 +233,22 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		UpdateMeshColliderAfterBlockChange ();
 // TODO: uncomment when aspect stuff is in place?
 //		asp.OnExit(null);
+			
+		OpenCog.Embodiment.OCPerceptionCollector perceptionCollector = OpenCog.Embodiment.OCPerceptionCollector.Instance;
+		
+		if (block.IsEmpty())
+		{
+			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
+				
+			perceptionCollector.NotifyBlockRemoved(pos);
+		}
+		else
+		{
+			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty = false -> inferring creation.");
+				
+			perceptionCollector.NotifyBlockAdded(pos);	
+		}
+		
 	}
 
 	public bool IsPathOpen (UnityEngine.Transform characterTransform, float characterHeight, PathDirection intendedDirection)

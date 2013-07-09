@@ -44,7 +44,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-	public class OCPerceptionCollector : OCMonoBehaviour
+	public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollector>
 	{
 		//---------------------------------------------------------------------------
 	
@@ -82,7 +82,15 @@ namespace OpenCog.Embodiment
 		#region Accessors and Mutators
 	
 		//---------------------------------------------------------------------------
-				
+		
+		public static OpenCog.Embodiment.OCPerceptionCollector Instance
+		{
+			get 
+			{
+				return OpenCog.Embodiment.OCPerceptionCollector.GetInstance<OCPerceptionCollector>();
+			}
+		}
+		
 		//---------------------------------------------------------------------------
 	
 		#endregion
@@ -130,12 +138,14 @@ namespace OpenCog.Embodiment
 			if (_timer >= _updatePerceptionInterval) {
 				// I'm not sure what this does...
 				
-				
-				if (!_hasStartedPerceivingTerrainForTheFirstTime)
-					StartCoroutine (this.PerceiveTerrain ());
+				// I'm not sure about the right order...when I look at the old world on the OpenCog side, it receives edible objects first and then the terrain.
+				// So I moved the calls below to the same order.
 				
 				if (_hasPerceivedTerrainForFirstTime)					
 					this.PerceiveWorld ();
+				
+				if (!_hasStartedPerceivingTerrainForTheFirstTime)
+					StartCoroutine (this.PerceiveTerrain ());
 				
 				if (_hasPerceivedWorldForTheFirstTime)
 					PerceiveStateChanges ();
@@ -369,32 +379,62 @@ namespace OpenCog.Embodiment
 			_stateInfoCache.Add (ainfo, valObj);
 		}
 		
-		public static void NotifyBlockRemoved (Vector3i blockBuildPoint)
+		public void NotifyBlockRemoved (Vector3i blockBuildPoint)
 		{
-			UnityEngine.Transform allAvatars = UnityEngine.GameObject.Find ("Avatars").transform;
-			foreach (UnityEngine.Transform child in allAvatars) {
-				if (child.gameObject.tag != "OCA") {
-					continue;
-				}
-				OCPerceptionCollector con = child.gameObject.GetComponent<OCPerceptionCollector> () as OCPerceptionCollector;
-				if (con != null) {
-					con._notifyBlockRemoved (blockBuildPoint);
-				}
-			}
+			// blockBuildPoint should be a global coordinate, and they're ints...so I guess we can use them directly. Still need to figure out the chunk.
+//			uint chunkX = (uint)(hitPoint.X / worldData.ChunkBlockWidth);
+//			uint chunkY = (uint)(hitPoint.Y / worldData.ChunkBlockHeight);
+//			uint chunkZ = (uint)(hitPoint.Z / worldData.ChunkBlockDepth);
+//			uint blockX = (uint)(hitPoint.X % worldData.ChunkBlockWidth);
+//			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
+//			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
+			
+			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
+			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
+			
+			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			
+			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
+			
+			OCObjectMapInfo mapInfo = OCObjectMapInfo.CreateObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			
+			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo>();
+			
+			removedBlockList.Add(mapInfo);
+			
+			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+			
+			connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
+			connector.SendTerrainInfoMessage(removedBlockList);
 		}
 		
-		public static void NotifyBlockAdded (Vector3i blockBuildPoint)
+		public void NotifyBlockAdded (Vector3i blockBuildPoint)
 		{
-			UnityEngine.Transform allAvatars = UnityEngine.GameObject.Find ("Avatars").transform;
-			foreach (UnityEngine.Transform child in allAvatars) {
-				if (child.gameObject.tag != "OCA") {
-					continue;
-				}
-				OCPerceptionCollector con = child.gameObject.GetComponent<OCPerceptionCollector> () as OCPerceptionCollector;
-				if (con != null) {
-					con._notifyBlockAdded (blockBuildPoint);
-				}
-			}
+			// blockBuildPoint should be a global coordinate, and they're ints...so I guess we can use them directly. Still need to figure out the chunk.
+//			uint chunkX = (uint)(hitPoint.X / worldData.ChunkBlockWidth);
+//			uint chunkY = (uint)(hitPoint.Y / worldData.ChunkBlockHeight);
+//			uint chunkZ = (uint)(hitPoint.Z / worldData.ChunkBlockDepth);
+//			uint blockX = (uint)(hitPoint.X % worldData.ChunkBlockWidth);
+//			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
+//			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
+			
+			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
+			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
+			
+			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			
+			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
+			
+			OCObjectMapInfo mapInfo = OCObjectMapInfo.CreateObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			
+			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
+			
+			addedBlockList.Add(mapInfo);
+			
+			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+			
+			connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, true);
+			connector.SendTerrainInfoMessage(addedBlockList);
 		}
 		
 	
