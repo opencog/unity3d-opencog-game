@@ -29,6 +29,7 @@ using OCID = System.Guid;
 using Tree = Behave.Runtime.Tree;
 using TreeType = BLOCBehaviours.TreeType;
 using System.Linq;
+using System.Xml;
 //using OpenCog.Aspects;
 
 namespace OpenCog
@@ -105,6 +106,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	public IEnumerator Start ()
 	{
 		_BehaviourDictionary = new Dictionary<TreeType, Tree>();
+		_BehaviourQueue = new Queue<Tree>();
 				
 		foreach( TreeType type in Enum.GetValues( typeof(TreeType) ).Cast<TreeType>() )
 		{
@@ -496,21 +498,40 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //		set {
 //		}
 //	}
-
+			
+	// Map XML elements to high-, mid-, or low-behaviour trees.
+	// Then queue each element in the plan in the behaviour queue.
+	public void ReceiveActionPlan(List<XmlElement> actionPlan)
+	{
+		Debug.Log("In ReceiveActionPlan...");
+	}
+			
+	public void CancelActionPlan()
+	{
+		_tree.Reset();
+		_BehaviourQueue.Clear();
+	}
 	
 	public void UpdateAI ()
 	{
-		if(_tree == null)
+		if(_tree == null && _BehaviourQueue.Count != 0)
 		{
 			_tree = _BehaviourQueue.Dequeue();
 		}
-				
-				
+		else if(_tree == null && _BehaviourQueue.Count == 0)
+		{
+			_tree = _BehaviourDictionary[_TreeType];
+		}
 				
 		BehaveResult result = _tree.Tick ();
 				
 		if(result != BehaveResult.Running)
+		{
+			_tree.Reset();
+			if(_BehaviourQueue.Count == 0) _BehaviourQueue.Enqueue(_BehaviourDictionary[_TreeType]);	
+			_tree = _BehaviourQueue.Dequeue();
 			Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
+		}
 
 		OpenCog.Map.OCMap map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
 

@@ -1628,35 +1628,25 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         _currentDemandName = element.GetAttribute(OCEmbodimentXMLTags.DEMAND_ATTRIBUTE);
         
         XmlNodeList list = element.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_ELEMENT);
-        LinkedList<OCAction> actionPlan = new LinkedList<OCAction>();
-        for (int i = 0; i < list.Count; i++)
-        {
-            OCAction avatarAction = OCAction.CreateAction((XmlElement)list.Item(i), true);
+				List<XmlElement> actionPlan = new List<XmlElement>();
+		
+				foreach(XmlNode node in list)
+				{
+					actionPlan.Add((XmlElement)node);
+				}
 
-            actionPlan.AddLast(avatarAction);
-        }
-
-        lock (_actionsList)
-        {
-            _actionsList = actionPlan;
-        }
         // Start to perform an action in front of the action list.
-        _actionController.SendMessage("receiveActionPlan", actionPlan);
+        _actionController.ReceiveActionPlan(actionPlan);// SendMessage("receiveActionPlan", actionPlan);
         //processNextAvatarAction();
     }
+	
 	/**
      * Cancel current action and clear actions from previous action plan.
      */
 	private void CancelAvatarActions()
     {
-        if(_actionsList.Count > 0)
-            lock (_actionsList)
-            {
-                _actionsList.Clear();
-            }
-        
         // Ask action scheduler to stop all current actions.
-        _actionController.SendMessage("cancelCurrentActionPlan");
+        _actionController.CancelActionPlan();// SendMessage("cancelCurrentActionPlan");
         SendActionStatus(_currentPlanId, false);
     }
 
