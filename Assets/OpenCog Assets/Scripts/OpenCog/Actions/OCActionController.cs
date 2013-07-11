@@ -134,11 +134,16 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		foreach( Tree tree in _TreeTypeDictionary.Values )
 		{
+			if(tree == null)
+				continue;
+			int index = tree.Name.LastIndexOf(".")+1;
+			if(index < 0 || index > tree.Name.Count())
+				index = 0;
+			string treeName = tree.Name.Substring(index);					
+					
 			foreach( OCAction action in actions)
 			{
-				string treeName = tree.Name.Substring(tree.Name.LastIndexOf("_"));
-
-				if(treeName.Contains(action.Descriptors[0]) || treeName.Contains(action.Descriptors[1]) || treeName.Contains(action.Descriptors[2]))
+				if(action.FullName.Contains(treeName))
 				{
 					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
 				
@@ -614,7 +619,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	
 	public void UpdateAI ()
 	{
-		if(_step == null && _ActionPlanQueue.Count != 0)
+ 		if(_step == null && _ActionPlanQueue.Count != 0)
 		{
 			_step = _ActionPlanQueue.Dequeue();
 		}
