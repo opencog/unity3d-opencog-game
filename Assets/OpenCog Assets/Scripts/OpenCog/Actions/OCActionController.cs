@@ -30,6 +30,7 @@ using Tree = Behave.Runtime.Tree;
 using TreeType = BLOCBehaviours.TreeType;
 using System.Linq;
 using System.Xml;
+using OpenCog.Utility;
 //using OpenCog.Aspects;
 
 namespace OpenCog
@@ -57,17 +58,24 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	[SerializeField]
 	private TreeType _TreeType;
-	private Tree _tree = null;
+	private OCActionPlanStep _step = null;
 	private Hashtable _idleParams;
 	private Vector3i _targetBlockPos = Vector3i.zero;
 	private DateTime _dtLastTNTSearchTime;
 	private static Dictionary<string, string> builtinActionMap = new Dictionary<string, string>();
 			
+				
+	private Dictionary<string, TreeType> _ActionNameDictionary = new Dictionary<string, TreeType>()
+	{ { "walk", TreeType.Character_Move }
+	, { "grab", TreeType.Character_RightHandActivate }
+	, { "eat", TreeType.Character_Activate }
+	};
+			
 	// Assume that there's just one behaviour we'd like to execute at a given time
-	private Dictionary<TreeType, Tree> _BehaviourDictionary;
+	private Dictionary<TreeType, Tree> _TreeTypeDictionary;
 			
 	// Our current queue of behaviours
-	private Queue<Tree> _BehaviourQueue;
+	private Queue< OCActionPlanStep > _ActionPlanQueue;
 
 	//---------------------------------------------------------------------------
 
@@ -105,31 +113,41 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	public IEnumerator Start ()
 	{
-		_BehaviourDictionary = new Dictionary<TreeType, Tree>();
-		_BehaviourQueue = new Queue<Tree>();
+		_TreeTypeDictionary = new Dictionary<TreeType, Tree>();
+		_ActionPlanQueue = new Queue<OCActionPlanStep>();
 				
 		foreach( TreeType type in Enum.GetValues( typeof(TreeType) ).Cast<TreeType>() )
 		{
-			_BehaviourDictionary.Add(type, BLOCBehaviours.InstantiateTree( type, this ));
+			_TreeTypeDictionary.Add(type, BLOCBehaviours.InstantiateTree( type, this ));
 		}
 				
-		_BehaviourQueue.Enqueue(_BehaviourDictionary[_TreeType]);		
+		OCActionPlanStep firstStep = new OCActionPlanStep();
+		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
+		firstStep.Arguments = new OCAction.OCActionArgs(gameObject, null, null);
+
+		_ActionPlanQueue.Enqueue(firstStep);		
 
 		RunningActions = new HashSet<string>();
 		RunningActions.Add("StandIdleShow");
 				
 		OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>(true);
 				
-		foreach( Tree tree in _BehaviourDictionary.Values )
+		foreach( Tree tree in _TreeTypeDictionary.Values )
 		{
 			foreach( OCAction action in actions)
 			{
-				int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
-				tree.SetTickForward( actionTypeID, action.ExecuteBehave );
+				string treeName = tree.Name.Substring(tree.Name.LastIndexOf("_"));
+
+				if(treeName.Contains(action.Descriptors[0]) || treeName.Contains(action.Descriptors[1]) || treeName.Contains(action.Descriptors[2]))
+				{
+					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
+				
+					tree.SetTickForward( actionTypeID, action.ExecuteBehave );
+				}
 			}
 		}
 
-		while (Application.isPlaying && _BehaviourQueue.Count > 0) {
+		while (Application.isPlaying && _ActionPlanQueue.Count > 0) {
 			yield return new WaitForSeconds (1.0f / 120.0f);
 			UpdateAI ();
 		}
@@ -504,32 +522,117 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	public void ReceiveActionPlan(List<XmlElement> actionPlan)
 	{
 		Debug.Log("In ReceiveActionPlan...");
+				
+		string actionName = GetAttribute(element, OCEmbodimentXMLTags.NAME_ATTRIBUTE);
+
+	  int sequence = int.Parse(GetAttribute(element, OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE));
+	  ArrayList paramList = new ArrayList();
+	
+	  XmlNodeList list = GetChildren(element, OCEmbodimentXMLTags.PARAMETER_ELEMENT);
+	  // Extract parameters from the xml element.
+	  for (int i = 0; i < list.Count; i++)
+	  {
+      XmlElement parameterElement = (XmlElement)list.Item(i);
+      ActionParamType parameterType = ActionParamType.getFromName(parameterElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE));
+
+      switch (parameterType.getCode())
+      {
+        case ActionParamTypeCode.VECTOR_CODE:
+          XmlElement vectorElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.VECTOR_ELEMENT)).Item(0));
+          float x = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.X_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+          float y = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.Y_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+          float z = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.Z_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+
+					if (adjustCoordinate)
+					{
+						x += 0.5f;
+						y += 0.5f;
+						z += 0.5f;
+					}
+
+          // swap z and y
+          paramList.Add(new Vector3(x, z, y)); 
+          break;
+        case ActionParamTypeCode.BOOLEAN_CODE:
+          paramList.Add(Boolean.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
+          break;
+        case ActionParamTypeCode.INT_CODE:
+          paramList.Add(int.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
+          break;
+        case ActionParamTypeCode.FLOAT_CODE:
+          paramList.Add(float.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
+          break;
+        case ActionParamTypeCode.ROTATION_CODE:
+          //!! This is a hacky trick. For currently, we do not use rotation
+          // in rotate method, so just convert it to vector type. What's more,
+          // "RotateTo" needs an angle parameter.
+
+          // Trick... add an angle...
+          XmlElement rotationElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.ROTATION_ELEMENT)).Item(0));
+          float pitch = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.PITCH_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+          float roll = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.ROLL_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+          float yaw = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.YAW_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+
+          Rotation rot = new Rotation(pitch, roll, yaw);
+          Vector3 rot3 = new Vector3(rot.Pitch, rot.Roll, rot.Yaw);
+
+          paramList.Add(0.0f);
+          paramList.Add(rot3);
+          break;
+        case ActionParamTypeCode.ENTITY_CODE:
+          // This action is supposed to act on certain entity.
+          XmlElement entityElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.ENTITY_ELEMENT)).Item(0));
+
+          int id = int.Parse(GetAttribute(entityElement, OCEmbodimentXMLTags.ID_ATTRIBUTE));
+          string type = GetAttribute(entityElement, OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
+          ActionTarget target = new ActionTarget(id, type);
+
+          paramList.Add(target);
+          break;
+        default:
+          paramList.Add(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE));
+          break;
+      }
+	  } 
+	}
+			
+	public OCActionPlanStep LoadActionPlanStep(string actionName, OCAction.OCActionArgs arguments)
+	{
+		TreeType treeType = _ActionNameDictionary[actionName];
+		Tree tree = _TreeTypeDictionary[treeType];
+		OCActionPlanStep actionPlanStep = new OCActionPlanStep();
+		actionPlanStep.Behaviour = tree;
+		actionPlanStep.Arguments = arguments;
+		return actionPlanStep;
 	}
 			
 	public void CancelActionPlan()
 	{
-		_tree.Reset();
-		_BehaviourQueue.Clear();
+		_step.Behaviour.Reset();
+		_ActionPlanQueue.Clear();
 	}
 	
 	public void UpdateAI ()
 	{
-		if(_tree == null && _BehaviourQueue.Count != 0)
+		if(_step == null && _ActionPlanQueue.Count != 0)
 		{
-			_tree = _BehaviourQueue.Dequeue();
+			_step = _ActionPlanQueue.Dequeue();
 		}
-		else if(_tree == null && _BehaviourQueue.Count == 0)
+		else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
-			_tree = _BehaviourDictionary[_TreeType];
+			OCActionPlanStep step = new OCActionPlanStep();
+			step.Behaviour = _TreeTypeDictionary[_TreeType];
+			step.Arguments = new OCAction.OCActionArgs(gameObject, null, null);
+			_step = step;
 		}
 				
-		BehaveResult result = _tree.Tick ();
+		BehaveResult result = _step.Behaviour.Tick ();
 				
 		if(result != BehaveResult.Running)
 		{
-			_tree.Reset();
-			if(_BehaviourQueue.Count == 0) _BehaviourQueue.Enqueue(_BehaviourDictionary[_TreeType]);	
-			_tree = _BehaviourQueue.Dequeue();
+			_step.Behaviour.Reset();
+			if(_ActionPlanQueue.Count == 0) _ActionPlanQueue.Enqueue(_step);	
+			_step = _ActionPlanQueue.Dequeue();
 			Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
 		}
 
@@ -679,6 +782,36 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	//---------------------------------------------------------------------------
 
+	public class OCActionPlanStep
+	{
+		private Behave.Runtime.Tree _behaviour;
+		private OCAction.OCActionArgs _arguments;
+		
+		public OCAction.OCActionArgs Arguments 
+		{
+			get 
+			{
+				return this._arguments;
+			}
+			set 
+			{
+				_arguments = value;
+			}
+		}
+
+		public Tree Behaviour 
+		{
+			get 
+			{
+				return this._behaviour;
+			}
+			set 
+			{
+				_behaviour = value;
+			}
+		}
+	}
+			
 	// TODO: This cose is just a set of stubs to get rid of an error.
 	//public static event ActionCompleteHandler globalActionCompleteEvent;
 	//public delegate void ActionCompleteHandler(OCAction action);
@@ -692,9 +825,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	// TODO: Implement / remove move to location function which can be called by OCConnector.ParseSingleActionElement.
 	public void MoveToCoordinate(Vector3 desiredLocation)
-			{
+	{
 
-			}
+	}
 
 	// TODO: Implement function below properly.
 	public static string GetOCActionNameFromMap(string methodName)
