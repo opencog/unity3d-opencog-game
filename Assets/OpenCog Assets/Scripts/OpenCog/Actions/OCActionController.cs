@@ -28,6 +28,8 @@ using ContextType = BLOCBehaviours.ContextType;
 using OCID = System.Guid;
 using Tree = Behave.Runtime.Tree;
 using TreeType = BLOCBehaviours.TreeType;
+using System.Linq;
+using System.Xml;
 //using OpenCog.Aspects;
 
 namespace OpenCog
@@ -55,11 +57,17 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	[SerializeField]
 	private TreeType _TreeType;
-	private Tree _tree;
+	private Tree _tree = null;
 	private Hashtable _idleParams;
 	private Vector3i _targetBlockPos = Vector3i.zero;
 	private DateTime _dtLastTNTSearchTime;
 	private static Dictionary<string, string> builtinActionMap = new Dictionary<string, string>();
+			
+	// Assume that there's just one behaviour we'd like to execute at a given time
+	private Dictionary<TreeType, Tree> _BehaviourDictionary;
+			
+	// Our current queue of behaviours
+	private Queue<Tree> _BehaviourQueue;
 
 	//---------------------------------------------------------------------------
 
@@ -89,24 +97,6 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	#endregion
 
-	//---------------------------------------------------------------------------	
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.OCActionController"/> class.
-	/// Generally, intitialization should occur in the Start function.
-	/// </summary>
-	public OCActionController ()
-	{
-	}			
-
-	//---------------------------------------------------------------------------
-
-	#endregion
-
 	//---------------------------------------------------------------------------
 
 	#region Public Member Functions
@@ -115,27 +105,34 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	public IEnumerator Start ()
 	{
-		_tree =
-		BLOCBehaviours.InstantiateTree
-		(_TreeType
-		, this
-		);
+		_BehaviourDictionary = new Dictionary<TreeType, Tree>();
+		_BehaviourQueue = new Queue<Tree>();
+				
+		foreach( TreeType type in Enum.GetValues( typeof(TreeType) ).Cast<TreeType>() )
+		{
+			_BehaviourDictionary.Add(type, BLOCBehaviours.InstantiateTree( type, this ));
+		}
+				
+		_BehaviourQueue.Enqueue(_BehaviourDictionary[_TreeType]);		
 
 		RunningActions = new HashSet<string>();
 		RunningActions.Add("StandIdleShow");
 				
 		OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>(true);
 				
-		foreach( OCAction action in actions)
+		foreach( Tree tree in _BehaviourDictionary.Values )
 		{
-			int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
-			_tree.SetTickForward( actionTypeID, action.ExecuteBehave );
+			foreach( OCAction action in actions)
+			{
+				int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
+				tree.SetTickForward( actionTypeID, action.ExecuteBehave );
+			}
 		}
 
-		while (Application.isPlaying && _tree != null) {
-			yield return new WaitForSeconds (1.0f / _tree.Frequency);
+		while (Application.isPlaying && _BehaviourQueue.Count > 0) {
+			yield return new WaitForSeconds (1.0f / 120.0f);
 			UpdateAI ();
-		}		
+		}
 	}
 	
 //			private void TestProprioception()
@@ -501,11 +498,40 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //		set {
 //		}
 //	}
-
+			
+	// Map XML elements to high-, mid-, or low-behaviour trees.
+	// Then queue each element in the plan in the behaviour queue.
+	public void ReceiveActionPlan(List<XmlElement> actionPlan)
+	{
+		Debug.Log("In ReceiveActionPlan...");
+	}
+			
+	public void CancelActionPlan()
+	{
+		_tree.Reset();
+		_BehaviourQueue.Clear();
+	}
 	
 	public void UpdateAI ()
 	{
-		_tree.Tick ();
+		if(_tree == null && _BehaviourQueue.Count != 0)
+		{
+			_tree = _BehaviourQueue.Dequeue();
+		}
+		else if(_tree == null && _BehaviourQueue.Count == 0)
+		{
+			_tree = _BehaviourDictionary[_TreeType];
+		}
+				
+		BehaveResult result = _tree.Tick ();
+				
+		if(result != BehaveResult.Running)
+		{
+			_tree.Reset();
+			if(_BehaviourQueue.Count == 0) _BehaviourQueue.Enqueue(_BehaviourDictionary[_TreeType]);	
+			_tree = _BehaviourQueue.Dequeue();
+			Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
+		}
 
 		OpenCog.Map.OCMap map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
 
