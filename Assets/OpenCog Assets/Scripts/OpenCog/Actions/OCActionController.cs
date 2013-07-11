@@ -121,15 +121,6 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			_TreeTypeDictionary.Add(type, BLOCBehaviours.InstantiateTree( type, this ));
 		}
 				
-		OCActionPlanStep firstStep = new OCActionPlanStep();
-		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
-		firstStep.Arguments = new OCAction.OCActionArgs(gameObject, null, null);
-
-		_ActionPlanQueue.Enqueue(firstStep);		
-
-		RunningActions = new HashSet<string>();
-		RunningActions.Add("StandIdleShow");
-				
 		OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>(true);
 				
 		foreach( Tree tree in _TreeTypeDictionary.Values )
@@ -143,7 +134,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					
 			foreach( OCAction action in actions)
 			{
-				if(action.FullName.Contains(treeName))
+				if(action.FullName.Contains(treeName) || treeName.Contains("Behaviour"))
 				{
 					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
 				
@@ -151,8 +142,18 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				}
 			}
 		}
+				
+		OCActionPlanStep firstStep = new OCActionPlanStep();
+		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
+		firstStep.Arguments = new OCAction.OCActionArgs(gameObject, null, null);
 
-		while (Application.isPlaying && _ActionPlanQueue.Count > 0) {
+		_ActionPlanQueue.Enqueue(firstStep);		
+
+		RunningActions = new HashSet<string>();
+		RunningActions.Add("StandIdleShow");
+
+		while (Application.isPlaying) 
+		{
 			yield return new WaitForSeconds (1.0f / 120.0f);
 			UpdateAI ();
 		}
@@ -528,77 +529,77 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	{
 		Debug.Log("In ReceiveActionPlan...");
 				
-		string actionName = GetAttribute(element, OCEmbodimentXMLTags.NAME_ATTRIBUTE);
-
-	  int sequence = int.Parse(GetAttribute(element, OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE));
-	  ArrayList paramList = new ArrayList();
-	
-	  XmlNodeList list = GetChildren(element, OCEmbodimentXMLTags.PARAMETER_ELEMENT);
-	  // Extract parameters from the xml element.
-	  for (int i = 0; i < list.Count; i++)
-	  {
-      XmlElement parameterElement = (XmlElement)list.Item(i);
-      ActionParamType parameterType = ActionParamType.getFromName(parameterElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE));
-
-      switch (parameterType.getCode())
-      {
-        case ActionParamTypeCode.VECTOR_CODE:
-          XmlElement vectorElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.VECTOR_ELEMENT)).Item(0));
-          float x = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.X_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
-          float y = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.Y_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
-          float z = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.Z_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
-
-					if (adjustCoordinate)
-					{
-						x += 0.5f;
-						y += 0.5f;
-						z += 0.5f;
-					}
-
-          // swap z and y
-          paramList.Add(new Vector3(x, z, y)); 
-          break;
-        case ActionParamTypeCode.BOOLEAN_CODE:
-          paramList.Add(Boolean.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
-          break;
-        case ActionParamTypeCode.INT_CODE:
-          paramList.Add(int.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
-          break;
-        case ActionParamTypeCode.FLOAT_CODE:
-          paramList.Add(float.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
-          break;
-        case ActionParamTypeCode.ROTATION_CODE:
-          //!! This is a hacky trick. For currently, we do not use rotation
-          // in rotate method, so just convert it to vector type. What's more,
-          // "RotateTo" needs an angle parameter.
-
-          // Trick... add an angle...
-          XmlElement rotationElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.ROTATION_ELEMENT)).Item(0));
-          float pitch = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.PITCH_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
-          float roll = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.ROLL_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
-          float yaw = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.YAW_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
-
-          Rotation rot = new Rotation(pitch, roll, yaw);
-          Vector3 rot3 = new Vector3(rot.Pitch, rot.Roll, rot.Yaw);
-
-          paramList.Add(0.0f);
-          paramList.Add(rot3);
-          break;
-        case ActionParamTypeCode.ENTITY_CODE:
-          // This action is supposed to act on certain entity.
-          XmlElement entityElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.ENTITY_ELEMENT)).Item(0));
-
-          int id = int.Parse(GetAttribute(entityElement, OCEmbodimentXMLTags.ID_ATTRIBUTE));
-          string type = GetAttribute(entityElement, OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
-          ActionTarget target = new ActionTarget(id, type);
-
-          paramList.Add(target);
-          break;
-        default:
-          paramList.Add(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE));
-          break;
-      }
-	  } 
+//		string actionName = GetAttribute(element, OCEmbodimentXMLTags.NAME_ATTRIBUTE);
+//
+//	  int sequence = int.Parse(GetAttribute(element, OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE));
+//	  ArrayList paramList = new ArrayList();
+//	
+//	  XmlNodeList list = GetChildren(element, OCEmbodimentXMLTags.PARAMETER_ELEMENT);
+//	  // Extract parameters from the xml element.
+//	  for (int i = 0; i < list.Count; i++)
+//	  {
+//      XmlElement parameterElement = (XmlElement)list.Item(i);
+//      ActionParamType parameterType = ActionParamType.getFromName(parameterElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE));
+//
+//      switch (parameterType.getCode())
+//      {
+//        case ActionParamTypeCode.VECTOR_CODE:
+//          XmlElement vectorElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.VECTOR_ELEMENT)).Item(0));
+//          float x = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.X_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+//          float y = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.Y_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+//          float z = float.Parse(GetAttribute(vectorElement, OCEmbodimentXMLTags.Z_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+//
+//					if (adjustCoordinate)
+//					{
+//						x += 0.5f;
+//						y += 0.5f;
+//						z += 0.5f;
+//					}
+//
+//          // swap z and y
+//          paramList.Add(new Vector3(x, z, y)); 
+//          break;
+//        case ActionParamTypeCode.BOOLEAN_CODE:
+//          paramList.Add(Boolean.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
+//          break;
+//        case ActionParamTypeCode.INT_CODE:
+//          paramList.Add(int.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
+//          break;
+//        case ActionParamTypeCode.FLOAT_CODE:
+//          paramList.Add(float.Parse(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE)));
+//          break;
+//        case ActionParamTypeCode.ROTATION_CODE:
+//          //!! This is a hacky trick. For currently, we do not use rotation
+//          // in rotate method, so just convert it to vector type. What's more,
+//          // "RotateTo" needs an angle parameter.
+//
+//          // Trick... add an angle...
+//          XmlElement rotationElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.ROTATION_ELEMENT)).Item(0));
+//          float pitch = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.PITCH_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+//          float roll = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.ROLL_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+//          float yaw = float.Parse(GetAttribute(rotationElement, OCEmbodimentXMLTags.YAW_ATTRIBUTE), CultureInfo.InvariantCulture.NumberFormat);
+//
+//          Rotation rot = new Rotation(pitch, roll, yaw);
+//          Vector3 rot3 = new Vector3(rot.Pitch, rot.Roll, rot.Yaw);
+//
+//          paramList.Add(0.0f);
+//          paramList.Add(rot3);
+//          break;
+//        case ActionParamTypeCode.ENTITY_CODE:
+//          // This action is supposed to act on certain entity.
+//          XmlElement entityElement = ((XmlElement)(GetChildren(parameterElement, OCEmbodimentXMLTags.ENTITY_ELEMENT)).Item(0));
+//
+//          int id = int.Parse(GetAttribute(entityElement, OCEmbodimentXMLTags.ID_ATTRIBUTE));
+//          string type = GetAttribute(entityElement, OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
+//          ActionTarget target = new ActionTarget(id, type);
+//
+//          paramList.Add(target);
+//          break;
+//        default:
+//          paramList.Add(GetAttribute(parameterElement, OCEmbodimentXMLTags.VALUE_ATTRIBUTE));
+//          break;
+//      }
+//	  } 
 	}
 			
 	public OCActionPlanStep LoadActionPlanStep(string actionName, OCAction.OCActionArgs arguments)
