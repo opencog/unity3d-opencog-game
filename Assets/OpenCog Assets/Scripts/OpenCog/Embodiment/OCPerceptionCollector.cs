@@ -258,11 +258,11 @@ namespace OpenCog.Embodiment
 				{
 					updatedObjects.Add (agiObject.GetInstanceID());
 					
-					UnityEngine.Debug.Log ("Added AGI with ID '" + agiObject.GetInstanceID() + "' to updatedObjects");
+					//UnityEngine.Debug.Log ("Added AGI with ID '" + agiObject.GetInstanceID() + "' to updatedObjects");
 				}
 				else
 				{
-					UnityEngine.Debug.Log ("AGI with ID '" + agiObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+					//UnityEngine.Debug.Log ("AGI with ID '" + agiObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
 			}
 			
@@ -289,7 +289,7 @@ namespace OpenCog.Embodiment
 				}
 				else
 				{
-					UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
 			}
 			

@@ -1246,7 +1246,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			if (objMapInfo.ID.Equals(_brainID))
 	        {
-				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), moving its objectmapinfo to first position...");
+				//UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), moving its objectmapinfo to first position...");
 	        	localMapInfo.Remove(objMapInfo);
 	        	localMapInfo.AddFirst(objMapInfo);
 	         	foundAvatarId = true;
@@ -1708,8 +1708,21 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						int entityID = System.Int32.Parse (entityElement.GetAttribute (OCEmbodimentXMLTags.ID_ATTRIBUTE));
 						string entityType = entityElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
 					
-						// Find battery object here.
-					
+						UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
+				
+						for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
+						{
+							UnityEngine.GameObject batteryObject = batteryArray[iBattery];
+							
+							if (entityID == batteryObject.GetInstanceID())
+							{
+								// This is the one!	
+								actionArguments.EndTarget = batteryObject;
+								
+								break;
+							}
+						}
+						
 						break;
 				}
 			}

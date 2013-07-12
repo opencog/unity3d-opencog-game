@@ -639,7 +639,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			_step.Behaviour.Reset();
 			if(_ActionPlanQueue.Count == 0) _ActionPlanQueue.Enqueue(_step);	
 			_step = _ActionPlanQueue.Dequeue();
-			Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
+			//Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
 		}
 
 		OpenCog.Map.OCMap map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
