@@ -644,6 +644,11 @@ public class OCAction : OCMonoBehaviour
 	{
 		return !IsSourceIdling(action, args);
 	}
+			
+	public static bool DoesSourceNeedToTellEndTarget(OCAction action, OCActionArgs args)
+	{
+		return UnityEngine.Random.Range(0,100) > 75 && !action._ActionController.RunningActions.Contains("StandIdleTell");
+	}
 
 	public static bool IsSourceRunningOtherActions(OCAction action, OCActionArgs args)
 	{

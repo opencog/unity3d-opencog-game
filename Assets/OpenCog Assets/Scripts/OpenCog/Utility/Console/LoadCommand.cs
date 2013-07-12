@@ -236,6 +236,9 @@ public class LoadCommand : Console.ConsoleCommand
 			float xFront = 3.0f * (float)Math.Sin ((eulerAngle.y / 180) * Math.PI);
 			
 			UnityEngine.Vector3 spawnPosition = new UnityEngine.Vector3(playerPos.x + xFront, playerPos.y + 2, playerPos.z + zFront);
+			spawnPosition.x = (float)((int)spawnPosition.x);
+			spawnPosition.y = (float)((int)spawnPosition.y);
+			spawnPosition.z = (float)((int)spawnPosition.z);
 			
 			//Debug.Log ("spawnPosition = [" + spawnPosition.x + ", " + spawnPosition.y + ", " + spawnPosition.z + "]");
 

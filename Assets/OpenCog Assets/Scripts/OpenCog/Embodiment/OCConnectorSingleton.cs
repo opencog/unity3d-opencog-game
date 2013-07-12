@@ -1711,6 +1711,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						// Find battery object here.
 					
 						break;
+					// If it's a string, then it's a say.  The end target is the character we'd like to talk to, and the start target is the thing we'd like to say.
+					case "string":
+						
+						break;
 				}
 			}
 			
