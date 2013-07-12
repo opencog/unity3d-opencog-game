@@ -1649,9 +1649,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		// Get the action elements from the actionPlan
         XmlNodeList list = actionPlan.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_ELEMENT);
 		
-		// TODO: I doubt we still need this?
-		//List<XmlElement> actionPlan = new List<XmlElement>();
-		
 		// list contains 'action' elements.
 		foreach(XmlNode actionNode in list)
 		{
@@ -1718,9 +1715,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			}
 			
 			// Lake's function here.
+			_actionController.LoadActionPlanStep(actionName, actionArguments);
 			//actionPlan.Add((XmlElement)node);
 		}
-
+				
         // Start to perform an action in front of the action list.
         //_actionController.ReceiveActionPlan(actionPlan);// SendMessage("receiveActionPlan", actionPlan);
         //processNextAvatarAction();

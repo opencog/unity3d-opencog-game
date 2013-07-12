@@ -602,14 +602,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //	  } 
 	}
 			
-	public OCActionPlanStep LoadActionPlanStep(string actionName, OCAction.OCActionArgs arguments)
+	public void LoadActionPlanStep(string actionName, OCAction.OCActionArgs arguments)
 	{
 		TreeType treeType = _ActionNameDictionary[actionName];
 		Tree tree = _TreeTypeDictionary[treeType];
 		OCActionPlanStep actionPlanStep = new OCActionPlanStep();
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
-		return actionPlanStep;
+		_ActionPlanQueue.Enqueue(actionPlanStep);
 	}
 			
 	public void CancelActionPlan()

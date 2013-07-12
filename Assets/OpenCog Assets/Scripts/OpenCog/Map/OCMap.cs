@@ -82,6 +82,9 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		
 	[SerializeField]
 	private GameObject _BatteryPrefab;
+		
+	[SerializeField]
+	private GameObject _BatteriesSceneObject;
 
 	//---------------------------------------------------------------------------
 
@@ -163,6 +166,11 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	public GameObject BatteryPrefab
 	{
 		get {return _BatteryPrefab;}
+	}
+		
+	public GameObject BatteriesSceneObject
+	{
+		get {return _BatteriesSceneObject;}
 	}
 		
 	public new static OCMap Instance
