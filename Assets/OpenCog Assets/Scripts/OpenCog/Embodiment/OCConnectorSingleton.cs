@@ -1748,6 +1748,19 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							string toSay = stringElement.GetAttribute(OCEmbodimentXMLTags.VALUE_ATTRIBUTE);
 							UnityEngine.Debug.Log ("Robot say: " + toSay );
 						}
+					
+						// We need to set the target to the avatar I guess....
+						UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
+				
+						for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+						{
+							UnityEngine.GameObject agiObject = agiArray[iAGI];
+							
+							actionArguments.EndTarget = agiObject;
+						
+							break;
+						}
+						
 						break;
 				}
 			}
