@@ -160,6 +160,8 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 			if(!_listener.Pending())
 			{
 				UnityEngine.Debug.Log (System.DateTime.Now.ToString ("HH:mm:ss.fff") + ": Nope, not pending...");
+				if (_shouldStop)
+					UnityEngine.Debug.Log("Which is funny, because IT SHOULDN'T BE HERE BECAUSE _shouldStop IS TRUE!!");	
 				// If listener is not pending, sleep for a while to relax the CPU.
 				yield return new UnityEngine.WaitForSeconds(0.5f);
 			}
@@ -178,6 +180,8 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 					_isReady = true;
 					
 					_shouldStop = true;
+					
+					UnityEngine.Debug.Log ("_shouldStop is now TRUE!");
 					
 					new OldMessageHandler(OCNetworkElement.Instance, _workSocket).start();
 					
