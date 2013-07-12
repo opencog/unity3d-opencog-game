@@ -454,16 +454,21 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			}
 			else
 			{
-	      // Calculate the offset of the terrain.
+	      		// Calculate the offset of the terrain.
 				_blockCountX = OpenCog.Map.OCChunk.SIZE_X * Map.ChunkCountX;
 				_blockCountY = OpenCog.Map.OCChunk.SIZE_Y * Map.ChunkCountY;
 	
-        // There is an invisible chunk at the edge of the terrain, so we should take count of it.
-        _globalStartPositionX = 0;
-        _globalStartPositionY = 0;
+		        // There is an invisible chunk at the edge of the terrain, so we should take count of it.
+				// I don't agree with this. Our map loads into 0,8,0 and 0,9,0. Though I don't see 0,9,0 here :(
+				// Anyway...the lowest coords should be the 0's of the lowest chunks. So here goes:
+				_globalStartPositionX = Map.Chunks.GetMinX() * OpenCog.Map.OCChunk.SIZE_X;
+				_globalStartPositionY = Map.Chunks.GetMinY() * OpenCog.Map.OCChunk.SIZE_Y;
+//		        _globalStartPositionX = 0;
+//		        _globalStartPositionY = 0;
 			}
+			
 			_blockCountZ = OpenCog.Map.OCChunk.SIZE_Z * Map.ChunkCountZ;
-			_globalStartPositionZ = 0;
+			_globalStartPositionZ = Map.Chunks.GetMinZ() * OpenCog.Map.OCChunk.SIZE_Z;
             // The floor height should be 1 unit larger than the block's z index.
             _globalFloorHeight = Map.FloorHeight;
         }
@@ -471,7 +476,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         {
 			/// TODO: I have no idea if the below code makes sense...if Map==null....
 			_mapName = "unknown_map";
-	    _blockCountX = 128;
+	   		 _blockCountX = 128;
 			_blockCountY = 128;
 			_blockCountZ = 128;
 
@@ -480,6 +485,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_globalStartPositionZ = 0;
 			_globalFloorHeight = 0;
 		}
+		
+		UnityEngine.Debug.Log ("OpenCog will receive a world with globalStartPosition [" + _globalStartPositionX + ", " + _globalStartPositionY + ", " + _globalStartPositionZ + "] and blockCounts [" + _blockCountX + ", " + _blockCountY + ", " + _blockCountZ + "].");
     
     // Get action scheduler component.
 		// TODO: old classes here. Lake needs to fix this.
@@ -1316,23 +1323,36 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
   private OCMessage SerializeMapInfo(List<OCObjectMapInfo> mapinfoSeq, string messageTag, string payloadTag, bool isFirstTimePerceptWorld = false)
   {
-      string timestamp = GetCurrentTimestamp();
-      // Create a xml document
-      XmlDocument doc = new XmlDocument();
-      XmlElement root = MakeXMLElementRoot(doc);
+      	string timestamp = GetCurrentTimestamp();
+      	// Create a xml document
+      	XmlDocument doc = new XmlDocument();
+      	XmlElement root = MakeXMLElementRoot(doc);
 
-      // Create a terrain-info element and append to root element.
-      XmlElement mapInfo = (XmlElement)root.AppendChild(doc.CreateElement(messageTag));
-	mapInfo.SetAttribute("map-name", _mapName);
-      mapInfo.SetAttribute("global-position-x", _globalStartPositionX.ToString());
-      mapInfo.SetAttribute("global-position-y", _globalStartPositionY.ToString());
-	mapInfo.SetAttribute("global-position-z", _globalStartPositionZ.ToString());
-      mapInfo.SetAttribute("global-position-offset-x", _blockCountX.ToString());
-	mapInfo.SetAttribute("global-position-offset-y", _blockCountY.ToString());
-	mapInfo.SetAttribute("global-position-offset-z", _blockCountZ.ToString());
-      mapInfo.SetAttribute("global-floor-height", (_globalFloorHeight).ToString());
-	mapInfo.SetAttribute("is-first-time-percept-world", isFirstTimePerceptWorld.ToString().ToLower());
-	mapInfo.SetAttribute("timestamp", timestamp);
+      	// Create a terrain-info element and append to root element.
+      	XmlElement mapInfo = (XmlElement)root.AppendChild(doc.CreateElement(messageTag));
+		mapInfo.SetAttribute("map-name", _mapName);
+		
+		
+		// ORIGINAL:
+//      mapInfo.SetAttribute("global-position-x", _globalStartPositionX.ToString());
+//      mapInfo.SetAttribute("global-position-y", _globalStartPositionY.ToString());
+//		mapInfo.SetAttribute("global-position-z", _globalStartPositionZ.ToString());
+//      mapInfo.SetAttribute("global-position-offset-x", _blockCountX.ToString());
+//		mapInfo.SetAttribute("global-position-offset-y", _blockCountY.ToString());
+//		mapInfo.SetAttribute("global-position-offset-z", _blockCountZ.ToString());
+		
+		// Y Z SWAPPED:
+		mapInfo.SetAttribute("global-position-x", _globalStartPositionX.ToString());
+      	mapInfo.SetAttribute("global-position-y", _globalStartPositionZ.ToString());
+		mapInfo.SetAttribute("global-position-z", _globalStartPositionY.ToString());
+      	mapInfo.SetAttribute("global-position-offset-x", _blockCountX.ToString());
+		mapInfo.SetAttribute("global-position-offset-y", _blockCountZ.ToString());
+		mapInfo.SetAttribute("global-position-offset-z", _blockCountY.ToString());
+      	mapInfo.SetAttribute("global-floor-height", (_globalFloorHeight).ToString());
+		
+		
+		mapInfo.SetAttribute("is-first-time-percept-world", isFirstTimePerceptWorld.ToString().ToLower());
+		mapInfo.SetAttribute("timestamp", timestamp);
 
       string encodedPlainText;
       using (var stream = new System.IO.MemoryStream())
