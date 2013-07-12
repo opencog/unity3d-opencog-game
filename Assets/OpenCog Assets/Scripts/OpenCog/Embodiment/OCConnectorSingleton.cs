@@ -1532,9 +1532,24 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     {
 		//UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument");
         // Handles action-plans
+
+		bool wrotePlan = false;
+		
         XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
         for (int i = 0; i < list.Count; i++)
         {
+			if (!wrotePlan)
+			{
+				System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+				XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+		
+				document.WriteTo(xmlTextWriter);
+				
+				UnityEngine.Debug.Log ("A plan! " + stringWriter.ToString());	
+				wrotePlan = true;	
+			}
+			
+			
 			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
             ParseActionPlanElement((XmlElement)list.Item(i));
         }
@@ -1723,6 +1738,16 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							}
 						}
 						
+						break;
+					case "string":
+						XmlNodeList stringParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
+						XmlElement stringElement = (XmlElement)stringParameterChildren.Item (0);
+					
+						if (actionName == "say")
+						{
+							string toSay = stringElement.GetAttribute(OCEmbodimentXMLTags.VALUE_ATTRIBUTE);
+							UnityEngine.Debug.Log ("Robot say: " + toSay );
+						}
 						break;
 				}
 			}

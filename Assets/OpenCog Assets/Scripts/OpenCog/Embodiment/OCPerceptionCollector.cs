@@ -141,11 +141,11 @@ namespace OpenCog.Embodiment
 				// I'm not sure about the right order...when I look at the old world on the OpenCog side, it receives edible objects first and then the terrain.
 				// So I moved the calls below to the same order.
 				
-				if (_hasPerceivedTerrainForFirstTime)					
-					this.PerceiveWorld ();
-				
 				if (!_hasStartedPerceivingTerrainForTheFirstTime)
 					StartCoroutine (this.PerceiveTerrain ());
+				
+//				if (_hasPerceivedTerrainForFirstTime)					
+//					this.PerceiveWorld ();
 				
 				if (_hasPerceivedWorldForTheFirstTime)
 					PerceiveStateChanges ();
@@ -755,6 +755,8 @@ namespace OpenCog.Embodiment
 
 				// Communicate completion of initial terrain perception
 				if (!_hasPerceivedTerrainForFirstTime) {
+					PerceiveWorld();
+						
 					UnityEngine.Debug.Log ("Time to send the 'finished perceiving terrain' message!");
 					_connector.SendFinishPerceptTerrain ();
 					_hasPerceivedTerrainForFirstTime = true;
