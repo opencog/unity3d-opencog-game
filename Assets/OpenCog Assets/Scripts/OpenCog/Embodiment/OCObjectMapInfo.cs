@@ -484,33 +484,66 @@ public class OCObjectMapInfo
 			AddTag ("class", "block", System.Type.GetType("System.String"));
 			AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
 			AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
-			AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.GetType().ToString(), System.Type.GetType("System.String"));
+			
+			try {
+				string blockType = blockData.block.GetName();
+				
+				if (blockType.ToLower() != "air")
+				{
+					string balls = "lol";
+					string lol = balls + "lol";	
+				}
+				
+				UnityEngine.Debug.Log ("BlockData.GetType = " + blockType);	
+			} catch (System.Exception ex) {
+				
+			}
+			
+			if (blockData.block == null)
+			{
+				// Report air
+				this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+			}
+			else
+			{
+				if (blockData.block.GetName().ToLower () == "air")
+				{
+					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+				}
+				else
+				{
+					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "42", System.Type.GetType("System.String"));
+				}
+			}
 			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
 		}
 
-		public static OCObjectMapInfo CreateObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
-		{
-			string blockName = "BLOCK_" + blockData.GetHashCode();
-			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();
-			mapinfo.Height = 1;
-			mapinfo.Width = 1;
-			mapinfo.Length = 1;
-			mapinfo.Type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
-			mapinfo.ID = blockName;
-			mapinfo.name = blockName;
-			mapinfo.Velocity = UnityEngine.Vector3.zero;
-			mapinfo.position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
-			mapinfo.rotation = new OpenCog.Utility.Rotation(0, 0, 0);
-
-			// Add block properties
-			mapinfo.AddTag ("class", "block", System.Type.GetType("System.String"));
-			mapinfo.AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
-			mapinfo.AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
-			mapinfo.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.GetType().ToString(), System.Type.GetType("System.String"));
-			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
-			return mapinfo;
-
-		}
+//		public static OCObjectMapInfo CreateObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
+//		{
+//			string blockName = "BLOCK_" + blockData.GetHashCode();
+//			OCObjectMapInfo mapinfo = new OCObjectMapInfo ();
+//			mapinfo.Height = 1;
+//			mapinfo.Width = 1;
+//			mapinfo.Length = 1;
+//			mapinfo.Type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
+//			mapinfo.ID = blockName;
+//			mapinfo.name = blockName;
+//			mapinfo.Velocity = UnityEngine.Vector3.zero;
+//			mapinfo.position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
+//			mapinfo.rotation = new OpenCog.Utility.Rotation(0, 0, 0);
+//
+//			// Add block properties
+//			mapinfo.AddTag ("class", "block", System.Type.GetType("System.String"));
+//			mapinfo.AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
+//			mapinfo.AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
+//			
+//			
+//			
+//			
+//			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
+//			return mapinfo;
+//
+//		}
 		
 //		public static OCObjectMapInfo CreateTerrainMapInfo (Chunk chunk, uint x, uint y, uint z, BlockData blockData)
 //		{

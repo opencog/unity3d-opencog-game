@@ -144,8 +144,8 @@ namespace OpenCog.Embodiment
 				if (!_hasStartedPerceivingTerrainForTheFirstTime)
 					StartCoroutine (this.PerceiveTerrain ());
 				
-//				if (_hasPerceivedTerrainForFirstTime)					
-//					this.PerceiveWorld ();
+				if (_hasPerceivedTerrainForFirstTime)					
+					this.PerceiveWorld ();
 				
 				if (_hasPerceivedWorldForTheFirstTime)
 					PerceiveStateChanges ();
@@ -396,7 +396,7 @@ namespace OpenCog.Embodiment
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
-			OCObjectMapInfo mapInfo = OCObjectMapInfo.CreateObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
 			
 			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo>();
 			
@@ -425,7 +425,7 @@ namespace OpenCog.Embodiment
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
-			OCObjectMapInfo mapInfo = OCObjectMapInfo.CreateObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
 			
 			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
 			
@@ -594,7 +594,7 @@ namespace OpenCog.Embodiment
 			 */
 
 			// TODO: Get the right value from BlockData to put into mapinfo
-			OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateObjectMapInfo (chunkX, chunkY, chunkZ, globalBlockX, globalBlockY, globalBlockZ, _map.GetBlock (globalBlockX, globalBlockY, globalBlockZ));
+			OCObjectMapInfo mapinfo = new OCObjectMapInfo (chunkX, chunkY, chunkZ, globalBlockX, globalBlockY, globalBlockZ, _map.GetBlock (globalBlockX, globalBlockY, globalBlockZ));
 			mapinfo.RemoveTag ("visibility-status");
 			mapinfo.AddTag ("remove", "true", System.Type.GetType ("System.Boolean"));
 			//mapinfo.Visibility = OCObjectMapInfo.VISIBLE_STATUS.UNKNOWN;
@@ -617,7 +617,7 @@ namespace OpenCog.Embodiment
 			int blockZ = (int)(hitPoint.z % OpenCog.Map.OCChunk.SIZE_Z);
 	
 			OpenCog.Map.OCChunk currentChunk = _map.Chunks.Get (chunkX, chunkY, chunkZ);
-			OCObjectMapInfo mapinfo = OCObjectMapInfo.CreateObjectMapInfo (chunkX, chunkY, chunkZ, blockX, blockY, blockZ, currentChunk.GetBlock (blockX, blockY, blockZ));
+			OCObjectMapInfo mapinfo = new OCObjectMapInfo (chunkX, chunkY, chunkZ, blockX, blockY, blockZ, currentChunk.GetBlock (blockX, blockY, blockZ));
 			
 			
 			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo> ();
@@ -685,7 +685,7 @@ namespace OpenCog.Embodiment
 											// Ok...now we have some globalz....
 											OpenCog.Map.OCBlockData globalBlock = map.GetBlock (iGlobalX, iGlobalY, iGlobalZ);
 				
-											if (!globalBlock.IsEmpty ()) {
+											if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > 138) ) {
 												//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
 												OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
 				

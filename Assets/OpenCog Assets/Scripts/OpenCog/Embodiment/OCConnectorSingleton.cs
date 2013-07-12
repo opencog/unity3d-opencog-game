@@ -103,7 +103,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private int _moveActionCount = 0;
 	private HashSet<string> _unavailableElements = new HashSet<string>();
 	private OpenCog.Map.OCMap _map;
-		
+	
+	[SerializeField]
 	private OCActionController _actionController;
 	
 	private bool _firstRun = true;
@@ -1535,19 +1536,24 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		bool wrotePlan = false;
 		
-        XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
-        for (int i = 0; i < list.Count; i++)
-        {
-			if (!wrotePlan)
+		if (!wrotePlan)
+		{
+			System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+			XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+	
+			document.WriteTo(xmlTextWriter);
+			
+			if (stringWriter.ToString().IndexOf("oc:emotional-feeling") == -1)
 			{
-				System.IO.StringWriter stringWriter = new System.IO.StringWriter();
-				XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
-		
-				document.WriteTo(xmlTextWriter);
-				
 				UnityEngine.Debug.Log ("A plan! " + stringWriter.ToString());	
 				wrotePlan = true;	
 			}
+		}
+		
+        XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
+        for (int i = 0; i < list.Count; i++)
+        {
+			
 			
 			
 			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
@@ -1714,10 +1720,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						vectorGameObject.transform.position = new Vector3(x, y, z);
 					
 						actionArguments.EndTarget = vectorGameObject;
+					
+						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
+					
 						break;	
 					// If it's an entity, then it's a grab or a consume. So the target is the battery.
 					case "entity":
-						XmlNodeList entityParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
+						XmlNodeList entityParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.ENTITY_ELEMENT);
 						XmlElement entityElement = (XmlElement)entityParameterChildren.Item (0);
 						
 						int entityID = System.Int32.Parse (entityElement.GetAttribute (OCEmbodimentXMLTags.ID_ATTRIBUTE));
@@ -1737,15 +1746,24 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 								break;
 							}
 						}
+					
+						if (actionName == "grab")
+						{
+							UnityEngine.Debug.Log ("A 'grab' command told me to grab an object with ID " + entityID);
+						}
+						else if (actionName == "eat")
+						{
+							UnityEngine.Debug.Log ("An 'eat' command told me to eat an object with ID " + entityID);
+						}
 						
 						break;
 					case "string":
-						XmlNodeList stringParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
-						XmlElement stringElement = (XmlElement)stringParameterChildren.Item (0);
+//						XmlNodeList stringParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
+//						XmlElement stringElement = (XmlElement)stringParameterChildren.Item (0);
 					
 						if (actionName == "say")
 						{
-							string toSay = stringElement.GetAttribute(OCEmbodimentXMLTags.VALUE_ATTRIBUTE);
+							string toSay = actionParameterElement.GetAttribute(OCEmbodimentXMLTags.VALUE_ATTRIBUTE);
 							UnityEngine.Debug.Log ("Robot say: " + toSay );
 						}
 					
@@ -1762,15 +1780,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						}
 						
 						break;
-					// If it's a string, then it's a say.  The end target is the character we'd like to talk to, and the start target is the thing we'd like to say.
-					case "string":
-						
-						break;
+
 				}
 			}
 			
 			// Lake's function here.
-			_actionController.LoadActionPlanStep(actionName, actionArguments);
+			if (actionName != "say")
+				_actionController.LoadActionPlanStep(actionName, actionArguments);
 			//actionPlan.Add((XmlElement)node);
 		}
 				
@@ -1885,7 +1901,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        {
 	            // Add physiological information to message sending queue.
 				// TODO: Re-enable this, was just getting sick of the tons of output on the Opencog side.
-	            //_messagesToSend.Add(message);
+	            _messagesToSend.Add(message);
 	
 	            // Send a tick message to make OAC start next cycle.
 	            if (bool.Parse(OCConfig.Instance.get("GENERATE_TICK_MESSAGE")))
