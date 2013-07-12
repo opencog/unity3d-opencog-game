@@ -1246,7 +1246,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			if (objMapInfo.ID.Equals(_brainID))
 	        {
-				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), moving its objectmapinfo to first position...");
+				//UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), moving its objectmapinfo to first position...");
 	        	localMapInfo.Remove(objMapInfo);
 	        	localMapInfo.AddFirst(objMapInfo);
 	         	foundAvatarId = true;
@@ -1532,9 +1532,24 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     {
 		//UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument");
         // Handles action-plans
+
+		bool wrotePlan = false;
+		
         XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
         for (int i = 0; i < list.Count; i++)
         {
+			if (!wrotePlan)
+			{
+				System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+				XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+		
+				document.WriteTo(xmlTextWriter);
+				
+				UnityEngine.Debug.Log ("A plan! " + stringWriter.ToString());	
+				wrotePlan = true;	
+			}
+			
+			
 			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
             ParseActionPlanElement((XmlElement)list.Item(i));
         }
@@ -1708,8 +1723,44 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						int entityID = System.Int32.Parse (entityElement.GetAttribute (OCEmbodimentXMLTags.ID_ATTRIBUTE));
 						string entityType = entityElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
 					
-						// Find battery object here.
+						UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
+				
+						for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
+						{
+							UnityEngine.GameObject batteryObject = batteryArray[iBattery];
+							
+							if (entityID == batteryObject.GetInstanceID())
+							{
+								// This is the one!	
+								actionArguments.EndTarget = batteryObject;
+								
+								break;
+							}
+						}
+						
+						break;
+					case "string":
+						XmlNodeList stringParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
+						XmlElement stringElement = (XmlElement)stringParameterChildren.Item (0);
 					
+						if (actionName == "say")
+						{
+							string toSay = stringElement.GetAttribute(OCEmbodimentXMLTags.VALUE_ATTRIBUTE);
+							UnityEngine.Debug.Log ("Robot say: " + toSay );
+						}
+					
+						// We need to set the target to the avatar I guess....
+						UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
+				
+						for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+						{
+							UnityEngine.GameObject agiObject = agiArray[iAGI];
+							
+							actionArguments.EndTarget = agiObject;
+						
+							break;
+						}
+						
 						break;
 					// If it's a string, then it's a say.  The end target is the character we'd like to talk to, and the start target is the thing we'd like to say.
 					case "string":

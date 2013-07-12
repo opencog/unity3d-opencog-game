@@ -141,11 +141,11 @@ namespace OpenCog.Embodiment
 				// I'm not sure about the right order...when I look at the old world on the OpenCog side, it receives edible objects first and then the terrain.
 				// So I moved the calls below to the same order.
 				
-				if (_hasPerceivedTerrainForFirstTime)					
-					this.PerceiveWorld ();
-				
 				if (!_hasStartedPerceivingTerrainForTheFirstTime)
 					StartCoroutine (this.PerceiveTerrain ());
+				
+//				if (_hasPerceivedTerrainForFirstTime)					
+//					this.PerceiveWorld ();
 				
 				if (_hasPerceivedWorldForTheFirstTime)
 					PerceiveStateChanges ();
@@ -258,11 +258,11 @@ namespace OpenCog.Embodiment
 				{
 					updatedObjects.Add (agiObject.GetInstanceID());
 					
-					UnityEngine.Debug.Log ("Added AGI with ID '" + agiObject.GetInstanceID() + "' to updatedObjects");
+					//UnityEngine.Debug.Log ("Added AGI with ID '" + agiObject.GetInstanceID() + "' to updatedObjects");
 				}
 				else
 				{
-					UnityEngine.Debug.Log ("AGI with ID '" + agiObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+					//UnityEngine.Debug.Log ("AGI with ID '" + agiObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
 			}
 			
@@ -289,7 +289,7 @@ namespace OpenCog.Embodiment
 				}
 				else
 				{
-					UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
 			}
 			
@@ -755,6 +755,8 @@ namespace OpenCog.Embodiment
 
 				// Communicate completion of initial terrain perception
 				if (!_hasPerceivedTerrainForFirstTime) {
+					PerceiveWorld();
+						
 					UnityEngine.Debug.Log ("Time to send the 'finished perceiving terrain' message!");
 					_connector.SendFinishPerceptTerrain ();
 					_hasPerceivedTerrainForFirstTime = true;
