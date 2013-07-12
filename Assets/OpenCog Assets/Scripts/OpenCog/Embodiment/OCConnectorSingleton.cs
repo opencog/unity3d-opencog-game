@@ -103,7 +103,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private int _moveActionCount = 0;
 	private HashSet<string> _unavailableElements = new HashSet<string>();
 	private OpenCog.Map.OCMap _map;
-		
+	
+	[SerializeField]
 	private OCActionController _actionController;
 	
 	private bool _firstRun = true;
@@ -1535,19 +1536,24 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		bool wrotePlan = false;
 		
-        XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
-        for (int i = 0; i < list.Count; i++)
-        {
-			if (!wrotePlan)
+		if (!wrotePlan)
+		{
+			System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+			XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+	
+			document.WriteTo(xmlTextWriter);
+			
+			if (stringWriter.ToString().IndexOf("oc:emotional-feeling") == -1)
 			{
-				System.IO.StringWriter stringWriter = new System.IO.StringWriter();
-				XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
-		
-				document.WriteTo(xmlTextWriter);
-				
 				UnityEngine.Debug.Log ("A plan! " + stringWriter.ToString());	
 				wrotePlan = true;	
 			}
+		}
+		
+        XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
+        for (int i = 0; i < list.Count; i++)
+        {
+			
 			
 			
 			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
@@ -1714,6 +1720,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						vectorGameObject.transform.position = new Vector3(x, y, z);
 					
 						actionArguments.EndTarget = vectorGameObject;
+					
+						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
+					
 						break;	
 					// If it's an entity, then it's a grab or a consume. So the target is the battery.
 					case "entity":
@@ -1736,6 +1745,15 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 								
 								break;
 							}
+						}
+					
+						if (actionName == "grab")
+						{
+							UnityEngine.Debug.Log ("A 'grab' command told me to grab an object with ID " + entityID);
+						}
+						else if (actionName == "eat")
+						{
+							UnityEngine.Debug.Log ("An 'eat' command told me to eat an object with ID " + entityID);
 						}
 						
 						break;
@@ -1873,7 +1891,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        
 	        
 	        string xmlText = BeautifyXmlText(doc);
-	        OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
+	        //OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
 	            
 	        // Construct a string message.
 			OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);
