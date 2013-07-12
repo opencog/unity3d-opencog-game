@@ -25,6 +25,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
+using System.Linq;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -43,7 +44,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-	public class OCPerceptionCollector : OCMonoBehaviour
+	public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollector>
 	{
 		//---------------------------------------------------------------------------
 	
@@ -61,7 +62,7 @@ namespace OpenCog.Embodiment
 		private ArrayList _statesToDelete = new ArrayList ();
 		private System.Object _cacheLock = new System.Object ();
 		private List<OCObjectMapInfo> _removedObjects = new List<OCObjectMapInfo> (); // A list of objects recently removed. This is a temporary data structure, cleared whenever it is processed.
-		private bool _perceptWorldFirstTime = true;
+		private bool _isPerceivingWorldForTheFirstTime = true;
 
 		//private WorldData _worldData; // Reference to the world data.
 		private OpenCog.Map.OCMap _map;
@@ -70,6 +71,7 @@ namespace OpenCog.Embodiment
 		private bool _hasPerceivedTerrainForFirstTime = false;
 		private bool _hasStartedPerceivingTerrainForTheFirstTime = false;
 		private bool _isPerceivingStateChangesForTheFirstTime = true;
+		private bool _hasPerceivedWorldForTheFirstTime = false;
 			
 		//---------------------------------------------------------------------------
 	
@@ -80,7 +82,15 @@ namespace OpenCog.Embodiment
 		#region Accessors and Mutators
 	
 		//---------------------------------------------------------------------------
-				
+		
+		public static OpenCog.Embodiment.OCPerceptionCollector Instance
+		{
+			get 
+			{
+				return OpenCog.Embodiment.OCPerceptionCollector.GetInstance<OCPerceptionCollector>();
+			}
+		}
+		
 		//---------------------------------------------------------------------------
 	
 		#endregion
@@ -127,12 +137,17 @@ namespace OpenCog.Embodiment
 			// Percept the world once in each interval.
 			if (_timer >= _updatePerceptionInterval) {
 				// I'm not sure what this does...
-				this.PerceiveWorld ();
+				
+				// I'm not sure about the right order...when I look at the old world on the OpenCog side, it receives edible objects first and then the terrain.
+				// So I moved the calls below to the same order.
+				
+				if (_hasPerceivedTerrainForFirstTime)					
+					this.PerceiveWorld ();
 				
 				if (!_hasStartedPerceivingTerrainForTheFirstTime)
 					StartCoroutine (this.PerceiveTerrain ());
 				
-				if (_hasPerceivedTerrainForFirstTime)					
+				if (_hasPerceivedWorldForTheFirstTime)
 					PerceiveStateChanges ();
 				
 				_timer = 0.0f;
@@ -215,23 +230,78 @@ namespace OpenCog.Embodiment
 			// Looks like we need to build a mapinfo object for each one....
 			
 			// Old comment: Update the map info of all avatar in the repository(including player avatar).
-			for (int oca = 0; oca < 0; oca++)
+			UnityEngine.GameObject[] npcArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCNPC");
+			
+			for (int iNPC = 0; iNPC < npcArray.Length; iNPC++)
 			{
-				UnityEngine.GameObject someAvatarGameObject = null;
+				UnityEngine.GameObject npcObject = npcArray[iNPC];
 				
-				if (this.BuildMapInfo (someAvatarGameObject))
-					updatedObjects.Add (someAvatarGameObject.GetInstanceID());
+				if (this.BuildMapInfo(npcObject))
+				{
+					updatedObjects.Add (npcObject.GetInstanceID());					
+					
+					UnityEngine.Debug.Log ("Added NPC with ID '" + npcObject.GetInstanceID() + "' to updatedObjects");
+				}
+				else
+				{
+					//UnityEngine.Debug.Log ("NPC with ID '" + npcObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
+			}
+			
+			UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
+			
+			for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+			{
+				UnityEngine.GameObject agiObject = agiArray[iAGI];
+				
+				if (this.BuildMapInfo(agiObject))
+				{
+					updatedObjects.Add (agiObject.GetInstanceID());
+					
+					UnityEngine.Debug.Log ("Added AGI with ID '" + agiObject.GetInstanceID() + "' to updatedObjects");
+				}
+				else
+				{
+					UnityEngine.Debug.Log ("AGI with ID '" + agiObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
 			}
 			
 			// Ok, so that was everything in the OCA (OpenCog Avatar?) Repository. Next come the OCObjects...
-			for (int ocObject = 0; ocObject < 0; ocObject++)
+			
+			//List<UnityEngine.GameObject> batteryObjects = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery").ToList();
+//			foreach (UnityEngine.GameObject batteryObject in batteryObjects)
+//			{
+//				if (this.BuildMapInfo(batteryObject))
+//					updatedObjects.Add (batteryObject.GetInstanceID());
+//			}
+			
+			UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
+			
+			for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
 			{
-				UnityEngine.GameObject someGameObject = null;
+				UnityEngine.GameObject batteryObject = batteryArray[iBattery];
 				
-				// Seems this function always tries to build a mapinfo...but returns false if it wasn't updated or something? Or maybe if it was the first time too?
-				if (this.BuildMapInfo(someGameObject))
-					updatedObjects.Add (someGameObject.GetInstanceID());
+				if (this.BuildMapInfo (batteryObject))
+				{
+					updatedObjects.Add (batteryObject.GetInstanceID());
+					
+					UnityEngine.Debug.Log ("Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
+				}
+				else
+				{
+					UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
 			}
+			
+			
+//			for (int ocObject = 0; ocObject < 0; ocObject++)
+//			{
+//				UnityEngine.GameObject someGameObject = null;
+//				
+//				// Seems this function always tries to build a mapinfo...but returns false if it wasn't updated or something? Or maybe if it was the first time too?
+//				if (this.BuildMapInfo(someGameObject))
+//					updatedObjects.Add (someGameObject.GetInstanceID());
+//			}
 	
 			// Ok...here we're determining which objects have disappeared. It seems that cacheIdList contains objects that existed before.
 			// We then look for these objects in _mapInfoCacheStatus (by gameobjectID it seems) to see if their boolean is false...not sure why yet.
@@ -258,7 +328,7 @@ namespace OpenCog.Embodiment
 			// mean they were updated. It seems that buildMapInfo actually does some kind of 'isupdated' analysis...
 			List<OCObjectMapInfo> latestMapInfoSeq = new List<OCObjectMapInfo> ();
 			if (updatedObjects != null) {
-				OCLogger.Info ("PerceptionCollector: global map info has been updated");
+				//UnityEngine.Debug.Log ("PerceptionCollector: global map info has been updated");
 				foreach (int oid in updatedObjects) {
 					latestMapInfoSeq.Add (this._mapInfoCache [oid]);
 				}
@@ -283,10 +353,11 @@ namespace OpenCog.Embodiment
 			// the first time too.
 			if (latestMapInfoSeq.Count > 0) {
 				// Append latest map info sequence to OC connector's sending queue.
-				_connector.SendMapInfoMessage (latestMapInfoSeq, _perceptWorldFirstTime);
+				_connector.SendMapInfoMessage (latestMapInfoSeq, _isPerceivingWorldForTheFirstTime);
 			}
 			
-			_perceptWorldFirstTime = false;
+			_isPerceivingWorldForTheFirstTime = false;
+			_hasPerceivedWorldForTheFirstTime = true;
 		}
 			
 		/// <summary>
@@ -308,32 +379,62 @@ namespace OpenCog.Embodiment
 			_stateInfoCache.Add (ainfo, valObj);
 		}
 		
-		public static void NotifyBlockRemoved (Vector3i blockBuildPoint)
+		public void NotifyBlockRemoved (Vector3i blockBuildPoint)
 		{
-			UnityEngine.Transform allAvatars = UnityEngine.GameObject.Find ("Avatars").transform;
-			foreach (UnityEngine.Transform child in allAvatars) {
-				if (child.gameObject.tag != "OCA") {
-					continue;
-				}
-				OCPerceptionCollector con = child.gameObject.GetComponent<OCPerceptionCollector> () as OCPerceptionCollector;
-				if (con != null) {
-					con._notifyBlockRemoved (blockBuildPoint);
-				}
-			}
+			// blockBuildPoint should be a global coordinate, and they're ints...so I guess we can use them directly. Still need to figure out the chunk.
+//			uint chunkX = (uint)(hitPoint.X / worldData.ChunkBlockWidth);
+//			uint chunkY = (uint)(hitPoint.Y / worldData.ChunkBlockHeight);
+//			uint chunkZ = (uint)(hitPoint.Z / worldData.ChunkBlockDepth);
+//			uint blockX = (uint)(hitPoint.X % worldData.ChunkBlockWidth);
+//			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
+//			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
+			
+			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
+			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
+			
+			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			
+			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
+			
+			OCObjectMapInfo mapInfo = OCObjectMapInfo.CreateObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			
+			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo>();
+			
+			removedBlockList.Add(mapInfo);
+			
+			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+			
+			connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
+			connector.SendTerrainInfoMessage(removedBlockList);
 		}
 		
-		public static void NotifyBlockAdded (Vector3i blockBuildPoint)
+		public void NotifyBlockAdded (Vector3i blockBuildPoint)
 		{
-			UnityEngine.Transform allAvatars = UnityEngine.GameObject.Find ("Avatars").transform;
-			foreach (UnityEngine.Transform child in allAvatars) {
-				if (child.gameObject.tag != "OCA") {
-					continue;
-				}
-				OCPerceptionCollector con = child.gameObject.GetComponent<OCPerceptionCollector> () as OCPerceptionCollector;
-				if (con != null) {
-					con._notifyBlockAdded (blockBuildPoint);
-				}
-			}
+			// blockBuildPoint should be a global coordinate, and they're ints...so I guess we can use them directly. Still need to figure out the chunk.
+//			uint chunkX = (uint)(hitPoint.X / worldData.ChunkBlockWidth);
+//			uint chunkY = (uint)(hitPoint.Y / worldData.ChunkBlockHeight);
+//			uint chunkZ = (uint)(hitPoint.Z / worldData.ChunkBlockDepth);
+//			uint blockX = (uint)(hitPoint.X % worldData.ChunkBlockWidth);
+//			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
+//			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
+			
+			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
+			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
+			
+			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			
+			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
+			
+			OCObjectMapInfo mapInfo = OCObjectMapInfo.CreateObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			
+			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
+			
+			addedBlockList.Add(mapInfo);
+			
+			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+			
+			connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, true);
+			connector.SendTerrainInfoMessage(addedBlockList);
 		}
 		
 	
@@ -390,20 +491,24 @@ namespace OpenCog.Embodiment
 			OCObjectMapInfo mapInfo;
 			int gameObjectID = go.GetInstanceID ();
 	
-			this._mapInfoCacheStatus [gameObjectID] = true;
+			// So here we register the fact that this gameobject has already been updated in the previous (or current?) cycle.
+			_mapInfoCacheStatus [gameObjectID] = true;
 	
-			if (this._mapInfoCache.ContainsKey (gameObjectID)) {
+			// Check if it's in our list of previously existing objects...?
+			if (_mapInfoCache.ContainsKey (gameObjectID)) {
 				// Read cache
 				mapInfo = _mapInfoCache [gameObjectID];
 			} else {
-				// Create a new map info and cache it.
+				/// If it's not in our list of previously existing objects...we should create a mapinfo, add it, and send it to opencog as an 'appeared' object.
 				mapInfo = new OCObjectMapInfo (go);
-				lock (_cacheLock) {
+				
+				lock (_mapInfoCache) {
 					_mapInfoCache [gameObjectID] = mapInfo;
 				}
 				
 				// We don't send all the existing objects as appear actions to the opencog at the time the robot is loaded.
-				if (! _perceptWorldFirstTime) {
+				// If it isn't perceiving the world for the first time, we inform OpenCog. Otherwise...we don't!
+				if (! _isPerceivingWorldForTheFirstTime) {
 					_connector.HandleObjectAppearOrDisappear (mapInfo.ID, mapInfo.Type, true);
 				}
 				
@@ -541,8 +646,8 @@ namespace OpenCog.Embodiment
 				
 				int blocksProcessed = 0;
 				int emptyBlocksProcessed = 0;
-				int blocksPerTransmission = 1024;
-				int blocksPerDebugEntry = 512;
+				int blocksPerTransmission = 4096;
+				int blocksPerDebugEntry = 4096;
 				
 				System.DateTime dtStartProcessing = System.DateTime.Now;
 			
@@ -671,6 +776,7 @@ namespace OpenCog.Embodiment
 		// So it appears we don't need it right now! Guess the interesting one is then PerceiveWorld.
 		private void PerceiveStateChanges ()
 		{
+			//UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveStateChanges");
 			// Loop through the states that have previously been registered. A stateInfo contains an gameobject, a behaviour and a statename.
 			foreach (OpenCog.Embodiment.OCStateChangesRegister.StateInfo stateInfo in OpenCog.Embodiment.OCStateChangesRegister.StateList) 
 			{

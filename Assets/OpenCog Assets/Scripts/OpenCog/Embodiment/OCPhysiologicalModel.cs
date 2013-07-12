@@ -99,6 +99,8 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 	private float _updateTimer = 0.0f;
 
 	private float _millisecondsPerTick;
+		
+	
 
 //	private bool at_home_flag; 
     #endregion
@@ -198,16 +200,17 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 
 		SetupBasicFactors();
 
-		_connector = gameObject.GetComponent<OCConnectorSingleton>() as OCConnectorSingleton;
+		_connector = OCConnectorSingleton.Instance;
 	}
 
 	void Update()
 	{
-
+		//UnityEngine.Debug.Log ("OCPhysiologicalModel::Update!");
 	}
 
 	void FixedUpdate()
 	{
+		//UnityEngine.Debug.Log ("OCPhysiologicalModel::FixedUpdate! UpdateTimer = " + _updateTimer.ToString () + ", UpdateInterval = " + _updateInterval.ToString());
 		_updateTimer += UnityEngine.Time.fixedDeltaTime;
 		if(_updateTimer >= _updateInterval)
 		{
@@ -234,6 +237,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 
 	public void TimeTick()
 	{
+		//UnityEngine.Debug.Log ("OCPhysiologicalModel::TimeTick!");
 		UpdateBasicFactors();
 		UpdateFitness();
 		UpdateEnergy();
@@ -254,8 +258,11 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 		
 		if(_connector != null)
 		{
+			//UnityEngine.Debug.Log ("OCPhysiologicalModel::TimeTick: _connector != null, yaay!!");
 			// Send updated values to OAC
-			_connector.SendMessage("sendAvatarSignalsAndTick", _factorSummaryMap);
+			//			_connector.SendMessage("sendAvatarSignalsAndTick", _factorSummaryMap);
+			_connector.SendAvatarSignalsAndTick(_factorSummaryMap);
+			
 
 			// Also update values holding by OCConnector, which would be displayed 
 			// in psi panel in unity
@@ -373,14 +380,13 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 		}
 
 		/**
-     * Update the value of physiological factor.
-     */
+     	* Update the value of physiological factor.
+     	*/
 		public void UpdateValue()
 		{
 			// (MILLISECONDS_PER_DAY / frequency) means how long the urgency will increase to 1
 			double delta = this.millisecondsPerTick / (MILLISECONDS_PER_DAY / frequency);
 			this.value = NumberUtil.zeroOneCut(this.value + delta);
-			//Debug.Log("Physiological: " + this.name + " " + this.value);
 		}
 
 		public void Increase(double delta)

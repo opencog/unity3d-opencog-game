@@ -44,7 +44,7 @@ namespace OpenCog.Utility.Console
 [Serializable]
 	
 #endregion
-public class Console : OCMonoBehaviour
+public class Console : OCSingletonMonoBehaviour<Console>
 {
 
 	//---------------------------------------------------------------------------
@@ -104,6 +104,15 @@ public class Console : OCMonoBehaviour
 			get { return _showChat; }
 			set { _showChat = value; }
 		}
+		
+	public static Console Instance
+	{
+		get 
+		{ 
+			return OpenCog.Utility.Console.Console.GetInstance<Console>();
+		}
+		
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -488,7 +497,7 @@ public class Console : OCMonoBehaviour
 		//_inputController.SetCharacterControl(true);
 	}
 		
-	private void AddConsoleEntry(string str, string sender, ConsoleEntry.Type type)
+	public void AddConsoleEntry(string str, string sender, ConsoleEntry.Type type)
 	{
 		if(str == null)
 		{
@@ -586,6 +595,21 @@ public class Console : OCMonoBehaviour
 					args.RemoveAt(0); // remove actual command name
 					string result = cc.Run(args);
 					AddConsoleEntry(result, null, ConsoleEntry.Type.RESULT);
+						
+//					AddConsoleEntry("Printing command line arguments...", "CommandLineArgumentor", ConsoleEntry.Type.COMMAND);
+						
+					try {
+						string[] commandLineArgs = System.Environment.GetCommandLineArgs();
+						
+						for (int iString = 0; iString < commandLineArgs.Length; iString++)
+						{
+							UnityEngine.Debug.Log ("Command line arg[" + iString + "] = " + commandLineArgs[iString]);
+								
+//							AddConsoleEntry("Command line arg[" + iString + "] = " + commandLineArgs[iString], "CommandLineArgumentor", ConsoleEntry.Type.SAY);
+						}
+					} catch (System.Exception ex) {
+						UnityEngine.Debug.Log ("OCWorldGenerator::Awake: An error occurred while parsing commandline args: " + ex.ToString());
+					}
 				}
 			}
 		}
@@ -699,7 +723,7 @@ public class Console : OCMonoBehaviour
 		NONE 
 	};
 		
-	private class ConsoleEntry
+	public class ConsoleEntry
 	{
 		public enum Type
 		{

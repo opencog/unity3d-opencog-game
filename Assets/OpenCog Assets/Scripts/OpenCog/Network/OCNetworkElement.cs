@@ -108,6 +108,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	protected bool _isLoggedIn = false;
 	protected bool _isListening = false;
 	private bool _isHandlingMessages = false;
+	protected bool _firstSendOfPhysiologicalFactors = true;
 	
 	protected string _verificationGuid ;
 		
@@ -303,16 +304,16 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="message">An unread message</param>
 	public void PullMessage(OCMessage message)
 	{
-		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
+//		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
 		lock(_messageQueue)
 		{
-			UnityEngine.Debug.Log ("Enqueueing a message (I hate this code!!)");
+//			UnityEngine.Debug.Log ("Enqueueing a message (I hate this code!!)");
 			_messageQueue.Enqueue(message);	
 		}
 		
 		lock(_unreadMessagesLock)
 		{
-			UnityEngine.Debug.Log ("Taking unreadMessagesCount from " + _unreadMessagesCount + " to " + (_unreadMessagesCount - 1).ToString() + ".");
+//			UnityEngine.Debug.Log ("Taking unreadMessagesCount from " + _unreadMessagesCount + " to " + (_unreadMessagesCount - 1).ToString() + ".");
 			_unreadMessagesCount--;
 		}
 	}
@@ -392,6 +393,13 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 		_routerIP = IPAddress.Parse(strConfigIP);
 		_routerPort = OCConfig.Instance.getInt("ROUTER_PORT", 16312);
+			
+//		if (_routerIP.ToString() == string.Empty)
+//		{
+//			_routerIP = IPAddress.Parse ("158.132.219.182");
+//			_routerPort = 16312;
+//			UnityEngine.Debug.Log ("Using hardcoded IP: " + _routerIP.ToString() + ":" + _routerPort);
+//		}
 	
 		OCServerListener.Instance.Initialize(this);
 		_listener = OCServerListener.Instance;
@@ -439,6 +447,19 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			IPEndPoint ipe = new IPEndPoint(_routerIP, _routerPort);
 				
 			UnityEngine.Debug.Log("Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...");
+				
+			// I'd kinda like to display this in the console...so people can see how it's connecting.
+				
+			OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+				
+			if (console == null)
+				UnityEngine.Debug.Log ("Nope, grabbing the console didn't work...");		
+			else
+			{
+				UnityEngine.Debug.Log ("Awesome grabbing the console worked...");		
+			
+				console.AddConsoleEntry("Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.COMMAND);
+			}
 				
 			// Start the async connection request.
 			System.IAsyncResult ar = asyncSocket
@@ -567,6 +588,9 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		command.Append(numberOfLines + NEWLINE);
 
 		command.Append(payload + NEWLINE);
+			
+//		if (message.Type != OCMessage.MessageType.TICK)
+//			UnityEngine.Debug.Log ("Sending: " + command.ToString ());
 		
 		bool result = Send(command.ToString());
 		
@@ -668,17 +692,17 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			
 		if(_messageQueue.Count > 0)
 		{
-			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
+//			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
 				
-			lock(_messageQueue)
-			{
-				int messageNumer = 0;
-					
-				foreach (OCMessage aMessage in _messageQueue)
-				{
-					UnityEngine.Debug.Log ("Message number " + messageNumer + " contains: " + aMessage.ToString());
-				}
-			}
+//			lock(_messageQueue)
+//			{
+//				int messageNumer = 0;
+//					
+//				foreach (OCMessage aMessage in _messageQueue)
+//				{
+//					UnityEngine.Debug.Log ("Message number " + messageNumer + " contains: " + aMessage.ToString());
+//				}
+//			}
 				
 			//long startTime = DateTime.Now.Ticks;
 			Queue<OCMessage> messagesToProcess;
@@ -688,7 +712,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				_messageQueue.Clear();
 			}
 				
-			UnityEngine.Debug.Log ("Weird copy from _messageQueue to messagesToProcess is complete! Time to get loopy!");
+			//UnityEngine.Debug.Log ("Weird copy from _messageQueue to messagesToProcess is complete! Time to get loopy!");
 				
 			foreach(OCMessage msg in messagesToProcess)
 			{
@@ -697,7 +721,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 					UnityEngine.Debug.Log("Null message to process.");
 				}
 
-				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
+//				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
 				
 				bool mustExit = ProcessNextMessage(msg);
 				

@@ -527,8 +527,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	// Then queue each element in the plan in the behaviour queue.
 	public void ReceiveActionPlan(List<XmlElement> actionPlan)
 	{
-		Debug.Log("In ReceiveActionPlan...");
-				
+//		Debug.Log("In ReceiveActionPlan...");
+//				
 //		string actionName = GetAttribute(element, OCEmbodimentXMLTags.NAME_ATTRIBUTE);
 //
 //	  int sequence = int.Parse(GetAttribute(element, OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE));

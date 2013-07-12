@@ -78,6 +78,7 @@ public class OCObjectMapInfo
 		private float _weight; // weight of an object
 		private UnityEngine.Vector3 _startMovePos; // the lastest time start to move position
 		private Dictionary<string, Embodiment.OCTag> _tags = new Dictionary<string, Embodiment.OCTag>();
+		private List<OCTag> _properties = new List<OCTag>();
 		private VISIBLE_STATUS _visibility = VISIBLE_STATUS.VISIBLE; // Set the visibility of an object to visible by default.
 
 		//---------------------------------------------------------------------------
@@ -174,11 +175,18 @@ public class OCObjectMapInfo
 			set { _visibility = value; }
 		}
 		
+//		[ProtoMember(10)]
+//		public Dictionary<string, Embodiment.OCTag> Properties {
+//			get { return _tags; }
+//			set { _tags = value; }
+//		}
+		
 		[ProtoMember(10)]
-		public Dictionary<string, Embodiment.OCTag> Properties {
-			get { return _tags; }
-			set { _tags = value; }
-		}
+        public List<OCTag> Properties
+        {
+            get { return _properties; }
+            set { _properties = value; }
+        }
 		
 		[ProtoMember(11)]
 		public float Weight {
@@ -259,6 +267,37 @@ public class OCObjectMapInfo
 			Uninitialize ();
 		}
 		
+		public OCTag CheckPropertyExist(string keyStr)
+        {
+            foreach (OCTag oct in _properties)
+            {
+                if (oct.key == keyStr)
+                    return oct;
+            }
+            return null;
+        }
+
+        public void AddProperty(string keyStr, string valueStr, System.Type type)
+        {
+            // Check if property existing
+            OCTag oct = CheckPropertyExist(keyStr);
+            if (oct != null)
+            {
+                _properties.Remove(oct);
+            }
+            _properties.Add(new OCTag(keyStr, valueStr, type));
+        }
+
+        public void RemoveProperty(string keyStr)
+        {
+            // Check if property existing
+            OCTag oct = CheckPropertyExist(keyStr);
+            if (oct != null)
+            {
+                _properties.Remove(oct);
+            }
+        }
+		
 		public bool CheckTagExists (string keyStr)
 		{
 			UnityEngine.Debug.Log ("Checking for tag '" + keyStr + "'.");
@@ -279,7 +318,8 @@ public class OCObjectMapInfo
 			
 			//UnityEngine.Debug.Log ("Adding tag '" + keyStr + "'");
 			if (!_tags.ContainsKey(keyStr))
-				_tags.Add(keyStr, new OCTag(valueStr, type));
+				_tags.Add(keyStr, new OCTag(keyStr, valueStr, type));
+			
 		}
 
 		public void RemoveTag (string keyStr)
@@ -341,7 +381,9 @@ public class OCObjectMapInfo
 		
 		public OCObjectMapInfo (UnityEngine.GameObject gameObject)
 		{
-			UnityEngine.Debug.Log ("OCObjectMapInfo::OCObjectMapInfo, passed object is of type: " + gameObject.GetType().ToString ());
+			UnityEngine.Debug.Log ("OCObjectMapInfo::OCObjectMapInfo, passed object is of type: " + gameObject.GetType().ToString () + ", and name " + gameObject.name);
+			
+			_id = gameObject.GetInstanceID().ToString();
 			
 //			// Get id of a game object
 //			_id = gameObject.GetInstanceID ().ToString ();
@@ -351,7 +393,7 @@ public class OCObjectMapInfo
 			_type = OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
 
 			// Convert from unity coordinate to OAC coordinate.
-			_position = Utility.VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
+			this.position = Utility.VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
 			// Get rotation
 			_rotation = new Utility.Rotation (gameObject.transform.rotation);
 			// Calculate the velocity later
@@ -372,15 +414,17 @@ public class OCObjectMapInfo
 				_length = 0.1f;
 			}
 
-			if (gameObject.tag == "OCA") {
+			if (gameObject.tag == "OCAGI") {
 				// This is an OC avatar, we will use the brain id instead of unity id.
 				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 
 				if (connector != null)
+				{
 					_id = connector.BrainID;
-				_type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
+					_type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
+				}
 
-			} else if (gameObject.tag == "Player") {
+			} else if (gameObject.tag == "OCNPC") {
 				// This is a human player avatar.
 				_type = OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE;
 				_length = OCObjectMapInfo.DEFAULT_AVATAR_LENGTH;
@@ -394,9 +438,16 @@ public class OCObjectMapInfo
 			} else {
 				_weight = 0.0f;
 			}
+			
+			if (gameObject.GetComponent<OpenCog.Extensions.OCConsumableData>() != null)
+			{
+				UnityEngine.Debug.Log ("Adding edible and foodbowl tags to battery with ID " + gameObject.GetInstanceID());
+				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
+				this.AddProperty ("foodbowl", "TRUE", System.Type.GetType ("System.Boolean"));
+			}
 
 			// Get a property manager instance
-			// TODO
+			// TODO: may need to re-enable this for other object types.
 //			OCPropertyManager manager = gameObject.GetComponent<OCPropertyManager> () as OCPropertyManager;
 //			if (manager != null) {
 //				// Copy all OC properties from the manager, if any.
