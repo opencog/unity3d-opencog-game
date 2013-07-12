@@ -304,16 +304,16 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="message">An unread message</param>
 	public void PullMessage(OCMessage message)
 	{
-		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
+//		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
 		lock(_messageQueue)
 		{
-			UnityEngine.Debug.Log ("Enqueueing a message (I hate this code!!)");
+//			UnityEngine.Debug.Log ("Enqueueing a message (I hate this code!!)");
 			_messageQueue.Enqueue(message);	
 		}
 		
 		lock(_unreadMessagesLock)
 		{
-			UnityEngine.Debug.Log ("Taking unreadMessagesCount from " + _unreadMessagesCount + " to " + (_unreadMessagesCount - 1).ToString() + ".");
+//			UnityEngine.Debug.Log ("Taking unreadMessagesCount from " + _unreadMessagesCount + " to " + (_unreadMessagesCount - 1).ToString() + ".");
 			_unreadMessagesCount--;
 		}
 	}
@@ -589,8 +589,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 		command.Append(payload + NEWLINE);
 			
-		if (message.Type != OCMessage.MessageType.TICK)
-			UnityEngine.Debug.Log ("Sending: " + command.ToString ());
+//		if (message.Type != OCMessage.MessageType.TICK)
+//			UnityEngine.Debug.Log ("Sending: " + command.ToString ());
 		
 		bool result = Send(command.ToString());
 		
@@ -692,7 +692,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			
 		if(_messageQueue.Count > 0)
 		{
-			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
+//			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
 				
 //			lock(_messageQueue)
 //			{
@@ -721,7 +721,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 					UnityEngine.Debug.Log("Null message to process.");
 				}
 
-				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
+//				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
 				
 				bool mustExit = ProcessNextMessage(msg);
 				

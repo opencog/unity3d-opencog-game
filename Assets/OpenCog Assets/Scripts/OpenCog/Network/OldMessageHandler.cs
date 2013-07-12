@@ -287,9 +287,9 @@ namespace OpenCog.Network
 				{
 					if(this.state == READING_MESSAGES)
 					{
-						UnityEngine.Debug.Log("onLine (NO_MORE_LINES_IN_CURRENT_MESSAGE): From [" + this.currentMessageFrom +
-						          "] to [" + this.currentMessageTo +
-						          "] Type [" + this.currentMessageType + "]: " + this.currentMessage.ToString());	
+//						UnityEngine.Debug.Log("onLine (NO_MORE_LINES_IN_CURRENT_MESSAGE): From [" + this.currentMessageFrom +
+//						          "] to [" + this.currentMessageTo +
+//						          "] Type [" + this.currentMessageType + "]: " + this.currentMessage.ToString());	
 						
 						OCMessage message = OCMessage.CreateMessage(this.currentMessageFrom,
 						                                  this.currentMessageTo,

@@ -780,15 +780,20 @@ public class OCAction : OCMonoBehaviour
 	public class OCActionArgs : EventArgs
 	{
 		/// <summary>
-		/// 	All actions are initiated by a source character or game object in the
+		/// All actions are initiated by a source character or game object in the
 		/// scene with zero, one, or two possible targets.  These OCID's may refer
 		/// to target objects themselves or simply dummy objects like waypoints
 		/// that specify locations (or other properties) for the action to target.
 		/// </summary>
 		private readonly GameObject _Source;
 		private readonly GameObject _StartTarget;
-		private readonly GameObject _EndTarget;
-
+		private GameObject _EndTarget;
+			
+		public OCActionArgs()
+		{
+			
+		}
+				
 		public OCActionArgs(GameObject source, GameObject startTarget, GameObject endTarget)
 		{
 			_Source = source;
@@ -798,7 +803,8 @@ public class OCAction : OCMonoBehaviour
 
 		public GameObject EndTarget
 		{
-			get { return _EndTarget;}
+			get { return _EndTarget; }
+			set { _EndTarget = value; }
 		}
 
 	

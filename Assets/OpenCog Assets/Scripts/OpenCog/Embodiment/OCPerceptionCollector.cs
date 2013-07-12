@@ -244,7 +244,7 @@ namespace OpenCog.Embodiment
 				}
 				else
 				{
-					UnityEngine.Debug.Log ("NPC with ID '" + npcObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+					//UnityEngine.Debug.Log ("NPC with ID '" + npcObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
 			}
 			

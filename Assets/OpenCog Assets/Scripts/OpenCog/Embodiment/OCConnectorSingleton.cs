@@ -551,7 +551,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public override bool ProcessNextMessage(OCMessage message)
 	{
-		UnityEngine.Debug.Log("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
+//		UnityEngine.Debug.Log("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
     
 		if(message.Type == OCMessage.MessageType.FEEDBACK)
 		{
@@ -582,7 +582,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		}
 		else
 		{
-			UnityEngine.Debug.Log ("Processing an interesting message type!");
+//			UnityEngine.Debug.Log ("Processing an interesting message type!");
 			// Get the plain text of this message(in XML format) and parse it.
 			if(_isInitialized)
 			{
@@ -1615,23 +1615,26 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		}
  
 	}
-
-		 /**
-     * Parse action plan and append the result into action list.
-     *
-     * @param element meta action in xml format
-     */
-    private void ParseActionPlanElement(XmlElement element)
+	
+	 /**
+	 * Parse action plan and append the result into action list.
+	 *
+	 * @param element meta action in xml format
+	 */
+    private void ParseActionPlanElement(XmlElement actionPlan)
     {
+		// TODO: Determine if we need this:
+		bool adjustCoordinate = true;
+		
         // Get the action performer id.
-        string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
+        string avatarId = actionPlan.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
         if (avatarId != _brainID)
         {
             // Usually this would not happen.
             OCLogger.Warn("Avatar[" + _ID + "]: This action plan is not for me.");
             return;
         }
- 
+		
         // Cancel current action and clear old action plan in the list.
         if (_actionsList.Count > 0)
         {
@@ -1640,19 +1643,86 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         }
 
         // Update current plan id and selected demand name.
-        _currentPlanId = element.GetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE);
-        _currentDemandName = element.GetAttribute(OCEmbodimentXMLTags.DEMAND_ATTRIBUTE);
+        _currentPlanId = actionPlan.GetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE);
+        _currentDemandName = actionPlan.GetAttribute(OCEmbodimentXMLTags.DEMAND_ATTRIBUTE);
         
-        XmlNodeList list = element.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_ELEMENT);
-				List<XmlElement> actionPlan = new List<XmlElement>();
+		// Get the action elements from the actionPlan
+        XmlNodeList list = actionPlan.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_ELEMENT);
 		
-				foreach(XmlNode node in list)
+		// TODO: I doubt we still need this?
+		//List<XmlElement> actionPlan = new List<XmlElement>();
+		
+		// list contains 'action' elements.
+		foreach(XmlNode actionNode in list)
+		{
+			// Cast actionNode to actionElement (XmlElement)
+			XmlElement actionElement = (XmlElement)actionNode;
+			
+			// Get attributes from actionElement (name, sequence)
+			string actionName = actionElement.GetAttribute(OCEmbodimentXMLTags.NAME_ATTRIBUTE);
+			int sequence = System.Int32.Parse(actionElement.GetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE));
+			
+			// Get the actionParameter nodes from the actionElement
+			XmlNodeList actionParameters = actionElement.GetElementsByTagName(OCEmbodimentXMLTags.PARAMETER_ELEMENT);
+			
+			// Prepare a new actionArgs object
+			OCAction.OCActionArgs actionArguments = new OCAction.OCActionArgs();
+			
+			// 'action' elements contain 'params'
+			foreach (XmlNode actionParameterNode in actionParameters)
+			{
+				// Cast actionParameterNode to an actionParameterElement (XmlElement)
+				XmlElement actionParameterElement = (XmlElement)actionParameterNode;
+				
+				// Get attributes from actionParameterElement
+				string actionParameterType = actionParameterElement.GetAttribute (OCEmbodimentXMLTags.TYPE_ATTRIBUTE);	
+				
+				switch (actionParameterType)
 				{
-					actionPlan.Add((XmlElement)node);
+					// If it's a vector, then it's a walk. So the target is a gameobject at the location of the vector.
+					case "vector":
+						XmlNodeList vectorParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
+						XmlElement vectorElement = (XmlElement)vectorParameterChildren.Item (0);
+						
+						float x = float.Parse(vectorElement.GetAttribute(OCEmbodimentXMLTags.X_ATTRIBUTE),System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+						float y = float.Parse(vectorElement.GetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE),System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+						float z = float.Parse(vectorElement.GetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE),System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+					
+						if (adjustCoordinate)
+						{
+							x += 0.5f;
+							y += 0.5f;
+							z += 0.5f;
+						}
+					
+						string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
+							
+						UnityEngine.GameObject vectorGameObject = new UnityEngine.GameObject(gameObjectString);
+					
+						vectorGameObject.transform.position = new Vector3(x, y, z);
+					
+						actionArguments.EndTarget = vectorGameObject;
+						break;	
+					// If it's an entity, then it's a grab or a consume. So the target is the battery.
+					case "entity":
+						XmlNodeList entityParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
+						XmlElement entityElement = (XmlElement)entityParameterChildren.Item (0);
+						
+						int entityID = System.Int32.Parse (entityElement.GetAttribute (OCEmbodimentXMLTags.ID_ATTRIBUTE));
+						string entityType = entityElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
+					
+						// Find battery object here.
+					
+						break;
 				}
+			}
+			
+			// Lake's function here.
+			//actionPlan.Add((XmlElement)node);
+		}
 
         // Start to perform an action in front of the action list.
-        _actionController.ReceiveActionPlan(actionPlan);// SendMessage("receiveActionPlan", actionPlan);
+        //_actionController.ReceiveActionPlan(actionPlan);// SendMessage("receiveActionPlan", actionPlan);
         //processNextAvatarAction();
     }
 	
