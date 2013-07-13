@@ -69,6 +69,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	{ { "walk", TreeType.Character_Move }
 	, { "grab", TreeType.Character_RightHandActivate }
 	, { "eat", TreeType.Character_Activate }
+	, { "say", TreeType.Character_Tell }
 	};
 			
 	// Assume that there's just one behaviour we'd like to execute at a given time
@@ -639,7 +640,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			_step.Behaviour.Reset();
 			if(_ActionPlanQueue.Count == 0) _ActionPlanQueue.Enqueue(_step);	
 			_step = _ActionPlanQueue.Dequeue();
-			if(result == BehaveResult.Success) Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
+			//if(result == BehaveResult.Success) Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
 		}
 
 		OpenCog.Map.OCMap map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
