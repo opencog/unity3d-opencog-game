@@ -101,7 +101,7 @@ namespace OpenCog.Embodiment
 	
 		//---------------------------------------------------------------------------
 			
-		public static bool HasBoundaryChuncks = true; // if has auto generated boundary chunks, like the stairs around the map
+		public static bool HasBoundaryChuncks = false; // if has auto generated boundary chunks, like the stairs around the map
 	
 		/// <summary>
 		/// Called when the script instance is being loaded.
@@ -687,7 +687,13 @@ namespace OpenCog.Embodiment
 				
 											if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > 138) ) {
 												//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+												
+												
+												// ORIGINAL VERSION PRE Y Z SWAP:
 												OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+												
+												// WARNING: Y AND Z SWAPPED HERE FOR OPENCOG'S SAKE:
+												//OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.z, viChunkPosition.y, iGlobalX, iGlobalZ, iGlobalY, globalBlock);
 				
 												terrainMapinfoList.Add (globalMapInfo);
 												
