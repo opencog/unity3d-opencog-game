@@ -314,9 +314,9 @@ namespace OpenCog.Embodiment
 					// The updated flag of the map info cache is false, meaning it has not been updated in last cycle.
 					// Why do we remove the visibility status tag??
 					// Anyway, we look up the object based on object id...so we get an objectMapInfo...and remove the visibility tag
-					_mapInfoCache [oid].RemoveTag ("visibility-status");
+					_mapInfoCache [oid].RemoveProperty ("visibility-status");
 					// And we add a 'remove' tag...guess that means removed = true!
-					_mapInfoCache [oid].AddTag ("remove", "true", System.Type.GetType ("System.Boolean"));
+					_mapInfoCache [oid].AddProperty ("remove", "true", System.Type.GetType ("System.Boolean"));
 					// Finally we add it's gameobject id to a hashset of disappeared objects...
 					disappearedObjects.Add (oid);
 				}
@@ -595,8 +595,8 @@ namespace OpenCog.Embodiment
 
 			// TODO: Get the right value from BlockData to put into mapinfo
 			OCObjectMapInfo mapinfo = new OCObjectMapInfo (chunkX, chunkY, chunkZ, globalBlockX, globalBlockY, globalBlockZ, _map.GetBlock (globalBlockX, globalBlockY, globalBlockZ));
-			mapinfo.RemoveTag ("visibility-status");
-			mapinfo.AddTag ("remove", "true", System.Type.GetType ("System.Boolean"));
+			mapinfo.RemoveProperty ("visibility-status");
+			mapinfo.AddProperty ("remove", "true", System.Type.GetType ("System.Boolean"));
 			//mapinfo.Visibility = OCObjectMapInfo.VISIBLE_STATUS.UNKNOWN;
 	
 			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo> ();
@@ -690,10 +690,10 @@ namespace OpenCog.Embodiment
 												
 												
 												// ORIGINAL VERSION PRE Y Z SWAP:
-												OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+												//OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
 												
 												// WARNING: Y AND Z SWAPPED HERE FOR OPENCOG'S SAKE:
-												//OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.z, viChunkPosition.y, iGlobalX, iGlobalZ, iGlobalY, globalBlock);
+												OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.z, viChunkPosition.y, iGlobalX, iGlobalZ, iGlobalY, globalBlock);
 				
 												terrainMapinfoList.Add (globalMapInfo);
 												

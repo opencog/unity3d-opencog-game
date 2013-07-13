@@ -298,42 +298,42 @@ public class OCObjectMapInfo
             }
         }
 		
-		public bool CheckTagExists (string keyStr)
-		{
-			UnityEngine.Debug.Log ("Checking for tag '" + keyStr + "'.");
-			
-			return _tags.ContainsKey(keyStr);
-			
-//			Embodiment.OCTag tagToCheck = _tags[keyStr];
+//		public bool CheckTagExists (string keyStr)
+//		{
+//			UnityEngine.Debug.Log ("Checking for tag '" + keyStr + "'.");
+//			
+//			return _tags.ContainsKey(keyStr);
+//			
+////			Embodiment.OCTag tagToCheck = _tags[keyStr];
+////
+////			return tagToCheck;
+//		}
 //
-//			return tagToCheck;
-		}
-
-		public void AddTag (string keyStr, string valueStr, System.Type type)
-		{
-			// Check if property exists
+//		public void AddTag (string keyStr, string valueStr, System.Type type)
+//		{
+//			// Check if property exists
+////			if (_tags.ContainsKey(keyStr)) {
+////				_tags.Remove (keyStr);
+////			}
+//			
+//			//UnityEngine.Debug.Log ("Adding tag '" + keyStr + "'");
+//			if (!_tags.ContainsKey(keyStr))
+//				_tags.Add(keyStr, new OCTag(keyStr, valueStr, type));
+//			
+//		}
+//
+//		public void RemoveTag (string keyStr)
+//		{
+//			// Check if property existing
 //			if (_tags.ContainsKey(keyStr)) {
 //				_tags.Remove (keyStr);
 //			}
-			
-			//UnityEngine.Debug.Log ("Adding tag '" + keyStr + "'");
-			if (!_tags.ContainsKey(keyStr))
-				_tags.Add(keyStr, new OCTag(keyStr, valueStr, type));
-			
-		}
-
-		public void RemoveTag (string keyStr)
-		{
-			// Check if property existing
-			if (_tags.ContainsKey(keyStr)) {
-				_tags.Remove (keyStr);
-			}
-		}
-
-		public void UpdateTag (string keyStr, string valueStr, System.Type type)
-		{
-			AddTag (keyStr, valueStr, type);
-		}
+//		}
+//
+//		public void UpdateTag (string keyStr, string valueStr, System.Type type)
+//		{
+//			AddTag (keyStr, valueStr, type);
+//		}
 
 		//---------------------------------------------------------------------------
 
@@ -456,14 +456,14 @@ public class OCObjectMapInfo
 //				}
 //			}
 
-			this.AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
-			this.AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
+			this.AddProperty ("visibility-status", "visible", System.Type.GetType("System.String"));
+			this.AddProperty ("detector", "true", System.Type.GetType("System.Boolean"));
 			
 			string gameObjectName = gameObject.name;
 			if (gameObjectName.Contains ("("))
 				gameObjectName = gameObjectName.Remove (gameObjectName.IndexOf ('('));
 
-			this.AddTag ("class", gameObjectName, System.Type.GetType("System.String"));
+			this.AddProperty ("class", gameObjectName, System.Type.GetType("System.String"));
 		}
 		
 		public OCObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
@@ -481,9 +481,18 @@ public class OCObjectMapInfo
 			_rotation = new OpenCog.Utility.Rotation(0, 0, 0);
 
 			// Add block properties
-			AddTag ("class", "block", System.Type.GetType("System.String"));
-			AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
-			AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
+//			AddTag ("class", "block", System.Type.GetType("System.String"));
+//			AddTag ("visibility-status", "visible", System.Type.GetType("System.String"));
+//			AddTag ("detector", "true", System.Type.GetType("System.Boolean"));
+			
+			AddProperty ("class", "block", System.Type.GetType("System.String"));
+			AddProperty ("visibility-status", "visible", System.Type.GetType("System.String"));
+			AddProperty ("detector", "true", System.Type.GetType("System.Boolean"));
+			
+			if (blockGlobalX == 9 && blockGlobalY == 140 && blockGlobalZ == 10)
+			{
+				UnityEngine.Debug.Log ("Break here plz...");	
+			}
 			
 			try {
 				string blockType = blockData.block.GetName();
@@ -502,17 +511,20 @@ public class OCObjectMapInfo
 			if (blockData.block == null)
 			{
 				// Report air
-				this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+//				this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+				this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
 			}
 			else
 			{
 				if (blockData.block.GetName().ToLower () == "air")
 				{
-					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+//					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
 				}
 				else
 				{
-					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "42", System.Type.GetType("System.String"));
+//					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
+					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
 				}
 			}
 			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
