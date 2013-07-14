@@ -125,7 +125,17 @@ public class OCAction : OCMonoBehaviour
 			bool shouldStart = true;
 			foreach(OCActionCondition precondition in PreCondition.GetInvocationList())
 			{
-				shouldStart &= precondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
+				OCActionArgs args = new OCActionArgs(_Source, _StartTarget, _EndTarget);
+				if(_ActionController != null)
+				{
+					if(_ActionController.Step.Arguments.Source != null)
+						args.Source = _ActionController.Step.Arguments.Source;
+					if(_ActionController.Step.Arguments.StartTarget != null)
+						args.StartTarget = _ActionController.Step.Arguments.StartTarget;
+					if(_ActionController.Step.Arguments.EndTarget != null)
+						args.EndTarget = _ActionController.Step.Arguments.EndTarget;
+				}
+				shouldStart &= precondition(this, args);
 				if(shouldStart == false)
 					break;
 			}
@@ -140,7 +150,17 @@ public class OCAction : OCMonoBehaviour
 			bool shouldContinue = true;
 			foreach(OCActionCondition invariant in InvariantCondition.GetInvocationList())
 			{
-				shouldContinue &= invariant(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
+				OCActionArgs args = new OCActionArgs(_Source, _StartTarget, _EndTarget);
+				if(_ActionController != null)
+				{
+					if(_ActionController.Step.Arguments.Source != null)
+						args.Source = _ActionController.Step.Arguments.Source;
+					if(_ActionController.Step.Arguments.StartTarget != null)
+						args.StartTarget = _ActionController.Step.Arguments.StartTarget;
+					if(_ActionController.Step.Arguments.EndTarget != null)
+						args.EndTarget = _ActionController.Step.Arguments.EndTarget;
+				}		
+				shouldContinue &= invariant(this, args);
 				if(shouldContinue == false)
 					break;
 			}
@@ -155,7 +175,17 @@ public class OCAction : OCMonoBehaviour
 			bool shouldEnd = true;
 			foreach(OCActionCondition postcondition in PostCondition.GetInvocationList())
 			{
-				shouldEnd &= postcondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
+				OCActionArgs args = new OCActionArgs(_Source, _StartTarget, _EndTarget);
+				if(_ActionController != null)
+				{
+					if(_ActionController.Step.Arguments.Source != null)
+						args.Source = _ActionController.Step.Arguments.Source;
+					if(_ActionController.Step.Arguments.StartTarget != null)
+						args.StartTarget = _ActionController.Step.Arguments.StartTarget;
+					if(_ActionController.Step.Arguments.EndTarget != null)
+						args.EndTarget = _ActionController.Step.Arguments.EndTarget;
+				}		
+				shouldEnd &= postcondition(this, args);
 				if(shouldEnd == false)
 					break;
 			}
@@ -339,7 +369,7 @@ public class OCAction : OCMonoBehaviour
 
 	public static bool IsSourceNotAnimating(OCAction action, OCActionArgs args)
 	{
-		return !args.Source.animation.isPlaying;
+		return !IsSourceAnimating(action, args);
 	}
 
 	public static bool IsSourceNotIdlingAnimation(OCAction action, OCActionArgs args)
@@ -790,8 +820,8 @@ public class OCAction : OCMonoBehaviour
 		/// to target objects themselves or simply dummy objects like waypoints
 		/// that specify locations (or other properties) for the action to target.
 		/// </summary>
-		private readonly GameObject _Source;
-		private readonly GameObject _StartTarget;
+		private GameObject _Source;
+		private GameObject _StartTarget;
 		private GameObject _EndTarget;
 			
 		public OCActionArgs()
@@ -816,12 +846,14 @@ public class OCAction : OCMonoBehaviour
 		public GameObject Source
 		{
 			get { return _Source;}
+			set { _Source = value; }
 		}
 
 
 		public GameObject StartTarget
 		{
 			get { return _StartTarget;}
+			set { _StartTarget = value; }
 		}
 	}
 

@@ -1804,6 +1804,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 				}
 			}
 			
+			if(_actionController == null)
+				_actionController = GameObject.FindGameObjectWithTag("OCAGI").GetComponent<OCActionController>();
+			
 			// Lake's function here.
 			if (actionName != "say")
 				_actionController.LoadActionPlanStep(actionName, actionArguments);

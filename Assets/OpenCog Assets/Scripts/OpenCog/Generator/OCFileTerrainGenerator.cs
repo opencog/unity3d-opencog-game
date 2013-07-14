@@ -118,6 +118,11 @@ public class OCFileTerrainGenerator
 
 											_map.SetBlock (new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
 											
+											if (blockPos.x == 9 && blockPos.y == 140 && blockPos.z == 10)
+											{
+												UnityEngine.Debug.Log ("Break here plz.");	
+											}
+											
 											Vector3i chunkPos = OpenCog.Map.OCChunk.ToChunkPosition(blockPos);
 											
 											_map.UpdateChunkLimits(chunkPos);	
