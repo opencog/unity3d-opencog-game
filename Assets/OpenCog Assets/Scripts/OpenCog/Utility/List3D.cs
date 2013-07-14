@@ -7,6 +7,9 @@ public class List3D<T>
 	private T[,,] list;
 	private Vector3i min, max;
 	
+	private bool minUnInitialized = true;
+	private bool maxUnInitialized = true;
+	
 	public List3D() {
 		list = new T[0, 0, 0];
 	}
@@ -16,6 +19,9 @@ public class List3D<T>
 		this.max = max;
 		Vector3i size = GetSize();
 		list = new T[size.z, size.y, size.x];
+		
+		minUnInitialized = false;
+		maxUnInitialized = false;
 	}
 	
 	
@@ -54,12 +60,21 @@ public class List3D<T>
 	}
 	
 	public void AddOrReplace(T obj, Vector3i pos) {
+		if (minUnInitialized)
+			min = pos;
+		
+		if (maxUnInitialized)
+			max = pos;
+		
 		Vector3i newMin = Vector3i.Min(min, pos);
 		Vector3i newMax = Vector3i.Max(max, pos+Vector3i.one);
-		if(newMin != min || newMax != max) {
+		if ((newMin != min || newMax != max) || (minUnInitialized || maxUnInitialized)) {
 			Resize(newMin, newMax);
 		}
 		Set(obj, pos);
+		
+		minUnInitialized = false;
+		maxUnInitialized = false;
 	}
 	public void AddOrReplace(T obj, int x, int y, int z) {
 		AddOrReplace(obj, new Vector3i(x, y, z));

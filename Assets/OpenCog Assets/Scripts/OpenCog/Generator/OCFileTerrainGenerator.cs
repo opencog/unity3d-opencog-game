@@ -118,7 +118,14 @@ public class OCFileTerrainGenerator
 
 											_map.SetBlock (new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
 											
+											if (blockPos.x == 9 && blockPos.y == 140 && blockPos.z == 10)
+											{
+												UnityEngine.Debug.Log ("Break here plz.");	
+											}
+											
 											Vector3i chunkPos = OpenCog.Map.OCChunk.ToChunkPosition(blockPos);
+											
+											_map.UpdateChunkLimits(chunkPos);	
 				
 											_map.SetDirty (chunkPos);
 
@@ -132,6 +139,11 @@ public class OCFileTerrainGenerator
 				} // End for (int iMCChunkZ = 0; iMCChunkZ < mcAnvilRegion.ZDim; iMCChunkZ++)
 			} // End for (int iMCChunkX  = 0; iMCChunkX < mcAnvilRegion.XDim; iMCChunkX++)
 		} // End foreach( Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager )
+		
+//		foreach (OpenCog.Map.OCChunk chunk in _map.Chu
+//		{
+//			
+//		}
 		
 		Debug.Log ("Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
 		

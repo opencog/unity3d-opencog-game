@@ -540,7 +540,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	/// <param name='chunkPosition'>
 	/// The position of the chunk to update the chunk limits with.
 	/// </param>
-	private void UpdateChunkLimits(Vector3i chunkPosition)
+	public void UpdateChunkLimits(Vector3i chunkPosition)
 	{
 		if (_chunkLimitsInitialized)
 		{
@@ -561,6 +561,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			_maxChunkX = chunkPosition.x;
 			_maxChunkY = chunkPosition.y;
 			_maxChunkZ = chunkPosition.z;
+				
+			_chunkLimitsInitialized = true;
 		}
 	}
 
