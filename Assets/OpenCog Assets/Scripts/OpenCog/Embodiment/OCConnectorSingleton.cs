@@ -1737,11 +1737,15 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							
 						UnityEngine.GameObject vectorGameObject = new UnityEngine.GameObject(gameObjectString);
 					
-						vectorGameObject.transform.position = new Vector3(x, y, z);
+						// Swapping Y and Z!!
+						// ORIGINAL:
+						// vectorGameObject.transform.position = new Vector3(x, y, z);
+						// UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
+						// SWAPPED:
+						vectorGameObject.transform.position = new Vector3(x, z, y);
+						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + z + ", " + y + "]");
 					
 						actionArguments.EndTarget = vectorGameObject;
-					
-						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
 					
 						break;	
 					// If it's an entity, then it's a grab or a consume. So the target is the battery.
