@@ -24,6 +24,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
+using OpenCog.Character;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -53,6 +54,7 @@ public class OCGameStateManager : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 	
 	private static OCGameStateManager _manager;
+	private static GameObject _player;
 			
 	//---------------------------------------------------------------------------
 
@@ -106,6 +108,7 @@ public class OCGameStateManager : OCMonoBehaviour
 
 	public void Start() {
 		Screen.showCursor = false;
+		_player = GameObject.FindGameObjectWithTag("Player");
 	}
 	
 	public void Update() {
@@ -118,6 +121,9 @@ public class OCGameStateManager : OCMonoBehaviour
 		
 		if(Input.GetKeyDown(KeyCode.Escape)) {
 			IsPause = !IsPause;
+			_player.GetComponent<OCInputController>().enabled = !IsPause;
+			_player.GetComponent<OCCharacterMotor>().enabled = !IsPause;
+			_player.GetComponent<MouseLook>().enabled = !IsPause;
 		}
 	}
 

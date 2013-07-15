@@ -25,6 +25,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
+using OpenCog.Character;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -78,9 +79,9 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	private bool _isShowingCompletionOptions = false; // Whether we are currently showing completion options
 	private bool _showChat = true;
 
-	// TODO: Search this file for the object below and re-enable all calls to it.
-	OpenCog.Character.OCInputController _inputController; // InputController to capture and return the consumer of input.
-
+	// TODO: (Scratch that) Search this file for the object below and re-enable all calls to it.
+	//OpenCog.Character.OCInputController _inputController; // InputController to capture and return the consumer of input.
+	GameObject _player = null;
 
 
 	//---------------------------------------------------------------------------
@@ -150,7 +151,8 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		// TODO: Disable line below
 		//_inputController = (GameObject.FindWithTag("CharacterInputController") as GameObject).GetComponent<CharacterInputController>();
 
-		_inputController = OpenCog.Character.OCInputController.Instance;
+		_player = GameObject.FindGameObjectWithTag("Player");
+		//_inputController = OpenCog.Character.OCInputController.Instance;
 
 
 		// Initialise position
@@ -202,11 +204,16 @@ public class Console : OCSingletonMonoBehaviour<Console>
 			if(_isShown && _movementState != Movement.DISAPPEARING)
 			{
 				CloseChatWindow();
+				_player.GetComponent<OCInputController>().enabled = true;
+				_player.GetComponent<OCCharacterMotor>().enabled = true;
+				_player.GetComponent<MouseLook>().enabled = true;	
 			}
 			else
 			{
 				_isShown = true;
-				_inputController.SetCharacterControl(false);
+				_player.GetComponent<OCInputController>().enabled = false;
+				_player.GetComponent<OCCharacterMotor>().enabled = false;
+				_player.GetComponent<MouseLook>().enabled = false;
                 
 				_movementState = Movement.APPEARING;
 			}
