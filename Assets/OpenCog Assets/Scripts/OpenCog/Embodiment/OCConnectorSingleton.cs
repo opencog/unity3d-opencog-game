@@ -2022,6 +2022,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       {
           _messagesToSend.Add(message);
       }
+		
+	UnityEngine.Debug.Log ("Queued message to report '" + success ? "done (success)" : "error" + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString ());
   }
   
   /**
@@ -2056,6 +2058,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       {
           _messagesToSend.Add(message);
       }
+		
+	UnityEngine.Debug.Log ("Queued message to report '" + success ? "done (success)" : "error" + "' on actionPlan " + planId);
   }
 
 	//---------------------------------------------------------------------------
