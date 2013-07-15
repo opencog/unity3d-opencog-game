@@ -1665,7 +1665,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     private void ParseActionPlanElement(XmlElement actionPlan)
     {
 		// TODO: Determine if we need this:
-		bool adjustCoordinate = true;
+		bool adjustCoordinate = false;
 		
         // Get the action performer id.
         string avatarId = actionPlan.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
