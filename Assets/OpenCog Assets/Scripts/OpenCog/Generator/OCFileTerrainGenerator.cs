@@ -8,6 +8,7 @@ public class OCFileTerrainGenerator
 	private string _fullMapPath;
 	private OpenCog.Map.OCMap _map;
 	private const string _baseMapFolder = "Assets\\Maps\\Resources";
+	private System.Collections.Generic.Dictionary<System.String, Vector3i> chunkList = new System.Collections.Generic.Dictionary<string, Vector3i>();
 	
 	public OCFileTerrainGenerator (OpenCog.Map.OCMap map, string mapName)
 	{
@@ -51,7 +52,7 @@ public class OCFileTerrainGenerator
 				
 		OpenCog.BlockSet.OCBlockSet blockSet = _map.GetBlockSet();
 				
-		_map.GetSunLightmap().SetSunHeight(3, 3, 3);
+		//_map.GetSunLightmap().SetSunHeight(20, 4, 4);
 
 		int createCount = 0;
 
@@ -129,7 +130,7 @@ public class OCFileTerrainGenerator
 												//Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
 												break;
 											default:
-												Debug.Log ("Unmapped BlockID: " + iBlockID);
+												//Debug.Log ("Unmapped BlockID: " + iBlockID);
 												break;
 											}
 											
@@ -149,6 +150,13 @@ public class OCFileTerrainGenerator
 									} // End for (int iMCChunkInternalZ = 0; iMCChunkInternalZ < mcChunkRef.Blocks.ZDim; iMCChunkInternalZ++)
 								} // End for (int iMCChunkInternalY = 0; iMCChunkInternalY < mcChunkRef.Blocks.YDim; iMCChunkInternalY++)
 								
+								string chunkCoord = chunkPos.x + ", " + chunkPos.z;
+								
+								if (!chunkList.ContainsKey(chunkCoord))
+								{
+									chunkList.Add (chunkCoord, chunkPos);
+								}
+								
 								if(iMCChunkY < iMCChunkInternalY / OCChunk.SIZE_Y)
 								{
 									_map.Chunks.AddOrReplace(lastChunk, lastChunkPos);
@@ -164,10 +172,10 @@ public class OCFileTerrainGenerator
 			} // End for (int iMCChunkX  = 0; iMCChunkX < mcAnvilRegion.XDim; iMCChunkX++)
 		} // End foreach( Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager )
 		
-//		foreach (OpenCog.Map.OCChunk chunk in _map.Chu
-//		{
-//			
-//		}
+		foreach (Vector3i chunkToLight in chunkList.Values)
+		{
+			OpenCog.Map.Lighting.OCChunkSunLightComputer.ComputeRays(_map, chunkToLight.x, chunkToLight.z);
+		}
 		
 		Debug.Log ("Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
 		
