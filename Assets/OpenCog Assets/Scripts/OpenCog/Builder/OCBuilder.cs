@@ -59,7 +59,7 @@ public class OCBuilder : OCMonoBehaviour
 
 	private UnityEngine.Transform _cameraTrans;
 
-	private CharacterCollider _characterCollider;
+	private CharacterController _characterCollider;
 
 	private OpenCog.Map.OCMap _map;
 
@@ -154,14 +154,14 @@ public class OCBuilder : OCMonoBehaviour
 			Vector3i? point = GetCursor(false);
 			if(point.HasValue)
 			{
-				bool empty = !BlockCharacterCollision.GetContactBlockCharacter(point.Value, transform.position, _characterCollider).HasValue;
+				bool empty = !BlockCharacterCollision.GetContactBlockCharacter(point.Value, transform.position, gameObject.GetComponent<CharacterController>()).HasValue;
 				if(empty)
 				{
 					OpenCog.Map.OCBlockData block = new OpenCog.Map.OCBlockData(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
 					block.SetDirection(GetDirection(-transform.forward));
 					_map.SetBlockAndRecompute(block, point.Value);
 						
-					if(_selectedBlock.GetName() == "Battery")
+					if(_selectedBlock != null && _selectedBlock.GetName() == "Battery")
 					{
 						GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
 						if (batteryPrefab == null)
@@ -243,7 +243,7 @@ public class OCBuilder : OCMonoBehaviour
 	private void Initialize()
 	{
 		_cameraTrans = transform.GetComponentInChildren<UnityEngine.Camera>().transform;
-		_characterCollider = GetComponent<CharacterCollider>();
+		_characterCollider = GetComponent<CharacterController>();
 		_map = (OpenCog.Map.OCMap)UnityEngine.GameObject.FindObjectOfType(typeof(OpenCog.Map.OCMap));
 		_cursor = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_cursor);
 	}

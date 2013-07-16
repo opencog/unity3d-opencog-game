@@ -503,7 +503,7 @@ public class OCObjectMapInfo
 					string lol = balls + "lol";	
 				}
 				
-				UnityEngine.Debug.Log ("BlockData.GetType = " + blockType);	
+				//UnityEngine.Debug.Log ("BlockData.GetType = " + blockType);	
 			} catch (System.Exception ex) {
 				
 			}

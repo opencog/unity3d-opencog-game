@@ -1665,7 +1665,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     private void ParseActionPlanElement(XmlElement actionPlan)
     {
 		// TODO: Determine if we need this:
-		bool adjustCoordinate = true;
+		bool adjustCoordinate = false;
 		
         // Get the action performer id.
         string avatarId = actionPlan.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
@@ -1737,11 +1737,17 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							
 						UnityEngine.GameObject vectorGameObject = new UnityEngine.GameObject(gameObjectString);
 					
-						vectorGameObject.transform.position = new Vector3(x, y, z);
+						// Swapping Y and Z!!
+					
+						// ORIGINAL:
+						// vectorGameObject.transform.position = new Vector3(x, y, z);
+						// UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
+					
+						// SWAPPED:
+						vectorGameObject.transform.position = new Vector3(x, z, y);
+						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + z + ", " + y + "]");
 					
 						actionArguments.EndTarget = vectorGameObject;
-					
-						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
 					
 						break;	
 					// If it's an entity, then it's a grab or a consume. So the target is the battery.
@@ -1801,14 +1807,25 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						
 						break;
 
-				}
-			}
+				} // end switch actionParameterType
+			} // end foreach actionParameterNode
+			
+			if(_actionController == null)
+				_actionController = GameObject.FindGameObjectWithTag("OCAGI").GetComponent<OCActionController>();
 			
 			// Lake's function here.
 			if (actionName != "say")
 				_actionController.LoadActionPlanStep(actionName, actionArguments);
+			
+			// Just for fun, I'm going to send success for everything for a while.
+			
+			this.SendActionStatus(_currentPlanId, sequence, actionName, true);
+			
 			//actionPlan.Add((XmlElement)node);
-		}
+		} // end foreach actionPlanElement 
+		
+		// And again for fun, send a whole action plan successful message:
+		this.SendActionPlanStatus(_currentPlanId, true);
 				
         // Start to perform an action in front of the action list.
         //_actionController.ReceiveActionPlan(actionPlan);// SendMessage("receiveActionPlan", actionPlan);
@@ -1821,8 +1838,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private void CancelAvatarActions()
     {
         // Ask action scheduler to stop all current actions.
-        _actionController.CancelActionPlan();// SendMessage("cancelCurrentActionPlan");
-        SendActionStatus(_currentPlanId, false);
+       _actionController.CancelActionPlan();// SendMessage("cancelCurrentActionPlan");
+        SendActionPlanStatus(_currentPlanId, false);
     }
 
 		  /// <summary>
@@ -1981,7 +1998,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    * @param action avatar action
    * @param success action result
    */
-  private void SendActionStatus(string planId, OCAction action, bool success)
+  private void SendActionStatus(string planId, int sequence, string actionName, bool success)
   {
       string timestamp = GetCurrentTimestamp();
       // Create a xml document
@@ -1995,8 +2012,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
 
 		// TODO: Fix the Sequence attribute on Action which is currently missing.
-      	//actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, action.Sequence.ToString());
-      actionElement.SetAttribute("name", action.FullName);
+      actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, sequence.ToString());
+      actionElement.SetAttribute("name", actionName);
       actionElement.SetAttribute("status", success ? "done" : "error");
 
       OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
@@ -2005,6 +2022,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       {
           _messagesToSend.Add(message);
       }
+		
+	UnityEngine.Debug.Log ("Queued message to report '" + (success ? "done (success)" : "error" + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString ()));
   }
   
   /**
@@ -2020,7 +2039,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    * @param planId plan id
    * @param success action result
    */
-  private void SendActionStatus(string planId, bool success)
+  private void SendActionPlanStatus(string planId, bool success)
   {
       string timestamp = GetCurrentTimestamp();
       XmlDocument doc = new XmlDocument();
@@ -2039,6 +2058,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
       {
           _messagesToSend.Add(message);
       }
+		
+	UnityEngine.Debug.Log ("Queued message to report '" + (success ? "done (success)" : "error" + "' on actionPlan " + planId));
   }
 
 	//---------------------------------------------------------------------------

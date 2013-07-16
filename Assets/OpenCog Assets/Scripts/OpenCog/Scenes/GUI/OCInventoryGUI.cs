@@ -24,6 +24,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
+using OpenCog.Character;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -54,6 +55,7 @@ public class OCInventoryGUI : OCMonoBehaviour
 	
 	private OpenCog.BlockSet.OCBlockSet _blockSet;
 	private OpenCog.Builder.OCBuilder _builder;
+	private GameObject _player;
 
 	private bool _show = false;
 	// Member is not static, but a variable with the same name is used in DrawList
@@ -84,14 +86,17 @@ public class OCInventoryGUI : OCMonoBehaviour
 	public void Awake () {
 		OpenCog.Map.OCMap map = (OpenCog.Map.OCMap) GameObject.FindObjectOfType( typeof(OpenCog.Map.OCMap) );
 		_blockSet = map.GetBlockSet();
-		GameObject player = GameObject.FindGameObjectWithTag( "Player" );
-		_builder = (OpenCog.Builder.OCBuilder) player.GetComponent<OpenCog.Builder.OCBuilder>();
+		_player = GameObject.FindGameObjectWithTag( "Player" );
+		_builder = (OpenCog.Builder.OCBuilder) _player.GetComponent<OpenCog.Builder.OCBuilder>();
 	}
 	
 	public void Update () {
 		if( Input.GetKeyDown(KeyCode.E) && OCGameStateManager.IsPlaying ) {
 			_show = !_show;
 			Screen.showCursor = _show;
+			_player.GetComponent<OCInputController>().enabled = !_show;
+			_player.GetComponent<OCCharacterMotor>().enabled = !_show;
+			_player.GetComponent<MouseLook>().enabled = !_show;
 		}
 		if(OCGameStateManager.IsPause) _show = false;
 	}
