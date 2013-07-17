@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using OpenCog.Map;
 
 public class OCFileTerrainGenerator
@@ -8,7 +8,31 @@ public class OCFileTerrainGenerator
 	private string _fullMapPath;
 	private OpenCog.Map.OCMap _map;
 	private const string _baseMapFolder = "Assets\\Maps\\Resources";
-	private System.Collections.Generic.Dictionary<System.String, Vector3i> chunkList = new System.Collections.Generic.Dictionary<string, Vector3i>();
+	private Dictionary<System.String, Vector3i> chunkList = new System.Collections.Generic.Dictionary<string, Vector3i>();
+	
+	private Dictionary<int, int> mcToOCBlockDictionary = new Dictionary<int, int>()
+	{ {0, -1}
+	, {1, 4}
+	, {2, 1}
+	, {3, 0}
+	, {4, 5}
+	, {5, 12}
+	, {6, 15}
+	, {7, 6}
+	, {8, 8}
+	, {9, 8}
+	, {10, 25}
+	, {11, 25}
+	, {12, 3}
+	, {16, 7}
+	, {17, 11}
+	, {18, 13}
+	, {26, 26}		
+	, {35, 15}
+	, {46, 22}
+	, {62, 24}
+	, {90, 29}
+	};
 	
 	public OCFileTerrainGenerator (OpenCog.Map.OCMap map, string mapName)
 	{
@@ -105,47 +129,64 @@ public class OCFileTerrainGenerator
 										
 										if (iBlockID != 0)
 										{
-											Vector3i blockPos = new Vector3i(iMCChunkInternalX, iMCChunkInternalY % OCChunk.SIZE_Y, iMCChunkInternalZ);											
+											Vector3i blockPos = new Vector3i(iMCChunkInternalZ, iMCChunkInternalY % OCChunk.SIZE_Y, iMCChunkInternalX);											
 											
-											int ourBlockID = 0;
+											int ourBlockID = -1;
 											
-											switch (iBlockID)
+//											switch (iBlockID)
+//											{
+//											case 3: // Dirt to first grass
+//												ourBlockID = 1;
+//												break;
+//											case 12: // Grass to grass
+//												ourBlockID = 1;
+//												break;
+//											case 13: // Gravel to stone
+//												ourBlockID = 4;
+//												break;
+//											case 1: // Stone to second stone
+//												ourBlockID = 5;
+//												break;
+//											case 16: // Coal ore to fungus
+//												ourBlockID = 17;
+//												break;
+//											case 15: // Iron ore to pumpkin
+//												ourBlockID = 20;
+//												break;
+//											case 9: // Water to water
+//												ourBlockID = 8;
+//												//Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
+//												break;
+////											case 2:
+////												iBlockID = 16;
+////												break;
+////											case 4:
+////												iBlockID = 16;
+////												break;
+////											case 18:
+////												iBlockID = 16;
+////												break;
+//											default: 
+//											{
+//												//Debug.Log ("Unmapped BlockID: " + iBlockID);
+//												
+//												if (!unmappedBlockTypes.ContainsKey (iBlockID))
+//												{
+//													unmappedBlockTypes.Add (iBlockID, 1);	
+//												}
+//												else
+//												{
+//													unmappedBlockTypes[iBlockID] += 1;	
+//												}
+//												
+//												break;
+//												}
+//											}
+											
+											if(mcToOCBlockDictionary.ContainsKey(iBlockID))
+												ourBlockID = mcToOCBlockDictionary[iBlockID];
+											else
 											{
-											case 3: // Dirt to first grass
-												ourBlockID = 1;
-												break;
-											case 12: // Grass to grass
-												ourBlockID = 1;
-												break;
-											case 13: // Gravel to stone
-												ourBlockID = 4;
-												break;
-											case 1: // Stone to second stone
-												ourBlockID = 5;
-												break;
-											case 16: // Coal ore to fungus
-												ourBlockID = 17;
-												break;
-											case 15: // Iron ore to pumpkin
-												ourBlockID = 20;
-												break;
-											case 9: // Water to water
-												ourBlockID = 8;
-												//Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
-												break;
-//											case 2:
-//												iBlockID = 16;
-//												break;
-//											case 4:
-//												iBlockID = 16;
-//												break;
-//											case 18:
-//												iBlockID = 16;
-//												break;
-											default: 
-											{
-												//Debug.Log ("Unmapped BlockID: " + iBlockID);
-												
 												if (!unmappedBlockTypes.ContainsKey (iBlockID))
 												{
 													unmappedBlockTypes.Add (iBlockID, 1);	
@@ -154,17 +195,15 @@ public class OCFileTerrainGenerator
 												{
 													unmappedBlockTypes[iBlockID] += 1;	
 												}
-												
-												break;
-												}
 											}
 											
-											if (ourBlockID != 0)
+											if (ourBlockID != -1)
 											{
 												OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(ourBlockID);
 											
 												chunk.SetBlock(new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
-	
+												OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition (_map, blockPos);
+												
 												createCount += 1;
 											}
 										}
@@ -196,6 +235,7 @@ public class OCFileTerrainGenerator
 		foreach (Vector3i chunkToLight in chunkList.Values)
 		{
 			OpenCog.Map.Lighting.OCChunkSunLightComputer.ComputeRays(_map, chunkToLight.x, chunkToLight.z);
+			OpenCog.Map.Lighting.OCChunkSunLightComputer.Scatter(_map, null, chunkToLight.x, chunkToLight.z);
 		}
 		
 		foreach (System.Collections.Generic.KeyValuePair<int, int> unmappedBlockData in unmappedBlockTypes)

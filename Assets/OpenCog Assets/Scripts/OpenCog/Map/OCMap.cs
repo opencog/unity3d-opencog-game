@@ -573,7 +573,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		yield return null;
 		
 		for (int i = objects.Length -1; i >= 0; i--) {
-			if (objects [i].gameObject.renderer) {
+			if (objects [i] != null && objects [i].gameObject != null && objects [i].gameObject.renderer) {
 				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
 				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
 
