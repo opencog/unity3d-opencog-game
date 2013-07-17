@@ -431,6 +431,11 @@ public class OCObjectMapInfo
 				_width = OCObjectMapInfo.DEFAULT_AVATAR_WIDTH;
 				_height = OCObjectMapInfo.DEFAULT_AVATAR_HEIGHT;
 			}
+			
+			if (gameObject.name == "Hearth")
+			{
+				this.AddProperty("petHome", "TRUE", System.Type.GetType("System.Boolean"));	
+			}
 
 			// Get weight
 			if (gameObject.rigidbody != null) {
