@@ -216,15 +216,19 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Update()
 	{
-		if (!_isListening)
-			StartListening();
-		else if (_listener.IsReady && !_isHandlingMessages) {
-			StartHandling();
-			Pulse();
+		if (_isEstablished)
+		{
+			if (!_isListening)
+				StartListening();
+			else if (_listener.IsReady && !_isHandlingMessages) {
+				StartHandling();
+				Pulse();
+			}
+			else {
+				Pulse();
+			}		
 		}
-		else {
-			Pulse();
-		}
+		
 			
 		OCLogger.Fine(this.name + " is updated.");
 	}
