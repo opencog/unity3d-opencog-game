@@ -128,7 +128,7 @@ namespace OpenCog.Embodiment
 		public void Update ()
 		{
 			// Check if OCConnector has been initialized (a.k.a connecting to the router).
-			if (!this._connector.IsInitialized) {
+			if (!_connector.IsInitialized) {
 				return;
 			}
 			
@@ -142,10 +142,24 @@ namespace OpenCog.Embodiment
 				// So I moved the calls below to the same order.
 				
 				if (!_hasStartedPerceivingTerrainForTheFirstTime)
+				{
+					// We only want this coroutine to launch once, so:
+					_hasStartedPerceivingTerrainForTheFirstTime = true;
+					
 					StartCoroutine (this.PerceiveTerrain ());
+					
+					// Once PerceiveTerrain (blocks) has finished, _hasPerceivedTerrainForFirstTime -> true;
+				}
+				
 				
 				if (_hasPerceivedTerrainForFirstTime)					
+				{
+					// Once _hasPerceivedTerrainForFirstTime is true, we start perceiving the world (characters, batteries, other non-block entities)
+					
 					this.PerceiveWorld ();
+					
+					// This sets _hasPerceivedWorldForTheFirstTime to true, so after this it only transmits updates (disappeared / created batteries, etc)
+				}
 				
 				if (_hasPerceivedWorldForTheFirstTime)
 					PerceiveStateChanges ();
@@ -640,7 +654,6 @@ namespace OpenCog.Embodiment
 				System.DateTime dtStartPerceptTerrain = System.DateTime.Now;
 				
 				UnityEngine.Debug.Log ("Terra incognita...better start perceiving it...");
-				_hasStartedPerceivingTerrainForTheFirstTime = true;
 				
 				List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo> ();
 				OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
@@ -719,8 +732,6 @@ namespace OpenCog.Embodiment
 												{
 													emptyBlocksProcessed += 1;	
 												}
-													
-													
 												
 												blocksProcessed += 1;
 												
@@ -744,14 +755,12 @@ namespace OpenCog.Embodiment
 								} // if chunk.isEmpty
 								else
 								{
-									UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is empty.");	
+									//UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is empty.");	
 								}	
 							} else {
 								// if chunk != null
 								UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is null.");	
 							}
-						
-						
 						}
 					}
 				}
@@ -771,7 +780,7 @@ namespace OpenCog.Embodiment
 					
 				// Communicate completion of initial terrain perception
 				if (!_hasPerceivedTerrainForFirstTime) {
-					PerceiveWorld();
+					//PerceiveWorld();
 						
 					UnityEngine.Debug.Log ("Time to send the 'finished perceiving terrain' message!");
 					_connector.SendFinishPerceptTerrain ();
