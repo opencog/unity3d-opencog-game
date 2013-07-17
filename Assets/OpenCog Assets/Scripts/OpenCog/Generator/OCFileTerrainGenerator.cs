@@ -8,6 +8,7 @@ public class OCFileTerrainGenerator
 	private string _fullMapPath;
 	private OpenCog.Map.OCMap _map;
 	private const string _baseMapFolder = "Assets\\Maps\\Resources";
+	private System.Collections.Generic.Dictionary<System.String, Vector3i> chunkList = new System.Collections.Generic.Dictionary<string, Vector3i>();
 	
 	public OCFileTerrainGenerator (OpenCog.Map.OCMap map, string mapName)
 	{
@@ -51,9 +52,11 @@ public class OCFileTerrainGenerator
 				
 		OpenCog.BlockSet.OCBlockSet blockSet = _map.GetBlockSet();
 				
-		_map.GetSunLightmap().SetSunHeight(3, 3, 3);
+		//_map.GetSunLightmap().SetSunHeight(20, 4, 4);
 
 		int createCount = 0;
+		
+		System.Collections.Generic.Dictionary<int, int> unmappedBlockTypes = new System.Collections.Generic.Dictionary<int, int>();
 
 		//Debug.Log("In LoadLevel, there are " + blockSet.BlockCount + " blocks available.");
 		
@@ -104,50 +107,76 @@ public class OCFileTerrainGenerator
 										{
 											Vector3i blockPos = new Vector3i(iMCChunkInternalX, iMCChunkInternalY % OCChunk.SIZE_Y, iMCChunkInternalZ);											
 											
+											int ourBlockID = 0;
+											
 											switch (iBlockID)
 											{
 											case 3: // Dirt to first grass
-												iBlockID = 1;
+												ourBlockID = 1;
 												break;
 											case 12: // Grass to grass
-												iBlockID = 1;
+												ourBlockID = 1;
 												break;
 											case 13: // Gravel to stone
-												iBlockID = 4;
+												ourBlockID = 4;
 												break;
 											case 1: // Stone to second stone
-												iBlockID = 5;
+												ourBlockID = 5;
 												break;
 											case 16: // Coal ore to fungus
-												iBlockID = 17;
+												ourBlockID = 17;
 												break;
 											case 15: // Iron ore to pumpkin
-												iBlockID = 20;
+												ourBlockID = 20;
 												break;
 											case 9: // Water to water
-												iBlockID = 8;
+												ourBlockID = 8;
 												//Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
 												break;
-											default:
-												Debug.Log ("Unmapped BlockID: " + iBlockID);
+//											case 2:
+//												iBlockID = 16;
+//												break;
+//											case 4:
+//												iBlockID = 16;
+//												break;
+//											case 18:
+//												iBlockID = 16;
+//												break;
+											default: 
+											{
+												//Debug.Log ("Unmapped BlockID: " + iBlockID);
+												
+												if (!unmappedBlockTypes.ContainsKey (iBlockID))
+												{
+													unmappedBlockTypes.Add (iBlockID, 1);	
+												}
+												else
+												{
+													unmappedBlockTypes[iBlockID] += 1;	
+												}
+												
 												break;
+												}
 											}
 											
-											OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(iBlockID);
+											if (ourBlockID != 0)
+											{
+												OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(ourBlockID);
 											
-											chunk.SetBlock(new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
-
-											
-											
-//											if (blockPos.x == 9 && blockPos.y == 140 && blockPos.z == 10)
-//											{
-//												UnityEngine.Debug.Log ("Break here plz.");	
-//											}
-
-											createCount += 1;
+												chunk.SetBlock(new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
+	
+												createCount += 1;
+											}
 										}
 									} // End for (int iMCChunkInternalZ = 0; iMCChunkInternalZ < mcChunkRef.Blocks.ZDim; iMCChunkInternalZ++)
 								} // End for (int iMCChunkInternalY = 0; iMCChunkInternalY < mcChunkRef.Blocks.YDim; iMCChunkInternalY++)
+								
+								string chunkCoord = chunkPos.x + ", " + chunkPos.z;
+								
+								if (!chunkList.ContainsKey(chunkCoord))
+								{
+									chunkList.Add (chunkCoord, chunkPos);
+								}
 								
 								if(iMCChunkY < iMCChunkInternalY / OCChunk.SIZE_Y)
 								{
@@ -164,10 +193,15 @@ public class OCFileTerrainGenerator
 			} // End for (int iMCChunkX  = 0; iMCChunkX < mcAnvilRegion.XDim; iMCChunkX++)
 		} // End foreach( Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager )
 		
-//		foreach (OpenCog.Map.OCChunk chunk in _map.Chu
-//		{
-//			
-//		}
+		foreach (Vector3i chunkToLight in chunkList.Values)
+		{
+			OpenCog.Map.Lighting.OCChunkSunLightComputer.ComputeRays(_map, chunkToLight.x, chunkToLight.z);
+		}
+		
+		foreach (System.Collections.Generic.KeyValuePair<int, int> unmappedBlockData in unmappedBlockTypes)
+		{
+			UnityEngine.Debug.Log ("Unmapped BlockID '" + unmappedBlockData.Key + "' found " + unmappedBlockData.Value + " times.");	
+		}
 		
 		Debug.Log ("Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
 		

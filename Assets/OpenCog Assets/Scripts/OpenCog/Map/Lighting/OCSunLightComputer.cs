@@ -12,10 +12,10 @@ namespace OpenCog.Map.Lighting
 		public const byte STEP_LIGHT = 1;
 		
 		private static List<Vector3i> list = new List<Vector3i>();
-		
 	
 		public static void ComputeRayAtPosition(OCMap map, int x, int z) {
 			int maxY = map.GetMaxY( x, z );
+			
 			map.GetSunLightmap().SetSunHeight(maxY+1, x, z);
 		}
 		

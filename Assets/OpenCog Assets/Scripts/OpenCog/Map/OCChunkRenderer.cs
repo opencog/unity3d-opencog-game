@@ -187,7 +187,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 		if (!_dirty)
 		{
 			_dirty = true;
-			UnityEngine.Debug.Log ("I just made the chunk at [" + _chunk.GetPosition().x + ", " + _chunk.GetPosition().y + ", " + _chunk.GetPosition().z + "] dirty.");	
+			//UnityEngine.Debug.Log ("I just made the chunk at [" + _chunk.GetPosition().x + ", " + _chunk.GetPosition().y + ", " + _chunk.GetPosition().z + "] dirty.");	
 		}
 	}
 	public void SetLightDirty() {
