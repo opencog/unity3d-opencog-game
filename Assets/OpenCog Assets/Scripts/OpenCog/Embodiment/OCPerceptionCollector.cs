@@ -631,10 +631,14 @@ namespace OpenCog.Embodiment
 		{
 			UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveTerrain");
 			
+			
+			
 			if (_hasPerceivedTerrainForFirstTime) {
 				UnityEngine.Debug.Log ("I've seen this terrain before...I'm out of here...");
 				yield return null;
 			} else {
+				System.DateTime dtStartPerceptTerrain = System.DateTime.Now;
+				
 				UnityEngine.Debug.Log ("Terra incognita...better start perceiving it...");
 				_hasStartedPerceivingTerrainForTheFirstTime = true;
 				
@@ -657,86 +661,94 @@ namespace OpenCog.Embodiment
 							OpenCog.Map.OCChunk chunk = map.Chunks.Get (x, y, z);
 						
 							if (chunk != null) {
-								// chunk position is the coordinates of the chunk.
-								Vector3i viChunkPosition = chunk.GetPosition ();
+								if (!chunk.IsEmpty)
+								{
+									// chunk position is the coordinates of the chunk.
+									Vector3i viChunkPosition = chunk.GetPosition ();
+					
+									UnityEngine.Debug.Log ("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
 				
-								UnityEngine.Debug.Log ("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
-			
-								// Maybe do some empty check here...there will be many empty chunks. But it might be
-								// equally expensive without setting new empty flags while creating chunks.
-								
-								int startX = viChunkPosition.x * Map.OCChunk.SIZE_X;
-								int startY = viChunkPosition.y * Map.OCChunk.SIZE_Y;
-								int startZ = viChunkPosition.z * Map.OCChunk.SIZE_Z;
-								
-								int endX = ((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X) - 1;
-								int endY = ((viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y) - 1;
-								int endZ = ((viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z) - 1;
-								
-								Vector3i viChunkStartingCorner = new Vector3i(startX, startY, startZ);
-								Vector3i viChunkEndingCorner = new Vector3i(endX, endY, endZ);
-				
-								UnityEngine.Debug.Log ("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
-								UnityEngine.Debug.Log ("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
-				
-								for (int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++) {
-									for (int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++) {
-										for (int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++) {
-											// Ok...now we have some globalz....
-											OpenCog.Map.OCBlockData globalBlock = map.GetBlock (iGlobalX, iGlobalY, iGlobalZ);
-				
-											if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > 138) ) {
-												//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
-												
-												
-												// ORIGINAL VERSION PRE Y Z SWAP:
-												//OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
-												
-												// WARNING: Y AND Z SWAPPED HERE FOR OPENCOG'S SAKE:
-												OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.z, viChunkPosition.y, iGlobalX, iGlobalZ, iGlobalY, globalBlock);
-				
-												terrainMapinfoList.Add (globalMapInfo);
-												
-//												if (globalMapInfo == null)
-//													UnityEngine.Debug.Log ("globalMapInfo == null");
-				
-												// in case there are too many blocks, we send every 5000 blocks per message
-												if (terrainMapinfoList.Count >= blocksPerTransmission) {
-													UnityEngine.Debug.Log ("Sending terrain info...");
-													//_connector.SendTerrainInfoMessage (terrainMapinfoList, true);
-													terrainMapinfoList.Clear ();
+									// Maybe do some empty check here...there will be many empty chunks. But it might be
+									// equally expensive without setting new empty flags while creating chunks.
+									
+									int startX = viChunkPosition.x * Map.OCChunk.SIZE_X;
+									int startY = viChunkPosition.y * Map.OCChunk.SIZE_Y;
+									int startZ = viChunkPosition.z * Map.OCChunk.SIZE_Z;
+									
+									int endX = ((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X) - 1;
+									int endY = ((viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y) - 1;
+									int endZ = ((viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z) - 1;
+									
+									Vector3i viChunkStartingCorner = new Vector3i(startX, startY, startZ);
+									Vector3i viChunkEndingCorner = new Vector3i(endX, endY, endZ);
+					
+									UnityEngine.Debug.Log ("   Processing blocks from [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
+									UnityEngine.Debug.Log ("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
+					
+									for (int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++) {
+										for (int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++) {
+											for (int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++) {
+												// Ok...now we have some globalz....
+												OpenCog.Map.OCBlockData globalBlock = map.GetBlock (iGlobalX, iGlobalY, iGlobalZ);
+					
+												if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > 43) ) {
+													//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
 													
-													yield return null;
-												}
-											} // end if (!globalBlock.IsEmpty())
-											else
-											{
-												emptyBlocksProcessed += 1;	
-											}
-												
-												
-											
-											blocksProcessed += 1;
-											
-											if (blocksProcessed % blocksPerDebugEntry == 0) {
-												System.DateTime dtProcessingTick = System.DateTime.Now;
 													
-												UnityEngine.Debug.Log ("Processed " + blocksPerDebugEntry + " blocks (" + (blocksProcessed - blocksPerDebugEntry) + " - " + blocksProcessed + ") in " + dtProcessingTick.Subtract (dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
+													// ORIGINAL VERSION PRE Y Z SWAP:
+													//OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+													
+													// WARNING: Y AND Z SWAPPED HERE FOR OPENCOG'S SAKE:
+													OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.z, viChunkPosition.y, iGlobalX, iGlobalZ, iGlobalY, globalBlock);
+					
+													terrainMapinfoList.Add (globalMapInfo);
+													
+	//												if (globalMapInfo == null)
+	//													UnityEngine.Debug.Log ("globalMapInfo == null");
+					
+													// in case there are too many blocks, we send every 5000 blocks per message
+													if (terrainMapinfoList.Count >= blocksPerTransmission) {
+														UnityEngine.Debug.Log ("Sending terrain info...");
+														_connector.SendTerrainInfoMessage (terrainMapinfoList, true);
+														terrainMapinfoList.Clear ();
 														
-												emptyBlocksProcessed = 0;
+														yield return null;
+													}
+												} // end if (!globalBlock.IsEmpty())
+												else
+												{
+													emptyBlocksProcessed += 1;	
+												}
+													
+													
 												
-												dtStartProcessing = System.DateTime.Now;
-											}
-				
-										} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
-										
-										yield return null;
-				
-									} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
-				
-								} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
+												blocksProcessed += 1;
+												
+												if (blocksProcessed % blocksPerDebugEntry == 0) {
+													System.DateTime dtProcessingTick = System.DateTime.Now;
+														
+													UnityEngine.Debug.Log ("Processed " + blocksPerDebugEntry + " blocks (" + (blocksProcessed - blocksPerDebugEntry) + " - " + blocksProcessed + ") in " + dtProcessingTick.Subtract (dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
+															
+													emptyBlocksProcessed = 0;
+													
+													dtStartProcessing = System.DateTime.Now;
+												}
+					
+											} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
+											
+											yield return null;
+					
+										} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
+					
+									} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)	
+								} // if chunk.isEmpty
+								else
+								{
+									UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is empty.");	
+								}	
 							} else {
-								//UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is null.");	
+								// if chunk != null
+								UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is null.");	
 							}
 						
 						
@@ -757,8 +769,6 @@ namespace OpenCog.Embodiment
 					UnityEngine.Debug.Log ("   Nope, looks like we already sent everything!");	
 				}
 					
-					
-
 				// Communicate completion of initial terrain perception
 				if (!_hasPerceivedTerrainForFirstTime) {
 					PerceiveWorld();
@@ -771,6 +781,8 @@ namespace OpenCog.Embodiment
 				{
 					UnityEngine.Debug.Log ("That's weird...it thinks _hasPerceivedTerrainForFirstTime is true already...");	
 				}
+				
+				UnityEngine.Debug.Log ("Finished perceiving terrain, total time taken: " + System.DateTime.Now.Subtract (dtStartPerceptTerrain).TotalSeconds);
 			}
 		}
 		
