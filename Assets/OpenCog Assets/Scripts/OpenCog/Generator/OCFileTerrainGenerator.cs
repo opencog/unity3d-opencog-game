@@ -129,7 +129,7 @@ public class OCFileTerrainGenerator
 										
 										if (iBlockID != 0)
 										{
-											Vector3i blockPos = new Vector3i(iMCChunkInternalZ, iMCChunkInternalY % OCChunk.SIZE_Y, iMCChunkInternalX);											
+											Vector3i blockPos = new Vector3i(iMCChunkInternalX, iMCChunkInternalY % OCChunk.SIZE_Y, iMCChunkInternalZ);											
 											
 											int ourBlockID = -1;
 											
