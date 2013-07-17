@@ -107,7 +107,7 @@ public class OCFileTerrainGenerator
 							OCChunk lastChunk = null;
 							
 							
-							Vector3i chunkPos = new Vector3i(mcAnvilRegion.ChunkGlobalX(iMCChunkX), iMCChunkY, mcAnvilRegion.ChunkGlobalZ(iMCChunkZ));
+							Vector3i chunkPos = new Vector3i(mcAnvilRegion.ChunkGlobalX(iMCChunkX), iMCChunkY + verticalOffset, mcAnvilRegion.ChunkGlobalZ(iMCChunkZ));
 							Vector3i lastChunkPos = Vector3i.zero;
 							chunk = _map.GetChunkInstance(chunkPos);
 							
@@ -117,7 +117,7 @@ public class OCFileTerrainGenerator
 								{
 									lastChunk = chunk;
 									lastChunkPos = chunkPos;
-									chunkPos = new Vector3i(mcAnvilRegion.ChunkGlobalX(iMCChunkX), iMCChunkInternalY / OCChunk.SIZE_Y, mcAnvilRegion.ChunkGlobalZ(iMCChunkZ));
+									chunkPos = new Vector3i(mcAnvilRegion.ChunkGlobalX(iMCChunkX), (iMCChunkInternalY + verticalOffset) / OCChunk.SIZE_Y, mcAnvilRegion.ChunkGlobalZ(iMCChunkZ));
 									chunk = _map.GetChunkInstance(chunkPos);
 								}
 								
