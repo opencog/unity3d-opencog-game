@@ -1573,9 +1573,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
         for (int i = 0; i < list.Count; i++)
         {
-			
-			
-			
 			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
             ParseActionPlanElement((XmlElement)list.Item(i));
         }
