@@ -152,7 +152,7 @@ namespace OpenCog.Embodiment
 				}
 				
 				
-				if (_hasPerceivedTerrainForFirstTime)					
+				if (_hasPerceivedTerrainForFirstTime && !_hasPerceivedWorldForTheFirstTime)					
 				{
 					// Once _hasPerceivedTerrainForFirstTime is true, we start perceiving the world (characters, batteries, other non-block entities)
 					
@@ -300,6 +300,24 @@ namespace OpenCog.Embodiment
 					updatedObjects.Add (batteryObject.GetInstanceID());
 					
 					UnityEngine.Debug.Log ("Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
+				}
+				else
+				{
+					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
+			}
+			
+			UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
+			
+			for (int iHearth = 0; iHearth < hearthArray.Length; iHearth++)
+			{
+				UnityEngine.GameObject hearthObject = hearthArray[iHearth];
+				
+				if (this.BuildMapInfo (hearthObject))
+				{
+					updatedObjects.Add (hearthObject.GetInstanceID());
+					
+					UnityEngine.Debug.Log ("Added Hearth with ID '" + hearthObject.GetInstanceID() + "' to updatedObjects");
 				}
 				else
 				{
@@ -704,7 +722,7 @@ namespace OpenCog.Embodiment
 												// Ok...now we have some globalz....
 												OpenCog.Map.OCBlockData globalBlock = map.GetBlock (iGlobalX, iGlobalY, iGlobalZ);
 					
-												if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > 43) ) {
+												if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > 55) ) {
 													//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
 													
 													

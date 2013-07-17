@@ -1573,9 +1573,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
         for (int i = 0; i < list.Count; i++)
         {
-			
-			
-			
 			UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
             ParseActionPlanElement((XmlElement)list.Item(i));
         }
@@ -1768,6 +1765,21 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							{
 								// This is the one!	
 								actionArguments.EndTarget = batteryObject;
+								
+								break;
+							}
+						}
+					
+						UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
+				
+						for (int iHearth = 0; iHearth < hearthArray.Length; iHearth++)
+						{
+							UnityEngine.GameObject hearthObject = hearthArray[iHearth];
+							
+							if (entityID == hearthObject.GetInstanceID())
+							{
+								// This is the one!	
+								actionArguments.EndTarget = hearthObject;
 								
 								break;
 							}

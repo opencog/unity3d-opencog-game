@@ -85,6 +85,12 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		
 	[SerializeField]
 	private GameObject _BatteriesSceneObject;
+		
+	[SerializeField]
+	private GameObject _HearthPrefab;
+		
+	[SerializeField]
+	private GameObject _HearthsSceneObject;		
 
 	//---------------------------------------------------------------------------
 
@@ -173,6 +179,16 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		get {return _BatteriesSceneObject;}
 	}
 		
+	public GameObject HearthPrefab
+	{
+		get {return _HearthPrefab;}
+	}
+		
+	public GameObject HearthsSceneObject
+	{
+		get {return _HearthsSceneObject;}
+	}		
+		
 	public new static OCMap Instance
 	{
 		get
@@ -255,6 +271,39 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty = false -> inferring creation.");
 				
 			perceptionCollector.NotifyBlockAdded(pos);	
+		}
+			
+		if(block.block.GetName() == "Battery")
+		{
+			GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
+			if (batteryPrefab == null)
+			{
+				UnityEngine.Debug.Log ("OCBuilder::Update, batteryPrefab == null");
+			}
+			else
+			{
+				GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
+				battery.transform.position = pos;
+				battery.name = "Battery";		
+				battery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
+			}
+			
+		}
+			
+		if(block.block.GetName() == "Hearth")
+		{
+			GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
+			if (hearthPrefab == null)
+			{
+				UnityEngine.Debug.Log ("OCBuilder::Update, hearthPrefab == null");
+			}
+			else
+			{
+				GameObject hearth = (GameObject)GameObject.Instantiate(hearthPrefab);
+				hearth.transform.position = pos;
+				hearth.name = "Hearth";		
+				hearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
+			}
 		}
 		
 	}
@@ -573,7 +622,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		yield return null;
 		
 		for (int i = objects.Length -1; i >= 0; i--) {
-			if (objects [i].gameObject.renderer) {
+			if (objects [i] != null && objects [i].gameObject != null && objects [i].gameObject.renderer) {
 				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
 				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
 
