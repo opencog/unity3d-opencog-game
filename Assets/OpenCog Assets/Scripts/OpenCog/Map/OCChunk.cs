@@ -18,6 +18,13 @@ namespace OpenCog.Map
 		private Vector3i position;
 		private OCChunkRenderer chunkRenderer;
 		
+		private bool _isEmpty = true;
+		
+		public bool IsEmpty
+		{
+			get { return _isEmpty; }	
+		}
+		
 		public OCChunk(OCMap map, Vector3i position) {
 			this.map = map;
 			this.position = position;
@@ -37,6 +44,8 @@ namespace OpenCog.Map
 		}
 		public void SetBlock(OCBlockData block, int x, int y, int z) {
 			blocks[z, y, x] = block;
+			
+			_isEmpty = false;
 		}
 	
 		public OCBlockData[,,] GetBlocks()

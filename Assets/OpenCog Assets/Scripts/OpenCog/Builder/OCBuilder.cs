@@ -160,23 +160,6 @@ public class OCBuilder : OCMonoBehaviour
 					OpenCog.Map.OCBlockData block = new OpenCog.Map.OCBlockData(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
 					block.SetDirection(GetDirection(-transform.forward));
 					_map.SetBlockAndRecompute(block, point.Value);
-						
-					if(_selectedBlock != null && _selectedBlock.GetName() == "Battery")
-					{
-						GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
-						if (batteryPrefab == null)
-						{
-							UnityEngine.Debug.Log ("OCBuilder::Update, batteryPrefab == null");
-						}
-						else
-						{
-							GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
-							battery.transform.position = point.Value;
-							battery.name = "Battery";		
-							battery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
-						}
-						
-					}
 				}
 			}
 		}

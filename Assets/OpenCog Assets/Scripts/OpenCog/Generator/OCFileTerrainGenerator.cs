@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using OpenCog.Map;
 
 public class OCFileTerrainGenerator
@@ -8,6 +8,31 @@ public class OCFileTerrainGenerator
 	private string _fullMapPath;
 	private OpenCog.Map.OCMap _map;
 	private const string _baseMapFolder = "Assets\\Maps\\Resources";
+	private Dictionary<System.String, Vector3i> chunkList = new System.Collections.Generic.Dictionary<string, Vector3i>();
+	
+	private Dictionary<int, int> mcToOCBlockDictionary = new Dictionary<int, int>()
+	{ {0, -1}
+	, {1, 4}
+	, {2, 1}
+	, {3, 0}
+	, {4, 5}
+	, {5, 12}
+	, {6, 15}
+	, {7, 6}
+	, {8, 8}
+	, {9, 8}
+	, {10, 25}
+	, {11, 25}
+	, {12, 3}
+	, {16, 7}
+	, {17, 11}
+	, {18, 13}
+	, {26, 26}		
+	, {35, 15}
+	, {46, 22}
+	, {62, 24}
+	, {90, 29}
+	};
 	
 	public OCFileTerrainGenerator (OpenCog.Map.OCMap map, string mapName)
 	{
@@ -51,9 +76,11 @@ public class OCFileTerrainGenerator
 				
 		OpenCog.BlockSet.OCBlockSet blockSet = _map.GetBlockSet();
 				
-		_map.GetSunLightmap().SetSunHeight(3, 3, 3);
+		//_map.GetSunLightmap().SetSunHeight(20, 4, 4);
 
 		int createCount = 0;
+		
+		System.Collections.Generic.Dictionary<int, int> unmappedBlockTypes = new System.Collections.Generic.Dictionary<int, int>();
 
 		//Debug.Log("In LoadLevel, there are " + blockSet.BlockCount + " blocks available.");
 		
@@ -104,50 +131,126 @@ public class OCFileTerrainGenerator
 										{
 											Vector3i blockPos = new Vector3i(iMCChunkInternalX, iMCChunkInternalY % OCChunk.SIZE_Y, iMCChunkInternalZ);											
 											
-											switch (iBlockID)
+											int ourBlockID = -1;
+											
+//											switch (iBlockID)
+//											{
+//											case 3: // Dirt to first grass
+//												ourBlockID = 1;
+//												break;
+//											case 12: // Grass to grass
+//												ourBlockID = 1;
+//												break;
+//											case 13: // Gravel to stone
+//												ourBlockID = 4;
+//												break;
+//											case 1: // Stone to second stone
+//												ourBlockID = 5;
+//												break;
+//											case 16: // Coal ore to fungus
+//												ourBlockID = 17;
+//												break;
+//											case 15: // Iron ore to pumpkin
+//												ourBlockID = 20;
+//												break;
+//											case 9: // Water to water
+//												ourBlockID = 8;
+//												//Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
+//												break;
+////											case 2:
+////												iBlockID = 16;
+////												break;
+////											case 4:
+////												iBlockID = 16;
+////												break;
+////											case 18:
+////												iBlockID = 16;
+////												break;
+//											default: 
+//											{
+//												//Debug.Log ("Unmapped BlockID: " + iBlockID);
+//												
+//												if (!unmappedBlockTypes.ContainsKey (iBlockID))
+//												{
+//													unmappedBlockTypes.Add (iBlockID, 1);	
+//												}
+//												else
+//												{
+//													unmappedBlockTypes[iBlockID] += 1;	
+//												}
+//												
+//												break;
+//												}
+//											}
+											
+											if(mcToOCBlockDictionary.ContainsKey(iBlockID))
+												ourBlockID = mcToOCBlockDictionary[iBlockID];
+											else
 											{
-											case 3: // Dirt to first grass
-												iBlockID = 1;
-												break;
-											case 12: // Grass to grass
-												iBlockID = 1;
-												break;
-											case 13: // Gravel to stone
-												iBlockID = 4;
-												break;
-											case 1: // Stone to second stone
-												iBlockID = 5;
-												break;
-											case 16: // Coal ore to fungus
-												iBlockID = 17;
-												break;
-											case 15: // Iron ore to pumpkin
-												iBlockID = 20;
-												break;
-											case 9: // Water to water
-												iBlockID = 8;
-												//Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
-												break;
-											default:
-												Debug.Log ("Unmapped BlockID: " + iBlockID);
-												break;
+												if (!unmappedBlockTypes.ContainsKey (iBlockID))
+												{
+													unmappedBlockTypes.Add (iBlockID, 1);	
+												}
+												else
+												{
+													unmappedBlockTypes[iBlockID] += 1;	
+												}
 											}
 											
-											OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(iBlockID);
+											if (ourBlockID != -1)
+											{
+												OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(ourBlockID);
+												
+												OCBlockData block = new OpenCog.Map.OCBlockData(newBlock, blockPos);
 											
-											chunk.SetBlock(new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
-
-											
-											
-//											if (blockPos.x == 9 && blockPos.y == 140 && blockPos.z == 10)
-//											{
-//												UnityEngine.Debug.Log ("Break here plz.");	
-//											}
-
-											createCount += 1;
+												chunk.SetBlock(block, blockPos);
+												OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition (_map, blockPos);
+												
+												if(block.block.GetName() == "Battery")
+												{
+													GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
+													if (batteryPrefab == null)
+													{
+														UnityEngine.Debug.Log ("OCBuilder::Update, batteryPrefab == null");
+													}
+													else
+													{
+														GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
+														battery.transform.position = blockPos;
+														battery.name = "Battery";		
+														battery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
+													}
+													
+												}
+													
+												if(block.block.GetName() == "Hearth")
+												{
+													GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
+													if (hearthPrefab == null)
+													{
+														UnityEngine.Debug.Log ("OCBuilder::Update, hearthPrefab == null");
+													}
+													else
+													{
+														GameObject hearth = (GameObject)GameObject.Instantiate(hearthPrefab);
+														hearth.transform.position = blockPos;
+														hearth.name = "Hearth";		
+														hearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
+													}
+												}
+												
+												createCount += 1;
+											}
 										}
 									} // End for (int iMCChunkInternalZ = 0; iMCChunkInternalZ < mcChunkRef.Blocks.ZDim; iMCChunkInternalZ++)
 								} // End for (int iMCChunkInternalY = 0; iMCChunkInternalY < mcChunkRef.Blocks.YDim; iMCChunkInternalY++)
+								
+								string chunkCoord = chunkPos.x + ", " + chunkPos.z;
+								
+								if (!chunkList.ContainsKey(chunkCoord))
+								{
+									chunkList.Add (chunkCoord, chunkPos);
+								}
 								
 								if(iMCChunkY < iMCChunkInternalY / OCChunk.SIZE_Y)
 								{
@@ -164,10 +267,16 @@ public class OCFileTerrainGenerator
 			} // End for (int iMCChunkX  = 0; iMCChunkX < mcAnvilRegion.XDim; iMCChunkX++)
 		} // End foreach( Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager )
 		
-//		foreach (OpenCog.Map.OCChunk chunk in _map.Chu
-//		{
-//			
-//		}
+		foreach (Vector3i chunkToLight in chunkList.Values)
+		{
+			OpenCog.Map.Lighting.OCChunkSunLightComputer.ComputeRays(_map, chunkToLight.x, chunkToLight.z);
+			OpenCog.Map.Lighting.OCChunkSunLightComputer.Scatter(_map, null, chunkToLight.x, chunkToLight.z);
+		}
+		
+		foreach (System.Collections.Generic.KeyValuePair<int, int> unmappedBlockData in unmappedBlockTypes)
+		{
+			UnityEngine.Debug.Log ("Unmapped BlockID '" + unmappedBlockData.Key + "' found " + unmappedBlockData.Value + " times.");	
+		}
 		
 		Debug.Log ("Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
 		

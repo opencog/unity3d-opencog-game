@@ -12,10 +12,10 @@ namespace OpenCog.Map.Lighting
 		public const byte STEP_LIGHT = 1;
 		
 		private static List<Vector3i> list = new List<Vector3i>();
-		
 	
 		public static void ComputeRayAtPosition(OCMap map, int x, int z) {
 			int maxY = map.GetMaxY( x, z );
+			
 			map.GetSunLightmap().SetSunHeight(maxY+1, x, z);
 		}
 		
@@ -185,7 +185,7 @@ namespace OpenCog.Map.Lighting
 	            if(light <= MIN_LIGHT) continue;
 				
 				Vector3i chunkPos = OCChunk.ToChunkPosition(pos);
-				if(!columnMap.IsBuilt(chunkPos.x, chunkPos.z)) continue;
+				if(columnMap != null && !columnMap.IsBuilt(chunkPos.x, chunkPos.z)) continue;
 				
 	            foreach(Vector3i dir in Vector3i.directions) {
 					Vector3i nextPos = pos + dir;
