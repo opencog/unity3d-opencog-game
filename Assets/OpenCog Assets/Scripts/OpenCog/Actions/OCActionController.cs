@@ -68,7 +68,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	private Dictionary<string, TreeType> _ActionNameDictionary = new Dictionary<string, TreeType>()
 	{ { "walk", TreeType.Character_Move }
 	, { "grab", TreeType.Character_RightHandActivate }
-	, { "eat", TreeType.Character_Activate }
+	, { "eat", TreeType.Character_Destroy }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
 	};

@@ -322,6 +322,20 @@ public class OCAction : OCMonoBehaviour
 		return args.Source.GetComponent<CharacterController>().isGrounded;
 	}
 			
+	public static bool IsEndTargetBelowClimbAngle(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePos = args.Source.transform.position;
+		Vector3 endTargetPos = args.EndTarget.transform.position;
+		float angle = Vector3.Angle(endTargetPos - sourcePos, Vector3.up);
+				
+		return angle > 45;
+	}
+			
+	public static bool IsEndTargetAboveClimbAngle(OCAction action, OCActionArgs args)
+	{
+		return !IsEndTargetBelowClimbAngle(action, args);
+	}
+			
 	public static bool IsLocalAnimating(OCAction action, OCActionArgs args)
 	{
 		bool isAnimating = false;
@@ -617,6 +631,22 @@ public class OCAction : OCMonoBehaviour
 		return Math.Abs(projUp) >= 1.5f && Math.Abs(projForward) < 0.5f && Math.Abs(projRight) < 0.5f;
 	}
 			
+	public static bool IsEndTargetAbove(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = args.Source.transform.up;
+		Vector3 sourceForward = args.Source.transform.forward;
+		Vector3 sourceRight = args.Source.transform.right;
+
+		Vector3 distance = targetPosition - sourcePosition;
+		float projUp = Vector3.Dot(distance, sourceUp);
+		float projForward = Vector3.Dot(distance, sourceForward);
+		float projRight = Vector3.Dot(distance, sourceRight);
+
+		return projUp >= 1.5f && Math.Abs(projForward) < 0.5f && Math.Abs(projRight) < 0.5f;
+	}		
+			
 	public static bool IsEndTargetMoreLeft(OCAction action, OCActionArgs args)
 	{
 		Vector3 sourcePosition = args.Source.gameObject.transform.position;
@@ -788,8 +818,10 @@ public class OCAction : OCMonoBehaviour
 		{
 			Vector3i forward = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward);
 			Vector3i forwardUp = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + _Source.transform.up);
+			Vector3i forwardUp2x = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + 2*_Source.transform.up);		
 			dbfx.DestroyBlock(forward);
 			dbfx.DestroyBlock(forwardUp);
+			dbfx.DestroyBlock(forwardUp2x);
 		}
 
 		//@TODO: Fix this hack...
