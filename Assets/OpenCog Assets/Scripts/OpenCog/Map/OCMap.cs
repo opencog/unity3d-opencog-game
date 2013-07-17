@@ -621,7 +621,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	}
 
 
-	private OCChunk GetChunkInstance (Vector3i chunkPos)
+	public OCChunk GetChunkInstance (Vector3i chunkPos)
 	{
 		if (chunkPos.y < 0)
 			return null;
