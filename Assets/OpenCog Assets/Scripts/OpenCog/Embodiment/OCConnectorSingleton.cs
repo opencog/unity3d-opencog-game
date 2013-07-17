@@ -1773,6 +1773,21 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							}
 						}
 					
+						UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
+				
+						for (int iHearth = 0; iHearth < hearthArray.Length; iHearth++)
+						{
+							UnityEngine.GameObject hearthObject = hearthArray[iHearth];
+							
+							if (entityID == hearthObject.GetInstanceID())
+							{
+								// This is the one!	
+								actionArguments.EndTarget = hearthObject;
+								
+								break;
+							}
+						}
+					
 						if (actionName == "grab")
 						{
 							UnityEngine.Debug.Log ("A 'grab' command told me to grab an object with ID " + entityID);

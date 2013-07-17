@@ -200,9 +200,44 @@ public class OCFileTerrainGenerator
 											if (ourBlockID != -1)
 											{
 												OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(ourBlockID);
+												
+												OCBlockData block = new OpenCog.Map.OCBlockData(newBlock, blockPos);
 											
-												chunk.SetBlock(new OpenCog.Map.OCBlockData(newBlock, blockPos), blockPos);
+												chunk.SetBlock(block, blockPos);
 												OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition (_map, blockPos);
+												
+												if(block.block.GetName() == "Battery")
+												{
+													GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
+													if (batteryPrefab == null)
+													{
+														UnityEngine.Debug.Log ("OCBuilder::Update, batteryPrefab == null");
+													}
+													else
+													{
+														GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
+														battery.transform.position = blockPos;
+														battery.name = "Battery";		
+														battery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
+													}
+													
+												}
+													
+												if(block.block.GetName() == "Hearth")
+												{
+													GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
+													if (hearthPrefab == null)
+													{
+														UnityEngine.Debug.Log ("OCBuilder::Update, hearthPrefab == null");
+													}
+													else
+													{
+														GameObject hearth = (GameObject)GameObject.Instantiate(hearthPrefab);
+														hearth.transform.position = blockPos;
+														hearth.name = "Hearth";		
+														hearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
+													}
+												}
 												
 												createCount += 1;
 											}

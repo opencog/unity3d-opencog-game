@@ -293,6 +293,24 @@ namespace OpenCog.Embodiment
 				}	
 			}
 			
+			UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
+			
+			for (int iHearth = 0; iHearth < hearthArray.Length; iHearth++)
+			{
+				UnityEngine.GameObject hearthObject = hearthArray[iHearth];
+				
+				if (this.BuildMapInfo (hearthObject))
+				{
+					updatedObjects.Add (hearthObject.GetInstanceID());
+					
+					UnityEngine.Debug.Log ("Added Hearth with ID '" + hearthObject.GetInstanceID() + "' to updatedObjects");
+				}
+				else
+				{
+					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
+			}
+			
 			
 //			for (int ocObject = 0; ocObject < 0; ocObject++)
 //			{
