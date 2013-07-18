@@ -1664,6 +1664,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		// TODO: Determine if we need this:
 		bool adjustCoordinate = false;
 		
+		OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+		
         // Get the action performer id.
         string avatarId = actionPlan.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
         if (avatarId != _brainID)
@@ -1744,6 +1746,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						vectorGameObject.transform.position = new Vector3(x, z, y);
 						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + z + ", " + y + "]");
 					
+						console.AddConsoleEntry("A '" + actionName + "' command told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+					
 						actionArguments.EndTarget = vectorGameObject;
 					
 						break;	
@@ -1788,10 +1792,14 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						if (actionName == "grab")
 						{
 							UnityEngine.Debug.Log ("A 'grab' command told me to grab an object with ID " + entityID);
+						
+							console.AddConsoleEntry("A 'grab' command told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						}
 						else if (actionName == "eat")
 						{
 							UnityEngine.Debug.Log ("An 'eat' command told me to eat an object with ID " + entityID);
+						
+						console.AddConsoleEntry("An 'eat' command told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						}
 						
 						break;
@@ -1802,7 +1810,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						if (actionName == "say")
 						{
 							string toSay = actionParameterElement.GetAttribute(OCEmbodimentXMLTags.VALUE_ATTRIBUTE);
-							UnityEngine.Debug.Log ("Robot say: " + toSay );
+						
+							if (toSay != string.Empty)
+							{
+								UnityEngine.Debug.Log ("Robot say: " + toSay );
+												
+								console.AddConsoleEntry(toSay, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+							}
 						}
 					
 						// We need to set the target to the avatar I guess....

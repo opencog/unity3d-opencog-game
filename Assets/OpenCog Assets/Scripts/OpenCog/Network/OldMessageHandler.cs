@@ -69,6 +69,12 @@ namespace OpenCog.Network
 			StreamReader reader = null;
 			StreamWriter writer = null;
 			
+//			try {
+//				OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+//				console.AddConsoleEntry("MessageHandler online, waiting for messages...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.COMMAND);	
+//			} catch (Exception ex) {
+//			}
+			
 			try
 			{
 				Stream s = new NetworkStream(this.socket);

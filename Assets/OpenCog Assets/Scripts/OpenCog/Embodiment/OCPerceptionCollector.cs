@@ -246,6 +246,9 @@ namespace OpenCog.Embodiment
 			// Old comment: Update the map info of all avatar in the repository(including player avatar).
 			UnityEngine.GameObject[] npcArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCNPC");
 			
+			OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+			
+			
 			for (int iNPC = 0; iNPC < npcArray.Length; iNPC++)
 			{
 				UnityEngine.GameObject npcObject = npcArray[iNPC];
@@ -260,6 +263,8 @@ namespace OpenCog.Embodiment
 				{
 					//UnityEngine.Debug.Log ("NPC with ID '" + npcObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
+				
+				console.AddConsoleEntry("I can see someone else! Their ID is " + npcObject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 			}
 			
 			UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
@@ -305,6 +310,8 @@ namespace OpenCog.Embodiment
 				{
 					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
+				
+				console.AddConsoleEntry("I can see a battery! Its ID is " + batteryObject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 			}
 			
 			UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
@@ -323,6 +330,8 @@ namespace OpenCog.Embodiment
 				{
 					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 				}	
+				
+				console.AddConsoleEntry("I can see my home! It's where I feel safe.", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 			}
 			
 			
@@ -663,10 +672,13 @@ namespace OpenCog.Embodiment
 		{
 			UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveTerrain");
 			
-			
+			OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+			console.AddConsoleEntry("What a beautiful world! Please give me a few seconds to process it...", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 			
 			if (_hasPerceivedTerrainForFirstTime) {
 				UnityEngine.Debug.Log ("I've seen this terrain before...I'm out of here...");
+				
+				console.AddConsoleEntry("I've seen this terrain before...can you show me something new?", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 				yield return null;
 			} else {
 				System.DateTime dtStartPerceptTerrain = System.DateTime.Now;
@@ -811,6 +823,8 @@ namespace OpenCog.Embodiment
 				
 				UnityEngine.Debug.Log ("Finished perceiving terrain, total time taken: " + System.DateTime.Now.Subtract (dtStartPerceptTerrain).TotalSeconds);
 			}
+			
+			console.AddConsoleEntry("Thank you for waiting! What should I do next...", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 		}
 		
 		// This function is only relevant in terms of the state changes of:
