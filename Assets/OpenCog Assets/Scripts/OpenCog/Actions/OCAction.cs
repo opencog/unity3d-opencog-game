@@ -647,18 +647,41 @@ public class OCAction : OCMonoBehaviour
 		return projUp >= 1.5f && Math.Abs(projForward) < 0.5f && Math.Abs(projRight) < 0.5f;
 	}		
 			
+	public static bool IsEndTargetAhead(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = args.Source.transform.up;
+		Vector3 sourceForward = args.Source.transform.forward;
+		Vector3 sourceRight = args.Source.transform.right;
+
+		Vector3 distance = targetPosition - sourcePosition;
+		float projUp = Vector3.Dot(distance, sourceUp);
+		float projForward = Vector3.Dot(distance, sourceForward);
+		float projRight = Vector3.Dot(distance, sourceRight);
+
+		return Math.Abs(projUp) < 0.5f && projForward >= 0.5f && Math.Abs(projRight) < 0.5f;
+	}
+			
+	public static bool IsEndTargetNotAhead(OCAction action, OCActionArgs args)
+	{
+		return !IsEndTargetAhead(action, args);
+	}
+			
 	public static bool IsEndTargetMoreLeft(OCAction action, OCActionArgs args)
 	{
 		Vector3 sourcePosition = args.Source.gameObject.transform.position;
 		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
 		Vector3 sourceRight = args.Source.gameObject.transform.right;
 		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
+		Vector3 sourceForward = args.Source.gameObject.transform.forward;
 				
-		Vector3 distance = targetPosition - sourcePosition;
-		float projectionLeft = Vector3.Dot(distance, sourceLeft);
-		float projectionRight = Vector3.Dot(distance, sourceRight);
+		Vector3 sourceGoal = targetPosition - sourcePosition;
+		float projectionLeft = Vector3.Dot(sourceGoal, sourceLeft);
+		float projectionRight = Vector3.Dot(sourceGoal, sourceRight);
+		float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
 				
-		return (projectionLeft + 0.0f) > projectionRight;
+		return (projectionLeft) > projectionRight && projectionLeft > projectionForward;
 	}
 			
 	public static bool IsEndTargetMoreRight(OCAction action, OCActionArgs args)
@@ -667,12 +690,14 @@ public class OCAction : OCMonoBehaviour
 		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
 		Vector3 sourceRight = args.Source.gameObject.transform.right;
 		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
+		Vector3 sourceForward = args.Source.gameObject.transform.forward;
 				
-		Vector3 distance = targetPosition - sourcePosition;
-		float projectionLeft = Vector3.Dot(distance, sourceLeft);
-		float projectionRight = Vector3.Dot(distance, sourceRight);
+		Vector3 sourceGoal = targetPosition - sourcePosition;
+		float projectionLeft = Vector3.Dot(sourceGoal, sourceLeft);
+		float projectionRight = Vector3.Dot(sourceGoal, sourceRight);
+		float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
 				
-		return projectionRight > (projectionLeft + 0.0f);
+		return projectionRight > (projectionLeft) && projectionRight > projectionForward;
 	}
 
 	public static bool IsNoEndTarget(OCAction action, OCActionArgs args)
