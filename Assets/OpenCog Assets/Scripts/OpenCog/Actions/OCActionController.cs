@@ -637,6 +637,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		if(result != BehaveResult.Running)
 		{
+			if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 1)
+				OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, result == BehaveResult.Success);						
+					
 			_step.Behaviour.Reset();
 			if(_ActionPlanQueue.Count == 0) _ActionPlanQueue.Enqueue(_step);	
 			_step = _ActionPlanQueue.Dequeue();
