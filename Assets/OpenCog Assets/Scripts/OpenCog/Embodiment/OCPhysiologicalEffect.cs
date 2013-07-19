@@ -78,7 +78,17 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-
+	public float EnergyIncrease 
+	{
+		get { return _energyIncrease; }
+		set { _energyIncrease = value; }
+	}
+		
+	public float FitnessChange
+	{
+		get { return _fitnessChange; }
+		set { _fitnessChange = value; }
+	}
 			
 	//---------------------------------------------------------------------------
 
