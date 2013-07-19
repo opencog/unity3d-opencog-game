@@ -28,6 +28,7 @@ using System.Linq;
 using OpenCog.Map;
 using System.Reflection;
 using OpenCog.Utility;
+using OpenCog.Embodiment;
 
 namespace OpenCog
 {
@@ -840,6 +841,8 @@ public class OCAction : OCMonoBehaviour
 	private ActionStatus EndAction()
 	{
 		//OCLogger.Debugging("Ending the " + FullName + " Action.");
+				
+		OCActionArgs args = _ActionController.Step.Arguments;		
 
 		_ActionController.RunningActions.Remove(FullName);
 
@@ -853,13 +856,41 @@ public class OCAction : OCMonoBehaviour
 		{
 			Vector3i forward = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward);
 			Vector3i forwardUp = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + _Source.transform.up);
-			Vector3i forwardUp2x = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + 2*_Source.transform.up);		
+			Vector3i forwardUp2x = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + 2*_Source.transform.up);	
+					
+			OCBlockData forwardBlock = _Map.GetBlock(forward);
+			OCBlockData forwardUpBlock = _Map.GetBlock(forwardUp);
+			OCBlockData forwardUp2xBlock = _Map.GetBlock(forwardUp2x);
+					
 			dbfx.DestroyBlock(forward);
 			dbfx.DestroyBlock(forwardUp);
 			dbfx.DestroyBlock(forwardUp2x);
 					
 			_EndTarget.transform.position = Vector3.zero;
 			_StartTarget.transform.position = Vector3.zero;
+					
+			// This is just some example code for you Lake, that you can use to give energy to the robot after consuming a battery.
+			if(forwardBlock.block.GetName() == "Battery" || forwardUpBlock.block.GetName() == "Battery" || forwardUp2xBlock.block.GetName() == "Battery")
+			{
+				UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
+		
+				for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+				{
+					UnityEngine.GameObject agiObject = agiArray[iAGI];
+				
+					args.EndTarget = agiObject;
+				
+					OCPhysiologicalModel agiPhysModel = agiObject.GetComponent<OCPhysiologicalModel>();
+				
+					OCPhysiologicalEffect batteryEatEffect = new OCPhysiologicalEffect(OCPhysiologicalEffect.CostLevel.NONE);
+				
+					batteryEatEffect.EnergyIncrease = 0.2f;
+				
+					agiPhysModel.ProcessPhysiologicalEffect(batteryEatEffect);
+				
+					break;
+				}		
+			}
 		}
 
 		//@TODO: Fix this hack...
@@ -869,7 +900,7 @@ public class OCAction : OCMonoBehaviour
 			motor.enabled = true;
 		}
 				
-		OCActionArgs args = _ActionController.Step.Arguments;
+
 			
 		if(args.ActionPlanID != null)
 			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);				
