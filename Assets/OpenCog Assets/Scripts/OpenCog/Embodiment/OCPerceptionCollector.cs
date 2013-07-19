@@ -437,7 +437,11 @@ namespace OpenCog.Embodiment
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
-			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// IMPORTANT: ANOTHER Y Z SWAP:
+			// ORIGINAL:
+			//OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// SWAPPED:
+			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.z, chunkPosition.y, localPosition.x, localPosition.z, localPosition.y, globalBlock);
 			
 			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo>();
 			
@@ -466,7 +470,12 @@ namespace OpenCog.Embodiment
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
-			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// IMPORTANT: SWAPPING OUT Y AND Z HERE AGAIN!!
+			// ORIGINAL:
+			//OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// SWAPPED:
+			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.z, chunkPosition.y, blockBuildPoint.x, blockBuildPoint.z, blockBuildPoint.y, globalBlock);
+			
 			
 			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
 			
@@ -478,8 +487,149 @@ namespace OpenCog.Embodiment
 			connector.SendTerrainInfoMessage(addedBlockList);
 		}
 		
-	
+		public void NotifyBatteryAdded (Vector3i batteryCreationPoint)
+		{
+			// blockBuildPoint should be a global coordinate, and they're ints...so I guess we can use them directly. Still need to figure out the chunk.
+//			uint chunkX = (uint)(hitPoint.X / worldData.ChunkBlockWidth);
+//			uint chunkY = (uint)(hitPoint.Y / worldData.ChunkBlockHeight);
+//			uint chunkZ = (uint)(hitPoint.Z / worldData.ChunkBlockDepth);
+//			uint blockX = (uint)(hitPoint.X % worldData.ChunkBlockWidth);
+//			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
+//			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
+			
+			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryCreationPoint);
+			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryCreationPoint);
+			
+			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			
+			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryCreationPoint.x, batteryCreationPoint.y, batteryCreationPoint.z);
+			
+			// IMPORTANT: SWAPPING OUT Y AND Z HERE AGAIN!!
+			// ORIGINAL:
+			//OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// SWAPPED:
+			//OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.z, chunkPosition.y, batteryCreationPoint.x, batteryCreationPoint.z, batteryCreationPoint.y, globalBlock);
+			
+			// The mapInfo created above is USELESS! We need to send the BATTERY not the BLOCK that surrounds the battery.
+			
+			OCObjectMapInfo mapInfo = null;
+			
+			// So we need to find this battery...
+			
+			UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
+			
+			for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
+			{
+				UnityEngine.GameObject batteryObject = batteryArray[iBattery];
+				
+				Vector3i v3iBatteryPosition = new Vector3i((int)batteryObject.transform.position.x, (int)batteryObject.transform.position.y, (int)batteryObject.transform.position.z);
+				
+				if (v3iBatteryPosition == batteryCreationPoint)
+				{
+					// You're the one that I want! (the one that I want!) Ooh Ooh oooooooh!	
+					if (!_mapInfoCache.ContainsKey(batteryObject.GetInstanceID()))
+					{
+						if (this.BuildMapInfo (batteryObject))
+						{
+							// THat puts into a dictionary, so we still need to retrieve it here.		
+												
+							mapInfo = _mapInfoCache [batteryObject.GetInstanceID()];
+							
+							//console.AddConsoleEntry("I can see a new battery! Its ID is " + batteryObject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+							UnityEngine.Debug.Log("I can see a new battery! Its ID is " + batteryObject.GetInstanceID());
+						}
+					}
+				}
+			}
+			
+			if (mapInfo != null)
+			{
+				List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
+			
+				addedBlockList.Add(mapInfo);
+				
+				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+				
+				connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, true);
+				connector.SendTerrainInfoMessage(addedBlockList);	
+			}
+			else
+			{
+				UnityEngine.Debug.Log ("mapInfo == null, nothing to report.");	
+			}
+		}
 		
+		public void NotifyBatteryRemoved (Vector3i batteryDestructionPoint)
+		{
+			// blockBuildPoint should be a global coordinate, and they're ints...so I guess we can use them directly. Still need to figure out the chunk.
+//			uint chunkX = (uint)(hitPoint.X / worldData.ChunkBlockWidth);
+//			uint chunkY = (uint)(hitPoint.Y / worldData.ChunkBlockHeight);
+//			uint chunkZ = (uint)(hitPoint.Z / worldData.ChunkBlockDepth);
+//			uint blockX = (uint)(hitPoint.X % worldData.ChunkBlockWidth);
+//			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
+//			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
+			
+			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryDestructionPoint);
+			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryDestructionPoint);
+			
+			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			
+			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryDestructionPoint.x, batteryDestructionPoint.y, batteryDestructionPoint.z);
+			
+			// IMPORTANT: SWAPPING OUT Y AND Z HERE AGAIN!!
+			// ORIGINAL:
+			//OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// SWAPPED:
+			//OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.z, chunkPosition.y, batteryCreationPoint.x, batteryCreationPoint.z, batteryCreationPoint.y, globalBlock);
+			
+			// The mapInfo created above is USELESS! We need to send the BATTERY not the BLOCK that surrounds the battery.
+			
+			OCObjectMapInfo mapInfo = null;
+			
+			// So we need to find this battery...
+			
+			UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
+			
+			for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
+			{
+				UnityEngine.GameObject batteryObject = batteryArray[iBattery];
+				
+				Vector3i v3iBatteryPosition = new Vector3i((int)batteryObject.transform.position.x, (int)batteryObject.transform.position.y, (int)batteryObject.transform.position.z);
+				
+				if (v3iBatteryPosition == batteryDestructionPoint)
+				{
+					// You're the one that I want! (the one that I want!) Ooh Ooh oooooooh!	
+					if (!_mapInfoCache.ContainsKey(batteryObject.GetInstanceID()))
+					{
+						if (this.BuildMapInfo (batteryObject))
+						{
+							// THat puts into a dictionary, so we still need to retrieve it here.		
+												
+							mapInfo = _mapInfoCache [batteryObject.GetInstanceID()];
+							
+							//console.AddConsoleEntry("I can see a new battery! Its ID is " + batteryObject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+							UnityEngine.Debug.Log("I can see a new battery! Its ID is " + batteryObject.GetInstanceID());
+						}
+					}
+				}
+			}
+			
+			if (mapInfo != null)
+			{
+				List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
+			
+				addedBlockList.Add(mapInfo);
+				
+				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+				
+				connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
+				connector.SendTerrainInfoMessage(addedBlockList);	
+			}
+			else
+			{
+				UnityEngine.Debug.Log ("mapInfo == null, nothing to report.");	
+			}
+		}
 	
 		//---------------------------------------------------------------------------
 	

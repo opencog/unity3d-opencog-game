@@ -270,7 +270,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		{
 			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty = false -> inferring creation.");
 				
-			perceptionCollector.NotifyBlockAdded(pos);	
+			// Moved notify down...to AFTER the point where it is actually created...
 		}
 			
 		if(block.block != null && block.block.GetName() == "Battery")
@@ -286,6 +286,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				battery.transform.position = pos;
 				battery.name = "Battery";		
 				battery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
+					
+				perceptionCollector.NotifyBatteryAdded(pos);	
 			}
 			
 		}

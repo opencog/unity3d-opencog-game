@@ -1799,7 +1799,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						{
 							UnityEngine.Debug.Log ("An 'eat' command told me to eat an object with ID " + entityID);
 						
-						console.AddConsoleEntry("An 'eat' command told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+							console.AddConsoleEntry("An 'eat' command told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						}
 						
 						break;
