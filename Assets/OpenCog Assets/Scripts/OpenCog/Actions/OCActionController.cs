@@ -60,8 +60,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	private TreeType _TreeType;
 	private OCActionPlanStep _step = null;
 	private Hashtable _idleParams;
-	private Vector3i _targetBlockPos = Vector3i.zero;
-	private DateTime _dtLastTNTSearchTime;
+	
 	private static Dictionary<string, string> builtinActionMap = new Dictionary<string, string>();
 			
 				
@@ -88,12 +87,6 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	#region Accessors and Mutators
 
 	//---------------------------------------------------------------------------
-
-	public Vector3i TargetBlockPos 
-	{
-		get { return _targetBlockPos;}
-		set { _targetBlockPos = value;}
-	}
 
 	public TreeType TreeType 
 	{
@@ -649,95 +642,6 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			_step = _ActionPlanQueue.Dequeue();
 			//if(result == BehaveResult.Success) Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
 		}
-
-		OpenCog.Map.OCMap map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
-
-		List3D<OCChunk> chunks = map.GetChunks ();
-
-		Vector3 robotPos = gameObject.transform.position;
-		Vector3 distanceVec = ((Vector3)TargetBlockPos) - robotPos;
-
-//		if(distanceVec.y < -1.0f + 0.5f && distanceVec.y > -1.0f - 0.5f)
-		if (distanceVec.sqrMagnitude < 2.25f) {
-			Debug.Log ("We've arrived at our goal TNT block...");
-			map.SetBlockAndRecompute (new OCBlockData (), TargetBlockPos);
-			TargetBlockPos = Vector3i.zero;
-
-			OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
-
-			foreach(OCAction action in actions)
-			{
-				action.EndTarget.transform.position = Vector3.zero;
-				action.StartTarget.transform.position = Vector3.zero;
-			}
-		}
-		
-		if (_dtLastTNTSearchTime == new DateTime())
-		{
-			_dtLastTNTSearchTime = DateTime.Now;	
-		}
-		
-		if (DateTime.Now.Subtract (_dtLastTNTSearchTime).Seconds > 1)
-		{
-			bool doesTNTExist = false;
-
-			//distanceVec = new Vector3(1000,1000,1000);
-			for (int cx=chunks.GetMinX(); cx<chunks.GetMaxX(); ++cx) {
-				for (int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); ++cy) {
-					for (int cz=chunks.GetMinZ(); cz<chunks.GetMaxZ(); ++cz) {
-						Vector3i chunkPos = new Vector3i (cx, cy, cz);
-						OCChunk chunk = chunks.SafeGet (chunkPos);
-						if (chunk != null) {
-							for (int z=0; z<OCChunk.SIZE_Z; z++) {
-								for (int x=0; x<OCChunk.SIZE_X; x++) {
-									for (int y=0; y<OCChunk.SIZE_Y; y++) {
-										Vector3i localPos = new Vector3i (x, y, z);
-										OCBlockData blockData = chunk.GetBlock (localPos);
-										Vector3i candidatePos = OCChunk.ToWorldPosition (chunk.GetPosition (), localPos);
-										Vector3 candidateVec = ((Vector3)candidatePos) - robotPos;
-										if (!blockData.IsEmpty () && blockData.block.GetName () == "TNT")
-										{
-											doesTNTExist = true;
-											if (candidateVec.sqrMagnitude < distanceVec.sqrMagnitude)
-											{
-												TargetBlockPos = candidatePos;
-												distanceVec = candidateVec;
-
-												OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
-
-												foreach(OCAction action in actions)
-												{
-													action.EndTarget.transform.position = new Vector3(TargetBlockPos.x, TargetBlockPos.y, TargetBlockPos.z);
-													action.StartTarget.transform.position = gameObject.transform.position;
-												}
-
-												Debug.Log ("We found some TNT nearby: " + TargetBlockPos + "!");
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if (TargetBlockPos != Vector3i.zero && (!doesTNTExist || map.GetBlock(TargetBlockPos).IsEmpty())) {
-				Debug.Log ("No more TNT... :(");
-				TargetBlockPos = Vector3i.zero;
-
-				OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
-
-				foreach(OCAction action in actions)
-				{
-					action.EndTarget.transform.position = Vector3.zero;
-					action.StartTarget.transform.position = Vector3.zero;
-				}
-			}
-			
-			_dtLastTNTSearchTime = DateTime.Now;
-		}
-
 		
 	}
 

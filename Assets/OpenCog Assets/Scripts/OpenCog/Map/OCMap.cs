@@ -411,7 +411,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				bPathIsOpen = true;
 			break;
 		case PathDirection.ForwardBlockSolid:
-			if(GetBlock(viForwardChestHigh).IsSolid() && GetBlock(viForwardKneeHigh).IsSolid() && GetBlock(viForwardOneAboveHead).IsSolid())
+			if(GetBlock(viForwardChestHigh).IsSolid() || GetBlock(viForwardKneeHigh).IsSolid() || GetBlock(viForwardOneAboveHead).IsSolid())
 				bPathIsOpen = true;
 			break;
 		default:
