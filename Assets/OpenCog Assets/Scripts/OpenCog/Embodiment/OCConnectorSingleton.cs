@@ -1839,19 +1839,23 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			if(_actionController == null)
 				_actionController = GameObject.FindGameObjectWithTag("OCAGI").GetComponent<OCActionController>();
 			
+			actionArguments.ActionName = actionName;
+			actionArguments.ActionPlanID = _currentPlanId;
+			actionArguments.SequenceID = sequence;
+			
 			// Lake's function here.
 			if (actionName != "say")
 				_actionController.LoadActionPlanStep(actionName, actionArguments);
 			
 			// Just for fun, I'm going to send success for everything for a while.
 			
-			this.SendActionStatus(_currentPlanId, sequence, actionName, true);
+			//this.SendActionStatus(_currentPlanId, sequence, actionName, true);
 			
 			//actionPlan.Add((XmlElement)node);
 		} // end foreach actionPlanElement 
 		
 		// And again for fun, send a whole action plan successful message:
-		this.SendActionPlanStatus(_currentPlanId, true);
+		//this.SendActionPlanStatus(_currentPlanId, true);
 				
         // Start to perform an action in front of the action list.
         //_actionController.ReceiveActionPlan(actionPlan);// SendMessage("receiveActionPlan", actionPlan);
@@ -2024,7 +2028,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    * @param action avatar action
    * @param success action result
    */
-  private void SendActionStatus(string planId, int sequence, string actionName, bool success)
+  public void SendActionStatus(string planId, int sequence, string actionName, bool success)
   {
       string timestamp = GetCurrentTimestamp();
       // Create a xml document
@@ -2065,7 +2069,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    * @param planId plan id
    * @param success action result
    */
-  private void SendActionPlanStatus(string planId, bool success)
+  public void SendActionPlanStatus(string planId, bool success)
   {
       string timestamp = GetCurrentTimestamp();
       XmlDocument doc = new XmlDocument();

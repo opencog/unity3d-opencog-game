@@ -302,9 +302,14 @@ public class OCAction : OCMonoBehaviour
 	//	The following can be used as Precondition, Invariant, or Postcondition
 	//	delegates.
 	
-	public static bool IsNoCondition(OCAction action, OCActionArgs args)
+	public static bool IsTrue(OCAction action, OCActionArgs args)
 	{
 		return true;
+	}
+			
+	public static bool IsFalse(OCAction action, OCActionArgs args)
+	{
+		return false;
 	}
 
 	public static bool IsGlobalInput(OCAction action, OCActionArgs args)
@@ -788,6 +793,11 @@ public class OCAction : OCMonoBehaviour
 		// Checks if all Postconditions are true.
 		if(ShouldEnd)
 			return EndAction();
+				
+		OCActionArgs args = _ActionController.Step.Arguments;
+			
+		if(args.ActionPlanID != null && IsSourceRunningAction(this, null))
+			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, false);
 
 		return ActionStatus.FAILURE;
 	}
@@ -847,6 +857,9 @@ public class OCAction : OCMonoBehaviour
 			dbfx.DestroyBlock(forward);
 			dbfx.DestroyBlock(forwardUp);
 			dbfx.DestroyBlock(forwardUp2x);
+					
+			_EndTarget.transform.position = Vector3.zero;
+			_StartTarget.transform.position = Vector3.zero;
 		}
 
 		//@TODO: Fix this hack...
@@ -855,6 +868,11 @@ public class OCAction : OCMonoBehaviour
 			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
 			motor.enabled = true;
 		}
+				
+		OCActionArgs args = _ActionController.Step.Arguments;
+			
+		if(args.ActionPlanID != null)
+			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);				
 			
 		return ActionStatus.SUCCESS;
 	}
@@ -880,6 +898,10 @@ public class OCAction : OCMonoBehaviour
 		private GameObject _Source;
 		private GameObject _StartTarget;
 		private GameObject _EndTarget;
+				
+		public string ActionPlanID;
+		public int SequenceID;
+		public string ActionName;
 			
 		public OCActionArgs()
 		{
