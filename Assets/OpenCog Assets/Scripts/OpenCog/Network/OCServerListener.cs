@@ -145,6 +145,9 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 				_listener.Start();	
 					
 				UnityEngine.Debug.Log ("Now listening on " + _networkElement.IP + ":" + _networkElement.Port + "...");
+					
+				OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+				console.AddConsoleEntry("Listening for connection callback...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
 			}
 			
 		}
@@ -176,6 +179,9 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 					_workSocket = _listener.AcceptSocket();
 					
 					UnityEngine.Debug.Log ("Socket accepted...");
+					
+					OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+					console.AddConsoleEntry("Callback received, initializing MessageHandler...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
 
 					_isReady = true;
 					
@@ -184,6 +190,8 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 					UnityEngine.Debug.Log ("_shouldStop is now TRUE!");
 					
 					new OldMessageHandler(OCNetworkElement.Instance, _workSocket).start();
+					
+					console.AddConsoleEntry("MessageHandler online, ready to receive messages!", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
 					
 					yield return new UnityEngine.WaitForSeconds(0.1f);
 					

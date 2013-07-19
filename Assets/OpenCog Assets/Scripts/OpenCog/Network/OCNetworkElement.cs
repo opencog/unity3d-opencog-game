@@ -460,9 +460,9 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				UnityEngine.Debug.Log ("Nope, grabbing the console didn't work...");		
 			else
 			{
-				UnityEngine.Debug.Log ("Awesome grabbing the console worked...");		
+				//UnityEngine.Debug.Log ("Awesome grabbing the console worked...");		
 			
-				console.AddConsoleEntry("Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.COMMAND);
+				console.AddConsoleEntry("Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
 			}
 				
 			// Start the async connection request.
@@ -542,6 +542,19 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			_connectionState = ConnectionState.Connected;
 
 			UnityEngine.Debug.Log("Socket connected to router.");
+				
+			// Can't write to the console here, it causes one of these:
+//			CompareBaseObjectsInternal  can only be called from the main thread.
+//			Constructors and field initializers will be executed from the loading thread when loading a scene.
+//			Don't use this function in the constructor or field initializers, instead move initialization code to the Awake or Start function.
+
+				
+//			try {
+//				OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+//				console.AddConsoleEntry("Socket connected to Embodiment Router...Logging in...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.COMMAND);		
+//			} catch (System.Exception ex) {
+//				
+//			}
 			
 			LoginRouter();
 		}
@@ -561,6 +574,9 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		Send(command);
 		
 		_isLoggedIn = true;
+			
+//		OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+//		console.AddConsoleEntry("Login complete.", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.COMMAND);
 	}
 
 	/// <summary>
