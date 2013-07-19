@@ -63,6 +63,9 @@ public class OCGoalController : OCMonoBehaviour
 	private OCMap _map;
 		
 	[SerializeField]
+	private string _blockType = "TNT";
+		
+	[SerializeField]
 	private Dictionary<string, float> _goalNameToChangeRatePerSecond = new Dictionary<string, float>()
 	{
 		{"Intensity", 1.0f}
@@ -102,7 +105,7 @@ public class OCGoalController : OCMonoBehaviour
 	{
 		_map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
 			
-		_goalBlockType = 	_map.GetBlockSet().GetBlock("TNT");
+		_goalBlockType = 	_map.GetBlockSet().GetBlock(_blockType);
 				
 			
 		while (Application.isPlaying) 

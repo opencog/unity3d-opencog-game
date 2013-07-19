@@ -113,6 +113,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 	private bool _actionStatusesUpdated = false;
 
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -1734,7 +1735,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					
 						string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
 							
-						UnityEngine.GameObject vectorGameObject = new UnityEngine.GameObject(gameObjectString);
+						UnityEngine.GameObject vectorGameObject = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_map.WaypointPrefab);
+						vectorGameObject.name = gameObjectString;
+						vectorGameObject.transform.parent = _map.WaypointsSceneObject.transform;
 					
 						// Swapping Y and Z!!
 					

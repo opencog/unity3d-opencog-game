@@ -91,6 +91,12 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		
 	[SerializeField]
 	private GameObject _HearthsSceneObject;		
+		
+	[SerializeField]
+	private GameObject _WaypointPrefab;
+		
+	[SerializeField]
+	private GameObject _WaypointsSceneObject;
 
 	//---------------------------------------------------------------------------
 
@@ -188,6 +194,16 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	{
 		get {return _HearthsSceneObject;}
 	}		
+		
+	public GameObject WaypointPrefab
+	{
+		get {return _WaypointPrefab;}
+	}
+		
+	public GameObject WaypointsSceneObject
+	{
+		get {return _WaypointsSceneObject;}
+	}
 		
 	public new static OCMap Instance
 	{

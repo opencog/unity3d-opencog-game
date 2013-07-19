@@ -290,6 +290,11 @@ public class OCAction : OCMonoBehaviour
 //		InvariantCondition += IsSourceNotRunningOtherActionsIgnoreIdle;
 //		PostCondition += IsSourceRunningOtherActionsIgnoreIdle;
 				
+		if(_EndTarget == null)
+			_EndTarget = GameObject.Find("EndPointStub");
+		if(_StartTarget == null)
+			_StartTarget = GameObject.Find("StartPointStub");
+				
 		DontDestroyOnLoad(this);
 	}
 			
@@ -870,7 +875,7 @@ public class OCAction : OCMonoBehaviour
 			_StartTarget.transform.position = Vector3.zero;
 					
 			// This is just some example code for you Lake, that you can use to give energy to the robot after consuming a battery.
-			if(forwardBlock.block.GetName() == "Battery" || forwardUpBlock.block.GetName() == "Battery" || forwardUp2xBlock.block.GetName() == "Battery")
+			if((forwardBlock.block != null && forwardBlock.block.GetName() == "Battery") || (forwardUpBlock.block != null && forwardUpBlock.block.GetName() == "Battery") || (forwardUp2xBlock.block != null && forwardUp2xBlock.block.GetName() == "Battery"))
 			{
 				UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
 		
