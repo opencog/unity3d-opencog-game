@@ -247,6 +247,7 @@ public class LoadCommand : Console.ConsoleCommand
 			//Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
 			
 			agentClone = (GameObject)UnityEngine.Object.Instantiate (_NPCAgent, spawnPosition, Quaternion.identity);
+			agentClone.transform.parent = GameObject.Find("Characters").transform;
 			
 			//Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
 

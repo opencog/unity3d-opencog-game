@@ -126,17 +126,16 @@ public class OCAction : OCMonoBehaviour
 			bool shouldStart = true;
 			foreach(OCActionCondition precondition in PreCondition.GetInvocationList())
 			{
-				OCActionArgs args = new OCActionArgs(_Source, _StartTarget, _EndTarget);
 				if(_ActionController != null)
 				{
 					if(_ActionController.Step.Arguments.Source != null)
-						args.Source = _ActionController.Step.Arguments.Source;
+						_Source = _ActionController.Step.Arguments.Source;
 					if(_ActionController.Step.Arguments.StartTarget != null)
-						args.StartTarget = _ActionController.Step.Arguments.StartTarget;
+						_StartTarget = _ActionController.Step.Arguments.StartTarget;
 					if(_ActionController.Step.Arguments.EndTarget != null)
-						args.EndTarget = _ActionController.Step.Arguments.EndTarget;
+						_EndTarget = _ActionController.Step.Arguments.EndTarget;
 				}
-				shouldStart &= precondition(this, args);
+				shouldStart &= precondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldStart == false)
 					break;
 			}
@@ -151,17 +150,16 @@ public class OCAction : OCMonoBehaviour
 			bool shouldContinue = true;
 			foreach(OCActionCondition invariant in InvariantCondition.GetInvocationList())
 			{
-				OCActionArgs args = new OCActionArgs(_Source, _StartTarget, _EndTarget);
 				if(_ActionController != null)
 				{
 					if(_ActionController.Step.Arguments.Source != null)
-						args.Source = _ActionController.Step.Arguments.Source;
+						_Source = _ActionController.Step.Arguments.Source;
 					if(_ActionController.Step.Arguments.StartTarget != null)
-						args.StartTarget = _ActionController.Step.Arguments.StartTarget;
+						_StartTarget = _ActionController.Step.Arguments.StartTarget;
 					if(_ActionController.Step.Arguments.EndTarget != null)
-						args.EndTarget = _ActionController.Step.Arguments.EndTarget;
+						_EndTarget = _ActionController.Step.Arguments.EndTarget;
 				}		
-				shouldContinue &= invariant(this, args);
+				shouldContinue &= invariant(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldContinue == false)
 					break;
 			}
@@ -176,17 +174,16 @@ public class OCAction : OCMonoBehaviour
 			bool shouldEnd = true;
 			foreach(OCActionCondition postcondition in PostCondition.GetInvocationList())
 			{
-				OCActionArgs args = new OCActionArgs(_Source, _StartTarget, _EndTarget);
 				if(_ActionController != null)
 				{
 					if(_ActionController.Step.Arguments.Source != null)
-						args.Source = _ActionController.Step.Arguments.Source;
+						_Source = _ActionController.Step.Arguments.Source;
 					if(_ActionController.Step.Arguments.StartTarget != null)
-						args.StartTarget = _ActionController.Step.Arguments.StartTarget;
+						_StartTarget = _ActionController.Step.Arguments.StartTarget;
 					if(_ActionController.Step.Arguments.EndTarget != null)
-						args.EndTarget = _ActionController.Step.Arguments.EndTarget;
+						_EndTarget = _ActionController.Step.Arguments.EndTarget;
 				}		
-				shouldEnd &= postcondition(this, args);
+				shouldEnd &= postcondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldEnd == false)
 					break;
 			}
