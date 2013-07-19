@@ -437,7 +437,11 @@ namespace OpenCog.Embodiment
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
-			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// IMPORTANT: ANOTHER Y Z SWAP:
+			// ORIGINAL:
+			//OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// SWAPPED:
+			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.z, chunkPosition.y, localPosition.x, localPosition.z, localPosition.y, globalBlock);
 			
 			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo>();
 			
@@ -466,7 +470,11 @@ namespace OpenCog.Embodiment
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
-			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// IMPORTANT: SWAPPING OUT Y AND Z HERE AGAIN!!
+			// ORIGINAL:
+			//OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.y, chunkPosition.z, localPosition.x, localPosition.y, localPosition.z, globalBlock);
+			// SWAPPED:
+			OCObjectMapInfo mapInfo = new OCObjectMapInfo(chunkPosition.x, chunkPosition.z, chunkPosition.y, localPosition.x, localPosition.z, localPosition.y, globalBlock);
 			
 			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
 			
