@@ -273,7 +273,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			perceptionCollector.NotifyBlockAdded(pos);	
 		}
 			
-		if(block.block.GetName() == "Battery")
+		if(block.block != null && block.block.GetName() == "Battery")
 		{
 			GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
 			if (batteryPrefab == null)
@@ -290,7 +290,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			
 		}
 			
-		if(block.block.GetName() == "Hearth")
+		if(block.block != null && block.block.GetName() == "Hearth")
 		{
 			GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
 			if (hearthPrefab == null)
@@ -411,7 +411,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				bPathIsOpen = true;
 			break;
 		case PathDirection.ForwardBlockSolid:
-			if(GetBlock(viForwardChestHigh).IsSolid() && GetBlock(viForwardKneeHigh).IsSolid() && GetBlock(viForwardOneAboveHead).IsSolid())
+			if(GetBlock(viForwardChestHigh).IsSolid() || GetBlock(viForwardKneeHigh).IsSolid() || GetBlock(viForwardOneAboveHead).IsSolid())
 				bPathIsOpen = true;
 			break;
 		default:
@@ -626,14 +626,16 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
 				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
 
-				if (myCollider != null) {
-
-					myCollider.sharedMesh = null;
-				
-					myCollider.sharedMesh = myFilter.mesh;
-				
-					//Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());
+				if (myCollider == null) 
+				{
+					myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
 				}
+					
+				myCollider.sharedMesh = null;
+				
+				myCollider.sharedMesh = myFilter.mesh;
+					
+				//Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());	
 				
 //				Debug.Log ("i: " + objects [i].name);
 //				Debug.Log ("Center: " + myCollider.bounds.center.ToString());

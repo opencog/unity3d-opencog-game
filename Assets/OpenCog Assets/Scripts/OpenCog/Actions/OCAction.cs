@@ -322,6 +322,20 @@ public class OCAction : OCMonoBehaviour
 		return args.Source.GetComponent<CharacterController>().isGrounded;
 	}
 			
+	public static bool IsEndTargetBelowClimbAngle(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePos = args.Source.transform.position;
+		Vector3 endTargetPos = args.EndTarget.transform.position;
+		float angle = Vector3.Angle(endTargetPos - sourcePos, Vector3.up);
+				
+		return angle > 45;
+	}
+			
+	public static bool IsEndTargetAboveClimbAngle(OCAction action, OCActionArgs args)
+	{
+		return !IsEndTargetBelowClimbAngle(action, args);
+	}
+			
 	public static bool IsLocalAnimating(OCAction action, OCActionArgs args)
 	{
 		bool isAnimating = false;
@@ -617,18 +631,57 @@ public class OCAction : OCMonoBehaviour
 		return Math.Abs(projUp) >= 1.5f && Math.Abs(projForward) < 0.5f && Math.Abs(projRight) < 0.5f;
 	}
 			
+	public static bool IsEndTargetAbove(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = args.Source.transform.up;
+		Vector3 sourceForward = args.Source.transform.forward;
+		Vector3 sourceRight = args.Source.transform.right;
+
+		Vector3 distance = targetPosition - sourcePosition;
+		float projUp = Vector3.Dot(distance, sourceUp);
+		float projForward = Vector3.Dot(distance, sourceForward);
+		float projRight = Vector3.Dot(distance, sourceRight);
+
+		return projUp >= 1.5f && Math.Abs(projForward) < 0.5f && Math.Abs(projRight) < 0.5f;
+	}		
+			
+	public static bool IsEndTargetAhead(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceUp = args.Source.transform.up;
+		Vector3 sourceForward = args.Source.transform.forward;
+		Vector3 sourceRight = args.Source.transform.right;
+
+		Vector3 distance = targetPosition - sourcePosition;
+		float projUp = Vector3.Dot(distance, sourceUp);
+		float projForward = Vector3.Dot(distance, sourceForward);
+		float projRight = Vector3.Dot(distance, sourceRight);
+
+		return Math.Abs(projUp) < 0.5f && projForward >= 0.5f && Math.Abs(projRight) < 0.5f;
+	}
+			
+	public static bool IsEndTargetNotAhead(OCAction action, OCActionArgs args)
+	{
+		return !IsEndTargetAhead(action, args);
+	}
+			
 	public static bool IsEndTargetMoreLeft(OCAction action, OCActionArgs args)
 	{
 		Vector3 sourcePosition = args.Source.gameObject.transform.position;
 		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
 		Vector3 sourceRight = args.Source.gameObject.transform.right;
 		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
+		Vector3 sourceForward = args.Source.gameObject.transform.forward;
 				
-		Vector3 distance = targetPosition - sourcePosition;
-		float projectionLeft = Vector3.Dot(distance, sourceLeft);
-		float projectionRight = Vector3.Dot(distance, sourceRight);
+		Vector3 sourceGoal = targetPosition - sourcePosition;
+		float projectionLeft = Vector3.Dot(sourceGoal, sourceLeft);
+		float projectionRight = Vector3.Dot(sourceGoal, sourceRight);
+		float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
 				
-		return (projectionLeft + 0.0f) > projectionRight;
+		return (projectionLeft) > projectionRight && projectionLeft > projectionForward;
 	}
 			
 	public static bool IsEndTargetMoreRight(OCAction action, OCActionArgs args)
@@ -637,12 +690,14 @@ public class OCAction : OCMonoBehaviour
 		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
 		Vector3 sourceRight = args.Source.gameObject.transform.right;
 		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
+		Vector3 sourceForward = args.Source.gameObject.transform.forward;
 				
-		Vector3 distance = targetPosition - sourcePosition;
-		float projectionLeft = Vector3.Dot(distance, sourceLeft);
-		float projectionRight = Vector3.Dot(distance, sourceRight);
+		Vector3 sourceGoal = targetPosition - sourcePosition;
+		float projectionLeft = Vector3.Dot(sourceGoal, sourceLeft);
+		float projectionRight = Vector3.Dot(sourceGoal, sourceRight);
+		float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
 				
-		return projectionRight > (projectionLeft + 0.0f);
+		return projectionRight > (projectionLeft) && projectionRight > projectionForward;
 	}
 
 	public static bool IsNoEndTarget(OCAction action, OCActionArgs args)
@@ -788,8 +843,10 @@ public class OCAction : OCMonoBehaviour
 		{
 			Vector3i forward = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward);
 			Vector3i forwardUp = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + _Source.transform.up);
+			Vector3i forwardUp2x = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + 2*_Source.transform.up);		
 			dbfx.DestroyBlock(forward);
 			dbfx.DestroyBlock(forwardUp);
+			dbfx.DestroyBlock(forwardUp2x);
 		}
 
 		//@TODO: Fix this hack...
