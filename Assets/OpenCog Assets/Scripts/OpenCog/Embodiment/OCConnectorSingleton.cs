@@ -1800,6 +1800,27 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							UnityEngine.Debug.Log ("An 'eat' command told me to eat an object with ID " + entityID);
 						
 							console.AddConsoleEntry("An 'eat' command told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+						
+							// This is just some example code for you Lake, that you can use to give energy to the robot after consuming a battery.
+						
+							UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
+					
+							for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+							{
+								UnityEngine.GameObject agiObject = agiArray[iAGI];
+							
+								actionArguments.EndTarget = agiObject;
+							
+								OCPhysiologicalModel agiPhysModel = agiObject.GetComponent<OCPhysiologicalModel>();
+							
+								OCPhysiologicalEffect batteryEatEffect = new OCPhysiologicalEffect(OCPhysiologicalEffect.CostLevel.NONE);
+							
+								batteryEatEffect.EnergyIncrease = 0.2f;
+							
+								agiPhysModel.ProcessPhysiologicalEffect(batteryEatEffect);
+							
+								break;
+							}
 						}
 						
 						break;
