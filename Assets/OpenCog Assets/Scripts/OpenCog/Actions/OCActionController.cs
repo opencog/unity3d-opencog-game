@@ -77,6 +77,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	// Our current queue of behaviours
 	private Queue< OCActionPlanStep > _ActionPlanQueue;
+			
+	private bool _PlanSucceeded = true;
 
 	//---------------------------------------------------------------------------
 
@@ -627,6 +629,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		}
 		else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
+			_PlanSucceeded = true;
 			OCActionPlanStep step = new OCActionPlanStep();
 			step.Behaviour = _TreeTypeDictionary[_TreeType];
 			step.Arguments = new OCAction.OCActionArgs(gameObject, null, null);
@@ -637,11 +640,17 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		if(result != BehaveResult.Running)
 		{
+			_PlanSucceeded &= result == BehaveResult.Success;
+					
 			if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 1)
-				OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, result == BehaveResult.Success);						
+				OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);						
 					
 			_step.Behaviour.Reset();
-			if(_ActionPlanQueue.Count == 0) _ActionPlanQueue.Enqueue(_step);	
+			if(_ActionPlanQueue.Count == 0) 
+			{
+				_PlanSucceeded = true;
+				_ActionPlanQueue.Enqueue(_step);	
+			}
 			_step = _ActionPlanQueue.Dequeue();
 			//if(result == BehaveResult.Success) Debug.Log("In OCActionController.UpdateAI, Result: " + result.ToString());
 		}
