@@ -113,7 +113,7 @@ public class OCGlassBlock : OCBlock
 	}
 	
 	public override bool IsSolid() {
-		return false;
+		return true;
 	}
 
 	//---------------------------------------------------------------------------
