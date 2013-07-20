@@ -29,6 +29,7 @@ Trees:
 	Character_RightHandCreate
 	Character_LeftHandDestroy
 	Character_IdleTell
+	Character_TurnAndDestroy
 	Unknown
 
 Contexts:

@@ -66,8 +66,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 	private Dictionary<string, TreeType> _ActionNameDictionary = new Dictionary<string, TreeType>()
 	{ { "walk", TreeType.Character_Move }
-	, { "grab", TreeType.Character_RightHandActivate }
-	, { "eat", TreeType.Character_Destroy }
+	, { "grab", TreeType.Character_RobotBehaviour }
+	, { "eat", TreeType.Character_RobotBehaviour }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
 	};
@@ -642,7 +642,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		{
 			_PlanSucceeded &= result == BehaveResult.Success;
 					
-			if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 1)
+			if(_PlanSucceeded == false)
+				Debug.Log(" -- Step Failed: " + _step.Arguments.ActionName);
+					
+			if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
 				OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);						
 					
 			_step.Behaviour.Reset();
