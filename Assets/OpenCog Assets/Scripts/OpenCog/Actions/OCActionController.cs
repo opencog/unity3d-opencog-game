@@ -643,7 +643,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			_PlanSucceeded &= result == BehaveResult.Success;
 					
 			if(_PlanSucceeded == false)
-				Debug.Log(" -- Step Failed: " + _step.Arguments.ActionName);
+				Debug.Log(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));
 					
 			if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
 				OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);						

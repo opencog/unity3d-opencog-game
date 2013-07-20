@@ -798,6 +798,8 @@ public class OCAction : OCMonoBehaviour
 			return EndAction();
 				
 		OCActionArgs args = _ActionController.Step.Arguments;
+				
+		Debug.Log(" -- Action Failed: " + FullName);
 			
 		if(args.ActionPlanID != null && IsSourceRunningAction(this, null))
 			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, false);
