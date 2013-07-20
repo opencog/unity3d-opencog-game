@@ -1764,50 +1764,56 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						int entityID = System.Int32.Parse (entityElement.GetAttribute (OCEmbodimentXMLTags.ID_ATTRIBUTE));
 						string entityType = entityElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
 					
-						UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
-				
-						for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
+						if (actionName == "grab" || actionName == "eat")
 						{
-							UnityEngine.GameObject batteryObject = batteryArray[iBattery];
-							
-							if (entityID == batteryObject.GetInstanceID())
-							{
-								// This is the one!	
-								actionArguments.EndTarget = batteryObject;
-								
-								break;
-							}
-						}
+							UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
 					
-						UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
-				
-						for (int iHearth = 0; iHearth < hearthArray.Length; iHearth++)
-						{
-							UnityEngine.GameObject hearthObject = hearthArray[iHearth];
-							
-							if (entityID == hearthObject.GetInstanceID())
+							for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
 							{
-								// This is the one!	
-								actionArguments.EndTarget = hearthObject;
+								UnityEngine.GameObject batteryObject = batteryArray[iBattery];
 								
-								break;
+								if (entityID == batteryObject.GetInstanceID())
+								{
+									// This is the one!	
+									actionArguments.EndTarget = batteryObject;
+									
+									break;
+								}
 							}
-						}
+						
+							if (actionName == "grab")
+							{
+								UnityEngine.Debug.Log ("A 'grab' command told me to grab an object with ID " + entityID);
+							
+								console.AddConsoleEntry("A 'grab' command told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+							}
+							else if (actionName == "eat")
+							{
+								UnityEngine.Debug.Log ("An 'eat' command told me to eat an object with ID " + entityID);
+							
+								console.AddConsoleEntry("An 'eat' command told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+							
+							}
+						} // if (actionName == "grab" || actionName == "eat"
+//						else
+//						{
+//							// I'll bet the section below does nothing. Go home 
+////							UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
+////					
+////							for (int iHearth = 0; iHearth < hearthArray.Length; iHearth++)
+////							{
+////								UnityEngine.GameObject hearthObject = hearthArray[iHearth];
+////								
+////								if (entityID == hearthObject.GetInstanceID())
+////								{
+////									// This is the one!	
+////									actionArguments.EndTarget = hearthObject;
+////									
+////									break;
+////								}
+////							}	
+//						}
 					
-						if (actionName == "grab")
-						{
-							UnityEngine.Debug.Log ("A 'grab' command told me to grab an object with ID " + entityID);
-						
-							console.AddConsoleEntry("A 'grab' command told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
-						}
-						else if (actionName == "eat")
-						{
-							UnityEngine.Debug.Log ("An 'eat' command told me to eat an object with ID " + entityID);
-						
-							console.AddConsoleEntry("An 'eat' command told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
-						
-						}
-						
 						break;
 					case "string":
 //						XmlNodeList stringParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
@@ -1836,7 +1842,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						
 							break;
 						}
-						
+					
 						break;
 
 				} // end switch actionParameterType
