@@ -38,23 +38,24 @@ Contexts:
 Branch priority groups:
 	Unknown
 
-Actions (13: 1 - 14):
+Actions (14: 1 - 15):
 	StandIdleShow (1)
-	WalkForwardMove (2)
-	JumpForwardMove (3)
-	ClimbForwardMove (4)
-	RunForwardMove (5)
-	FallForwardMove (6)
-	StandTurnLeftMove (7)
-	StandTurnRightMove (8)
-	JumpUpMove (9)
-	JumpDownMove (10)
-	HoldRightHandCreate (11)
-	StrikeLeftHandDestroy (12)
-	StandIdleTell (13)
-	Unknown (14)
-
-Decorators (0: 15 - 15):
+	FallIdleShow (2)
+	WalkForwardMove (3)
+	JumpForwardMove (4)
+	ClimbForwardMove (5)
+	RunForwardMove (6)
+	FallForwardMove (7)
+	StandTurnLeftMove (8)
+	StandTurnRightMove (9)
+	JumpUpMove (10)
+	JumpDownMove (11)
+	HoldRightHandCreate (12)
+	StrikeLeftHandDestroy (13)
+	StandIdleTell (14)
 	Unknown (15)
+
+Decorators (0: 16 - 16):
+	Unknown (16)
 
 Agent classes:

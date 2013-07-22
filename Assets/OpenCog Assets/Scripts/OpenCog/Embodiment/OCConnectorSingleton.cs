@@ -1733,11 +1733,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //							z += 0.5f;
 //						}
 					
-						string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
+//						string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
 							
-						UnityEngine.GameObject vectorGameObject = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_map.WaypointPrefab);
-						vectorGameObject.name = gameObjectString;
-						vectorGameObject.transform.parent = _map.WaypointsSceneObject.transform;
+//						UnityEngine.GameObject vectorGameObject = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_map.WaypointPrefab);
+//						vectorGameObject.name = gameObjectString;
+//						vectorGameObject.transform.parent = _map.WaypointsSceneObject.transform;
 					
 						// Swapping Y and Z!!
 					
@@ -1746,14 +1746,17 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						// UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
 					
 						// SWAPPED:
-						vectorGameObject.transform.position = new Vector3(x, z, y);
+						//vectorGameObject.transform.position = new Vector3(x, z, y);
 						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + z + ", " + y + "]");
 					
 						console.AddConsoleEntry("A '" + actionName + "' command told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 					
-						actionArguments.EndTarget = vectorGameObject;
-						//actionArguments.EndTarget = GameObject.Find("EndPointStub");
-						//actionArguments.EndTarget.transform.position = new Vector3(x, z, y);
+						//actionArguments.EndTarget = vectorGameObject;
+						actionArguments.EndTarget = GameObject.Find("EndPointStub");
+						actionArguments.EndTarget.transform.position = new Vector3(x, z, y);
+						actionArguments.StartTarget = GameObject.Find("StartPointStub");
+						actionArguments.StartTarget.transform.position = GameObject.FindGameObjectWithTag("OCAGI").transform.position;
+						
 					
 						break;	
 					// If it's an entity, then it's a grab or a consume. So the target is the battery.
@@ -1854,6 +1857,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			actionArguments.ActionName = actionName;
 			actionArguments.ActionPlanID = _currentPlanId;
 			actionArguments.SequenceID = sequence;
+			actionArguments.Source = UnityEngine.GameObject.FindGameObjectWithTag("OCAGI");
 			
 			// Lake's function here.
 			if (actionName != "say")

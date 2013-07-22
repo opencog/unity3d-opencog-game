@@ -96,7 +96,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		set {	_TreeType = value;}
 	}
 
-	public HashSet<string> RunningActions;
+	public List<string> RunningActions;
 
 	public OCActionPlanStep Step 
 	{
@@ -148,16 +148,16 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		OCActionPlanStep firstStep = new OCActionPlanStep();
 		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
-		firstStep.Arguments = new OCAction.OCActionArgs(gameObject, null, null);
+		firstStep.Arguments = new OCAction.OCActionArgs(gameObject, GameObject.Find("StartPointStub"), GameObject.Find("EndPointStub"));
 
 		_ActionPlanQueue.Enqueue(firstStep);		
 
-		RunningActions = new HashSet<string>();
-		RunningActions.Add("StandIdleShow");
+		RunningActions = new List<string>();
+		//RunningActions.Add("StandIdleShow");
 
 		while (Application.isPlaying) 
 		{
-			yield return new WaitForSeconds (1.0f / 120.0f);
+			yield return new WaitForSeconds (1.0f / 240.0f);
 			UpdateAI ();
 		}
 	}
@@ -632,7 +632,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			_PlanSucceeded = true;
 			OCActionPlanStep step = new OCActionPlanStep();
 			step.Behaviour = _TreeTypeDictionary[_TreeType];
-			step.Arguments = new OCAction.OCActionArgs(gameObject, null, null);
+			step.Arguments = new OCAction.OCActionArgs(gameObject, GameObject.Find("StartPointStub"), GameObject.Find("EndPointStub"));
 			_step = step;
 		}
 				
@@ -640,10 +640,39 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		if(result != BehaveResult.Running)
 		{
-			_PlanSucceeded &= result == BehaveResult.Success;
+			// if we have a goal...
+			if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
+				_PlanSucceeded &= result == BehaveResult.Success;
 					
-			if(_PlanSucceeded == false)
-				Debug.Log(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));
+			if(!_PlanSucceeded)
+			{
+				Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
+				Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
+				Vector3 sourcePosition = _step.Arguments.Source.transform.position;
+							
+				Vector3 startToEnd = endPosition - startPosition;
+				Vector3 sourceToEnd = endPosition - sourcePosition;		
+						
+				float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
+				float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
+						
+				if(_step.Behaviour.Name == "Character.Move" || _step.Behaviour.Name == "Character.RobotBehaviour")
+				{
+					// don't use euclideon distance
+					//_PlanSucceeded |= sourceToEnd.sqrMagnitude < startToEnd.sqrMagnitude;
+							
+					// use manhattan distance
+					_PlanSucceeded |= sourceToEndManDist < startToEndManDist;
+				}
+						
+				if(_step.Behaviour.Name == "Character.TurnAndDestroy")
+				{
+					_PlanSucceeded |= endPosition == Vector3.zero;
+				}
+						
+				if(!_PlanSucceeded)
+					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));
+			}
 					
 			if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
 				OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);						

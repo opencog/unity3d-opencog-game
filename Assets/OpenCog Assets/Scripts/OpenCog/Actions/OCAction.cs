@@ -97,6 +97,12 @@ public class OCAction : OCMonoBehaviour
 	private OCActionController _ActionController;
 
 	private OCMap _Map;
+			
+	[SerializeField]
+	private bool _blockOnFail = true;
+			
+	[SerializeField]
+	private bool _blockOnRunning = true;
 
 	//---------------------------------------------------------------------------
 
@@ -330,6 +336,11 @@ public class OCAction : OCMonoBehaviour
 		return args.Source.GetComponent<CharacterController>().isGrounded;
 	}
 			
+	public static bool IsSourceNotGrounded(OCAction action, OCActionArgs args)
+	{
+		return !IsSourceGrounded(action, args);
+	}
+			
 	public static bool IsEndTargetBelowClimbAngle(OCAction action, OCActionArgs args)
 	{
 		Vector3 sourcePos = args.Source.transform.position;
@@ -392,6 +403,11 @@ public class OCAction : OCMonoBehaviour
 	public static bool IsSourceNotAnimating(OCAction action, OCActionArgs args)
 	{
 		return !IsSourceAnimating(action, args);
+	}
+			
+	public static bool IsNoEndTargetOrNotAnimating(OCAction action, OCActionArgs args)
+	{
+		return IsSourceNotAnimating(action, args) || IsNoEndTarget(action, args);
 	}
 
 	public static bool IsSourceNotIdlingAnimation(OCAction action, OCActionArgs args)
@@ -727,6 +743,11 @@ public class OCAction : OCMonoBehaviour
 	{
 		return !IsSourceRunningAction(action, args);
 	}
+			
+	public static bool IsSourceNotAnimatingOrRunningAction(OCAction action, OCActionArgs args)
+	{
+		return IsSourceNotAnimating(action, args) || IsSourceRunningAction(action, args);
+	}
 
 	public static bool IsSourceIdling(OCAction action, OCActionArgs args)
 	{
@@ -797,21 +818,39 @@ public class OCAction : OCMonoBehaviour
 		if(ShouldEnd)
 			return EndAction();
 				
-		OCActionArgs args = _ActionController.Step.Arguments;
+		OCActionArgs args = _ActionController.Step.Arguments;		
 				
-		Debug.Log(" -- Action Failed: " + FullName);
-			
-		if(args.ActionPlanID != null && IsSourceRunningAction(this, null))
-			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, false);
-
-		return ActionStatus.FAILURE;
+		if(!_blockOnFail)
+		{
+			if(IsSourceRunningAction(this, null))
+			{
+				Debug.Log(" -- Action Failed, but will not block: " + FullName);
+				
+				if(args.ActionPlanID != null)
+					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);
+			}
+	
+			return ActionStatus.SUCCESS;
+		}
+		else
+		{
+			if(IsSourceRunningAction(this, null))
+			{
+				Debug.LogWarning(" -- Action Failed: " + FullName);
+				
+				if(args.ActionPlanID != null)
+					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, false);
+			}
+					
+			return ActionStatus.FAILURE;
+		}
 	}
 			
 	private ActionStatus StartAction()
 	{
 		//OCLogger.Debugging("Starting the " + FullName + " Action.");
-
-		_ActionController.RunningActions.Add(FullName);
+		if(_blockOnFail && _blockOnRunning)
+			_ActionController.RunningActions.Add(FullName);
 
 		// Start animation effects
 		foreach(OCAnimationEffect afx in _AnimationEffects)
@@ -825,7 +864,7 @@ public class OCAction : OCMonoBehaviour
 		}
 
 		//@TODO: Fix this hack...
-		if(Descriptors.Contains("Jump") || Descriptors.Contains("Climb") || Descriptors.Contains("Fall"))
+		if(Descriptors.Contains("Jump") || Descriptors.Contains("Climb"))
 		{
 			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
 			motor.enabled = false;
@@ -839,7 +878,10 @@ public class OCAction : OCMonoBehaviour
 		//OCLogger.Fine("Continuing the " + FullName + " Action.");
 
 		// Animation effects continue automatically
-		return ActionStatus.RUNNING;
+		if(_blockOnRunning)
+			return ActionStatus.RUNNING;
+		else
+			return ActionStatus.SUCCESS;
 	}
 			
 	private ActionStatus EndAction()
@@ -847,8 +889,9 @@ public class OCAction : OCMonoBehaviour
 		//OCLogger.Debugging("Ending the " + FullName + " Action.");
 				
 		OCActionArgs args = _ActionController.Step.Arguments;		
-
-		_ActionController.RunningActions.Remove(FullName);
+				
+		if(_blockOnFail && _blockOnRunning)
+			_ActionController.RunningActions.Remove(FullName);
 
 		// End animation effects
 		foreach(OCAnimationEffect afx in _AnimationEffects)
