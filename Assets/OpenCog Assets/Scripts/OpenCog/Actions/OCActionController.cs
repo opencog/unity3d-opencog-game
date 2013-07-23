@@ -678,14 +678,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					// use manhattan distance
 					_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
 							
-					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
+					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 1)
 						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);		
 				}
 						
 				if(_step.Behaviour.Name == "Character.TurnAndDestroy" || _step.Arguments.ActionName == "grab" || _step.Arguments.ActionName == "eat")
 				{
 					_PlanSucceeded = endPosition == Vector3.zero;
-					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
+					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 1)
 						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);
 				}
 						
@@ -699,7 +699,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				}
 				else
 				{
-					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + result.ToString() + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));		
+					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));		
 					_step = _ActionPlanQueue.Dequeue();
 				}
 			}
