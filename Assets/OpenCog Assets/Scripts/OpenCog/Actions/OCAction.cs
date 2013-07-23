@@ -429,7 +429,7 @@ public class OCAction : OCMonoBehaviour
 				
 		return 
 			map.IsPathOpen
-			(	action.gameObject.transform
+			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardDrop
 			)
@@ -445,7 +445,7 @@ public class OCAction : OCMonoBehaviour
 				
 		return 
 			map.IsPathOpen
-			(	action.gameObject.transform
+			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardClimb
 			)
@@ -461,7 +461,7 @@ public class OCAction : OCMonoBehaviour
 				
 		return 
 			map.IsPathOpen
-			(	action.gameObject.transform
+			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardRun
 			)
@@ -477,7 +477,7 @@ public class OCAction : OCMonoBehaviour
 				
 		return 
 			map.IsPathOpen
-			(	action.gameObject.transform
+			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardJump
 			)
@@ -493,7 +493,7 @@ public class OCAction : OCMonoBehaviour
 				
 		return 
 			map.IsPathOpen
-			(	action.gameObject.transform
+			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardWalk
 			)
@@ -509,7 +509,7 @@ public class OCAction : OCMonoBehaviour
 				
 		return 
 			map.IsPathOpen
-			(	action.gameObject.transform
+			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardBlockEmpty
 			)
@@ -525,7 +525,7 @@ public class OCAction : OCMonoBehaviour
 				
 		return 
 			map.IsPathOpen
-			(	action.gameObject.transform
+			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardBlockSolid
 			)
@@ -947,7 +947,7 @@ public class OCAction : OCMonoBehaviour
 			motor.enabled = true;
 		}
 				
-
+		Debug.LogWarning("Ending Action: " + FullName);
 			
 		if(args.ActionPlanID != null)
 			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);				

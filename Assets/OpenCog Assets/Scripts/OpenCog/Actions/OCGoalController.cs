@@ -66,6 +66,9 @@ public class OCGoalController : OCMonoBehaviour
 	private string _blockType = "TNT";
 		
 	[SerializeField]
+	private bool _ShouldMoveTargets = true;
+		
+	[SerializeField]
 	private Dictionary<string, float> _goalNameToChangeRatePerSecond = new Dictionary<string, float>()
 	{
 		{"Intensity", 1.0f}
@@ -189,13 +192,16 @@ public class OCGoalController : OCMonoBehaviour
 											{
 												GoalBlockPos = candidatePos;
 												distanceVec = candidateVec;
-
-												OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
-
-												foreach(OCAction action in actions)
+												
+												if(_ShouldMoveTargets)
 												{
-													action.EndTarget.transform.position = new Vector3(GoalBlockPos.x, GoalBlockPos.y, GoalBlockPos.z);
-													action.StartTarget.transform.position = gameObject.transform.position;
+													OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
+	
+													foreach(OCAction action in actions)
+													{
+														action.EndTarget.transform.position = new Vector3(GoalBlockPos.x, GoalBlockPos.y, GoalBlockPos.z);
+														action.StartTarget.transform.position = gameObject.transform.position;
+													}
 												}
 
 												Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
