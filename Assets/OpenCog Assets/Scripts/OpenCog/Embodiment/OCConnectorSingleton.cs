@@ -2105,7 +2105,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
           _messagesToSend.Add(message);
       }
 		
-	UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
+	UnityEngine.Debug.LogWarning("Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
   }
 
 	//---------------------------------------------------------------------------

@@ -84,6 +84,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	private Queue< OCActionPlanStep > _ActionPlanQueue;
 			
 	private bool _PlanSucceeded = true;
+			
+	private string _LastPlanID = null;
 
 	//---------------------------------------------------------------------------
 
@@ -677,32 +679,46 @@ public class OCActionController : OCMonoBehaviour, IAgent
 							
 					// use manhattan distance
 					_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
-							
-					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 1)
-						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);		
 				}
 						
 				if(_step.Behaviour.Name == "Character.TurnAndDestroy" || _step.Arguments.ActionName == "grab" || _step.Arguments.ActionName == "eat")
 				{
 					_PlanSucceeded = endPosition == Vector3.zero;
-					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 1)
-						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);
 				}
 						
-				if(!_PlanSucceeded)
-					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
-						
+//				if(!_PlanSucceeded)
+//					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
+					
+				if(_step.Behaviour.Name != "Character.IdleShow")
+					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));		
+				
 				_step.Behaviour.Reset();
+						
 				if(_ActionPlanQueue.Count == 0) 
 				{
+					if(_LastPlanID != null)
+					{
+						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded);
+						_LastPlanID = null;		
+					}
 					_step = null;	
 				}
-				else
+				else if(_LastPlanID != null)
 				{
-					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));		
 					_step = _ActionPlanQueue.Dequeue();
+					if(_LastPlanID != _step.Arguments.ActionPlanID)
+					{
+						Debug.LogError("We've changed plans without reporting back to OpenCog!");
+					}
+				}
+				else
+				{	
+					_LastPlanID = _step.Arguments.ActionPlanID;
+					_step = _ActionPlanQueue.Dequeue();		
 				}
 			}
+					
+			
 		}
 		
 	}
