@@ -78,6 +78,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	private ArrayList _completionPossibilities; // Potential commands to be used in command completion.
 	private bool _isShowingCompletionOptions = false; // Whether we are currently showing completion options
 	private bool _showChat = true;
+	private string _lastLine = "";
 
 	// TODO: (Scratch that) Search this file for the object below and re-enable all calls to it.
 	//OpenCog.Character.OCInputController _inputController; // InputController to capture and return the consumer of input.
@@ -510,6 +511,14 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		{
 			return;
 		} // No message, ignore it
+			
+		// Same message...ignore it.
+		if (str == _lastLine)
+		{
+			return;	
+		}
+		
+	
 
 		// Create console entry
 		ConsoleEntry entry = new ConsoleEntry();
@@ -540,7 +549,9 @@ public class Console : OCSingletonMonoBehaviour<Console>
 
 		// Ensure we are at the bottom...
 		// TODO Do this in a non-brittle way... i.e. find actual maximum value
-		_scrollPosition.y = 1000000;	
+		_scrollPosition.y = 1000000;
+			
+		_lastLine = str;
 	}
 
 	private bool TabComplete(string context)

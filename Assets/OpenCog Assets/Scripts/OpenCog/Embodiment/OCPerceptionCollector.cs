@@ -939,7 +939,7 @@ namespace OpenCog.Embodiment
 								}	
 							} else {
 								// if chunk != null
-								UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is null.");	
+								//UnityEngine.Debug.Log ("Chunk at [" + x + ", " + y + ", " + z + "] is null.");	
 							}
 						}
 					}

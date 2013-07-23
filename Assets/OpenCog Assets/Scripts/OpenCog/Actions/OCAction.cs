@@ -736,7 +736,7 @@ public class OCAction : OCMonoBehaviour
 
 	public static bool IsSourceRunningAction(OCAction action, OCActionArgs args)
 	{
-		return action._ActionController.RunningActions.Contains(action.FullName);
+		return action._ActionController.RunningActions.Count > 0 && action._ActionController.RunningActions.Contains(action.FullName);
 	}
 			
 	public static bool IsSourceNotRunningAction(OCAction action, OCActionArgs args)
@@ -806,17 +806,26 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus Execute()
 	{
+		ActionStatus retVal = ActionStatus.NONE;		
+				
 		// Checks if all Preconditions are true.
 		if(ShouldStart)
-			return StartAction();
+			return StartAction();//retVal = StartAction();
 				
 		// Checks if all Invariants are true.
-		if(ShouldContinue)
-			return ContinueAction();
+		if(ShouldContinue && retVal == ActionStatus.NONE)
+			return ContinueAction();//retVal = ContinueAction();
 
 		// Checks if all Postconditions are true.
-		if(ShouldEnd)
-			return EndAction();
+		if(ShouldEnd && retVal == ActionStatus.NONE)
+			return EndAction();//retVal = EndAction();
+				
+//		if(Descriptors.Contains("Idle") && _EndTarget.transform.position != Vector3.zero && retVal == ActionStatus.NONE)
+//		{
+//			return ActionStatus.FAILURE;
+//		}
+//		else if(retVal != ActionStatus.NONE)
+//			return retVal;
 				
 		OCActionArgs args = _ActionController.Step.Arguments;		
 				
@@ -873,7 +882,7 @@ public class OCAction : OCMonoBehaviour
 			motor.enabled = false;
 		}
 				
-		if(FullName != "StandIdleShow")
+		if(!Descriptors.Contains("Idle"))
 			Debug.LogWarning("Starting Action: " + FullName);		
 			
 		return ActionStatus.RUNNING;
@@ -882,6 +891,9 @@ public class OCAction : OCMonoBehaviour
 	private ActionStatus ContinueAction()
 	{
 		//OCLogger.Fine("Continuing the " + FullName + " Action.");
+				
+//		if(!Descriptors.Contains("Idle"))
+//			Debug.LogWarning("Continuing Action: " + FullName);		
 
 		// Animation effects continue automatically
 		if(_blockOnRunning)
@@ -952,8 +964,9 @@ public class OCAction : OCMonoBehaviour
 			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
 			motor.enabled = true;
 		}
-				
-		Debug.LogWarning("Ending Action: " + FullName);
+			
+		if(!Descriptors.Contains("Idle"))
+			Debug.LogWarning("Ending Action: " + FullName);
 			
 		if(args.ActionPlanID != null)
 			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);				

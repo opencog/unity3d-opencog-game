@@ -644,20 +644,18 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		BehaveResult result = _step.Behaviour.Tick ();
 				
-		if((_step.Behaviour.Name == _TreeTypeDictionary[TreeType.Character_IdleShow].Name) && result == BehaveResult.Success)
-		{
-			//iTween itween = _step.Arguments.Source.GetComponent<iTween>();
-			iTween.Stop(_step.Arguments.Source);
-		}		
+//		if((_step.Behaviour.Name == _TreeTypeDictionary[TreeType.Character_IdleShow].Name) && result == BehaveResult.Success)
+//		{
+//			//iTween itween = _step.Arguments.Source.GetComponent<iTween>();
+//			iTween.Stop(_step.Arguments.Source);
+//		}		
 				
 		if(result != BehaveResult.Running)
 		{
-			if((_step.Behaviour.Name != _TreeTypeDictionary[_TreeType].Name) 
-				|| ((_step.Behaviour.Name == _TreeTypeDictionary[_TreeType].Name) 
-					&& (GameObject.Find("EndPointStub").transform.position != Vector3.zero)))
+//			if((_step.Behaviour.Name != _TreeTypeDictionary[_TreeType].Name) 
+//				|| ((_step.Behaviour.Name == _TreeTypeDictionary[_TreeType].Name) 
+//					&& (GameObject.Find("EndPointStub").transform.position != Vector3.zero)))
 			{
-				
-						
 				// if we have a goal...
 				if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
 					_PlanSucceeded &= result == BehaveResult.Success;
@@ -678,7 +676,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					//_PlanSucceeded |= sourceToEnd.sqrMagnitude < startToEnd.sqrMagnitude;
 							
 					// use manhattan distance
-					_PlanSucceeded = sourceToEndManDist < startToEndManDist;
+					_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
 							
 					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
 						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);		
