@@ -134,7 +134,7 @@ public class OCGoalController : OCMonoBehaviour
 			
 		UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
 			
-		if (integrityChange > 0.05)
+		if (integrityChange > 0.04)
 		{
 			for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
 			{
