@@ -964,7 +964,8 @@ public class OCAction : OCMonoBehaviour
 	#region Other Members
 
 	//---------------------------------------------------------------------------
-
+			
+	[Serializable]
 	public class OCActionArgs : EventArgs
 	{
 		/// <summary>

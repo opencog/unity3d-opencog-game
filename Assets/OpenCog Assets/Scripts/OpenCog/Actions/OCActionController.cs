@@ -70,12 +70,17 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	, { "eat", TreeType.Character_RobotBehaviour }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
+	, { "BuildBlockAtPosition", TreeType.Character_Create }
+	, { "MoveToCoordinate", TreeType.Character_Move }
 	};
 			
 	// Assume that there's just one behaviour we'd like to execute at a given time
 	private Dictionary<TreeType, Tree> _TreeTypeDictionary;
 			
 	// Our current queue of behaviours
+	[SerializeField]
+	private List< OCActionPlanStep > _ActionPlanList;		
+			
 	private Queue< OCActionPlanStep > _ActionPlanQueue;
 			
 	private bool _PlanSucceeded = true;
@@ -623,6 +628,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	
 	public void UpdateAI ()
 	{
+		_ActionPlanList = _ActionPlanQueue.ToList();
  		if(_step == null && _ActionPlanQueue.Count != 0)
 		{
 			_step = _ActionPlanQueue.Dequeue();
@@ -644,7 +650,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
 				_PlanSucceeded &= result == BehaveResult.Success;
 					
-			if(!_PlanSucceeded)
+			//if(!_PlanSucceeded)
 			{
 				Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
 				Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
@@ -656,26 +662,28 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
 				float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
 						
-				if(_step.Behaviour.Name == "Character.Move" || _step.Behaviour.Name == "Character.RobotBehaviour")
+				if(_step.Behaviour.Name == "Character.Move" || _step.Arguments.ActionName == "walk" || _step.Arguments.ActionName == "jump_toward")
 				{
 					// don't use euclideon distance
 					//_PlanSucceeded |= sourceToEnd.sqrMagnitude < startToEnd.sqrMagnitude;
 							
 					// use manhattan distance
-					_PlanSucceeded |= sourceToEndManDist < startToEndManDist;
+					_PlanSucceeded = sourceToEndManDist < startToEndManDist;
+							
+					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
+						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);		
 				}
 						
-				if(_step.Behaviour.Name == "Character.TurnAndDestroy")
+				if(_step.Behaviour.Name == "Character.TurnAndDestroy" || _step.Arguments.ActionName == "grab" || _step.Arguments.ActionName == "eat")
 				{
-					_PlanSucceeded |= endPosition == Vector3.zero;
+					_PlanSucceeded = endPosition == Vector3.zero;
+					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
+						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);
 				}
 						
 				if(!_PlanSucceeded)
 					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));
-			}
-					
-			if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
-				OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);						
+			}							
 					
 			_step.Behaviour.Reset();
 			if(_ActionPlanQueue.Count == 0) 
@@ -743,7 +751,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	#region Other Members
 
 	//---------------------------------------------------------------------------
-
+			
+	[Serializable]
 	public class OCActionPlanStep
 	{
 		private Behave.Runtime.Tree _behaviour;
@@ -772,6 +781,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				_behaviour = value;
 			}
 		}
+				
+		public override string ToString ()
+		{
+			return _behaviour.ToString() + ", " + _arguments.ToString(); 
+		}
 	}
 			
 	// TODO: This cose is just a set of stubs to get rid of an error.
@@ -782,13 +796,29 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	// TODO: Implement / remove build block function which can be called by OCConnector.ParseSingleActionElement. Will probably have to be amended with material / blockdata.
 	public void BuildBlockAtPosition(Vector3i desiredBlockLocation)
 	{
-
+		OCAction.OCActionArgs args = new OCAction.OCActionArgs();
+		args.Source = GameObject.FindGameObjectWithTag("OCAGI");
+		args.StartTarget = GameObject.Find("StartPointStub");
+		args.EndTarget = GameObject.Find ("EndPointStub");
+		
+		args.StartTarget.transform.position = args.Source.transform.position;
+		args.EndTarget.transform.position = desiredBlockLocation;
+				
+		LoadActionPlanStep("BuildBlockAtPosition", args);
 	}
 
 	// TODO: Implement / remove move to location function which can be called by OCConnector.ParseSingleActionElement.
 	public void MoveToCoordinate(Vector3 desiredLocation)
 	{
-
+		OCAction.OCActionArgs args = new OCAction.OCActionArgs();
+		args.Source = GameObject.FindGameObjectWithTag("OCAGI");
+		args.StartTarget = GameObject.Find("StartPointStub");
+		args.EndTarget = GameObject.Find ("EndPointStub");
+		
+		args.StartTarget.transform.position = args.Source.transform.position;
+		args.EndTarget.transform.position = desiredLocation;
+				
+		LoadActionPlanStep("MoveToCoordinate", args);
 	}
 
 	// TODO: Implement function below properly.
@@ -808,6 +838,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	// TODO: Implement dynamic behaviour tree loading to execute actions
 	public void StartAction(OCAction action, OCID sourceID, OCID targetStartID, OCID targetEndID)
 	{
+		Debug.LogError("OCActionController.StartAction is unimplemented...");
 	}
 			
 	public Dictionary<string, OCAction> GetCurrentActions()

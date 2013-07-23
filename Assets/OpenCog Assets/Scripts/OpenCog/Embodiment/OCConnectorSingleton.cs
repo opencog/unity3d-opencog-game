@@ -1706,6 +1706,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// Prepare a new actionArgs object
 			OCAction.OCActionArgs actionArguments = new OCAction.OCActionArgs();
 			
+			actionArguments.StartTarget = GameObject.Find("StartPointStub");
+			actionArguments.StartTarget.transform.position = GameObject.FindGameObjectWithTag("OCAGI").transform.position;			
+			
 			// 'action' elements contain 'params'
 			foreach (XmlNode actionParameterNode in actionParameters)
 			{
@@ -1754,9 +1757,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						//actionArguments.EndTarget = vectorGameObject;
 						actionArguments.EndTarget = GameObject.Find("EndPointStub");
 						actionArguments.EndTarget.transform.position = new Vector3(x, z, y);
-						actionArguments.StartTarget = GameObject.Find("StartPointStub");
-						actionArguments.StartTarget.transform.position = GameObject.FindGameObjectWithTag("OCAGI").transform.position;
-						
 					
 						break;	
 					// If it's an entity, then it's a grab or a consume. So the target is the battery.
@@ -2069,7 +2069,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
           _messagesToSend.Add(message);
       }
 		
-	UnityEngine.Debug.Log ("Queued message to report '" + (success ? "done (success)" : "error" + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString ()));
+	UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString ()));
   }
   
   /**
@@ -2105,7 +2105,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
           _messagesToSend.Add(message);
       }
 		
-	UnityEngine.Debug.Log ("Queued message to report '" + (success ? "done (success)" : "error" + "' on actionPlan " + planId));
+	UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
   }
 
 	//---------------------------------------------------------------------------
