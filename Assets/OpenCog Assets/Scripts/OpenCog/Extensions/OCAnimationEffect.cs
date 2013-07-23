@@ -421,7 +421,8 @@ public class OCAnimationEffect : OCMonoBehaviour
 
 	public void Stop()
 	{
-		iTween.Stop(_Target);
+		if(_Target.GetComponent<iTween>() != null)
+			iTween.Stop(_Target);
 	}
 
 	public bool IsPlaying

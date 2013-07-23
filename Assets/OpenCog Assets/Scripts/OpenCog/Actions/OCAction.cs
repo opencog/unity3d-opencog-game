@@ -853,9 +853,12 @@ public class OCAction : OCMonoBehaviour
 			_ActionController.RunningActions.Add(FullName);
 
 		// Start animation effects
-		foreach(OCAnimationEffect afx in _AnimationEffects)
+		if(_blockOnRunning || !_Source.animation.isPlaying)
 		{
-			afx.Play();
+			foreach(OCAnimationEffect afx in _AnimationEffects)
+			{
+				afx.Play();
+			}
 		}
 
 		foreach(OCCreateBlockEffect cbfx in _CreateBlockEffects)
@@ -869,6 +872,9 @@ public class OCAction : OCMonoBehaviour
 			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
 			motor.enabled = false;
 		}
+				
+		if(FullName != "StandIdleShow")
+			Debug.LogWarning("Starting Action: " + FullName);		
 			
 		return ActionStatus.RUNNING;
 	}
@@ -894,10 +900,10 @@ public class OCAction : OCMonoBehaviour
 			_ActionController.RunningActions.Remove(FullName);
 
 		// End animation effects
-		foreach(OCAnimationEffect afx in _AnimationEffects)
-		{
-			afx.Stop();
-		}
+//		foreach(OCAnimationEffect afx in _AnimationEffects)
+//		{
+//			afx.Stop();
+//		}
 
 		foreach(OCDestroyBlockEffect dbfx in _DestroyBlockEffects)
 		{

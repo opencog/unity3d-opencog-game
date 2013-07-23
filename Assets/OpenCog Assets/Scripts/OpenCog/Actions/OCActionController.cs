@@ -644,53 +644,66 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		BehaveResult result = _step.Behaviour.Tick ();
 				
-		if(result != BehaveResult.Running || ((_step.Behaviour.Name == _TreeTypeDictionary[_TreeType].Name) && (GameObject.Find("EndPointStub").transform.position != Vector3.zero)))
+		if((_step.Behaviour.Name == _TreeTypeDictionary[TreeType.Character_IdleShow].Name) && result == BehaveResult.Success)
 		{
-			// if we have a goal...
-			if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
-				_PlanSucceeded &= result == BehaveResult.Success;
-					
-			Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
-			Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
-			Vector3 sourcePosition = _step.Arguments.Source.transform.position;
+			//iTween itween = _step.Arguments.Source.GetComponent<iTween>();
+			iTween.Stop(_step.Arguments.Source);
+		}		
+				
+		if(result != BehaveResult.Running)
+		{
+			if((_step.Behaviour.Name != _TreeTypeDictionary[_TreeType].Name) 
+				|| ((_step.Behaviour.Name == _TreeTypeDictionary[_TreeType].Name) 
+					&& (GameObject.Find("EndPointStub").transform.position != Vector3.zero)))
+			{
+				
 						
-			Vector3 startToEnd = endPosition - startPosition;
-			Vector3 sourceToEnd = endPosition - sourcePosition;		
-					
-			float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
-			float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
-					
-			if(_step.Behaviour.Name == "Character.Move" || _step.Arguments.ActionName == "walk" || _step.Arguments.ActionName == "jump_toward")
-			{
-				// don't use euclideon distance
-				//_PlanSucceeded |= sourceToEnd.sqrMagnitude < startToEnd.sqrMagnitude;
+				// if we have a goal...
+				if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
+					_PlanSucceeded &= result == BehaveResult.Success;
 						
-				// use manhattan distance
-				_PlanSucceeded = sourceToEndManDist < startToEndManDist;
+				Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
+				Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
+				Vector3 sourcePosition = _step.Arguments.Source.transform.position;
+							
+				Vector3 startToEnd = endPosition - startPosition;
+				Vector3 sourceToEnd = endPosition - sourcePosition;		
 						
-				if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
-					OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);		
-			}
-					
-			if(_step.Behaviour.Name == "Character.TurnAndDestroy" || _step.Arguments.ActionName == "grab" || _step.Arguments.ActionName == "eat")
-			{
-				_PlanSucceeded = endPosition == Vector3.zero;
-				if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
-					OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);
-			}
-					
-			if(!_PlanSucceeded)
-				Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
-					
-			_step.Behaviour.Reset();
-			if(_ActionPlanQueue.Count == 0) 
-			{
-				_step = null;	
-			}
-			else
-			{
-				Debug.LogWarning("In OCActionController.UpdateAI, Result: " + result.ToString());		
-				_step = _ActionPlanQueue.Dequeue();
+				float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
+				float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
+						
+				if(_step.Behaviour.Name == "Character.Move" || _step.Arguments.ActionName == "walk" || _step.Arguments.ActionName == "jump_toward")
+				{
+					// don't use euclideon distance
+					//_PlanSucceeded |= sourceToEnd.sqrMagnitude < startToEnd.sqrMagnitude;
+							
+					// use manhattan distance
+					_PlanSucceeded = sourceToEndManDist < startToEndManDist;
+							
+					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
+						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);		
+				}
+						
+				if(_step.Behaviour.Name == "Character.TurnAndDestroy" || _step.Arguments.ActionName == "grab" || _step.Arguments.ActionName == "eat")
+				{
+					_PlanSucceeded = endPosition == Vector3.zero;
+					if(_step.Arguments.ActionPlanID != null && _ActionPlanQueue.Count == 0)
+						OCConnectorSingleton.Instance.SendActionPlanStatus(_step.Arguments.ActionPlanID, _PlanSucceeded);
+				}
+						
+				if(!_PlanSucceeded)
+					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
+						
+				_step.Behaviour.Reset();
+				if(_ActionPlanQueue.Count == 0) 
+				{
+					_step = null;	
+				}
+				else
+				{
+					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + result.ToString() + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));		
+					_step = _ActionPlanQueue.Dequeue();
+				}
 			}
 		}
 		
