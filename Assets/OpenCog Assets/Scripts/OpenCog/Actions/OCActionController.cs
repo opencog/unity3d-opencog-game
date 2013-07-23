@@ -66,8 +66,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 	private Dictionary<string, TreeType> _ActionNameDictionary = new Dictionary<string, TreeType>()
 	{ { "walk", TreeType.Character_Move }
-	, { "grab", TreeType.Character_RobotBehaviour }
-	, { "eat", TreeType.Character_RobotBehaviour }
+	, { "grab", TreeType.Character_Move }
+	, { "eat", TreeType.Character_Destroy }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
 	, { "BuildBlockAtPosition", TreeType.Character_Create }
@@ -620,6 +620,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
 		_ActionPlanQueue.Enqueue(actionPlanStep);
+		Debug.Log("Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
 	}
 			
 	public void CancelActionPlan()
@@ -630,12 +631,13 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	
 	public void UpdateAI ()
 	{
-		_ActionPlanList = _ActionPlanQueue.ToList();
+		_ActionPlanList = _ActionPlanQueue.ToList();		
+				
  		if(_step == null && _ActionPlanQueue.Count != 0)
 		{
 			_step = _ActionPlanQueue.Dequeue();
-		}
-		else if(_ActionPlanQueue.Count == 0)
+		} 
+		else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
 			_PlanSucceeded = true;
 			OCActionPlanStep step = new OCActionPlanStep();
@@ -654,6 +656,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		if(result != BehaveResult.Running)
 		{
+			OCAction.OCActionArgs args = _step.Arguments; 	
+					
 //			if((_step.Behaviour.Name != _TreeTypeDictionary[_TreeType].Name) 
 //				|| ((_step.Behaviour.Name == _TreeTypeDictionary[_TreeType].Name) 
 //					&& (GameObject.Find("EndPointStub").transform.position != Vector3.zero)))
@@ -679,18 +683,26 @@ public class OCActionController : OCMonoBehaviour, IAgent
 							
 					// use manhattan distance
 					_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
+							
+					if(sourcePosition == endPosition)
+						_PlanSucceeded = true;
 				}
 						
-				if(_step.Behaviour.Name == "Character.TurnAndDestroy" || _step.Arguments.ActionName == "grab" || _step.Arguments.ActionName == "eat")
+				if(_step.Behaviour.Name == "Character.Destroy" || _step.Arguments.ActionName == "eat")
 				{
 					_PlanSucceeded = endPosition == Vector3.zero;
+				}
+						
+				if(_step.Arguments.ActionPlanID != null)
+				{
+					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
 				}
 						
 //				if(!_PlanSucceeded)
 //					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
 					
 				if(_step.Behaviour.Name != "Character.IdleShow")
-					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));		
+					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));		
 				
 				_step.Behaviour.Reset();
 						
@@ -698,6 +710,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				{
 					if(_LastPlanID != null)
 					{
+							
+								
+//						if(result == BehaveResult.Failure)
+//							OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);			
+								
 						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded);
 						_LastPlanID = null;		
 					}

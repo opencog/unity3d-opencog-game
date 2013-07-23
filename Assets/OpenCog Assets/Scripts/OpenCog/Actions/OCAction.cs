@@ -835,24 +835,50 @@ public class OCAction : OCMonoBehaviour
 			{
 				Debug.Log(" -- Action Failed, but will not block: " + FullName);
 				
-				if(args.ActionPlanID != null)
-					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);
+//				if(args.ActionPlanID != null)
+//					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);
 			}
 	
 			return ActionStatus.SUCCESS;
 		}
-		else
+		else if(args.ActionPlanID == null)
 		{
 			if(IsSourceRunningAction(this, null))
 			{
 				Debug.LogWarning(" -- Action Failed: " + FullName);
-				
-				if(args.ActionPlanID != null)
-					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, false);
 			}
 					
 			return ActionStatus.FAILURE;
 		}
+//		else if(IsSourceNotRunningAction(this, null))
+//		{
+//			if(_ActionController.Step.Behaviour.Name == "Character.Move" || args.ActionName == "walk" || args.ActionName == "jump_toward")
+//			{
+//				Vector3 endTargetPos = args.EndTarget.transform.position;
+//				Vector3 sourceTargetPos = args.Source.transform.position;
+//						
+//				sourceTargetPos.y -= 0.5f;
+//						
+//				if(args.EndTarget.transform.position == Vector3.zero || endTargetPos == sourceTargetPos)
+//				{
+//					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);
+//					return ActionStatus.SUCCESS;
+//				}
+//			}
+//					
+//			if(_ActionController.Step.Behaviour.Name == "Character.TurnAndDestroy" || args.ActionName == "grab" || args.ActionName == "eat")
+//			{
+//				if(args.EndTarget.transform.position == Vector3.zero)
+//				{
+//					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);
+//					return ActionStatus.SUCCESS;
+//				}
+//			}
+//					
+//			return ActionStatus.FAILURE;
+//		}
+				
+		return ActionStatus.FAILURE;
 	}
 			
 	private ActionStatus StartAction()
@@ -931,8 +957,8 @@ public class OCAction : OCMonoBehaviour
 			dbfx.DestroyBlock(forwardUp);
 			dbfx.DestroyBlock(forwardUp2x);
 					
-			_EndTarget.transform.position = Vector3.zero;
-			_StartTarget.transform.position = Vector3.zero;
+			args.EndTarget.transform.position = Vector3.zero;
+			args.StartTarget.transform.position = Vector3.zero;
 					
 			// This is just some example code for you Lake, that you can use to give energy to the robot after consuming a battery.
 			if((forwardBlock.block != null && forwardBlock.block.GetName() == "Battery") || (forwardUpBlock.block != null && forwardUpBlock.block.GetName() == "Battery") || (forwardUp2xBlock.block != null && forwardUp2xBlock.block.GetName() == "Battery"))
@@ -968,8 +994,8 @@ public class OCAction : OCMonoBehaviour
 		if(!Descriptors.Contains("Idle"))
 			Debug.LogWarning("Ending Action: " + FullName);
 			
-		if(args.ActionPlanID != null)
-			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);				
+//		if(args.ActionPlanID != null)
+//			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);				
 			
 		return ActionStatus.SUCCESS;
 	}
