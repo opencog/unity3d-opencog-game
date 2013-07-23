@@ -517,6 +517,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		{
 			return;	
 		}
+		
 	
 
 		// Create console entry
