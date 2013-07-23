@@ -1750,9 +1750,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					
 						// SWAPPED:
 						//vectorGameObject.transform.position = new Vector3(x, z, y);
-						UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + z + ", " + y + "]");
+						UnityEngine.Debug.Log ("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
 					
-						console.AddConsoleEntry("A '" + actionName + "' command told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+						console.AddConsoleEntry("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 					
 						//actionArguments.EndTarget = vectorGameObject;
 						actionArguments.EndTarget = GameObject.Find("EndPointStub");
@@ -1786,15 +1786,15 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						
 							if (actionName == "grab")
 							{
-								UnityEngine.Debug.Log ("A 'grab' command told me to grab an object with ID " + entityID);
+								UnityEngine.Debug.Log ("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
 							
-								console.AddConsoleEntry("A 'grab' command told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+								console.AddConsoleEntry("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 							}
 							else if (actionName == "eat")
 							{
-								UnityEngine.Debug.Log ("An 'eat' command told me to eat an object with ID " + entityID);
+								UnityEngine.Debug.Log ("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
 							
-								console.AddConsoleEntry("An 'eat' command told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+								console.AddConsoleEntry("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 							
 							}
 						} // if (actionName == "grab" || actionName == "eat"
@@ -1828,7 +1828,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						
 							if (toSay != string.Empty)
 							{
-								UnityEngine.Debug.Log ("Robot say: " + toSay );
+								UnityEngine.Debug.Log ("Robot say: " + toSay + "(actionPlan = " + _currentPlanId + ", sequence = " + sequence);
 												
 								console.AddConsoleEntry(toSay, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 							}
@@ -2046,30 +2046,37 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
   public void SendActionStatus(string planId, int sequence, string actionName, bool success)
   {
-      string timestamp = GetCurrentTimestamp();
-      // Create a xml document
-      XmlDocument doc = new XmlDocument();
-      XmlElement root = MakeXMLElementRoot(doc);
-
-      XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
-      avatarSignal.SetAttribute("id", _brainID);
-      avatarSignal.SetAttribute("timestamp", timestamp);
-      XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
-      actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
-
-		// TODO: Fix the Sequence attribute on Action which is currently missing.
-      actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, sequence.ToString());
-      actionElement.SetAttribute("name", actionName);
-      actionElement.SetAttribute("status", success ? "done" : "error");
-
-      OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
-
-      lock (_messageSendingLock)
-      {
-          _messagesToSend.Add(message);
-      }
+		string timestamp = GetCurrentTimestamp();
+		// Create a xml document
+		XmlDocument doc = new XmlDocument();
+		XmlElement root = MakeXMLElementRoot(doc);
 		
-	UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString ()));
+		XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
+		avatarSignal.SetAttribute("id", _brainID);
+		avatarSignal.SetAttribute("timestamp", timestamp);
+		XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+		actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
+		
+		// TODO: Fix the Sequence attribute on Action which is currently missing.
+		actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, sequence.ToString());
+		actionElement.SetAttribute("name", actionName);
+		actionElement.SetAttribute("status", success ? "done" : "error");
+		
+	  	System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+		XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+		
+		doc.WriteTo(xmlTextWriter);
+		
+		UnityEngine.Debug.Log ("Send ActionStatus message: " + stringWriter.ToString());	
+		
+		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+		
+		lock (_messageSendingLock)
+		{
+		  _messagesToSend.Add(message);
+		}
+		
+		UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString ()));
   }
   
   /**
@@ -2087,25 +2094,32 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
   public void SendActionPlanStatus(string planId, bool success)
   {
-      string timestamp = GetCurrentTimestamp();
-      XmlDocument doc = new XmlDocument();
-      XmlElement root = MakeXMLElementRoot(doc);
-
-      XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
-      avatarSignal.SetAttribute("id", _brainID);
-      avatarSignal.SetAttribute("timestamp", timestamp);
-      XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
-      actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
-      actionElement.SetAttribute("status", success ? "done" : "error");
-
-      OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
-
-      lock (_messageSendingLock)
-      {
-          _messagesToSend.Add(message);
-      }
+		string timestamp = GetCurrentTimestamp();
+		XmlDocument doc = new XmlDocument();
+		XmlElement root = MakeXMLElementRoot(doc);
 		
-	UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
+		XmlElement avatarSignal = (XmlElement)root.AppendChild(doc.CreateElement("avatar-signal"));
+		avatarSignal.SetAttribute("id", _brainID);
+		avatarSignal.SetAttribute("timestamp", timestamp);
+		XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+		actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
+		actionElement.SetAttribute("status", success ? "done" : "error");
+		
+	  	System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+		XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+	
+		doc.WriteTo(xmlTextWriter);
+		
+		UnityEngine.Debug.Log ("Send ActionPlanStatus message: " + stringWriter.ToString());	
+
+		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+		
+		lock (_messageSendingLock)
+		{
+		  _messagesToSend.Add(message);
+		}
+		
+		UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
   }
 
 	//---------------------------------------------------------------------------
