@@ -68,7 +68,7 @@ public class OCGoalController : OCMonoBehaviour
 	[SerializeField]
 	private Dictionary<string, float> _goalNameToChangeRatePerSecond = new Dictionary<string, float>()
 	{
-		{"Intensity", 1.0f}
+		{"Integrity", 1.0f}
 	};
 		
 	[SerializeField]
@@ -125,7 +125,7 @@ public class OCGoalController : OCMonoBehaviour
 		Vector3 sourcePos = gameObject.transform.position;
 		Vector3 distanceVec = ((Vector3)GoalBlockPos) - sourcePos;
 			
-		float intensityChange = _goalNameToChangeRatePerSecond["Intensity"]/(distanceVec.magnitude * _distanceAttenuation);
+		float intensityChange = _goalNameToChangeRatePerSecond["Integrity"]/(distanceVec.magnitude * _distanceAttenuation);
 	}
 
 	//---------------------------------------------------------------------------
