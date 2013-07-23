@@ -181,7 +181,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 
 		_millisecondsPerTick = _config.GetLong("MILLISECONDS_PER_TICK");
 		
-		this.IDLE_ENERGY_DECREASE_RATE = - _millisecondsPerTick / (MILLISECONDS_PER_DAY / _config.GetInt("EAT_STOPS_PER_DAY"));
+		this.IDLE_ENERGY_DECREASE_RATE = 0;//- _millisecondsPerTick / (MILLISECONDS_PER_DAY / _config.GetInt("EAT_STOPS_PER_DAY"));
 		this.SLEEP_ENERGY_INCREASE_RATE = - IDLE_ENERGY_DECREASE_RATE * 5;
 		this.STARVING_ENERGY_DECREASE_RATE = IDLE_ENERGY_DECREASE_RATE * 2;
 		this.FITNESS_DECREASE_OUTSIDE_HOME = _config.GetFloat("FITNESS_DECREASE_OUTSIDE_HOME");
@@ -339,7 +339,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
                             0.2 * basicFactorMap["poo_urgency"].value +
                             0.1 * basicFactorMap["pee_urgency"].value);
          */
- 		
+ 		_fitness = _fitness - 0.01f;
 	}
 			
 	//---------------------------------------------------------------------------

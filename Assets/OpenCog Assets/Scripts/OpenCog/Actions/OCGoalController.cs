@@ -125,7 +125,29 @@ public class OCGoalController : OCMonoBehaviour
 		Vector3 sourcePos = gameObject.transform.position;
 		Vector3 distanceVec = ((Vector3)GoalBlockPos) - sourcePos;
 			
-		float intensityChange = _goalNameToChangeRatePerSecond["Integrity"]/(distanceVec.magnitude * _distanceAttenuation);
+		float integrityChange = _goalNameToChangeRatePerSecond["Integrity"]/(distanceVec.magnitude * _distanceAttenuation);
+			
+		integrityChange = integrityChange / 10;
+			
+		UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
+			
+		if (integrityChange > 0.05)
+		{
+			for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+			{
+				UnityEngine.GameObject agiObject = agiArray[iAGI];
+					
+				OpenCog.Embodiment.OCPhysiologicalModel agiPhysModel = agiObject.GetComponent<OpenCog.Embodiment.OCPhysiologicalModel>();
+					
+				OpenCog.Embodiment.OCPhysiologicalEffect nearHomeEffect = new OpenCog.Embodiment.OCPhysiologicalEffect(OpenCog.Embodiment.OCPhysiologicalEffect.CostLevel.NONE);
+			
+				nearHomeEffect.FitnessChange = integrityChange;
+					
+				UnityEngine.Debug.Log ("Increasing Integrity by '" + integrityChange.ToString() + "'");
+			
+				agiPhysModel.ProcessPhysiologicalEffect(nearHomeEffect);
+			}
+		}
 	}
 
 	//---------------------------------------------------------------------------
