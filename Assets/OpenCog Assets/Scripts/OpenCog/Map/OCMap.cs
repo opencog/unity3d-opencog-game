@@ -285,9 +285,6 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			// I'm going to take a gamble here...since NotifyBatteryRemoved only does its work when it finds a battery at this location...it should be ok...
 				
 			perceptionCollector.NotifyBatteryRemoved(pos);
-				
-			// Now we need to destroy the actual batteryobject...terrifying!!
-			
 			
 		}
 		else
