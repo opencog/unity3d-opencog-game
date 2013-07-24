@@ -590,6 +590,8 @@ namespace OpenCog.Embodiment
 			
 			UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
 			
+			int batteryIDToRemove = 0;
+			
 			for (int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
 			{
 				UnityEngine.GameObject batteryObject = batteryArray[iBattery];
@@ -598,19 +600,22 @@ namespace OpenCog.Embodiment
 				
 				if (v3iBatteryPosition == batteryDestructionPoint)
 				{
-					// You're the one that I want! (the one that I want!) Ooh Ooh oooooooh!	
-					if (!_mapInfoCache.ContainsKey(batteryObject.GetInstanceID()))
+					UnityEngine.Debug.Log ("We'll be searching the _mapInfoCache for an objeject with key '" + batteryObject.GetInstanceID() + "'");
+					
+					foreach (KeyValuePair<int, OpenCog.Embodiment.OCObjectMapInfo> pair in _mapInfoCache)
 					{
-						if (this.BuildMapInfo (batteryObject))
-						{
-							// THat puts into a dictionary, so we still need to retrieve it here.		
-												
-							mapInfo = _mapInfoCache [batteryObject.GetInstanceID()];
-							
-							//console.AddConsoleEntry("I can see a new battery! Its ID is " + batteryObject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
-							UnityEngine.Debug.Log("I can see a new battery! Its ID is " + batteryObject.GetInstanceID());
-						}
+						UnityEngine.Debug.Log ("In any case, there is a key '" + pair.Key + "' in it.");	
 					}
+					
+					// You're the one that I want! (the one that I want!) Ooh Ooh oooooooh!	
+					if (_mapInfoCache.ContainsKey(batteryObject.GetInstanceID()))
+					{
+						mapInfo = _mapInfoCache [batteryObject.GetInstanceID()];
+						
+						batteryIDToRemove = batteryObject.GetInstanceID();
+					}
+					
+					//UnityEngine.GameObject.Destroy (batteryObject);
 				}
 			}
 			
@@ -623,7 +628,13 @@ namespace OpenCog.Embodiment
 				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 				
 				connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
-				connector.SendTerrainInfoMessage(addedBlockList);	
+				//connector.SendTerrainInfoMessage(addedBlockList);	
+				 
+				_mapInfoCache.Remove (batteryIDToRemove);
+				
+				// Now we need to destroy the actual batteryobject...terrifying!!
+				
+				
 			}
 			else
 			{

@@ -423,6 +423,8 @@ public class OCObjectMapInfo
 					_id = connector.BrainID;
 					_type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
 				}
+				
+				UnityEngine.Debug.Log ("Just made an OCObjectMapInfo stating the AGI is at [" + this.position.x + ", " + this.position.y + ", " + this.position.z + "]");
 
 			} else if (gameObject.tag == "OCNPC") {
 				// This is a human player avatar.
@@ -446,7 +448,7 @@ public class OCObjectMapInfo
 			
 			if (gameObject.GetComponent<OpenCog.Extensions.OCConsumableData>() != null)
 			{
-				UnityEngine.Debug.Log ("Adding edible and foodbowl tags to battery with ID " + gameObject.GetInstanceID());
+				UnityEngine.Debug.Log ("Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
 				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
 				this.AddProperty ("foodbowl", "TRUE", System.Type.GetType ("System.Boolean"));
 			}

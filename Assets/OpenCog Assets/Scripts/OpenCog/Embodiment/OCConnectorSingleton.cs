@@ -1784,19 +1784,30 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 								}
 							}
 						
-							if (actionName == "grab")
+							if (actionArguments.EndTarget != null)
 							{
-								UnityEngine.Debug.Log ("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
-							
-								console.AddConsoleEntry("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+								// Then we can grab it, eat it, whatever...since it's a battery
+								if (actionName == "grab")
+								{
+									UnityEngine.Debug.Log ("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
+								
+									console.AddConsoleEntry("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+								}
+								else if (actionName == "eat")
+								{
+									UnityEngine.Debug.Log ("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
+								
+									console.AddConsoleEntry("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+								
+								}	
 							}
-							else if (actionName == "eat")
+							else
 							{
-								UnityEngine.Debug.Log ("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
-							
-								console.AddConsoleEntry("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
-							
+								// That's silly..we can only eat / grab batteries!
+								UnityEngine.Debug.Log ("Received a grab or eat command, but couldn't find the battery in Unity!");
 							}
+						
+							
 						} // if (actionName == "grab" || actionName == "eat"
 //						else
 //						{
@@ -2062,12 +2073,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		actionElement.SetAttribute("name", actionName);
 		actionElement.SetAttribute("status", success ? "done" : "error");
 		
-	  	System.IO.StringWriter stringWriter = new System.IO.StringWriter();
-		XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
-		
-		doc.WriteTo(xmlTextWriter);
-		
-		UnityEngine.Debug.Log ("Send ActionStatus message: " + stringWriter.ToString());	
+//	  	System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+//		XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+//		
+//		doc.WriteTo(xmlTextWriter);
+//		
+//		UnityEngine.Debug.Log ("Send ActionStatus message: " + stringWriter.ToString());	
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 		
@@ -2105,12 +2116,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
 		actionElement.SetAttribute("status", success ? "done" : "error");
 		
-	  	System.IO.StringWriter stringWriter = new System.IO.StringWriter();
-		XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
-	
-		doc.WriteTo(xmlTextWriter);
-		
-		UnityEngine.Debug.Log ("Send ActionPlanStatus message: " + stringWriter.ToString());	
+//	  	System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+//		XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+//	
+//		doc.WriteTo(xmlTextWriter);
+//		
+//		UnityEngine.Debug.Log ("Send ActionPlanStatus message: " + stringWriter.ToString());	
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 		

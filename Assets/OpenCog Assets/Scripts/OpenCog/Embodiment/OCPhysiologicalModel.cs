@@ -339,7 +339,7 @@ public class OCPhysiologicalModel : OCMonoBehaviour
                             0.2 * basicFactorMap["poo_urgency"].value +
                             0.1 * basicFactorMap["pee_urgency"].value);
          */
- 		_fitness = _fitness - 0.01f;
+ 		_fitness = _fitness - FITNESS_DECREASE_OUTSIDE_HOME;
 	}
 			
 	//---------------------------------------------------------------------------

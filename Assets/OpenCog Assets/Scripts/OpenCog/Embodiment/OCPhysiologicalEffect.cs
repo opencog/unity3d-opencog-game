@@ -107,6 +107,9 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 		model.Energy += _energyIncrease;
         
 		model.Fitness += _fitnessChange;
+			
+		model.Fitness = OpenCog.Utility.NumberUtil.zeroOneCut(model.Fitness);
+		model.Energy = OpenCog.Utility.NumberUtil.zeroOneCut(model.Energy);
         
 		// Set new mode
 		model.CurrentMode = _newAvatarMode;

@@ -281,6 +281,14 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
 				
 			perceptionCollector.NotifyBlockRemoved(pos);
+			
+			// I'm going to take a gamble here...since NotifyBatteryRemoved only does its work when it finds a battery at this location...it should be ok...
+				
+			perceptionCollector.NotifyBatteryRemoved(pos);
+				
+			// Now we need to destroy the actual batteryobject...terrifying!!
+			
+			
 		}
 		else
 		{
@@ -321,6 +329,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				hearth.transform.position = pos;
 				hearth.name = "Hearth";		
 				hearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
+					
+				perceptionCollector.NotifyBlockAdded(pos);
 			}
 		}
 		
