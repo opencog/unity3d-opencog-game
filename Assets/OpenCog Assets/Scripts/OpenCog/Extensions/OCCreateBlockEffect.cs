@@ -28,6 +28,7 @@ using OpenCog.BlockSet.BaseBlockSet;
 using GameObject = UnityEngine.GameObject;
 using System.Linq;
 using OpenCog.Utility;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -56,7 +57,8 @@ public class OCCreateBlockEffect : OCMonoBehaviour
 
     //---------------------------------------------------------------------------
     
-
+	[SerializeField]
+	string _BlockType = "Ice";
             
     //---------------------------------------------------------------------------
 
@@ -86,7 +88,7 @@ public class OCCreateBlockEffect : OCMonoBehaviour
 				{
 					OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
 
-					OCBlock block = map.GetBlockSet().GetBlock("Wood");
+					OCBlock block = map.GetBlockSet().GetBlock(_BlockType);
 
 					//block.SetDirection(GetDirection(-gameObject.transform.forward));
 

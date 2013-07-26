@@ -26,6 +26,7 @@ using Serializable = System.SerializableAttribute;
 using OpenCog.Map;
 using GameObject = UnityEngine.GameObject;
 using System.Linq;
+using System.Collections.Generic;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414

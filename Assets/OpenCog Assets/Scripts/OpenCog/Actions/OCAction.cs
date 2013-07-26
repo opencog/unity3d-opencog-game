@@ -132,7 +132,7 @@ public class OCAction : OCMonoBehaviour
 			bool shouldStart = true;
 			foreach(OCActionCondition precondition in PreCondition.GetInvocationList())
 			{
-				if(_ActionController != null)
+				if(_ActionController != null && _ActionController.Step != null)
 				{
 					if(_ActionController.Step.Arguments.Source != null)
 						_Source = _ActionController.Step.Arguments.Source;
@@ -156,7 +156,7 @@ public class OCAction : OCMonoBehaviour
 			bool shouldContinue = true;
 			foreach(OCActionCondition invariant in InvariantCondition.GetInvocationList())
 			{
-				if(_ActionController != null)
+				if(_ActionController != null && _ActionController.Step != null)
 				{
 					if(_ActionController.Step.Arguments.Source != null)
 						_Source = _ActionController.Step.Arguments.Source;
@@ -180,7 +180,7 @@ public class OCAction : OCMonoBehaviour
 			bool shouldEnd = true;
 			foreach(OCActionCondition postcondition in PostCondition.GetInvocationList())
 			{
-				if(_ActionController != null)
+				if(_ActionController != null && _ActionController.Step != null)
 				{
 					if(_ActionController.Step.Arguments.Source != null)
 						_Source = _ActionController.Step.Arguments.Source;
@@ -293,10 +293,10 @@ public class OCAction : OCMonoBehaviour
 //		InvariantCondition += IsSourceNotRunningOtherActionsIgnoreIdle;
 //		PostCondition += IsSourceRunningOtherActionsIgnoreIdle;
 				
-		if(_EndTarget == null)
-			_EndTarget = GameObject.Find("EndPointStub");
-		if(_StartTarget == null)
-			_StartTarget = GameObject.Find("StartPointStub");
+//		if(_EndTarget == null)
+//			_EndTarget = GameObject.Find("EndPointStub");
+//		if(_StartTarget == null)
+//			_StartTarget = GameObject.Find("StartPointStub");
 				
 		DontDestroyOnLoad(this);
 	}
@@ -347,7 +347,7 @@ public class OCAction : OCMonoBehaviour
 		Vector3 endTargetPos = args.EndTarget.transform.position;
 		float angle = Vector3.Angle(endTargetPos - sourcePos, Vector3.up);
 				
-		return angle > 45;
+		return angle > 45.0f;
 	}
 			
 	public static bool IsEndTargetAboveClimbAngle(OCAction action, OCActionArgs args)
@@ -827,7 +827,10 @@ public class OCAction : OCMonoBehaviour
 //		else if(retVal != ActionStatus.NONE)
 //			return retVal;
 				
-		OCActionArgs args = _ActionController.Step.Arguments;		
+		OCActionArgs args = null;
+				
+		if(_ActionController.Step != null)
+			args = _ActionController.Step.Arguments;		
 				
 		if(!_blockOnFail)
 		{
@@ -841,7 +844,7 @@ public class OCAction : OCMonoBehaviour
 	
 			return ActionStatus.SUCCESS;
 		}
-		else if(args.ActionPlanID == null)
+		else if(args == null || args.ActionPlanID == null)
 		{
 			if(IsSourceRunningAction(this, null))
 			{
@@ -932,7 +935,10 @@ public class OCAction : OCMonoBehaviour
 	{
 		//OCLogger.Debugging("Ending the " + FullName + " Action.");
 				
-		OCActionArgs args = _ActionController.Step.Arguments;		
+		OCActionArgs args = null;
+				
+		if(_ActionController.Step != null)
+			args = _ActionController.Step.Arguments;		
 				
 		if(_blockOnFail && _blockOnRunning)
 			_ActionController.RunningActions.Remove(FullName);
@@ -969,7 +975,7 @@ public class OCAction : OCMonoBehaviour
 				{
 					UnityEngine.GameObject agiObject = agiArray[iAGI];
 				
-					args.EndTarget = agiObject;
+					//args.EndTarget = agiObject;
 				
 					OCPhysiologicalModel agiPhysModel = agiObject.GetComponent<OCPhysiologicalModel>();
 				

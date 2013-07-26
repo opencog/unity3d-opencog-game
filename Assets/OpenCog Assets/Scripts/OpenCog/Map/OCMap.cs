@@ -27,6 +27,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using OpenCog.Utility;
+using System.Linq;
 
 //using PostSharp.Aspects;
 //using OpenCog.Aspects;
@@ -285,6 +286,17 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			// I'm going to take a gamble here...since NotifyBatteryRemoved only does its work when it finds a battery at this location...it should be ok...
 				
 			perceptionCollector.NotifyBatteryRemoved(pos);
+				
+			List<GameObject> batteries = GameObject.FindGameObjectsWithTag("OCBattery").ToList();
+				GameObject battery = batteries.Where(b => b.transform.position == pos).FirstOrDefault();
+				
+			List<GameObject> hearths = GameObject.FindGameObjectsWithTag("OCHearth").ToList();
+				GameObject hearth = hearths.Where(h => h.transform.position == pos).FirstOrDefault();
+				
+			if(battery != default(GameObject))
+				GameObject.Destroy(battery);
+			if(hearth != default(GameObject))
+				GameObject.Destroy(hearth);
 			
 		}
 		else

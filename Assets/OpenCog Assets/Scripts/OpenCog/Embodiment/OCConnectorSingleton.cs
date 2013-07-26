@@ -1682,6 +1682,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
             OCLogger.Warn("Stop all current actions");
             CancelAvatarActions();
         }
+		
+		GameObject endPointStub = GameObject.Find("EndPointStub");
 
         // Update current plan id and selected demand name.
         _currentPlanId = actionPlan.GetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE);
@@ -1777,8 +1779,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 								
 								if (entityID == batteryObject.GetInstanceID())
 								{
+									endPointStub.transform.position = batteryObject.transform.position;
+								
 									// This is the one!	
-									actionArguments.EndTarget = batteryObject;
+									actionArguments.EndTarget = endPointStub;
 									
 									break;
 								}
@@ -1851,8 +1855,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
 						{
 							UnityEngine.GameObject agiObject = agiArray[iAGI];
+						
+							endPointStub.transform.position = agiObject.transform.position;
 							
-							actionArguments.EndTarget = agiObject;
+							actionArguments.EndTarget = endPointStub;
 						
 							break;
 						}

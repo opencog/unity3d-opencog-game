@@ -57,6 +57,15 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	//---------------------------------------------------------------------------
 			
 	[SerializeField]
+	private GameObject _defaultSource;
+			
+	[SerializeField]
+	private GameObject _defaultStartTarget;			
+	
+	[SerializeField]
+	private GameObject _defaultEndTarget;
+			
+	[SerializeField]
 	private TreeType _TreeType;
 	private OCActionPlanStep _step = null;
 	private Hashtable _idleParams;
@@ -105,6 +114,18 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	public List<string> RunningActions;
 
+	public GameObject DefaultEndTarget 
+	{
+		get {return this._defaultEndTarget;}
+		set {_defaultEndTarget = value;}
+	}
+
+	public GameObject DefaultStartTarget 
+	{
+		get {return this._defaultStartTarget;}
+		set {_defaultStartTarget = value;}
+	}
+			
 	public OCActionPlanStep Step 
 	{
 		get {return this._step;}
@@ -147,7 +168,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				if(action.FullName.Contains(treeName) || treeName.Contains("Behaviour"))
 				{
 					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
-				
+							
 					tree.SetTickForward( actionTypeID, action.ExecuteBehave );
 				}
 			}
@@ -155,7 +176,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		OCActionPlanStep firstStep = new OCActionPlanStep();
 		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
-		firstStep.Arguments = new OCAction.OCActionArgs(gameObject, GameObject.Find("StartPointStub"), GameObject.Find("EndPointStub"));
+		firstStep.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
 
 		_ActionPlanQueue.Enqueue(firstStep);		
 
@@ -642,7 +663,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			_PlanSucceeded = true;
 			OCActionPlanStep step = new OCActionPlanStep();
 			step.Behaviour = _TreeTypeDictionary[_TreeType];
-			step.Arguments = new OCAction.OCActionArgs(gameObject, GameObject.Find("StartPointStub"), GameObject.Find("EndPointStub"));
+			step.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
 			_step = step;
 		}
 				
@@ -663,45 +684,48 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //					&& (GameObject.Find("EndPointStub").transform.position != Vector3.zero)))
 			{
 				// if we have a goal...
-				if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
-					_PlanSucceeded &= result == BehaveResult.Success;
-						
-				Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
-				Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
-				Vector3 sourcePosition = _step.Arguments.Source.transform.position;
-							
-				Vector3 startToEnd = endPosition - startPosition;
-				Vector3 sourceToEnd = endPosition - sourcePosition;		
-						
-				float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
-				float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
-						
-				if(_step.Behaviour.Name == "Character.Move" || _step.Arguments.ActionName == "walk" || _step.Arguments.ActionName == "jump_toward")
+				if(_step.Arguments.EndTarget != null)
 				{
-					// don't use euclideon distance
-					//_PlanSucceeded |= sourceToEnd.sqrMagnitude < startToEnd.sqrMagnitude;
+					if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
+						_PlanSucceeded &= result == BehaveResult.Success;
 							
-					// use manhattan distance
-					_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
+					Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
+					Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
+					Vector3 sourcePosition = _step.Arguments.Source.transform.position;
+								
+					Vector3 startToEnd = endPosition - startPosition;
+					Vector3 sourceToEnd = endPosition - sourcePosition;		
 							
-					if(sourcePosition == endPosition)
-						_PlanSucceeded = true;
-				}
-						
-				if(_step.Behaviour.Name == "Character.Destroy" || _step.Arguments.ActionName == "eat")
-				{
-					_PlanSucceeded = endPosition == Vector3.zero;
-				}
-						
-				if(_step.Arguments.ActionPlanID != null)
-				{
-					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
+					float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
+					float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
+							
+					if(_step.Behaviour.Name == "Character.Move" || _step.Arguments.ActionName == "walk" || _step.Arguments.ActionName == "jump_toward")
+					{
+						// don't use euclideon distance
+						//_PlanSucceeded |= sourceToEnd.sqrMagnitude < startToEnd.sqrMagnitude;
+								
+						// use manhattan distance
+						_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
+								
+						if(sourcePosition == endPosition)
+							_PlanSucceeded = true;
+					}
+							
+					if(_step.Behaviour.Name == "Character.Destroy" || _step.Arguments.ActionName == "eat")
+					{
+						_PlanSucceeded = endPosition == Vector3.zero;
+					}
+							
+					if(_step.Arguments.ActionPlanID != null)
+					{
+						OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
+					}
 				}
 						
 //				if(!_PlanSucceeded)
 //					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
 					
-				if(_step.Behaviour.Name != "Character.IdleShow")
+				if(_step.Behaviour.Name != "Character.IdleShow" && !_step.Behaviour.Name.Contains("Behaviour"))
 					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));		
 				
 				_step.Behaviour.Reset();
@@ -840,9 +864,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	public void BuildBlockAtPosition(Vector3i desiredBlockLocation)
 	{
 		OCAction.OCActionArgs args = new OCAction.OCActionArgs();
-		args.Source = GameObject.FindGameObjectWithTag("OCAGI");
-		args.StartTarget = GameObject.Find("StartPointStub");
-		args.EndTarget = GameObject.Find ("EndPointStub");
+		args.Source = _defaultSource;
+		args.StartTarget = _defaultStartTarget;
+		args.EndTarget = _defaultEndTarget;
 		
 		args.StartTarget.transform.position = args.Source.transform.position;
 		args.EndTarget.transform.position = desiredBlockLocation;
@@ -854,9 +878,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	public void MoveToCoordinate(Vector3 desiredLocation)
 	{
 		OCAction.OCActionArgs args = new OCAction.OCActionArgs();
-		args.Source = GameObject.FindGameObjectWithTag("OCAGI");
-		args.StartTarget = GameObject.Find("StartPointStub");
-		args.EndTarget = GameObject.Find ("EndPointStub");
+		args.Source = _defaultSource;
+		args.StartTarget = _defaultStartTarget;
+		args.EndTarget = _defaultEndTarget;
 		
 		args.StartTarget.transform.position = args.Source.transform.position;
 		args.EndTarget.transform.position = desiredLocation;

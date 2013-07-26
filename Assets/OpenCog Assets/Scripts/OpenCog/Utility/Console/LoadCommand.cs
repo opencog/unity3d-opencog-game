@@ -29,6 +29,7 @@ using Serializable = System.SerializableAttribute;
 using Vector3 = UnityEngine.Vector3;
 using Quaternion = UnityEngine.Quaternion;
 using Debug = UnityEngine.Debug;
+using OpenCog.Actions;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -248,6 +249,9 @@ public class LoadCommand : Console.ConsoleCommand
 			
 			agentClone = (GameObject)UnityEngine.Object.Instantiate (_NPCAgent, spawnPosition, Quaternion.identity);
 			agentClone.transform.parent = GameObject.Find("Characters").transform;
+			OCActionController agiAC = agiAC = agentClone.GetComponent<OCActionController>();
+			agiAC.DefaultEndTarget = GameObject.Find("EndPointStub");
+			agiAC.DefaultStartTarget = GameObject.Find("StartPointStub");
 			
 			//Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
 
