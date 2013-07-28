@@ -37,7 +37,7 @@ namespace OpenCog.Embodiment
 #region Class Attributes
 [ProtoContract]
 //[OCExposePropertyFields]
-//[Serializable]
+[Serializable]
 	
 #endregion
 public class OCObjectMapInfo
@@ -77,7 +77,7 @@ public class OCObjectMapInfo
 		private float _length, _width, _height; // Size of an object.
 		private float _weight; // weight of an object
 		private UnityEngine.Vector3 _startMovePos; // the lastest time start to move position
-		private Dictionary<string, Embodiment.OCTag> _tags = new Dictionary<string, Embodiment.OCTag>();
+		//private Dictionary<string, Embodiment.OCTag> _tags = new Dictionary<string, Embodiment.OCTag>();
 		private List<OCTag> _properties = new List<OCTag>();
 		private VISIBLE_STATUS _visibility = VISIBLE_STATUS.VISIBLE; // Set the visibility of an object to visible by default.
 
@@ -597,6 +597,7 @@ public class OCObjectMapInfo
 		/// class that are to be serialized, we need to wrap the built-in types of
 		/// Unity3D with manual data contract declaration.
 		/// </summary>
+		[Serializable]
 		[ProtoContract]
 	    public class Vector3Wrapper
 		{

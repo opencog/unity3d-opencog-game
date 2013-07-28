@@ -616,7 +616,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		
 		if(result)
 		{
-			//UnityEngine.Debug.Log("Successful.");
+//			UnityEngine.Debug.Log("Successful.");
 		}
 		else
 		{

@@ -187,7 +187,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		_inputHistory.AddFirst("/do Avatar \"Soccer Ball\" PickUp");
 		_inputHistory.AddFirst("/do Avatar \"Soccer Ball\" Drop");
 		_inputHistory.AddFirst("/list Avatar");
-		_inputHistory.AddFirst("/load npc");
+		_inputHistory.AddFirst("/load AGI_Robot");
 			
 		OCLogger.Fine(gameObject.name + " is started.");
 	}

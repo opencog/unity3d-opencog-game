@@ -889,7 +889,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 	public void SendMoveActionDone (UnityEngine.GameObject obj,UnityEngine.Vector3 startPos, UnityEngine.Vector3 endPos)
 	{
-		if (obj == gameObject)
+		if (obj == GameObject.FindGameObjectWithTag("OCAGI"))
 			return;
 		
     string timestamp = GetCurrentTimestamp();
@@ -1032,7 +1032,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	// it will be processed in opencog the same as handleOtherAgentActionResult
 	public void HandleObjectStateChange(UnityEngine.GameObject obj, string stateName, string valueType, System.Object oldValue, System.Object newValue, string blockId = "")
 	{
-		if (obj == gameObject)
+		if (obj == GameObject.FindGameObjectWithTag("OCAGI"))
 			return;
 		
     string timestamp = GetCurrentTimestamp();
@@ -1607,7 +1607,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	// but a single action that current the robot want to do
 	private void ParseSingleActionElement(XmlElement element)
 	{
-		OCActionController oca = gameObject.GetComponent<OCActionController>() as OCActionController;
+		OCActionController oca = GameObject.FindGameObjectWithTag("OCAGI").GetComponent<OCActionController>() as OCActionController;
 		if (oca == null)
 			return;
 		

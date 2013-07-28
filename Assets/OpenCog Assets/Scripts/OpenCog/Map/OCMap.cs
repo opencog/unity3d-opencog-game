@@ -239,6 +239,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 //			Debug.Log("No OCLog Aspect...");
 //
 //		asp.OnEntry(null);
+			
+		OCBlockData oldBlock = GetBlock(pos);
 
 		SetBlock (block, pos);
 
@@ -277,15 +279,18 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			
 		OpenCog.Embodiment.OCPerceptionCollector perceptionCollector = OpenCog.Embodiment.OCPerceptionCollector.Instance;
 		
-		if (block.IsEmpty())
+		if (block.IsEmpty() && !oldBlock.IsEmpty())
 		{
 			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
 				
-			perceptionCollector.NotifyBlockRemoved(pos);
+			if(perceptionCollector != null)
+				perceptionCollector.NotifyBlockRemoved(pos);
 			
 			// I'm going to take a gamble here...since NotifyBatteryRemoved only does its work when it finds a battery at this location...it should be ok...
 				
-			perceptionCollector.NotifyBatteryRemoved(pos);
+			if(perceptionCollector != null)
+				perceptionCollector.NotifyBatteryRemoved(pos);
+			
 				
 			List<GameObject> batteries = GameObject.FindGameObjectsWithTag("OCBattery").ToList();
 				GameObject battery = batteries.Where(b => b.transform.position == pos).FirstOrDefault();
@@ -293,10 +298,13 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			List<GameObject> hearths = GameObject.FindGameObjectsWithTag("OCHearth").ToList();
 				GameObject hearth = hearths.Where(h => h.transform.position == pos).FirstOrDefault();
 				
-			if(battery != default(GameObject))
-				GameObject.Destroy(battery);
-			if(hearth != default(GameObject))
-				GameObject.Destroy(hearth);
+			if(battery != default(GameObject) && battery != null)
+				GameObject.DestroyImmediate(battery);
+			if(hearth != default(GameObject) && hearth != null)
+				GameObject.DestroyImmediate(hearth);
+				
+			if(perceptionCollector != null)
+				perceptionCollector.PerceiveWorld();
 			
 		}
 		else
@@ -320,7 +328,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				battery.name = "Battery";		
 				battery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
 					
-				perceptionCollector.NotifyBatteryAdded(pos);	
+				if(perceptionCollector != null)
+					perceptionCollector.NotifyBatteryAdded(pos);	
 			}
 			
 		}
@@ -339,7 +348,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				hearth.name = "Hearth";		
 				hearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
 					
-				perceptionCollector.NotifyBlockAdded(pos);
+				if(perceptionCollector != null)
+					perceptionCollector.NotifyBlockAdded(pos);
 			}
 		}
 		

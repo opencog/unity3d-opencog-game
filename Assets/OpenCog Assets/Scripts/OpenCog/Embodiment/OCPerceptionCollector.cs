@@ -26,6 +26,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
 using System.Linq;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -57,6 +58,10 @@ namespace OpenCog.Embodiment
 		private OCConnectorSingleton _connector; // The OCConnector instance used to send map-info.
 		private int _id; // A local copy of the game object id that this component attached to.
 		private Dictionary<int, OCObjectMapInfo> _mapInfoCache = new Dictionary<int, OCObjectMapInfo> ();
+		[SerializeField]
+		private List<int> _mapInfoCacheKeys = new List<int>();
+		[SerializeField]
+		private List<string> _mapInfoCacheNames = new List<string>();
 		private Dictionary<int, bool> _mapInfoCacheStatus = new Dictionary<int, bool> (); // A flag map indicates if a cached map info has been percepted in latest cycle.
 		private Dictionary<OCStateChangesRegister.StateInfo, System.Object> _stateInfoCache = new Dictionary<OCStateChangesRegister.StateInfo, System.Object> ();
 		private ArrayList _statesToDelete = new ArrayList ();
@@ -83,11 +88,15 @@ namespace OpenCog.Embodiment
 	
 		//---------------------------------------------------------------------------
 		
-		public static OpenCog.Embodiment.OCPerceptionCollector Instance
+		public static OCPerceptionCollector Instance
 		{
 			get 
 			{
-				return OpenCog.Embodiment.OCPerceptionCollector.GetInstance<OCPerceptionCollector>();
+				GameObject agi = GameObject.FindGameObjectWithTag("OCAGI");
+				if(agi)
+					return agi.GetComponent<OCPerceptionCollector>();
+				else
+					return null;
 			}
 		}
 		
@@ -127,6 +136,8 @@ namespace OpenCog.Embodiment
 		/// </summary>
 		public void Update ()
 		{
+			_mapInfoCacheKeys = _mapInfoCache.Keys.ToList();
+			_mapInfoCacheNames = _mapInfoCache.Values.Select(o => o.name).ToList();
 			// Check if OCConnector has been initialized (a.k.a connecting to the router).
 			if (!_connector.IsInitialized) {
 				return;
@@ -658,8 +669,8 @@ namespace OpenCog.Embodiment
 		private void Initialize ()
 		{
 			// Obtain components of this OCAvatar.
-			_connector = gameObject.GetComponent ("OCConnector") as OCConnectorSingleton;
-			_id = gameObject.GetInstanceID ();
+			_connector = OCConnectorSingleton.Instance;
+			_id = GameObject.FindGameObjectWithTag("OCAGI").GetInstanceID();
 			
 			foreach (OCStateChangesRegister.StateInfo ainfo in OCStateChangesRegister.StateList) {			
 				System.Reflection.FieldInfo stateValInfo = ainfo.behaviour.GetType ().GetField (ainfo.stateName);

@@ -22,6 +22,8 @@ using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
 using OpenCog.Serialization;
+using OpenCog.Embodiment;
+using OpenCog.Network;
 
 namespace OpenCog
 {

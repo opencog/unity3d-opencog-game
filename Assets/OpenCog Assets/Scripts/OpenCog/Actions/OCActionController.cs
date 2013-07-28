@@ -716,6 +716,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						_PlanSucceeded = endPosition == Vector3.zero;
 					}
 							
+					if(_step.Arguments.ActionName == "grab")
+					{
+						_PlanSucceeded = endPosition != startPosition && endPosition != null;
+					}
+							
 					if(_step.Arguments.ActionPlanID != null)
 					{
 						OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
