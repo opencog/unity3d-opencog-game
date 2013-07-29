@@ -173,7 +173,10 @@ namespace OpenCog.Embodiment
 				}
 				
 				if (_hasPerceivedWorldForTheFirstTime)
+				{
+					PerceiveWorld();	
 					PerceiveStateChanges ();
+				}
 				
 				_timer = 0.0f;
 			}
@@ -359,8 +362,21 @@ namespace OpenCog.Embodiment
 			// We then look for these objects in _mapInfoCacheStatus (by gameobjectID it seems) to see if their boolean is false...not sure why yet.
 			// Oh...I just found out it means that it's status has not been updated in the last cycle...weird...why would it not complete....?
 			// Handle all objects that disappeared in this cycle.
+			
+			string strCacheIdList = "";
+			
+			foreach (int cacheIDItem in cacheIdList)
+			{
+				strCacheIdList += cacheIDItem.ToString() + ", ";	
+			}
+			
+			UnityEngine.Debug.Log ("CacheIDList contains these ID's: " + strCacheIdList );
+			
+			
 			foreach (int oid in cacheIdList) {
+				UnityEngine.Debug.Log ("Now we're checking _mapInfoCache for the ID " + oid);
 				if (!_mapInfoCacheStatus [oid]) {
+					UnityEngine.Debug.Log ("We didn't find the ID " + oid);
 					// So...if the game object's boolean is false...
 					
 					// The updated flag of the map info cache is false, meaning it has not been updated in last cycle.
@@ -372,6 +388,8 @@ namespace OpenCog.Embodiment
 					// Finally we add it's gameobject id to a hashset of disappeared objects...
 					disappearedObjects.Add (oid);
 				}
+				else
+					UnityEngine.Debug.Log ("We found the ID " + oid);
 			}
 	
 			
@@ -638,10 +656,10 @@ namespace OpenCog.Embodiment
 				
 				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 				
-				connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
+				//connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
 				//connector.SendTerrainInfoMessage(addedBlockList);	
 				 
-				_mapInfoCache.Remove (batteryIDToRemove);
+				//_mapInfoCache.Remove (batteryIDToRemove);
 				
 				// Now we need to destroy the actual batteryobject...terrifying!!
 				
@@ -779,66 +797,66 @@ namespace OpenCog.Embodiment
 		/// Notify OAC that certain block has been removed.
 		/// </summary>
 		/// <param name="hitPoint"></param>
-		private void _notifyBlockRemoved (Vector3i hitPoint)
-		{
-			int chunkX = (int)hitPoint.x / OpenCog.Map.OCChunk.SIZE_X;
-			int chunkY = (int)hitPoint.y / OpenCog.Map.OCChunk.SIZE_Y;
-			int chunkZ = (int)hitPoint.z / OpenCog.Map.OCChunk.SIZE_Z;
-			int blockX = (int)hitPoint.x % OpenCog.Map.OCChunk.SIZE_X;
-			int blockY = (int)hitPoint.y % OpenCog.Map.OCChunk.SIZE_Y;
-			int blockZ = (int)hitPoint.z % OpenCog.Map.OCChunk.SIZE_Z;
-
-			int globalBlockX = (int)hitPoint.x;
-			int globalBlockY = (int)hitPoint.y;
-			int globalBlockZ = (int)hitPoint.z;
-
-			OpenCog.Map.OCChunk currentChunk = _map.Chunks.Get (chunkX, chunkY, chunkZ);
-	
-			/*		// check if this block is contained in a block conjunction.
-			// If so, find out the base z index of this conjunction.
-			int z = blockZ;
-			for (; z > floorHeight; z--)
-			{
-				if (currentChunk.Blocks[blockX, blockY, z].Type != BlockType.Air ||
-					!CheckSurfaceBlock(currentChunk, blockX, blockY, z) ||
-					z == floorHeight + 1)
-					break;
-			}
-			 */
-
-			// TODO: Get the right value from BlockData to put into mapinfo
-			OCObjectMapInfo mapinfo = new OCObjectMapInfo (chunkX, chunkY, chunkZ, globalBlockX, globalBlockY, globalBlockZ, _map.GetBlock (globalBlockX, globalBlockY, globalBlockZ));
-			mapinfo.RemoveProperty ("visibility-status");
-			mapinfo.AddProperty ("remove", "true", System.Type.GetType ("System.Boolean"));
-			//mapinfo.Visibility = OCObjectMapInfo.VISIBLE_STATUS.UNKNOWN;
-	
-			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo> ();
-			removedBlockList.Add (mapinfo);
-			_connector.HandleObjectAppearOrDisappear (mapinfo.ID, mapinfo.Type, false);
-			_connector.SendTerrainInfoMessage (removedBlockList);
-		
-		}
-			
-		private void _notifyBlockAdded (Vector3i hitPoint)
-		{
-			//TODO MAYBE, XYZ XZY ETC.
-			int chunkX = (int)(hitPoint.x / OpenCog.Map.OCChunk.SIZE_X);
-			int chunkY = (int)(hitPoint.y / OpenCog.Map.OCChunk.SIZE_Y);
-			int chunkZ = (int)(hitPoint.z / OpenCog.Map.OCChunk.SIZE_Z);
-			int blockX = (int)(hitPoint.x % OpenCog.Map.OCChunk.SIZE_X);
-			int blockY = (int)(hitPoint.y % OpenCog.Map.OCChunk.SIZE_Y);
-			int blockZ = (int)(hitPoint.z % OpenCog.Map.OCChunk.SIZE_Z);
-	
-			OpenCog.Map.OCChunk currentChunk = _map.Chunks.Get (chunkX, chunkY, chunkZ);
-			OCObjectMapInfo mapinfo = new OCObjectMapInfo (chunkX, chunkY, chunkZ, blockX, blockY, blockZ, currentChunk.GetBlock (blockX, blockY, blockZ));
-			
-			
-			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo> ();
-			addedBlockList.Add (mapinfo);
-			_connector.HandleObjectAppearOrDisappear (mapinfo.ID, mapinfo.Type, true);
-			_connector.SendTerrainInfoMessage (addedBlockList);
-		
-		}
+//		private void _notifyBlockRemoved (Vector3i hitPoint)
+//		{
+//			int chunkX = (int)hitPoint.x / OpenCog.Map.OCChunk.SIZE_X;
+//			int chunkY = (int)hitPoint.y / OpenCog.Map.OCChunk.SIZE_Y;
+//			int chunkZ = (int)hitPoint.z / OpenCog.Map.OCChunk.SIZE_Z;
+//			int blockX = (int)hitPoint.x % OpenCog.Map.OCChunk.SIZE_X;
+//			int blockY = (int)hitPoint.y % OpenCog.Map.OCChunk.SIZE_Y;
+//			int blockZ = (int)hitPoint.z % OpenCog.Map.OCChunk.SIZE_Z;
+//
+//			int globalBlockX = (int)hitPoint.x;
+//			int globalBlockY = (int)hitPoint.y;
+//			int globalBlockZ = (int)hitPoint.z;
+//
+//			OpenCog.Map.OCChunk currentChunk = _map.Chunks.Get (chunkX, chunkY, chunkZ);
+//	
+//			/*		// check if this block is contained in a block conjunction.
+//			// If so, find out the base z index of this conjunction.
+//			int z = blockZ;
+//			for (; z > floorHeight; z--)
+//			{
+//				if (currentChunk.Blocks[blockX, blockY, z].Type != BlockType.Air ||
+//					!CheckSurfaceBlock(currentChunk, blockX, blockY, z) ||
+//					z == floorHeight + 1)
+//					break;
+//			}
+//			 */
+//
+//			// TODO: Get the right value from BlockData to put into mapinfo
+//			OCObjectMapInfo mapinfo = new OCObjectMapInfo (chunkX, chunkY, chunkZ, globalBlockX, globalBlockY, globalBlockZ, _map.GetBlock (globalBlockX, globalBlockY, globalBlockZ));
+//			mapinfo.RemoveProperty ("visibility-status");
+//			mapinfo.AddProperty ("remove", "true", System.Type.GetType ("System.Boolean"));
+//			//mapinfo.Visibility = OCObjectMapInfo.VISIBLE_STATUS.UNKNOWN;
+//	
+//			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo> ();
+//			removedBlockList.Add (mapinfo);
+//			_connector.HandleObjectAppearOrDisappear (mapinfo.ID, mapinfo.Type, false);
+//			_connector.SendTerrainInfoMessage (removedBlockList);
+//		
+//		}
+//			
+//		private void _notifyBlockAdded (Vector3i hitPoint)
+//		{
+//			//TODO MAYBE, XYZ XZY ETC.
+//			int chunkX = (int)(hitPoint.x / OpenCog.Map.OCChunk.SIZE_X);
+//			int chunkY = (int)(hitPoint.y / OpenCog.Map.OCChunk.SIZE_Y);
+//			int chunkZ = (int)(hitPoint.z / OpenCog.Map.OCChunk.SIZE_Z);
+//			int blockX = (int)(hitPoint.x % OpenCog.Map.OCChunk.SIZE_X);
+//			int blockY = (int)(hitPoint.y % OpenCog.Map.OCChunk.SIZE_Y);
+//			int blockZ = (int)(hitPoint.z % OpenCog.Map.OCChunk.SIZE_Z);
+//	
+//			OpenCog.Map.OCChunk currentChunk = _map.Chunks.Get (chunkX, chunkY, chunkZ);
+//			OCObjectMapInfo mapinfo = new OCObjectMapInfo (chunkX, chunkY, chunkZ, blockX, blockY, blockZ, currentChunk.GetBlock (blockX, blockY, blockZ));
+//			
+//			
+//			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo> ();
+//			addedBlockList.Add (mapinfo);
+//			_connector.HandleObjectAppearOrDisappear (mapinfo.ID, mapinfo.Type, true);
+//			_connector.SendTerrainInfoMessage (addedBlockList);
+//		
+//		}
 	
 		private IEnumerator PerceiveTerrain ()
 		{

@@ -836,6 +836,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
 	public void HandleObjectAppearOrDisappear(string objectID, string objectType, bool isAppear)
 	{
+		if (isAppear)
+			UnityEngine.Debug.Log ("Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
+		else
+			UnityEngine.Debug.Log ("Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		// TODO: Figure out what this is...why would we report an object that is our ID...or maybe that's the agent ID...
 		if (objectID == ID.ToString())
 			return;
@@ -869,13 +873,14 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			actionElement.SetAttribute("name", "disappear");
 			actionElement.SetAttribute("action-instance-name", "disappear"+ (++_disappearActionCount).ToString());
+			actionElement.SetAttribute("remove", "true");
 		}
 	
 		actionElement.SetAttribute("result-state", "true"); 
 		
 		actionElement.SetAttribute("target", objectID.ToString());
 		actionElement.SetAttribute("target-type",targetType);		
-			
+		
 	   	OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 	   	
 	   	OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
@@ -1752,7 +1757,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					
 						// SWAPPED:
 						//vectorGameObject.transform.position = new Vector3(x, z, y);
-						UnityEngine.Debug.Log ("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
+						//UnityEngine.Debug.Log ("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
 					
 						console.AddConsoleEntry("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 					
@@ -1793,13 +1798,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 								// Then we can grab it, eat it, whatever...since it's a battery
 								if (actionName == "grab")
 								{
-									UnityEngine.Debug.Log ("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
+									//UnityEngine.Debug.Log ("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
 								
 									console.AddConsoleEntry("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 								}
 								else if (actionName == "eat")
 								{
-									UnityEngine.Debug.Log ("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
+									//UnityEngine.Debug.Log ("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
 								
 									console.AddConsoleEntry("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 								
@@ -2093,7 +2098,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		  _messagesToSend.Add(message);
 		}
 		
-		UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString () + ")"));
+		//UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString () + ")"));
   }
   
   /**

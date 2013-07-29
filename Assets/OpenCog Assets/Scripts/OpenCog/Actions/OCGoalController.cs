@@ -146,7 +146,7 @@ public class OCGoalController : OCMonoBehaviour
 			
 				nearHomeEffect.FitnessChange = integrityChange;
 					
-				UnityEngine.Debug.Log ("Increasing Integrity by '" + integrityChange.ToString() + "'");
+				//UnityEngine.Debug.Log ("Increasing Integrity by '" + integrityChange.ToString() + "'");
 			
 				agiPhysModel.ProcessPhysiologicalEffect(nearHomeEffect);
 			}
