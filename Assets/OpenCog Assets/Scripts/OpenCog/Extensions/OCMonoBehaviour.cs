@@ -20,11 +20,9 @@ using System.Collections.Generic;
 using OpenCog.Attributes;
 using ProtoBuf;
 using UnityEngine;
+using OCID = System.Guid;
 
-namespace OpenCog
-{
-
-namespace Extensions
+namespace OpenCog.Extensions
 {
 
 /// <summary>
@@ -45,7 +43,7 @@ public class OCMonoBehaviour : MonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-
+	private OCID _ID;
 
 	//---------------------------------------------------------------------------
 
@@ -57,25 +55,12 @@ public class OCMonoBehaviour : MonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------    
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
-        
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.OCMonoBehaviour"/>
-	/// class.  Generally, intitialization should occur in the Start function.
-	/// </summary>
-	public OCMonoBehaviour()
+	public OCID ID 
 	{
-	}            
-
+		get {return _ID;}
+	}		
+		
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -162,9 +147,18 @@ public class OCMonoBehaviour : MonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	#region Member Classes
+	#region Other Members
 
 	//---------------------------------------------------------------------------        
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="OpenCog.OCMonoBehaviour"/>
+	/// class.  Generally, intitialization should occur in the Start function.
+	/// </summary>
+	public OCMonoBehaviour()
+	{
+		_ID = Guid.NewGuid();
+	}
 
 	public delegate void Task(float time);
 
@@ -176,9 +170,7 @@ public class OCMonoBehaviour : MonoBehaviour
 
 }// class OCMonoBehaviour
 
-}// namespace Extensions
-
-}// namespace OpenCog
+}// namespace OpenCog.Extensions
 
 
 

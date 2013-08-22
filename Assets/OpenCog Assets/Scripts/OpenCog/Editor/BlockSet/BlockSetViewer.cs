@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Collections;
+using OpenCog.BlockSet;
+using OpenCog.BlockSet.BaseBlockSet;
 
 namespace OpenCog
 {
@@ -10,17 +12,17 @@ public class BlockSetViewer {
 	
 	private static string DRAG_AND_DROP = "drag block";
 	
-	public static int SelectionGrid(BlockSet blockSet, int index, params GUILayoutOption[] options) {
+	public static int SelectionGrid(OCBlockSet blockSet, int index, params GUILayoutOption[] options) {
 		Container<Vector2> scroll = EditorGUIUtils.GetStateObject<Container<Vector2>>(blockSet.GetHashCode());
 		
 		scroll.value = GUILayout.BeginScrollView(scroll, options);
-		index = SelectionGrid(blockSet.GetBlocks(), index);
+		index = SelectionGrid(blockSet.Blocks, index);
 		GUILayout.EndScrollView();
 		
 		return index;
 	}
 	
-	private static int SelectionGrid(IList<Block> items, int index) {
+	private static int SelectionGrid(IList<OCBlock> items, int index) {
 		Rect rect;
 		int xCount, yCount;
 		index = SelectionGrid(items, index, out rect, out xCount, out yCount);
@@ -80,7 +82,7 @@ public class BlockSetViewer {
 		return index;
 	}
 	
-	private static int SelectionGrid(IList<Block> items, int index, out Rect rect, out int xCount, out int yCount) {
+	private static int SelectionGrid(IList<OCBlock> items, int index, out Rect rect, out int xCount, out int yCount) {
 		xCount = Mathf.FloorToInt( Screen.width/66f );
 		yCount = Mathf.CeilToInt( (float) items.Count/xCount );
 		
@@ -102,7 +104,7 @@ public class BlockSetViewer {
 		return index;
 	}
 	
-	private static bool DrawItem(Rect position, Block block, bool selected, int index) {
+	private static bool DrawItem(Rect position, OCBlock block, bool selected, int index) {
 		Rect texturePosition = position;
 		texturePosition.height = texturePosition.width;
 		Rect labelPosition = position;
@@ -124,9 +126,9 @@ public class BlockSetViewer {
 		return false;
 	}
 	
-	private static void Insert(IList<Block> items, int newIndex, int oldIndex) {
-		List<Block> list = new List<Block>(items);
-		Block block = list[oldIndex];
+	private static void Insert(IList<OCBlock> items, int newIndex, int oldIndex) {
+		List<OCBlock> list = new List<OCBlock>(items);
+		OCBlock block = list[oldIndex];
 		list.RemoveAt(oldIndex);
 		list.Insert(newIndex, block);
 		

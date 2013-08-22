@@ -4,8 +4,10 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using OpenCog.BlockSet;
+using OpenCog.BlockSet.BaseBlockSet;
 
-[CustomEditor(typeof(BlockSet))]
+[CustomEditor(typeof(OCBlockSet))]
 public class BlockSetEditor : Editor {
 	
 	private enum Mode {
@@ -15,7 +17,7 @@ public class BlockSetEditor : Editor {
 	private Type[] blockTypes;
 	private Mode mode = Mode.BlockSet;
 
-	private BlockSet blockSet;
+	private OCBlockSet blockSet;
 	
 	private static int selectedAtlas = -1;
 	private static int selectedBlock = -1;
@@ -29,19 +31,30 @@ public class BlockSetEditor : Editor {
 		if(Selection.activeObject != null) {
 			path = AssetDatabase.GetAssetPath(Selection.activeObject)+"/";
 		}
-		AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<BlockSet>(), path+"NewBlockSet.asset");
+		AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<OCBlockSet>(), path+"NewBlockSet.asset");
 	}
 	
 	void OnEnable() {
-		blockSet = (BlockSet)target;
-		
-		Type[] types = Assembly.GetAssembly(typeof(Block)).GetTypes();
+		blockSet = (OCBlockSet)target;
+
+//		bool allBlocksNull = true;
+//
+//		for (int i = 0; i < blockSet.Blocks.Length; i++)
+//		{
+//			if (blockSet.Blocks[i] != null)
+//				allBlocksNull = false;
+//		}
+//
+//		if (allBlocksNull)
+//			OCBlockSetImport.Import(blockSet, blockSet.Data);
+
+		Type[] types = Assembly.GetAssembly(typeof(OCBlock)).GetTypes();
 		List<Type> list = new List<Type>();
 		foreach(Type type in types) {
-			if(type.IsSubclassOf(typeof(Block))) list.Add(type);
+			if(type.IsSubclassOf(typeof(OCBlock))) list.Add(type);
 		}
+
 		blockTypes = list.ToArray();
-		
 	}
 	
 	
@@ -68,30 +81,30 @@ public class BlockSetEditor : Editor {
 			}
 		}
 		if(mode == Mode.XML) {
-			if(oldMode != mode) xml = blockSet.GetData();
+			if(oldMode != mode) xml = blockSet.Data;
 			
 			xmlScrollPosition = GUILayout.BeginScrollView(xmlScrollPosition);
 				GUIStyle style = new GUIStyle(GUI.skin.box);
 				style.alignment = TextAnchor.UpperLeft;
 				xml = EditorGUILayout.TextArea(xml, GUILayout.ExpandWidth(true));
-				blockSet.SetData(xml);
+				blockSet.Data = xml;
 			GUILayout.EndScrollView();
 			
 			if(GUILayout.Button("Import")) {
-				BlockSetImport.Import(blockSet, blockSet.GetData());
+				OCBlockSetImport.Import(blockSet, blockSet.Data);
 				GUI.changed = true;
 			}
 		}
 		
 		if(GUI.changed) {
 			string data = BlockSetExport.Export(blockSet);
-			blockSet.SetData(data);
+			blockSet.Data = data;
 			EditorUtility.SetDirty(blockSet);
 		}
 	}
 	
-	private static void DrawAtlasesList( BlockSet blockSet ) {
-		Atlas[] list = blockSet.GetAtlases();
+	private static void DrawAtlasesList( OCBlockSet blockSet ) {
+		OCAtlas[] list = blockSet.Atlases;
 		GUILayout.BeginVertical(GUI.skin.box, GUILayout.ExpandWidth(true));
 		{
 			selectedAtlas = EditorGUIUtils.DrawList(selectedAtlas, list);
@@ -99,44 +112,46 @@ public class BlockSetEditor : Editor {
 		
 			GUILayout.BeginHorizontal();
 				if(GUILayout.Button("Add")) {
-					ArrayUtility.Add<Atlas>(ref list, new Atlas());
+					ArrayUtility.Add<OCAtlas>(ref list, new OCAtlas());
 					selectedAtlas = list.Length - 1;
 					GUI.changed = true;
 				}
 				if(GUILayout.Button("Remove") && selectedAtlas != -1) {
 					Undo.RegisterUndo(blockSet, "Remove atlas");
-					ArrayUtility.RemoveAt<Atlas>(ref list, selectedAtlas);
+					ArrayUtility.RemoveAt<OCAtlas>(ref list, selectedAtlas);
 					selectedAtlas = Mathf.Clamp(selectedAtlas, 0, list.Length - 1);
 					GUI.changed = true;
 				}
 			GUILayout.EndHorizontal();
 		}
 		GUILayout.EndVertical();
-		blockSet.SetAtlases(list);
+		blockSet.Atlases = list;
 	}
 	
-	private static void DrawAtlasEditor(Atlas atlas) {
+	private static void DrawAtlasEditor(OCAtlas atlas) {
 		GUILayout.BeginVertical(GUI.skin.box);
-			Material material = (Material) EditorGUILayout.ObjectField("Material", atlas.GetMaterial(), typeof(Material), true);
-			atlas.SetMaterial(material);
+			Material material = (Material) EditorGUILayout.ObjectField("Material", atlas.Material, typeof(Material), true);
+			atlas.Material = material;
 				
-			int w = EditorGUILayout.IntField("Width", atlas.GetWidth());
+			int w = EditorGUILayout.IntField("Width", atlas.Width);
 			if(w < 1) w = 1; 
-			atlas.SetWidth(w);
+			atlas.Width = w;
 				
-			int h = EditorGUILayout.IntField("Height", atlas.GetHeight());
+			int h = EditorGUILayout.IntField("Height", atlas.Height);
 			if(h < 1) h = 1; 
-			atlas.SetHeight(h);
+			atlas.Height = h;
 				
-			bool alpha = EditorGUILayout.Toggle("Alpha", atlas.IsAlpha());
-			atlas.SetAlpha(alpha);
+			bool alpha = EditorGUILayout.Toggle("Alpha", atlas.IsAlpha);
+			atlas.IsAlpha = alpha;
 		GUILayout.EndVertical();
 	}
 	
-	private void DrawBlockSet(BlockSet blockSet) {
-		GUILayout.BeginVertical(GUI.skin.box); 
+	private void DrawBlockSet(OCBlockSet blockSet) {
+		GUILayout.BeginVertical(GUI.skin.box);
 		
 		int oldSelectedBlock = selectedBlock;
+
+		// Next line pushes the blockSet to BlockSetViewer
 		selectedBlock = OpenCog.BlockSetViewer.SelectionGrid(blockSet, selectedBlock, GUILayout.MinHeight(200), GUILayout.MaxHeight(300));
 		if(selectedBlock != oldSelectedBlock) GUIUtility.keyboardControl = 0;
 		
@@ -144,16 +159,17 @@ public class BlockSetEditor : Editor {
 		
 		GUILayout.BeginHorizontal();
 		foreach(Type type in blockTypes) {
-			string name = type.ToString();
+			string name = type.Name;
+
 			if(name.EndsWith("Block")) name = name.Substring(0, name.Length-5);
 			if(GUILayout.Button(name)) {
-				Block newBlock = (Block) System.Activator.CreateInstance(type);
+				OCBlock newBlock = (OCBlock) CreateInstance(type);
 				newBlock.SetName("New "+type.ToString());
 				newBlock.Init(blockSet);
 				
-				Block[] blocks = blockSet.GetBlocks();
-				ArrayUtility.Add<Block>(ref blocks, newBlock);
-				blockSet.SetBlocks(blocks);
+				OCBlock[] blocks = blockSet.Blocks;
+				ArrayUtility.Add<OCBlock>(ref blocks, newBlock);
+				blockSet.Blocks = blocks;
 				selectedBlock = blocks.Length-1;
 				EditorGUIUtility.keyboardControl = 0;
 				GUI.changed = true;
@@ -162,9 +178,9 @@ public class BlockSetEditor : Editor {
 		GUILayout.EndHorizontal();
 		
 		if( GUILayout.Button("Remove") ) {
-			Block[] blocks = blockSet.GetBlocks();
-			ArrayUtility.RemoveAt<Block>(ref blocks, selectedBlock);
-			blockSet.SetBlocks(blocks);
+			OCBlock[] blocks = blockSet.Blocks;
+			ArrayUtility.RemoveAt<OCBlock>(ref blocks, selectedBlock);
+			blockSet.Blocks = blocks;
 			selectedBlock = Mathf.Clamp(selectedBlock, 0, blocks.Length-1);
 			GUI.changed = true;
 		}

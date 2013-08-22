@@ -46,12 +46,12 @@ public class OCBoolPropertyToggleAttribute : Attribute
 	/// <summary>
 	/// The boolean field name that will toggle the attribute display.
 	/// </summary>
-	private string m_BooleanField;
+	private string _booleanField;
 
 	/// <summary>
 	/// The boolean value that will determine whether to display.
 	/// </summary>
-	private bool m_EqualsValue;
+	private bool _equalsValue;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -71,8 +71,8 @@ public class OCBoolPropertyToggleAttribute : Attribute
 	/// </value>
 	public string BooleanField
 	{
-		get { return m_BooleanField; }
-		set { m_BooleanField = value; }
+		get { return _booleanField; }
+		set { _booleanField = value; }
 	}
 
 	/// <summary>
@@ -85,8 +85,8 @@ public class OCBoolPropertyToggleAttribute : Attribute
 	/// </value>
 	public bool EqualsValue
 	{
-		get { return m_EqualsValue; }
-		set { m_EqualsValue = value; }
+		get { return _equalsValue; }
+		set { _equalsValue = value; }
 	}
 
   /////////////////////////////////////////////////////////////////////////////

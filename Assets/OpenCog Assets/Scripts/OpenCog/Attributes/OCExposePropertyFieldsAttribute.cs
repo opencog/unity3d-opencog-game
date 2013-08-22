@@ -21,9 +21,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using OpenCog.Serialization;
 using ProtoBuf;
-using UnityEditor;
 using UnityEngine;
-using OCExposure = OpenCog.Serialization.OCPropertyField.OCExposure;
 
 namespace OpenCog
 {
@@ -49,7 +47,7 @@ public class OCExposePropertyFieldsAttribute : Attribute
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	private OCExposure m_Exposure;
+	private OCExposure _exposure;
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -63,8 +61,8 @@ public class OCExposePropertyFieldsAttribute : Attribute
 
 	public OCExposure Exposure
 	{
-		get{ return m_Exposure;}
-		set{ m_Exposure = value;}
+		get{ return _exposure;}
+		set{ _exposure = value;}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -80,7 +78,7 @@ public class OCExposePropertyFieldsAttribute : Attribute
 	public OCExposePropertyFieldsAttribute
 		(OCExposure exposure = OCExposure.PropertiesAndFields)
 	{
-		m_Exposure = exposure;
+		_exposure = exposure;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -103,7 +101,15 @@ public class OCExposePropertyFieldsAttribute : Attribute
 
 	/////////////////////////////////////////////////////////////////////////////
 
-
+	public enum OCExposure
+	{
+		None
+	, PublicFieldsOnly
+	, FieldsOnly
+	, PropertiesOnly
+	, PublicPropertiesOnly
+	, PropertiesAndFields
+	};
 
 	/////////////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using OpenCog.Map;
 
 public class Map2D<I> {
 	
@@ -15,15 +16,15 @@ public class Map2D<I> {
 	}
 	
 	public void Set(I val, int x, int z) {
-		Vector3i chunkPos = Chunk.ToChunkPosition(x, 0, z);
-		Vector3i localPos = Chunk.ToLocalPosition(x, 0, z);
+		Vector3i chunkPos = OCChunk.ToChunkPosition(x, 0, z);
+		Vector3i localPos = OCChunk.ToLocalPosition(x, 0, z);
 		Chunk2D<I> chunk = GetChunkInstance(chunkPos.x, chunkPos.z);
 		chunk.Set(val, localPos.x, localPos.z);
 	}
 	
 	public I Get(int x, int z) {
-		Vector3i chunkPos = Chunk.ToChunkPosition(x, 0, z);
-		Vector3i localPos = Chunk.ToLocalPosition(x, 0, z);
+		Vector3i chunkPos = OCChunk.ToChunkPosition(x, 0, z);
+		Vector3i localPos = OCChunk.ToLocalPosition(x, 0, z);
 		Chunk2D<I> chunk = GetChunk(chunkPos.x, chunkPos.z);
 		if(chunk != null) return chunk.Get(localPos.x, localPos.z);
 		return defaultValue;
@@ -43,7 +44,7 @@ public class Map2D<I> {
 
 public class Chunk2D<I> {
 	
-	private I[,] chunk = new I[Chunk.SIZE_Z, Chunk.SIZE_X];
+	private I[,] chunk = new I[OpenCog.Map.OCChunk.SIZE_Z, OpenCog.Map.OCChunk.SIZE_X];
 	
 	public void Set(I val, int x, int z) {
 		chunk[z, x] = val;

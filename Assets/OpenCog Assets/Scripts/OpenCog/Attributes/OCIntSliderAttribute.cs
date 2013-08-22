@@ -47,12 +47,12 @@ public class OCIntSliderAttribute : Attribute
   /// <summary>
 	/// The minimum value cap.
 	/// </summary>
-	private int m_MinValue;
+	private int _minValue;
 
 	/// <summary>
 	/// The maximum value cap.
 	/// </summary>
-	private int m_MaxValue;
+	private int _maxValue;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -72,8 +72,8 @@ public class OCIntSliderAttribute : Attribute
 	/// </value>
 	public int MinValue
 	{
-		get { return m_MinValue; }
-		set { m_MinValue = value; }
+		get { return _minValue; }
+		set { _minValue = value; }
 	}
 
 	/// <summary>
@@ -84,8 +84,8 @@ public class OCIntSliderAttribute : Attribute
 	/// </value>
 	public int MaxValue
 	{
-		get { return m_MaxValue; }
-		set { m_MaxValue = value; }
+		get { return _maxValue; }
+		set { _maxValue = value; }
 	}
 
   /////////////////////////////////////////////////////////////////////////////

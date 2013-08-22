@@ -1,0 +1,91 @@
+2013-07-16 13:24:58 [INFO] Starting minecraft server version 1.5.2
+2013-07-16 13:24:58 [INFO] Loading properties
+2013-07-16 13:24:59 [INFO] Default game type: SURVIVAL
+2013-07-16 13:24:59 [INFO] Generating keypair
+2013-07-16 13:24:59 [INFO] Starting Minecraft server on *:33621
+2013-07-16 13:24:59 [WARNING] Failed to load operators list: java.io.FileNotFoundException: .\ops.txt (The system cannot find the file specified)
+2013-07-16 13:24:59 [WARNING] Failed to load white-list: java.io.FileNotFoundException: .\white-list.txt (The system cannot find the file specified)
+2013-07-16 13:24:59 [INFO] Preparing level "TestScene1"
+2013-07-16 13:24:59 [INFO] Preparing start region for level 0
+2013-07-16 13:25:00 [INFO] Preparing spawn area: 11%
+2013-07-16 13:25:01 [INFO] Preparing spawn area: 35%
+2013-07-16 13:25:02 [INFO] Preparing spawn area: 57%
+2013-07-16 13:25:03 [INFO] Preparing spawn area: 82%
+2013-07-16 13:25:04 [INFO] Done (4.909s)! For help, type "help" or "?"
+2013-07-16 13:25:04 [INFO] Stopping the server
+2013-07-16 13:25:04 [INFO] Stopping server
+2013-07-16 13:25:04 [INFO] Saving players
+2013-07-16 13:25:04 [INFO] Saving worlds
+2013-07-16 13:25:04 [INFO] Saving chunks for level 'TestScene1'/Overworld
+2013-07-16 13:25:04 [INFO] Closing listening thread
+2013-07-16 13:25:10 [INFO] Saving chunks for level 'TestScene1'/Nether
+2013-07-16 13:25:10 [INFO] Saving chunks for level 'TestScene1'/The End
+2013-07-16 13:25:16 [INFO] Stopping server
+2013-07-16 13:27:35 [INFO] Starting minecraft server version 1.5.2
+2013-07-16 13:27:35 [INFO] Loading properties
+2013-07-16 13:27:35 [INFO] Default game type: SURVIVAL
+2013-07-16 13:27:35 [INFO] Generating keypair
+2013-07-16 13:27:36 [INFO] Starting Minecraft server on *:45149
+2013-07-16 13:27:36 [INFO] Preparing level "TestScene1"
+2013-07-16 13:27:36 [INFO] Preparing start region for level 0
+2013-07-16 13:27:37 [INFO] Preparing spawn area: 10%
+2013-07-16 13:27:38 [INFO] Preparing spawn area: 33%
+2013-07-16 13:27:39 [INFO] Preparing spawn area: 55%
+2013-07-16 13:27:40 [INFO] Preparing spawn area: 79%
+2013-07-16 13:27:41 [INFO] Done (5.108s)! For help, type "help" or "?"
+2013-07-16 13:27:41 [INFO] Stopping the server
+2013-07-16 13:27:41 [INFO] Stopping server
+2013-07-16 13:27:41 [INFO] Saving players
+2013-07-16 13:27:41 [INFO] Saving worlds
+2013-07-16 13:27:41 [INFO] Closing listening thread
+2013-07-16 13:27:41 [INFO] Saving chunks for level 'TestScene1'/Overworld
+2013-07-16 13:27:46 [INFO] Saving chunks for level 'TestScene1'/Nether
+2013-07-16 13:27:46 [INFO] Saving chunks for level 'TestScene1'/The End
+2013-07-17 16:02:05 [INFO] Starting minecraft server version 1.5.2
+2013-07-17 16:02:05 [INFO] Loading properties
+2013-07-17 16:02:05 [INFO] Default game type: SURVIVAL
+2013-07-17 16:02:05 [INFO] Generating keypair
+2013-07-17 16:02:05 [INFO] Starting Minecraft server on *:34801
+2013-07-17 16:02:05 [INFO] Preparing level "TestScene2"
+2013-07-17 16:02:05 [INFO] Preparing start region for level 0
+2013-07-17 16:02:06 [INFO] Preparing spawn area: 7%
+2013-07-17 16:02:07 [INFO] Preparing spawn area: 20%
+2013-07-17 16:02:08 [INFO] Preparing spawn area: 39%
+2013-07-17 16:02:09 [INFO] Preparing spawn area: 59%
+2013-07-17 16:02:10 [INFO] Preparing spawn area: 76%
+2013-07-17 16:02:11 [INFO] Preparing spawn area: 93%
+2013-07-17 16:02:12 [INFO] Done (6.545s)! For help, type "help" or "?"
+2013-07-17 16:02:12 [INFO] Stopping the server
+2013-07-17 16:02:12 [INFO] Stopping server
+2013-07-17 16:02:12 [INFO] Saving players
+2013-07-17 16:02:12 [INFO] Saving worlds
+2013-07-17 16:02:12 [INFO] Saving chunks for level 'TestScene2'/Overworld
+2013-07-17 16:02:12 [INFO] Closing listening thread
+2013-07-17 16:02:18 [INFO] Saving chunks for level 'TestScene2'/Nether
+2013-07-17 16:02:18 [INFO] Saving chunks for level 'TestScene2'/The End
+2013-07-17 16:02:23 [INFO] Stopping server
+2013-07-17 16:02:23 [INFO] Saving players
+2013-07-17 16:02:23 [INFO] Saving worlds
+2013-07-17 16:02:23 [INFO] Saving chunks for level 'TestScene2'/Overworld
+2013-07-17 16:04:20 [INFO] Starting minecraft server version 1.5.2
+2013-07-17 16:04:20 [INFO] Loading properties
+2013-07-17 16:04:20 [INFO] Default game type: SURVIVAL
+2013-07-17 16:04:20 [INFO] Generating keypair
+2013-07-17 16:04:21 [INFO] Starting Minecraft server on *:32973
+2013-07-17 16:04:21 [INFO] Preparing level "TestScene2"
+2013-07-17 16:04:21 [INFO] Preparing start region for level 0
+2013-07-17 16:04:22 [INFO] Preparing spawn area: 9%
+2013-07-17 16:04:23 [INFO] Preparing spawn area: 27%
+2013-07-17 16:04:24 [INFO] Preparing spawn area: 49%
+2013-07-17 16:04:25 [INFO] Preparing spawn area: 68%
+2013-07-17 16:04:26 [INFO] Preparing spawn area: 90%
+2013-07-17 16:04:26 [INFO] Done (5.534s)! For help, type "help" or "?"
+2013-07-17 16:04:26 [INFO] Stopping the server
+2013-07-17 16:04:26 [INFO] Stopping server
+2013-07-17 16:04:26 [INFO] Saving players
+2013-07-17 16:04:26 [INFO] Saving worlds
+2013-07-17 16:04:26 [INFO] Saving chunks for level 'TestScene2'/Overworld
+2013-07-17 16:04:26 [INFO] Closing listening thread
+2013-07-17 16:04:32 [INFO] Saving chunks for level 'TestScene2'/Nether
+2013-07-17 16:04:32 [INFO] Saving chunks for level 'TestScene2'/The End
+2013-07-17 16:04:37 [INFO] Stopping server

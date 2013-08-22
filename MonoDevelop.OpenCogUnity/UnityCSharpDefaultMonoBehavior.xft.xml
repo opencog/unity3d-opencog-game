@@ -1,0 +1,230 @@
+﻿<?xml version="1.0"?>
+<Template Originator="Lake Watkins" Language="C#" Created="1/30/2013" LastModified="4/26/2013">
+	
+    <TemplateConfiguration>
+        <_Name>Default GameObject Script</_Name>
+        <Icon>md-text-file-icon</Icon>
+        <_Category>OpenCog</_Category>
+        <LanguageName>C#</LanguageName>
+        <_Description>Creates a default MonoBehaviour script for Unity. Attach to GameObject.</_Description>
+    </TemplateConfiguration>
+
+    <TemplateFiles>
+        <File DefaultExtension=".cs" DefaultName="OCGameObjectScriptLite" AddStandardHeader="True"><![CDATA[
+/// Unity3D OpenCog World Embodiment Program
+/// Copyright (C) 2013  Novamente			
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as
+/// published by the Free Software Foundation, either version 3 of the
+/// License, or (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#region Usings, Namespaces, and Pragmas
+
+using System.Collections;
+using OpenCog.Attributes;
+using OpenCog.Extensions;
+using ImplicitFields = ProtoBuf.ImplicitFields;
+using ProtoContract = ProtoBuf.ProtoContractAttribute;
+using Serializable = System.SerializableAttribute;
+
+//The private field is assigned but its value is never used
+#pragma warning disable 0414
+
+#endregion
+
+namespace OpenCog
+{
+
+/// <summary>
+/// The OpenCog ${Name}.
+/// </summary>
+#region Class Attributes
+
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[OCExposePropertyFields]
+[Serializable]
+	
+#endregion
+public class ${Name} : OCMonoBehaviour
+{
+
+	//---------------------------------------------------------------------------
+
+	#region Private Member Data
+
+	//---------------------------------------------------------------------------
+		
+	/// <summary>
+	/// An example variable.  Don't fall into the trap of making all variables
+	/// public (I know Unity encourages you to do this).  Instead, make use of
+	/// public properties whenever possible.
+	/// </summary>
+	private int m_ExampleVar;
+
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+	#region Accessors and Mutators
+
+	//---------------------------------------------------------------------------
+		
+	/// <summary>
+	/// Gets or sets the example variable.  Includes attribute examples.
+	/// </summary>
+	/// <value>
+	/// The example variable.
+	/// </value>
+	[OCTooltip("I'm an example tooltip!")]
+	//creates a tooltip popup in the editor
+	[OCIntSlider(0, 100)]//creates a integer slider from 0 to 100 in the editor
+	public int ExampleVar
+	{
+		get{ return m_ExampleVar; }
+
+		set{ m_ExampleVar = value; }
+	}
+			
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+	#region Public Member Functions
+
+	//---------------------------------------------------------------------------
+
+	/// <summary>
+	/// Called when the script instance is being loaded.
+	/// </summary>
+	public void Awake()
+	{
+		Initialize();
+		OCLogger.Fine(gameObject.name + " is awake.");
+	}
+
+	/// <summary>
+	/// Use this for initialization
+	/// </summary>
+	public void Start()
+	{
+		OCLogger.Fine(gameObject.name + " is started.");
+	}
+
+	/// <summary>
+	/// Update is called once per frame.
+	/// </summary>
+	public void Update()
+	{
+		OCLogger.Fine(gameObject.name + " is updated.");	
+	}
+		
+	/// <summary>
+	/// Reset this instance to its default values.
+	/// </summary>
+	public void Reset()
+	{
+		Uninitialize();
+		Initialize();
+		OCLogger.Fine(gameObject.name + " is reset.");	
+	}
+
+	/// <summary>
+	/// Raises the enable event when ${Name} is loaded.
+	/// </summary>
+	public void OnEnable()
+	{
+		OCLogger.Fine(gameObject.name + " is enabled.");
+	}
+
+	/// <summary>
+	/// Raises the disable event when ${Name} goes out of scope.
+	/// </summary>
+	public void OnDisable()
+	{
+		OCLogger.Fine(gameObject.name + " is disabled.");
+	}
+
+	/// <summary>
+	/// Raises the destroy event when ${Name} is about to be destroyed.
+	/// </summary>
+	public void OnDestroy()
+	{
+		Uninitialize();
+		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+	}
+
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+	#region Private Member Functions
+
+	//---------------------------------------------------------------------------
+	
+	/// <summary>
+	/// Initializes this instance.  Set default values here.
+	/// </summary>
+	private void Initialize()
+	{
+		ExampleVar = 0;
+	}
+	
+	/// <summary>
+	/// Uninitializes this instance.  Cleanup refernces here.
+	/// </summary>
+	private void Uninitialize()
+	{
+	}
+			
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+	#region Other Members
+
+	//---------------------------------------------------------------------------		
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="OpenCog.${Name}"/> class.  
+	/// Generally, intitialization should occur in the Start or Awake
+	/// functions, not here.
+	/// </summary>
+	public ${Name}()
+	{
+	}
+
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+}// class ${Name}
+
+}// namespace OpenCog
+
+
+
+]]>
+        </File>
+    </TemplateFiles>
+
+    <FileOptions/>
+</Template>

@@ -31,33 +31,33 @@ public class OCScriptScanner : MonoBehaviour
 	}
 
 	//All of the candidate scripts
-	private static List<ScannedScript> m_scripts;
+	private static List<ScannedScript> _scripts;
 
 	//Whether we have scanned for scripts
-	private static bool m_initialized = false;
+	private static bool _initialized = false;
 
 	//Are we setup to repaint on changes to the project window?
-	private static bool m_willRepaint;
+	private static bool _willRepaint;
 
 	public static List<ScannedScript> Scripts
 	{
-		get {return m_scripts;}
+		get {return _scripts;}
 	}
 
 	//Initialize the scanned scripts
 	public static void Start()
 	{
-		if( !m_willRepaint )
+		if( !_willRepaint )
 		{
 			EditorApplication.projectWindowChanged += () => {
 				//@TODO: Repaint only in the Editor?
 				//Repaint();
 			};
-			m_willRepaint = true;
+			_willRepaint = true;
 		}
-		if( !m_initialized )
+		if( !_initialized )
 		{
-			m_initialized = true;
+			_initialized = true;
 
 			ScanAll();
 		}
@@ -67,7 +67,7 @@ public class OCScriptScanner : MonoBehaviour
 	public static void ScanAll()
 	{
 		//Get all of the scripts
-		m_scripts = Resources.FindObjectsOfTypeAll( typeof( MonoScript ) )
+		_scripts = Resources.FindObjectsOfTypeAll( typeof( MonoScript ) )
 			//Make this a collection of MonoScripts
       .Cast<MonoScript>()
 			//Make sure that they aren't system scripts

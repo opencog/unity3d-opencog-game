@@ -25,7 +25,6 @@ using ProtoBuf;
 using UnityEditor;
 using UnityEngine;
 using Enum = System.Enum;
-using OCExposure = OpenCog.Serialization.OCPropertyField.OCExposure;
 using Type = System.Type;
 using TypeCode = System.TypeCode;
 
@@ -71,30 +70,30 @@ where OCType : MonoBehaviour
 	/// <summary>
 	/// The mono behavior instance we're editing.
 	/// </summary>
-	private OCType m_Instance;
+	private OCType _instance;
 
-	private bool m_ShowProperties = false;
+	private bool _showProperties = false;
 
-	private List<OCPropertyField> m_AllPropertyFields = new List<OCPropertyField>();
+	private List<OCPropertyField> _allPropertyFields = new List<OCPropertyField>();
 
 	/// <summary>
 	/// Have we tried to find a suitable script for a missing connection?
 	/// </summary>
-	private static bool m_HaveTried;
+	private static bool _haveTried;
 
 	/// <summary>
 	/// The next object to try to find a suitable script for.
 	/// </summary>
-	private static GameObject m_TryThisObject;
+	private static GameObject _tryThisObject;
 
 	/// <summary>
 	/// Are we setup to repaint on changes to the project window?
 	/// </summary>
-	private static bool m_willRepaint = false;
+	private static bool _willRepaint = false;
 
-	private Type m_Type = null;//typeof(OCType);
+	private Type _type = null;//typeof(OCType);
 
-	private Dictionary<string, bool> m_FoldedState = new Dictionary<string, bool>();
+	private Dictionary<string, bool> _foldedState = new Dictionary<string, bool>();
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -115,8 +114,8 @@ where OCType : MonoBehaviour
 	/// </value>
 	public static bool HaveTried
 	{
-		get { return m_HaveTried;}
-		set { m_HaveTried = value;}
+		get { return _haveTried;}
+		set { _haveTried = value;}
 	}
 
 	/// <summary>
@@ -127,8 +126,8 @@ where OCType : MonoBehaviour
 	/// </value>
 	public static GameObject TryThisObject
 	{
-		get { return m_TryThisObject;}
-		set { m_TryThisObject = value;}
+		get { return _tryThisObject;}
+		set { _tryThisObject = value;}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -143,7 +142,7 @@ where OCType : MonoBehaviour
 
 	public void OnEnable()
 	{
-		m_Instance = target as OCType;
+		_instance = target as OCType;
 
 		OCAutomatedScriptScanner.Init();
 	}
@@ -163,15 +162,15 @@ where OCType : MonoBehaviour
 		serializedObject.ApplyModifiedProperties();
 		serializedObject.UpdateIfDirtyOrScript();
 
-		m_AllPropertyFields.Clear();
+		_allPropertyFields.Clear();
 
 		//@TODO: vvv Is this needed given the repaint event in OnEnable?
 		if(GUI.changed)
 			EditorUtility.SetDirty(target);
 	}
 
-	public void DrawInspector<OCType>(OCType target)
-		where OCType : new()
+	public void DrawInspector<OCNewType>(OCNewType target)
+		where OCNewType : new()
 	{
 		if(target == null)
 		{
@@ -182,7 +181,7 @@ where OCType : MonoBehaviour
 		Type exposePropertiesType =
 			typeof(OCExposePropertyFieldsAttribute);
 
-		OCExposure exposure = OCExposure.None;
+		OCExposePropertyFieldsAttribute.OCExposure exposure = OCExposePropertyFieldsAttribute.OCExposure.None;
 
 		if(exposePropertiesType != null)
 		{
@@ -315,7 +314,7 @@ where OCType : MonoBehaviour
 	{
 		if(floatSlider != null)
 		{
-//			var currentTarget = m_Instance;
+//			var currentTarget = _instance;
 //			MemberInfo[] memberInfo = currentTarget.GetType().GetMember(propertyField.PrivateName, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 			//Tests if the field is not a float, if so it will display an error
 //			if
@@ -324,7 +323,7 @@ where OCType : MonoBehaviour
 //			|| ((memberInfo[0] as FieldInfo).FieldType != typeof(float) && (memberInfo[0] as PropertyInfo).PropertyType != typeof(float))
 //			)
 //			{
-//				Debug.LogError("The '[FloatSliderInInspector(" + floatSlider.MinValue + " ," + floatSlider.MaxValue + ")]' failed. FloatSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with float. The attribute is attached to the field '" + propertyField.Name + "' in '" + m_Instance + "'.");
+//				Debug.LogError("The '[FloatSliderInInspector(" + floatSlider.MinValue + " ," + floatSlider.MaxValue + ")]' failed. FloatSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with float. The attribute is attached to the field '" + propertyField.Name + "' in '" + _instance + "'.");
 //				return;
 //			}
 			propertyField.SetValue(EditorGUILayout.Slider(label, (float)propertyField.GetValue(), floatSlider.MinValue, floatSlider.MaxValue));
@@ -333,7 +332,7 @@ where OCType : MonoBehaviour
 		else
 		if(intSlider != null)
 		{
-//			var currentTarget = m_Instance;
+//			var currentTarget = _instance;
 //			MemberInfo[] memberInfo = currentTarget.GetType().GetMember(propertyField.PrivateName, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 			//Tests if the field is not a int, if so it will display an error
 //			if
@@ -342,7 +341,7 @@ where OCType : MonoBehaviour
 //			|| ((memberInfo[0] as FieldInfo).FieldType != typeof(int) && (memberInfo[0] as PropertyInfo).PropertyType != typeof(int))
 //			)
 //			{
-//				Debug.LogError("The '[IntSliderInInspector(" + intSlider.MinValue + " ," + intSlider.MaxValue + ")]' failed. IntSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with int. The attribute is attached to the field '" + propertyField.Name + "' in '" + m_Instance + "'.");
+//				Debug.LogError("The '[IntSliderInInspector(" + intSlider.MinValue + " ," + intSlider.MaxValue + ")]' failed. IntSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with int. The attribute is attached to the field '" + propertyField.Name + "' in '" + _instance + "'.");
 //				return;
 //			}
 			propertyField.SetValue(EditorGUILayout.IntSlider(label, (int)propertyField.GetValue(), intSlider.MinValue, intSlider.MaxValue));
@@ -401,7 +400,7 @@ where OCType : MonoBehaviour
 						nestedPropertiesAndFields = OCPropertyField.GetAllPropertiesAndFields
 						( propertyField.Instance
 						, propertyField.UnityPropertyField
-						, OCExposure.PropertiesAndFields
+						, OCExposePropertyFieldsAttribute.OCExposure.PropertiesAndFields
 						);
 
 						Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
@@ -458,7 +457,7 @@ where OCType : MonoBehaviour
 							nestedPropertiesAndFields = OCPropertyField.GetAllPropertiesAndFields
 							( propertyField.GetValue()
 							, propertyField.UnityPropertyField
-							, OCExposure.PropertiesAndFields
+							, OCExposePropertyFieldsAttribute.OCExposure.PropertiesAndFields
 							);
 
 							//EditorGUILayout.Separator();
@@ -467,18 +466,18 @@ where OCType : MonoBehaviour
 
 
 
-							if(m_FoldedState.ContainsKey(propertyField.PublicName))
+							if(_foldedState.ContainsKey(propertyField.PublicName))
 							{
 								EditorGUI.indentLevel--;
-								m_FoldedState[propertyField.PublicName] = EditorGUILayout.Foldout(m_FoldedState[propertyField.PublicName], label);
+								_foldedState[propertyField.PublicName] = EditorGUILayout.Foldout(_foldedState[propertyField.PublicName], label);
 								EditorGUI.indentLevel++;
 							}
 							else
 							{
-								m_FoldedState.Add(propertyField.PublicName, true);
+								_foldedState.Add(propertyField.PublicName, true);
 							}
 
-							if(m_FoldedState[propertyField.PublicName])
+							if(_foldedState[propertyField.PublicName])
 							{
 
 								//EditorGUILayout.BeginVertical();
@@ -532,7 +531,7 @@ where OCType : MonoBehaviour
 	private void FindMissingScripts(ref List< OCPropertyField > allPropertyFields)
 	{
 		OCPropertyField scriptPropertyField =
-			m_AllPropertyFields.Find(p => p.PublicName == "Script");
+			_allPropertyFields.Find(p => p.PublicName == "Script");
 
 		if(scriptPropertyField != null
 		&& scriptPropertyField != default(OCPropertyField))
@@ -602,17 +601,17 @@ where OCType : MonoBehaviour
 								{
 									//Configure the script
 									propertyField.SetValue(candidate.Script);
-									m_Type = candidate.Script.GetClass();
+									_type = candidate.Script.GetClass();
 
-									//if(m_Instance != null) UnityEditor.EditorUtility.SetDirty(m_Instance);
+									//if(_instance != null) UnityEditor.EditorUtility.SetDirty(_instance);
 		
 									serializedObject.ApplyModifiedProperties();
 									serializedObject.UpdateIfDirtyOrScript();
 		
-									//m_Editor = (OCDefaultEditor)Editor.CreateEditor(target);
-									//m_Editor.OnEnable();
-									//m_Editor.m_AllPropertyFields = candidate.Properties.Values.ToList();
-									//m_Editor. .OnEnable();
+									//_editor = (OCDefaultEditor)Editor.CreateEditor(target);
+									//_editor.OnEnable();
+									//_editor._allPropertyFields = candidate.Properties.Values.ToList();
+									//_editor. .OnEnable();
 		
 									//if(candidate.Script != null)
 									{
@@ -705,9 +704,9 @@ where OCType : MonoBehaviour
 					)
 				;
 
-				if(m_AllPropertyFields == null)
+				if(_allPropertyFields == null)
 					Debug.Log("In OCEditor.OnInspectorGUI, no property fields!");
-				targetScript.Properties = m_AllPropertyFields.ToDictionary(p => p.PrivateName);
+				targetScript.Properties = _allPropertyFields.ToDictionary(p => p.PrivateName);
 			}
 		}
 	}

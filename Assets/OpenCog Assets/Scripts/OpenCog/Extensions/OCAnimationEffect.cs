@@ -36,8 +36,10 @@ namespace Extensions
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
+[ExecuteInEditMode]	
+	
 #endregion
-public class OCAnimationEffect
+public class OCAnimationEffect : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -49,24 +51,49 @@ public class OCAnimationEffect
 	/// <summary>
 	/// The target Unity game object to be animated.
 	/// </summary>
-	private GameObject m_Target = null;
+	[SerializeField]
+	private GameObject _Target;// = null;
 
 	/// <summary>
 	/// The Unity animation state that we're wrapping.
 	/// </summary>
-	private AnimationState m_State = null;
+	[SerializeField]
+	private AnimationState _State;// = null;
+			
+	[SerializeField]
+	private WrapMode _Wrap;// = WrapMode.Default;
+	
+	[SerializeField]
+	private int _Layer;// = -1;
+			
+	[SerializeField]
+	private string _StateName;// = "";
+
+	[SerializeField]
+	private float _Speed = 1.0f;
 
 	/// <summary>
 	/// The iTween parameters for the wrapped animation state.
 	/// </summary>
-	private Hashtable m_iTweenParams;
+	[SerializeField]	
+	private Hashtable _iTweenParams;
+
+	[SerializeField]
+	private Vector3 _Translation;
+
+	[SerializeField]
+	private Vector3 _Rotation;
 
 	/// <summary>
 	/// The length of the animation's cross fade.
 	/// </summary>
-	private float m_FadeLength = 0.5f;
+	[SerializeField]
+	private float _FadeLength;// = 0.5f;
 
-//	private bool m_Initialized = false;
+//	private bool _initialized = false;
+
+	[SerializeField]
+	private bool _IsTranslationVsRotation = true;
 
 
 
@@ -89,10 +116,28 @@ public class OCAnimationEffect
 	[OCTooltip("The Unity animation state that we're wrapping.")]
 	public AnimationState State
 	{
-		get{ return m_State;}
-		set{ m_State = value;}
+		get{ return _State;}
+		set{ _State = value;}
 	}
 
+	public string StateName
+	{
+		get{ return _StateName;}
+		set{ _StateName = value;}
+	}
+			
+	public WrapMode Wrap
+	{
+		get{ return _Wrap;}
+		set{ _Wrap = value;}
+	}
+			
+	public int Layer
+	{
+		get{ return _Layer;}
+		set{ _Layer = value;}
+	}
+			
 	/// <summary>
 	/// Gets or sets the length of the animation's cross fade.
 	/// </summary>
@@ -102,8 +147,8 @@ public class OCAnimationEffect
 	[OCTooltip("The length of the animation's cross fade.")]
 	public float FadeLength
 	{
-		get{ return this.m_FadeLength;}
-		set{ m_FadeLength = value;}
+		get{ return _FadeLength;}
+		set{ _FadeLength = value;}
 	}
 
 	/// <summary>
@@ -115,14 +160,14 @@ public class OCAnimationEffect
 	[OCTooltip("The target Unity game object to be animated.")]
 	public GameObject Target
 	{
-		get{ return this.m_Target;}
-		set{ m_Target = value;}
+		get{ return _Target;}
+		set{ _Target = value;}
 	}
 
 //	public bool IsInitialized
 //	{
-//		get { return m_Initialized;}
-//		set { m_Initialized = value;}
+//		get { return _initialized;}
+//		set { _initialized = value;}
 //	}
 
 	/// <summary>
@@ -136,7 +181,7 @@ public class OCAnimationEffect
 	public float Time
 	{
 		get{ return ValueOrDefault<float>(iT.MoveBy.time);}
-		set{ m_iTweenParams[iT.MoveBy.time] = value;}
+		set{ _iTweenParams[iT.MoveBy.time] = value;}
 	}
 
 	/// <summary>
@@ -150,7 +195,7 @@ public class OCAnimationEffect
 	public string EaseType
 	{
 		get{ return ValueOrDefault<string>(iT.MoveBy.easetype);}
-		set{ m_iTweenParams[iT.MoveBy.easetype] = value;}
+		set{ _iTweenParams[iT.MoveBy.easetype] = value;}
 	}
 
 	/// <summary>
@@ -162,10 +207,10 @@ public class OCAnimationEffect
 	/// </value>
 	[	OCTooltip
 		("The time in seconds that the animation will wait before beginning.") ]
-	public int Delay
+	public float Delay
 	{
-		get{ return ValueOrDefault<int>(iT.MoveBy.delay);}
-		set{ m_iTweenParams[iT.MoveBy.delay] = value;}
+		get{ return ValueOrDefault<float>(iT.MoveBy.delay);}
+		set{ _iTweenParams[iT.MoveBy.delay] = value;}
 	}
 
 	/// <summary>
@@ -180,7 +225,7 @@ public class OCAnimationEffect
 	public string OnStart
 	{
 		get{ return ValueOrDefault<string>(iT.MoveBy.onstart);}
-		set{ m_iTweenParams[iT.MoveBy.onstart] = value;}
+		set{ _iTweenParams[iT.MoveBy.onstart] = value;}
 	}
 
 	/// <summary>
@@ -195,7 +240,7 @@ public class OCAnimationEffect
 	public string OnEnd
 	{
 		get{ return ValueOrDefault<string>(iT.MoveBy.oncomplete);}
-		set{ m_iTweenParams[iT.MoveBy.oncomplete] = value;}
+		set{ _iTweenParams[iT.MoveBy.oncomplete] = value;}
 	}
 
 	//@TODO: Don't move the characters directly through the animation.
@@ -212,7 +257,7 @@ public class OCAnimationEffect
 	public float MoveByX
 	{
 		get{ return ValueOrDefault<float>(iT.MoveBy.x);}
-		set{ m_iTweenParams[iT.MoveBy.x] = value;}
+		set{ _iTweenParams[iT.MoveBy.x] = value;}
 	}
 
 	/// <summary>
@@ -227,7 +272,7 @@ public class OCAnimationEffect
 	public float MoveByY
 	{
 		get{ return ValueOrDefault<float>(iT.MoveBy.y);}
-		set{ m_iTweenParams[iT.MoveBy.y] = value;}
+		set{ _iTweenParams[iT.MoveBy.y] = value;}
 	}
 
 
@@ -243,7 +288,7 @@ public class OCAnimationEffect
 	public float MoveByZ
 	{
 		get{ return ValueOrDefault<float>(iT.MoveBy.z);}
-		set{ m_iTweenParams[iT.MoveBy.z] = value;}
+		set{ _iTweenParams[iT.MoveBy.z] = value;}
 	}
 
 	/// <summary>
@@ -258,7 +303,7 @@ public class OCAnimationEffect
 	public float RotateByX
 	{
 		get{ return ValueOrDefault<float>(iT.RotateBy.x);}
-		set{ m_iTweenParams[iT.RotateBy.x] = value;}
+		set{ _iTweenParams[iT.RotateBy.x] = value;}
 	}
 
 	/// <summary>
@@ -273,7 +318,7 @@ public class OCAnimationEffect
 	public float RotateByY
 	{
 		get{ return ValueOrDefault<float>(iT.RotateBy.y);}
-		set{ m_iTweenParams[iT.RotateBy.y] = value;}
+		set{ _iTweenParams[iT.RotateBy.y] = value;}
 	}
 
 
@@ -289,43 +334,16 @@ public class OCAnimationEffect
 	public float RotateByZ
 	{
 		get{ return ValueOrDefault<float>(iT.RotateBy.z);}
-		set{ m_iTweenParams[iT.RotateBy.z] = value;}
+		set{ _iTweenParams[iT.RotateBy.z] = value;}
 	}
 
 	public Vector3 Position
 	{
 		get{ return ValueOrDefault<Vector3>("position");}
-		set{ m_iTweenParams["position"] = value;}
+		set{ _iTweenParams["position"] = value;}
 	}
 
 			
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------	
-
-	#region Constructors
-
-	//---------------------------------------------------------------------------
-
-	/// <summary>
-	/// Initializes a new instance of the
-	/// <see cref="OpenCog.Extensions.OCAnimationEffect"/> class.
-	/// </summary>
-
-	public OCAnimationEffect()
-	{
-	}
-
-	public OCAnimationEffect(OCAnimationEffect anim)
-	{
-		FadeLength = anim.FadeLength;
-		Target = anim.Target;
-		State = anim.State;
-		m_iTweenParams = anim.m_iTweenParams;
-	}
-
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -335,6 +353,11 @@ public class OCAnimationEffect
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+			
+	public void OnEnable()
+	{
+		Initialize();
+	}
 
 	/// <summary>
 	/// Initialize the OpenCog Animation with the specified target and
@@ -346,64 +369,91 @@ public class OCAnimationEffect
 	/// <param name='animationState'>
 	/// The Unity animation state that corresponds to this OpenCog animation.
 	/// </param>
-	public void Initialize(GameObject target, AnimationState animationState)
+	public void Initialize()
 	{
-
-		Target = target;
-		State = animationState;
-		m_iTweenParams = new Hashtable();
-		Time = State.length / State.speed + 0.01f;
+		if(_iTweenParams == null) _iTweenParams = new Hashtable();
+		if(_Target != null)
+		{
+			_State = _Target.animation[_StateName];
+			_State.speed = _Speed;
+			Time = _State.length / _State.speed + 0.01f;
+			_State.wrapMode = _Wrap;
+			_State.layer = _Layer;		
+		}
+		
+			
 		EaseType = "linear";//iTween.EaseType.linear;
-		Delay = 0;
+		Delay = 0.0f; 
+		OnStart = "StartAnimationEffect";
+		OnEnd = "EndAnimationEffect";
+				
+		_iTweenParams["OnStartTarget"] = gameObject;
+		_iTweenParams["OnEndTarget"] = gameObject;
 
-		//m_Initialized = true;
+
+		//TODO: Remove _Translation and _Rotation and find a way to serialize Hashtables directly.
+		if(_IsTranslationVsRotation)
+		{
+			MoveByX = _Translation.x;
+			MoveByY = _Translation.y;
+			MoveByZ = _Translation.z;
+		}
+		else
+		{
+			RotateByX = _Rotation.x;
+			RotateByY = _Rotation.y;
+			RotateByZ = _Rotation.z;
+		}
+		//_initialized = true;
 		//DontDestroyOnLoad(this);
 	}
 
 	/// <summary>
-	/// Play this animation.
+	/// Play this animation. 
 	/// </summary>
-	public void PlayAndTranslate()
+	public void Play()
 	{
-		iTween.MoveBy(m_Target, m_iTweenParams);
-	}
-
-	public void PlayAndRotate()
-	{
-		iTween.RotateBy(m_Target, m_iTweenParams);
+		if(_IsTranslationVsRotation)
+			iTween.MoveBy(_Target, _iTweenParams);
+		else
+			iTween.RotateBy(_Target, _iTweenParams);
 	}
 
 	public void Stop()
 	{
-		iTween.Stop(m_Target);
+		if(_Target.GetComponent<iTween>() != null)
+			iTween.Stop(_Target);
 	}
 
 	public bool IsPlaying
 	{
-		get { return m_Target.animation.IsPlaying(State.name);}
+		get { return _Target.animation.IsPlaying(_State.name);}
 	}
 
 	public bool IsPlayingButNotThis
 	{
-		get { return m_Target.animation.isPlaying && !IsPlaying;}
+		get { return _Target.animation.isPlaying && !IsPlaying;}
 	}
 
 	/// <summary>
 	/// Call from the function which is the value of OnStart.
 	/// </summary>
-	public void Start()
+	public void StartAnimationEffect()
 	{
-		m_Target.animation.CrossFade(m_State.name, m_FadeLength);
+		_Target.animation.CrossFade(_State.name, _FadeLength);
 	}
 
 	/// <summary>
 	/// Call from the function which is the value of OnEnd.
 	/// </summary>
-	public void End()
+	public void EndAnimationEffect()
 	{
-		if(m_State.wrapMode != WrapMode.Loop)
+		OCCharacterMotor motor = _Target.GetComponent<OCCharacterMotor>();
+		motor.enabled = true;
+
+		if(_State.wrapMode != WrapMode.Loop)
 		{
-			m_Target.animation.Stop();
+			_Target.animation.Stop();
 		}
 	}
 
@@ -419,8 +469,8 @@ public class OCAnimationEffect
 			
 	private T ValueOrDefault<T>(string key)
 	{
-		if(m_iTweenParams.Contains(key))
-			return (T)m_iTweenParams[key];
+		if(_iTweenParams.Contains(key))
+			return (T)_iTweenParams[key];
 		else
 			return default(T);
 	}

@@ -4,15 +4,15 @@ using System.Collections;
 public class BlockCharacterCollision {
 
 	
-	public static Contact? GetContactBlockCharacter(Vector3 blockPos, Vector3 pos, CharacterCollider collider) {
-		Contact contactA = GetClosestPoint(blockPos, pos+collider.bottom);
-		Contact contactB = GetClosestPoint(blockPos, pos+collider.top);
+	public static Contact? GetContactBlockCharacter(Vector3 blockPos, Vector3 pos, CharacterController controller) {
+		Contact contactA = GetClosestPoint(blockPos, pos+controller.bounds.min);
+		Contact contactB = GetClosestPoint(blockPos, pos+controller.bounds.max);
 		Contact contact = contactA;
 		if(contactB.sqrDistance < contact.sqrDistance) contact = contactB;
 		
-		if(contact.sqrDistance > collider.radius*collider.radius) return null;
+		if(contact.sqrDistance > controller.bounds.extents.sqrMagnitude) return null;
 		
-        Vector3 dir = contact.delta.normalized * collider.radius;
+        Vector3 dir = contact.delta.normalized * controller.bounds.extents.sqrMagnitude;
         Vector3 capsulePoint = contact.b + dir;
 		contact.b = capsulePoint;
 		return contact;
