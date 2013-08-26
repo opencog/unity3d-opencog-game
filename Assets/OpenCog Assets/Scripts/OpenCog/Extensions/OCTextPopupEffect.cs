@@ -23,6 +23,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -51,7 +52,11 @@ public class OCTextPopupEffect : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-
+	[SerializeField]
+	private UnityEngine.Camera _cameraToLookAt;
+		
+	[SerializeField]
+	private UnityEngine.GUIText _text = new UnityEngine.GUIText();
 			
 	//---------------------------------------------------------------------------
 
@@ -63,7 +68,11 @@ public class OCTextPopupEffect : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-
+	public UnityEngine.GUIText Text 
+	{
+		get {return this._text;}
+		set {_text = value;}
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -75,7 +84,16 @@ public class OCTextPopupEffect : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	
+	public void Update()
+	{
+		Vector3 v = _cameraToLookAt.transform.position - transform.position;
+ 
+     	v.x = v.z = 0.0f;
+ 
+     	transform.LookAt( _cameraToLookAt.transform.position - v ); 
+ 
+     	transform.Rotate(0,180,0);
+	}
 
 	//---------------------------------------------------------------------------
 

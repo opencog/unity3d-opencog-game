@@ -405,6 +405,12 @@ public class OCAction : OCMonoBehaviour
 		return !IsSourceAnimating(action, args);
 	}
 			
+	public static bool IsSourceAngry(OCAction action, OCActionArgs args)
+	{
+		OCPhysiologicalModel model = GameObject.FindGameObjectWithTag("OCAGI").GetComponent<OCPhysiologicalModel>();
+		return model.Energy < 0.9;
+	}
+			
 	public static bool IsNoEndTargetOrNotAnimating(OCAction action, OCActionArgs args)
 	{
 		return IsSourceNotAnimating(action, args) || IsNoEndTarget(action, args);

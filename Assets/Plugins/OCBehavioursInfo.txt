@@ -32,6 +32,7 @@ Trees:
 	Character_TurnAndDestroy
 	Character_GirlBehaviour
 	Character_GhostBehaviour
+	Character_NewTree1
 	Unknown
 
 Contexts:
@@ -40,25 +41,27 @@ Contexts:
 Branch priority groups:
 	Unknown
 
-Actions (15: 1 - 16):
+Actions (17: 1 - 18):
 	StandIdleShow (1)
 	FallIdleShow (2)
-	WalkForwardMove (3)
-	JumpForwardMove (4)
-	ClimbForwardMove (5)
-	RunForwardMove (6)
-	FallForwardMove (7)
-	FlyForwardMove (8)
-	StandTurnLeftMove (9)
-	StandTurnRightMove (10)
-	JumpUpMove (11)
-	JumpDownMove (12)
-	HoldRightHandCreate (13)
-	StrikeLeftHandDestroy (14)
-	StandIdleTell (15)
-	Unknown (16)
+	AngryEmoteShow (3)
+	SadEmoteShow (4)
+	WalkForwardMove (5)
+	JumpForwardMove (6)
+	ClimbForwardMove (7)
+	RunForwardMove (8)
+	FallForwardMove (9)
+	FlyForwardMove (10)
+	StandTurnLeftMove (11)
+	StandTurnRightMove (12)
+	JumpUpMove (13)
+	JumpDownMove (14)
+	HoldRightHandCreate (15)
+	StrikeLeftHandDestroy (16)
+	StandIdleTell (17)
+	Unknown (18)
 
-Decorators (0: 17 - 17):
-	Unknown (17)
+Decorators (0: 19 - 19):
+	Unknown (19)
 
 Agent classes:
