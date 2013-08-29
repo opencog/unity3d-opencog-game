@@ -19,7 +19,7 @@ public class AutomationManager
 	[MenuItem ("Build/BuildStandaloneLinux64Player")]
 	static void BuildStandaloneLinux64Player()
 	{
-		string[] scenes = { "Assets/Scenes/GameScenes/MainGameScene.unity" };
+		string[] scenes = { "Assets/OpenCog Assets/Scenes/Game/Game.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux64);
 		BuildPipeline.BuildPlayer(scenes
 								  , "Players/Unity3DGameWorldPlayer_Linux64"
@@ -29,7 +29,7 @@ public class AutomationManager
 	[MenuItem ("Build/BuildStandaloneLinuxPlayer")]
 	static void BuildStandaloneLinuxPlayer()
 	{
-		string[] scenes = { "Assets/Scenes/GameScenes/MainGameScene.unity" };
+		string[] scenes = { "Assets/OpenCog Assets/Scenes/Game/Game.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux);
 		BuildPipeline.BuildPlayer(scenes
 								  , "Players/Unity3DGameWorldPlayer_Linux"
@@ -39,7 +39,7 @@ public class AutomationManager
 	[MenuItem ("Build/BuildStandaloneWindowsPlayer")]
 	static void BuildStandaloneWindowsPlayer()
 	{
-		string[] scenes = { "Assets/Scenes/GameScenes/MainGameScene.unity" };
+		string[] scenes = { "Assets/OpenCog Assets/Scenes/Game/Game.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows);
 		BuildPipeline.BuildPlayer(scenes
 								  , "Players/Unity3DGameWorldPlayer_Windows.exe"
@@ -49,7 +49,7 @@ public class AutomationManager
 	[MenuItem ("Build/BuildStandaloneWindows64Player")]
 	static void BuildStandaloneWindows64Player()
 	{
-		string[] scenes = { "Assets/Scenes/GameScenes/MainGameScene.unity" };
+		string[] scenes = { "Assets/OpenCog Assets/Scenes/Game/Game.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows64);
 		BuildPipeline.BuildPlayer(scenes
 								  , "Players/Unity3DGameWorldPlayer_Windows64.exe"
