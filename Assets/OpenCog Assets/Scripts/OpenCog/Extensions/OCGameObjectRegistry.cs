@@ -26,10 +26,10 @@ namespace OpenCog.Extensions
 		public void RegisterGameObject(UnityEngine.GameObject objectToRegister)
 		{
 			if (objectToRegister != null)
-			{
+			{ 
 				_gameObjectRegistry.Add (objectToRegister.GetInstanceID(), objectToRegister);	
-			}
-			else
+			} 
+			else 
 			{
 				UnityEngine.Debug.Log ("OCGameObjectRegistry::RegisterGameObject: objectToRegister == null");	
 			}
