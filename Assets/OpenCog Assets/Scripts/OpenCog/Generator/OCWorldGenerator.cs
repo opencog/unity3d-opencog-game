@@ -1,9 +1,12 @@
+//#define TEST_AND_EXIT
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Threading;
 using OpenCog.BlockSet.BaseBlockSet;
+
 
 
 [AddComponentMenu("VoxelEngine/WorldGenerator")]
@@ -45,6 +48,11 @@ public class OCWorldGenerator : MonoBehaviour {
 				treeGenerator[i] = new OCTreeGenerator(map, wood, leaves);
 			}	
 		}
+		
+#if (TEST_AND_EXIT)
+		Console.WriteLine("Level Loaded...");
+		Application.Quit();
+#endif
 	}
 	
 	void Update() {

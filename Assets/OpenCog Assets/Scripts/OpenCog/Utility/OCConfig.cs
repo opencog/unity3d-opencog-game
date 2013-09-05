@@ -153,6 +153,9 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 		
 		// OpenCog properties persistence data file
 		_settings["OCPROPERTY_DATA_FILE"] = ".\\oc_properties.dat";			
+		
+		// Testing and Buildbot Integration
+		//_settings["TEST_AND_EXIT"] = "false";  //Use #define TEST_AND_EXIT instead...
 	}
 		
 	/// <summary>

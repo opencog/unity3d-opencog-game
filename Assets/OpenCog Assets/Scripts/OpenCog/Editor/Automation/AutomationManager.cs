@@ -33,7 +33,7 @@ namespace Automation
 #region Class Attributes
 
 #endregion
-public class OCAutomatedPlayerBuilder
+public class AutomationManager //@TODO: coordinate with David and rename to OCAutomatedPlayerBuild
 {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -73,17 +73,31 @@ public class OCAutomatedPlayerBuilder
 		BuildStandaloneLinux64Player();
 		BuildStandaloneWindowsPlayer();
 		BuildStandaloneWindows64Player();
+				
+		BuildStandaloneLinux64TestPlayer();			
 	}
 	
 	[MenuItem ("Build/BuildStandaloneLinux64Player")]
 	static void BuildStandaloneLinux64Player()
-	{
+	{			
 		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux64);
 		BuildPipeline.BuildPlayer(scenes
 								  , "../Players/Unity3DGameWorldPlayer_Linux64"
 								  , BuildTarget.StandaloneLinux64, BuildOptions.None );
 	}
+			
+	[MenuItem ("Build/BuildStandaloneLinux64TestPlayer")]
+	static void BuildStandaloneLinux64TestPlayer()
+	{
+		PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "TEST_AND_EXIT");
+				
+		string[] scenes = { "Assets/Scenes/Game/Game.unity" };
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux64);
+		BuildPipeline.BuildPlayer(scenes
+								  , "../Players/Unity3DGameWorldTestPlayer_Linux64"
+								  , BuildTarget.StandaloneLinux64, BuildOptions.None );
+	}			
 	
 	[MenuItem ("Build/BuildStandaloneLinuxPlayer")]
 	static void BuildStandaloneLinuxPlayer()
@@ -107,7 +121,7 @@ public class OCAutomatedPlayerBuilder
 	
 	[MenuItem ("Build/BuildStandaloneWindows64Player")]
 	static void BuildStandaloneWindows64Player()
-	{
+	{	
 		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows64);
 		BuildPipeline.BuildPlayer(scenes
