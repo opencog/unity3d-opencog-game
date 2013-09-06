@@ -5,7 +5,7 @@ using UnityEditor;
 /// Example commandline usage:
 /// "C:\Program Files (x86)\Unity\Editor\Unity.exe" -batchMode -quit -nographics -projectPath C:\project -executeMethod AutomationManager.BuildAll
 /// </summary>
-public class AutomationManager
+public class OCAutomatedPlayerBuilder
 {
 	[MenuItem ("Build/BuildAll")]
 	static void BuildAll()

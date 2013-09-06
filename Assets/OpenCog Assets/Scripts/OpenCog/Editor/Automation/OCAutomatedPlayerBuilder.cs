@@ -32,8 +32,8 @@ namespace Automation
 /// </summary>
 #region Class Attributes
 
-#endregion
-public class AutomationManager //@TODO: coordinate with David and rename to OCAutomatedPlayerBuild
+#endregion 
+public class OCAutomatedPlayerBuilder //@TODO: coordinate with David and rename to OCAutomatedPlayerBuild
 {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ public class AutomationManager //@TODO: coordinate with David and rename to OCAu
 	[MenuItem ("Build/BuildStandaloneLinux64Player")]
 	static void BuildStandaloneLinux64Player()
 	{			
-		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+		string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux64);
 		BuildPipeline.BuildPlayer(scenes
 								  , "../Players/Unity3DGameWorldPlayer_Linux64"
@@ -102,7 +102,7 @@ public class AutomationManager //@TODO: coordinate with David and rename to OCAu
 	[MenuItem ("Build/BuildStandaloneLinuxPlayer")]
 	static void BuildStandaloneLinuxPlayer()
 	{
-		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+		string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux);
 		BuildPipeline.BuildPlayer(scenes
 								  , "../Players/Unity3DGameWorldPlayer_Linux"
@@ -112,7 +112,7 @@ public class AutomationManager //@TODO: coordinate with David and rename to OCAu
 	[MenuItem ("Build/BuildStandaloneWindowsPlayer")]
 	static void BuildStandaloneWindowsPlayer()
 	{
-		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+		string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows);
 		BuildPipeline.BuildPlayer(scenes
 								  , "../Players/Unity3DGameWorldPlayer_Windows.exe"
@@ -122,7 +122,7 @@ public class AutomationManager //@TODO: coordinate with David and rename to OCAu
 	[MenuItem ("Build/BuildStandaloneWindows64Player")]
 	static void BuildStandaloneWindows64Player()
 	{	
-		string[] scenes = { "Assets/Scenes/Game/Game.unity", "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+		string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows64);
 		BuildPipeline.BuildPlayer(scenes
 								  , "../Players/Unity3DGameWorldPlayer_Windows64.exe"

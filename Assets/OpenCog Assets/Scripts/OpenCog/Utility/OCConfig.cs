@@ -156,6 +156,8 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 		
 		// Testing and Buildbot Integration
 		//_settings["TEST_AND_EXIT"] = "false";  //Use #define TEST_AND_EXIT instead...
+		_settings["test"] = "";// will be "internal_XGA" in case of buildbot
+		_settings["quit"] = "false";// should be "true" in case of buildbot 
 	}
 		
 	/// <summary>
@@ -187,7 +189,7 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
           }
           if (_settings.ContainsKey(tokens[0])) 
           {
-              //if (Debug.isDebugBuild) Debug.Log(tokens[0] + "=" + tokens[1]);
+              if (Debug.isDebugBuild) Debug.Log(tokens[0] + "=" + tokens[1]);
               _settings[tokens[0]] = tokens[1];
           }
           else
@@ -243,7 +245,14 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 			string[] keyValuePair = arg.Split(':');
 			if(keyValuePair != null && _settings.ContainsKey(keyValuePair[0]))
 			{
-				_settings[keyValuePair[0]] = keyValuePair[1];
+				if(keyValuePair[0] != "quit")
+				{
+              		//if (Debug.isDebugBuild) Debug.Log(tokens[0] + "=" + tokens[1]);
+              		_settings[keyValuePair[0]] = keyValuePair[1];
+				}
+				else
+					_settings["quit"] = "true";
+					
 			}
 			else
 			{

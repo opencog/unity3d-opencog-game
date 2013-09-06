@@ -49,10 +49,23 @@ public class OCWorldGenerator : MonoBehaviour {
 			}	
 		}
 		
-#if (TEST_AND_EXIT)
-		Console.WriteLine("Level Loaded...");
-		Application.Quit();
-#endif
+		TextAsset configFile = (TextAsset)Resources.Load("embodiment");
+        if(configFile != null) OCConfig.Instance.LoadFromTextAsset(configFile);
+				OCConfig.Instance.LoadFromCommandLine();
+		
+		string testValue = OCConfig.Instance.get("test");
+		string quitValue = OCConfig.Instance.get("quit");
+		
+		if(testValue == "internal_XGA")
+		{
+			Screen.SetResolution(1024, 768, false);
+			Console.WriteLine("Level Loaded...");
+		}
+		
+		if(quitValue == "true")
+		{
+			Application.Quit();
+		}
 	}
 	
 	void Update() {

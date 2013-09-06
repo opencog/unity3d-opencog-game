@@ -91,3 +91,4 @@ GOLD_STANDARD_FILENAME = GoldStandards.txt
 # This is the VisibilityMap tile side
 # half of the LocalSpaceMap2D grid side (xDim | yDim) is a good value
 VISIBILITY_MAP_TILES_PER_SIDE = 64
+
