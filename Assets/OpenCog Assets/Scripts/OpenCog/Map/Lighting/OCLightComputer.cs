@@ -12,16 +12,20 @@ namespace OpenCog.Map.Lighting
 		
 		private static List<Vector3i> list = new List<Vector3i>();
 		
-		public static void RecomputeLightAtPosition(OCMap map, Vector3i pos) {
-			OpenCog.Map.Lighting.OCLightMap lightmap = map.GetLightmap();
-			int oldLight = lightmap.GetLight(pos);
-			int light = map.GetBlock(pos).GetLight();
-			
-			if(oldLight > light) {
-				RemoveLight(map, pos);
-			}
-			if(light > MIN_LIGHT) {
-				Scatter(map, pos);
+		public static void RecomputeLightAtPosition(OCMap map, Vector3i pos) 
+		{
+			if(map.GetBlock(pos) != null && !map.GetBlock(pos).IsEmpty())
+			{
+				OpenCog.Map.Lighting.OCLightMap lightmap = map.GetLightmap();
+				int oldLight = lightmap.GetLight(pos);
+				int light = map.GetBlock(pos).GetLight();
+				
+				if(oldLight > light) {
+					RemoveLight(map, pos);
+				}
+				if(light > MIN_LIGHT) {
+					Scatter(map, pos);
+				}
 			}
 		}
 		

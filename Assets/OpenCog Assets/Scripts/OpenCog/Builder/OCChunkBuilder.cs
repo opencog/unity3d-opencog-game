@@ -25,6 +25,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using OpenCog.BlockSet.BaseBlockSet;
+using OpenCog.Map;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -103,12 +104,17 @@ public class OCChunkBuilder
 		for(int z=0; z<OpenCog.Map.OCChunk.SIZE_Z; z++) {
 			for(int y=0; y<OpenCog.Map.OCChunk.SIZE_Y; y++) {
 				for(int x=0; x<OpenCog.Map.OCChunk.SIZE_X; x++) {
-					OCBlock block = chunk.GetBlock(x, y, z).block;
-					if(block != null) {
-						Vector3i localPos = new Vector3i(x, y, z);
-						Vector3i worldPos = OpenCog.Map.OCChunk.ToWorldPosition(chunk.GetPosition(), localPos);
-						if(worldPos.y > 0)
-							block.Build(localPos, worldPos, map, _meshData, onlyLight);
+					OCBlockData blockData = chunk.GetBlock(x, y, z);
+					if(blockData != null)
+					{
+						OCBlock block = blockData.block;
+						if(block != null) 
+						{
+							Vector3i localPos = new Vector3i(x, y, z);
+							Vector3i worldPos = OpenCog.Map.OCChunk.ToWorldPosition(chunk.GetPosition(), localPos);
+							if(worldPos.y > 0)
+								block.Build(localPos, worldPos, map, _meshData, onlyLight);
+						}
 					}
 				}
 			}

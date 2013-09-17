@@ -92,7 +92,7 @@ public class OCCreateBlockEffect : OCMonoBehaviour
 
 					//block.SetDirection(GetDirection(-gameObject.transform.forward));
 
-					OCBlockData blockData = new OCBlockData(block, VectorUtil.Vector3ToVector3i(point.Value));
+					OCBlockData blockData = OCBlockData.CreateInstance<OCBlockData>().Init(block, VectorUtil.Vector3ToVector3i(point.Value));
 					map.SetBlockAndRecompute(blockData, point.Value);
 				}
 		}

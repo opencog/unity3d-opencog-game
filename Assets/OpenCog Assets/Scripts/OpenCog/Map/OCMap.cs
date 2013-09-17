@@ -520,12 +520,12 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 	public void SetBlock (OpenCog.BlockSet.BaseBlockSet.OCBlock block, Vector3i pos)
 	{
-		SetBlock (new OCBlockData (block, pos), pos);
+		SetBlock (OCBlockData.CreateInstance<OCBlockData>().Init(block, pos), pos);
 	}
 
 	public void SetBlock (OpenCog.BlockSet.BaseBlockSet.OCBlock block, int x, int y, int z)
 	{
-		SetBlock (new OCBlockData (block, new Vector3i(x, y, z)), x, y, z);
+		SetBlock (OCBlockData.CreateInstance<OCBlockData>().Init(block, new Vector3i(x, y, z)), x, y, z);
 	}
 	
 	public void SetBlock (OCBlockData block, Vector3i pos)
@@ -565,7 +565,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		}
 			
 		if (chunk == null)
-			return default(OCBlockData);
+			return OCBlockData.CreateInstance<OCBlockData>();
 		return chunk.GetBlock (OCChunk.ToLocalPosition (x, y, z));
 	}
 	
@@ -582,7 +582,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				if (chunk == null)
 					break;
 				OCBlockData block = chunk.GetBlock (localPos);
-				if (!block.IsEmpty ())
+				if (block != null && !block.IsEmpty ())
 					return OCChunk.ToWorldPosition (chunkPos, localPos).y;
 			}
 		}

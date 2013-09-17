@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using OpenCog.Map;
 
 public class OCTreeGenerator {
 	
@@ -33,7 +34,7 @@ public class OCTreeGenerator {
 	private void GenerateTree(int x, int y, int z) {
 		GenerateLeaves( new Vector3i(x, y+6, z), new Vector3i(x, y+6, z) );
 		for(int i=0; i<8; i++) {
-			map.SetBlock(new OpenCog.Map.OCBlockData(wood, new Vector3i(x, y+i, z)), new Vector3i(x, y+i, z));
+			map.SetBlock(OCBlockData.CreateInstance<OCBlockData>().Init(wood, new Vector3i(x, y+i, z)), new Vector3i(x, y+i, z));
 		}
 	}
 	

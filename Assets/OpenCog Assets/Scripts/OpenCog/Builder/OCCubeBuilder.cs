@@ -25,6 +25,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using OpenCog.BlockSet.BaseBlockSet;
+using OpenCog.Map;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -209,7 +210,9 @@ public class OCCubeBuilder
 	
 	private static bool IsFaceVisible(OpenCog.Map.OCMap map, Vector3i nearPos)
 	{
-		OCBlock block = map.GetBlock(nearPos).block;
+		OCBlockData blockData = map.GetBlock(nearPos);
+		if(blockData == null) return false;
+		OCBlock block = blockData.block;
 		return !(block is OCCubeBlock) || block.IsAlpha();
 	}
 	

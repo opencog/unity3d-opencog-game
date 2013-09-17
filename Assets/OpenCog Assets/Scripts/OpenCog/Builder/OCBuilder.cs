@@ -145,7 +145,17 @@ public class OCBuilder : OCMonoBehaviour
 			Vector3i? point = GetCursor(true);
 			if(point.HasValue)
 			{
-				_map.SetBlockAndRecompute(new OpenCog.Map.OCBlockData(), point.Value);
+				Vector3i above = point.Value;
+				above.y += 1;
+				OCBlockData blockAbove = _map.GetBlock(above);
+				OCBlockData blockData = _map.GetBlock (point.Value);
+				if(blockAbove.IsEmpty() && !blockData.IsEmpty())
+				{
+					_map.SetBlockAndRecompute(blockData, above);
+					_map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
+				}
+				else
+					_map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
 			}
 		}
 		
@@ -157,7 +167,7 @@ public class OCBuilder : OCMonoBehaviour
 				bool empty = !BlockCharacterCollision.GetContactBlockCharacter(point.Value, transform.position, gameObject.GetComponent<CharacterController>()).HasValue;
 				if(empty)
 				{
-					OpenCog.Map.OCBlockData block = new OpenCog.Map.OCBlockData(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
+					OpenCog.Map.OCBlockData block = OCBlockData.CreateInstance<OCBlockData>().Init(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
 					block.SetDirection(GetDirection(-transform.forward));
 					_map.SetBlockAndRecompute(block, point.Value);
 				}

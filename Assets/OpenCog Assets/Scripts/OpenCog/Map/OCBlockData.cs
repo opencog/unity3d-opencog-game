@@ -11,7 +11,7 @@ namespace OpenCog.Map
 		X_MINUS
 	}
 
-	public struct OCBlockData
+	public class OCBlockData : OCScriptableObject
 	{
 
 		public OpenCog.BlockSet.BaseBlockSet.OCBlock block;
@@ -45,12 +45,18 @@ namespace OpenCog.Map
 	//		direction = BlockDirection.Z_PLUS;
 	//	}
 	
-		public OCBlockData(OpenCog.BlockSet.BaseBlockSet.OCBlock block, Vector3i globalPosition) {
+//		public OCBlockData() 
+//		{
+//		}
+		
+		public OCBlockData Init(OpenCog.BlockSet.BaseBlockSet.OCBlock block, Vector3i globalPosition)
+		{
 			this.block = block;
 			this._globalX = globalPosition.x;
 			this._globalY = globalPosition.y;
 			this._globalZ = globalPosition.z;
 			direction = OCBlockDirection.Z_PLUS;
+			return this;
 		}
 		
 		public void SetDirection(OCBlockDirection direction) {

@@ -84,7 +84,7 @@ public class OCDestroyBlockEffect : OCMonoBehaviour
 			if(point.HasValue)
 			{
 				OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
-				map.SetBlockAndRecompute(new OpenCog.Map.OCBlockData(), point.Value);
+				map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
 			}
 		}
 

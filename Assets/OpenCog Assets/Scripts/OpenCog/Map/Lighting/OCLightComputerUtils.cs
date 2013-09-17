@@ -30,7 +30,7 @@ namespace OpenCog.Map.Lighting
 		}
 		
 		public static int GetLightStep(OCBlockData block) {
-			if(block.IsEmpty()) {
+			if(block == null || block.IsEmpty()) {
 				return 1;
 			} else {
 				return 2;

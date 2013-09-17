@@ -13,7 +13,8 @@ namespace OpenCog.Map
 		public const int SIZE_Y = 16; //<< SIZE_Y_BITS;
 		public const int SIZE_Z = 16; //<< SIZE_Z_BITS;
 	
-		private OCBlockData[,,] blocks = new OCBlockData[OCChunk.SIZE_Z, OCChunk.SIZE_Y, OCChunk.SIZE_X];
+		//private OCBlockData[,,] blocks = new OCBlockData[OCChunk.SIZE_Z, OCChunk.SIZE_Y, OCChunk.SIZE_X];
+		private List3D<OCBlockData> blocks = new List3D<OCBlockData>(Vector3i.zero, new Vector3i(OCChunk.SIZE_Z, OCChunk.SIZE_Y, OCChunk.SIZE_X));
 		private OpenCog.Map.OCMap map;
 		private Vector3i position;
 		private OCChunkRenderer chunkRenderer;
@@ -28,6 +29,17 @@ namespace OpenCog.Map
 		public OCChunk(OCMap map, Vector3i position) {
 			this.map = map;
 			this.position = position;
+			for(int x=blocks.GetMinX(); x < blocks.GetMaxX(); ++x)
+			{
+				for(int y=blocks.GetMinY(); y < blocks.GetMaxY(); ++y)
+				{
+					for(int z=blocks.GetMinZ (); z < blocks.GetMaxZ (); ++z)
+					{
+						Vector3i pos = new Vector3i(x, y, z);
+						blocks.Set(OCBlockData.CreateInstance<OCBlockData>().Init(null,pos), pos);
+					}
+				}
+			}
 		}
 		
 		public OCChunkRenderer GetChunkRendererInstance() {
@@ -43,12 +55,12 @@ namespace OpenCog.Map
 			SetBlock(block, pos.x, pos.y, pos.z);
 		}
 		public void SetBlock(OCBlockData block, int x, int y, int z) {
-			blocks[z, y, x] = block;
+			blocks.Set(block, new Vector3i(z, y, x));
 			
 			_isEmpty = false;
 		}
 	
-		public OCBlockData[,,] GetBlocks()
+		public List3D<OCBlockData> GetBlocks()
 		{
 			return blocks;
 		}
@@ -57,7 +69,7 @@ namespace OpenCog.Map
 			return GetBlock(pos.x, pos.y, pos.z);
 		}
 		public OCBlockData GetBlock(int x, int y, int z) {
-			return blocks[z, y, x];
+			return blocks.Get(new Vector3i(z, y, x));
 		}
 		
 		

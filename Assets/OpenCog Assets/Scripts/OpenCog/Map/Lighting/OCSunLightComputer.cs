@@ -190,10 +190,10 @@ namespace OpenCog.Map.Lighting
 	            foreach(Vector3i dir in Vector3i.directions) {
 					Vector3i nextPos = pos + dir;
 					block = map.GetBlock(nextPos);
-	                if( block.IsAlpha() && lightmap.SetMaxLight((byte)light, nextPos) ) {
+	                if(block != null && block.IsAlpha() && lightmap.SetMaxLight((byte)light, nextPos) ) {
 	                	list.Add( nextPos );
 	                }
-					if(!block.IsEmpty()) OCLightComputerUtils.SetLightDirty(map, nextPos);
+					if(block != null && !block.IsEmpty()) OCLightComputerUtils.SetLightDirty(map, nextPos);
 	            }
 	        }
 	    }

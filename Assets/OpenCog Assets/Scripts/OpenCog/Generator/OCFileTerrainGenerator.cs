@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using OpenCog.Map;
+using OpenCog;
+using OpenCog;
+using OpenCog.BlockSet.BaseBlockSet;
 
 public class OCFileTerrainGenerator
 {
@@ -199,9 +202,11 @@ public class OCFileTerrainGenerator
 											
 											if (ourBlockID != -1)
 											{
-												OpenCog.BlockSet.BaseBlockSet.OCBlock newBlock = blockSet.GetBlock(ourBlockID);
+												OCBlock newBlock = blockSet.GetBlock(ourBlockID);
 												
-												OCBlockData block = new OpenCog.Map.OCBlockData(newBlock, blockPos);
+												//OCBlockData block = new OpenCog.Map.OCBlockData(newBlock, blockPos);
+												OCBlockData block = (OCBlockData)OCScriptableObject.CreateInstance<OCBlockData>();
+												block.Init(newBlock, blockPos);
 											
 												chunk.SetBlock(block, blockPos);
 												OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition (_map, blockPos);
