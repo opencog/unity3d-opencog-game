@@ -17,7 +17,6 @@ Trees:
 	Character_ForwardMove
 	Character_BackwardMove
 	Character_DownMove
-	Character_EmoteShow
 	Character_FaceShow
 	Character_KickActivate
 	Character_LeftMove
@@ -32,7 +31,7 @@ Trees:
 	Character_TurnAndDestroy
 	Character_GirlBehaviour
 	Character_GhostBehaviour
-	Character_NewTree1
+	Character_EmoteShow
 	Unknown
 
 Contexts:

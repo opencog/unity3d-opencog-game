@@ -242,6 +242,9 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 		
 		foreach(string arg in args)
 		{
+			if(arg == args[0])
+				continue;
+				
 			string[] keyValuePair = arg.Split(':');
 			if(keyValuePair != null && _settings.ContainsKey(keyValuePair[0]))
 			{

@@ -93,7 +93,29 @@ public class OCGoalController : OCMonoBehaviour
 		get { return _goalBlockPos;}
 		set { _goalBlockPos = value;}
 	}
-			
+
+	public string BlockType 
+	{
+		get {
+			return this._blockType;
+		}
+		set {
+			_blockType = value;
+			if(_map != null)
+				_goalBlockType = _map.GetBlockSet().GetBlock(_blockType);
+		}
+	}	
+
+	public OCBlock GoalBlockType 
+	{
+		get {
+			return this._goalBlockType;
+		}
+		set {
+			_goalBlockType = value;
+		}
+	}		
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -122,8 +144,9 @@ public class OCGoalController : OCMonoBehaviour
 	{
 
 		List3D<OCChunk> chunks = _map.GetChunks ();
-
-		FindGoalBlockPositionInChunks(chunks);
+			
+		// Since this is probably bogging down the gameplay, switch it to block creation only.
+		//FindGoalBlockPositionInChunks(chunks);
 			
 		Vector3 sourcePos = gameObject.transform.position;
 		Vector3 distanceVec = ((Vector3)GoalBlockPos) - sourcePos;
@@ -163,7 +186,7 @@ public class OCGoalController : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private void FindGoalBlockPositionInChunks(List3D<OCChunk> chunks)
+	public void FindGoalBlockPositionInChunks(List3D<OCChunk> chunks)
 	{
 		Vector3 sourcePos = gameObject.transform.position;
 		Vector3 distanceVec = ((Vector3)GoalBlockPos) - sourcePos;
@@ -215,16 +238,7 @@ public class OCGoalController : OCMonoBehaviour
 												GoalBlockPos = candidatePos;
 												distanceVec = candidateVec;
 												
-												if(_ShouldMoveTargets)
-												{
-													OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
-	
-													foreach(OCAction action in actions)
-													{
-														action.EndTarget.transform.position = new Vector3(GoalBlockPos.x, GoalBlockPos.y, GoalBlockPos.z);
-														action.StartTarget.transform.position = gameObject.transform.position;
-													}
-												}
+												MoveTargetsIfNecessary ();
 
 												Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
 											}
@@ -252,6 +266,23 @@ public class OCGoalController : OCMonoBehaviour
 				}
 			}
 		
+	}
+		
+	/// <summary>
+	/// Moves the targets if necessary.
+	/// </summary>
+	public void MoveTargetsIfNecessary ()
+	{
+		if(_ShouldMoveTargets)
+		{
+			OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
+		
+			foreach(OCAction action in actions)
+			{
+				action.EndTarget.transform.position = new Vector3(GoalBlockPos.x, GoalBlockPos.y, GoalBlockPos.z);
+				action.StartTarget.transform.position = gameObject.transform.position;
+			}
+		}
 	}
 			
 	//---------------------------------------------------------------------------
