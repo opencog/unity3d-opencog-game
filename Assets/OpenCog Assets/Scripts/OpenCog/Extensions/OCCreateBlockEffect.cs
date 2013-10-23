@@ -29,6 +29,7 @@ using GameObject = UnityEngine.GameObject;
 using System.Linq;
 using OpenCog.Utility;
 using UnityEngine;
+using OpenCog.Actions;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -91,7 +92,7 @@ public class OCCreateBlockEffect : OCMonoBehaviour
 					OCBlock block = map.GetBlockSet().GetBlock(_BlockType);
 
 					//block.SetDirection(GetDirection(-gameObject.transform.forward));
-
+				
 					OCBlockData blockData = OCBlockData.CreateInstance<OCBlockData>().Init(block, VectorUtil.Vector3ToVector3i(point.Value));
 					map.SetBlockAndRecompute(blockData, point.Value);
 				}

@@ -165,7 +165,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					
 			foreach( OCAction action in actions)
 			{
-				if(action.FullName.Contains(treeName) || treeName.Contains("Behaviour"))
+				if(	   (action.FullName.Contains(treeName) || treeName.Contains("Behaviour")) 
+					&& !(treeName == "GhostBehaviour" && action.name.Contains("Create"))
+					&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy"))
+				  )
 				{
 					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
 							
@@ -185,7 +188,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 		while (Application.isPlaying) 
 		{
-			yield return new WaitForSeconds (1.0f / 240.0f);
+			yield return new WaitForSeconds (1.0f);// / 240.0f);
 			UpdateAI ();
 		}
 	}

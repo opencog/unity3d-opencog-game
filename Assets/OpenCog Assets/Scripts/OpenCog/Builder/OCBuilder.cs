@@ -26,6 +26,7 @@ using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using System.Linq;
 using OpenCog.Map;
+using OpenCog.Actions;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -170,6 +171,23 @@ public class OCBuilder : OCMonoBehaviour
 					OpenCog.Map.OCBlockData block = OCBlockData.CreateInstance<OCBlockData>().Init(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
 					block.SetDirection(GetDirection(-transform.forward));
 					_map.SetBlockAndRecompute(block, point.Value);
+						
+					OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+						
+					foreach(OCGoalController goalController in goalControllers)
+					{
+						if(goalController.GoalBlockType == _selectedBlock)
+						{
+							Vector3 sourcePos = goalController.gameObject.transform.position;
+							Vector3 oldDistanceVec = ((Vector3)goalController.GoalBlockPos) - sourcePos;
+							Vector3 newDistanceVec = point.Value - sourcePos;
+							if(newDistanceVec.sqrMagnitude < oldDistanceVec.sqrMagnitude)
+							{
+								goalController.GoalBlockPos = point.Value;	
+								goalController.MoveTargetsIfNecessary();
+							}
+						}
+					}	
 				}
 			}
 		}
