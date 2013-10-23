@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Xml;
+using System.Linq;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using IAsyncResult = System.IAsyncResult;
@@ -389,7 +390,12 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		UnityEngine.Debug.Log ("In InitializeNetworkElement, my GUID is " + VerificationGuid);
 		_ID = id;
 		_port = OCPortManager.AllocatePort();
-		_IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+			
+		string _IP = 
+			(from ip in Dns.GetHostEntry (Dns.GetHostName()).AddressList
+			where ip.AddressFamily.Equals (AddressFamily.InterNetwork)
+			select ip).FirstOrDefault().ToString ();
+
 		// routerIpString appears to only be set in the obsoleted OldNetworkElement class in the old project...
 		//_routerIP = IPAddress.Parse(this.routerIpString);
 		// so we'll try the new way for now
