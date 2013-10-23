@@ -82,26 +82,26 @@ public class OCDestroyBlockEffect : OCMonoBehaviour
     //---------------------------------------------------------------------------
 
     public void DestroyBlock(Vector3i? point)
+	{
+		if(point.HasValue)
 		{
-			if(point.HasValue)
+			OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
+			
+			OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+					
+			OCBlock blockType = map.GetBlock(point.Value).block;
+			
+			foreach(OCGoalController goalController in goalControllers)
 			{
-				OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
-				
-				OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
-						
-				OCBlock blockType = map.GetBlock(point.Value).block;
-				
-				foreach(OCGoalController goalController in goalControllers)
+				if(goalController.GoalBlockType == blockType)
 				{
-					if(goalController.GoalBlockType == blockType)
-					{
-						goalController.FindGoalBlockPositionInChunks(map.GetChunks());
-					}
+					goalController.FindGoalBlockPositionInChunks(map.GetChunks());
 				}
-				
-				map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
 			}
+			
+			map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
 		}
+	}
 
     //---------------------------------------------------------------------------
 
