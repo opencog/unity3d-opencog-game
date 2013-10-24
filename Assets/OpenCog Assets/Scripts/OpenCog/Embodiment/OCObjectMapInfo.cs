@@ -481,7 +481,7 @@ public class OCObjectMapInfo
 			_width = 1;
 			_length = 1;
 			_type = OCEmbodimentXMLTags.STRUCTURE_OBJECT_TYPE;
-			_id = blockData.ID.ToString();
+			_id = blockName;//blockData.ID.ToString();
 			_name = blockName;
 			//this.Velocity = UnityEngine.Vector3.zero;
 			this.position = new UnityEngine.Vector3(blockGlobalX, blockGlobalY, blockGlobalZ);
