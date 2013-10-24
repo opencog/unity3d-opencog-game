@@ -394,7 +394,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		_IP = 
 			(from ip in Dns.GetHostEntry (Dns.GetHostName()).AddressList
 			where ip.AddressFamily.Equals (AddressFamily.InterNetwork)
-			select ip).FirstOrDefault().ToString ();
+			select ip).FirstOrDefault();
 
 		// routerIpString appears to only be set in the obsoleted OldNetworkElement class in the old project...
 		//_routerIP = IPAddress.Parse(this.routerIpString);
