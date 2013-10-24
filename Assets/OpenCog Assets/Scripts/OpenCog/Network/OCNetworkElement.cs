@@ -391,7 +391,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		_ID = id;
 		_port = OCPortManager.AllocatePort();
 			
-		string _IP = 
+		_IP = 
 			(from ip in Dns.GetHostEntry (Dns.GetHostName()).AddressList
 			where ip.AddressFamily.Equals (AddressFamily.InterNetwork)
 			select ip).FirstOrDefault().ToString ();
