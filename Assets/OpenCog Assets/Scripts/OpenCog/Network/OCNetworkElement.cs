@@ -400,10 +400,10 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			
 		foreach (NetworkInterface networkInterface in networkInterfaces)
 		{
-			var ipProperties = networkInterface.GetIPProperties();
-			var unicastAddresses = ipProperties.UnicastAddresses;
+			IPInterfaceProperties ipProperties = networkInterface.GetIPProperties();
+			UnicastIPAddressInformationCollection unicastAddresses = ipProperties.UnicastAddresses;
 				
-			foreach (var unicastAddress in unicastAddresses)
+			foreach (UnicastIPAddressInformation unicastAddress in unicastAddresses)
 			{
 				if (unicastAddress.DuplicateAddressDetectionState == DuplicateAddressDetectionState.Preferred &&
 					unicastAddress.AddressPreferredLifetime != System.UInt32.MaxValue)
