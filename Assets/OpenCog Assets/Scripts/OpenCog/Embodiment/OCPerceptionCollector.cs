@@ -858,7 +858,7 @@ namespace OpenCog.Embodiment
 //		
 //		}
 	
-		private IEnumerator PerceiveTerrain ()
+		public IEnumerator PerceiveTerrain ()
 		{
 			UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveTerrain");
 			

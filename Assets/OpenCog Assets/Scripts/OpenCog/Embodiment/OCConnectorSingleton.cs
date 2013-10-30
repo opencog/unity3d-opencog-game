@@ -500,6 +500,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	public IEnumerator ConnectOAC()
 	{
+		Debug.Log("In OCCOnnectorSingleton::ConnectOAC...");
 		if (_firstRun)
 		{
 			_firstRun = false;
