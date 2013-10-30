@@ -138,6 +138,7 @@ public class OCGoalController : OCMonoBehaviour
 			yield return new WaitForSeconds (1.0f);
 			UpdateGoal();
 		}
+//		yield return 0;
 	}
 		
 	public void UpdateGoal()

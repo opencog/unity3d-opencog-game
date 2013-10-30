@@ -90,7 +90,17 @@ public class OCCreateBlockEffect : OCMonoBehaviour
 					OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
 
 					OCBlock block = map.GetBlockSet().GetBlock(_BlockType);
-
+				
+					OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+			
+					foreach(OCGoalController goalController in goalControllers)
+					{
+						if(goalController.GoalBlockType == block)
+						{
+							goalController.FindGoalBlockPositionInChunks(map.GetChunks());
+						}
+					}
+				
 					//block.SetDirection(GetDirection(-gameObject.transform.forward));
 				
 					OCBlockData blockData = OCBlockData.CreateInstance<OCBlockData>().Init(block, VectorUtil.Vector3ToVector3i(point.Value));
