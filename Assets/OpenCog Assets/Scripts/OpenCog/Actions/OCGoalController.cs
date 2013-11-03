@@ -175,6 +175,21 @@ public class OCGoalController : OCMonoBehaviour
 				agiPhysModel.ProcessPhysiologicalEffect(nearHomeEffect);
 			}
 		}
+			
+		if(GoalBlockPos != Vector3i.zero && _map.GetBlock(GoalBlockPos).IsEmpty())
+		{
+			Debug.Log("No more " + _goalBlockType.GetName() + "... :(");
+			
+			GoalBlockPos = Vector3i.zero;
+
+			OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
+
+			foreach(OCAction action in actions)
+			{
+				action.EndTarget.transform.position = Vector3.zero;
+				action.StartTarget.transform.position = Vector3.zero;
+			}
+		}
 	}
 
 	//---------------------------------------------------------------------------
@@ -208,64 +223,80 @@ public class OCGoalController : OCMonoBehaviour
 //			}
 //		}
 		
-			bool doesGoalExist = false;
-
-			//distanceVec = new Vector3(1000,1000,1000);
-			for(int cx=chunks.GetMinX(); cx<chunks.GetMaxX(); ++cx)
+		//bool doesGoalExist = false;
+		
+		GameObject goalBlockChild = GameObject.Find(GoalBlockType.GetName());
+			
+		if(goalBlockChild != null)
+		{
+			GameObject goalBlocks = goalBlockChild.transform.parent.gameObject;
+				
+			if(goalBlocks != null)
 			{
-				for(int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); ++cy)
+				foreach(Transform candidateTransform in goalBlocks.transform)
 				{
-					for(int cz=chunks.GetMinZ(); cz<chunks.GetMaxZ(); ++cz)
+					GameObject candidateBlock = candidateTransform.gameObject;
+					Vector3 candidatePos = candidateBlock.transform.position;
+					Vector3 candidateVec = candidatePos - sourcePos;
+					//OCBlockData blockData = _map.GetBlock(new Vector3i(candidatePos.x, candidatePos.y, candidatePos.z));
+					//if(!blockData.IsEmpty() && blockData.block.GetName() == _goalBlockType.GetName())
 					{
-						Vector3i chunkPos = new Vector3i(cx, cy, cz);
-						OCChunk chunk = chunks.SafeGet(chunkPos);
-						if(chunk != null)
+						//doesGoalExist = true;
+						if(candidateVec.sqrMagnitude < distanceVec.sqrMagnitude)
 						{
-							for(int z=0; z<OCChunk.SIZE_Z; z++)
-							{
-								for(int x=0; x<OCChunk.SIZE_X; x++)
-								{
-									for(int y=0; y<OCChunk.SIZE_Y; y++)
-									{
-										Vector3i localPos = new Vector3i(x, y, z);
-										OCBlockData blockData = chunk.GetBlock(localPos);
-										Vector3i candidatePos = OCChunk.ToWorldPosition(chunk.GetPosition(), localPos);
-										Vector3 candidateVec = ((Vector3)candidatePos) - sourcePos;
-										if(!blockData.IsEmpty() && blockData.block.GetName() == _goalBlockType.GetName())
-										{
-											doesGoalExist = true;
-											if(candidateVec.sqrMagnitude < distanceVec.sqrMagnitude)
-											{
-												GoalBlockPos = candidatePos;
-												distanceVec = candidateVec;
-												
-												MoveTargetsIfNecessary ();
-
-												Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
-											}
-										}
-									}
-								}
-							}
+							GoalBlockPos = new Vector3i((int)candidatePos.x, (int)candidatePos.y, (int)candidatePos.z);
+							distanceVec = candidateVec;
+							
+							MoveTargetsIfNecessary ();
+		
+							Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
 						}
 					}
 				}
 			}
+		}
 
-			if(GoalBlockPos != Vector3i.zero && (!doesGoalExist || _map.GetBlock(GoalBlockPos).IsEmpty()))
-			{
-				Debug.Log("No more " + _goalBlockType.GetName() + "... :(");
-				
-				GoalBlockPos = Vector3i.zero;
-
-				OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>();
-
-				foreach(OCAction action in actions)
-				{
-					action.EndTarget.transform.position = Vector3.zero;
-					action.StartTarget.transform.position = Vector3.zero;
-				}
-			}
+//			//distanceVec = new Vector3(1000,1000,1000);
+//			for(int cx=chunks.GetMinX(); cx<chunks.GetMaxX(); ++cx)
+//			{
+//				for(int cy=chunks.GetMinY(); cy<chunks.GetMaxY(); ++cy)
+//				{
+//					for(int cz=chunks.GetMinZ(); cz<chunks.GetMaxZ(); ++cz)
+//					{
+//						Vector3i chunkPos = new Vector3i(cx, cy, cz);
+//						OCChunk chunk = chunks.SafeGet(chunkPos);
+//						if(chunk != null)
+//						{
+//							for(int z=0; z<OCChunk.SIZE_Z; z++)
+//							{
+//								for(int x=0; x<OCChunk.SIZE_X; x++)
+//								{
+//									for(int y=0; y<OCChunk.SIZE_Y; y++)
+//									{
+//										Vector3i localPos = new Vector3i(x, y, z);
+//										OCBlockData blockData = chunk.GetBlock(localPos);
+//										Vector3i candidatePos = OCChunk.ToWorldPosition(chunk.GetPosition(), localPos);
+//										Vector3 candidateVec = ((Vector3)candidatePos) - sourcePos;
+//										if(!blockData.IsEmpty() && blockData.block.GetName() == _goalBlockType.GetName())
+//										{
+//											doesGoalExist = true;
+//											if(candidateVec.sqrMagnitude < distanceVec.sqrMagnitude)
+//											{
+//												GoalBlockPos = candidatePos;
+//												distanceVec = candidateVec;
+//												
+//												MoveTargetsIfNecessary ();
+//
+//												Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
+//											}
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
 		
 	}
 		
