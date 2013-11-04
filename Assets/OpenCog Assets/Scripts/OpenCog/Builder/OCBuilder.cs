@@ -146,16 +146,16 @@ public class OCBuilder : OCMonoBehaviour
 			Vector3i? point = GetCursor(true);
 			if(point.HasValue)
 			{
-				Vector3i above = point.Value;
-				above.y += 1;
-				OCBlockData blockAbove = _map.GetBlock(above);
-				OCBlockData blockData = _map.GetBlock (point.Value);
-				if(blockAbove.IsEmpty() && !blockData.IsEmpty())
-				{
-					_map.SetBlockAndRecompute(blockData, above);
-					_map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
-				}
-				else
+//				Vector3i above = point.Value;
+//				above.y += 1;
+//				OCBlockData blockAbove = _map.GetBlock(above);
+//				OCBlockData blockData = _map.GetBlock (point.Value);
+//				if(blockAbove.IsEmpty() && !blockData.IsEmpty())
+//				{
+//					_map.SetBlockAndRecompute(blockData, above);
+//					_map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
+//				}
+//				else
 					_map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
 			}
 		}

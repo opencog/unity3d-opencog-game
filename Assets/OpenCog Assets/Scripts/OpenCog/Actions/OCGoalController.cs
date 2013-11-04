@@ -144,7 +144,7 @@ public class OCGoalController : OCMonoBehaviour
 	public void UpdateGoal()
 	{
 
-		List3D<OCChunk> chunks = _map.GetChunks ();
+		//List3D<OCChunk> chunks = _map.GetChunks ();
 			
 		// Since this is probably bogging down the gameplay, switch it to block creation only.
 		//FindGoalBlockPositionInChunks(chunks);
