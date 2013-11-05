@@ -24,7 +24,15 @@ public class OCTreeGenerator {
 	
 	public void Generate(int x, int y, int z) {
 		OpenCog.Map.OCBlockData block = map.GetBlock(x, y-1, z);
-		if(block.IsEmpty() || !block.block.GetName().Equals("Dirt")) return;
+		if(block.IsEmpty() || !block.block.GetName().Equals("Dirt")) 
+		{
+			if(Random.Range(0f, 1f) > 0.5)
+				GenerateBookshelf(x, y, z);
+			else
+				GenerateTNT(x, y, z);
+			return;
+		}
+		
 		if(Random.Range(0f, 1f) > 0.2f) return;
 		
 		GenerateTree(x, y, z);
@@ -35,6 +43,18 @@ public class OCTreeGenerator {
 		for(int i=0; i<8; i++) {
 			map.SetBlock(new OpenCog.Map.OCBlockData(wood, new Vector3i(x, y+i, z)), new Vector3i(x, y+i, z));
 		}
+	}
+
+	public void GenerateTNT (int x, int y, int z)
+	{
+		OpenCog.BlockSet.OCBlockSet blockSet = map.GetBlockSet();
+		map.SetBlock(new OpenCog.Map.OCBlockData(blockSet.GetBlock("TNT"), new Vector3i(x, y, z)), new Vector3i(x, y, z));
+	}
+
+	public void GenerateBookshelf (int x, int y, int z)
+	{
+		OpenCog.BlockSet.OCBlockSet blockSet = map.GetBlockSet();
+		map.SetBlock(new OpenCog.Map.OCBlockData(blockSet.GetBlock("Bookshelf"), new Vector3i(x, y, z)), new Vector3i(x, y, z));
 	}
 	
 	private void GenerateLeaves(Vector3i center, Vector3i pos) {

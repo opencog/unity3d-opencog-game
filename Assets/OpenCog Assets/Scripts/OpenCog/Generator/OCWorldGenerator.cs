@@ -48,15 +48,31 @@ public class OCWorldGenerator : MonoBehaviour {
 	}
 	
 	void Update() {
-		if(!building) StartCoroutine( Building() );
+		Vector3 pos = Camera.mainCamera.transform.position;
+		Vector3i current = OpenCog.Map.OCChunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
+		
+		if(!building) 
+			StartCoroutine( Building(current) );
+		
+		pos = GameObject.Find("Girl").transform.position;
+		current = OpenCog.Map.OCChunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
+		
+		if(!building)
+			StartCoroutine( Building(current) );
+		
+		pos = GameObject.Find("Robot").transform.position;
+		current = OpenCog.Map.OCChunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
+		
+		if(!building)
+			StartCoroutine( Building(current) );
 	}
 	
-	private IEnumerator Building() {
+	private IEnumerator Building(Vector3i current) {
 		if (MapName == String.Empty)
 		{
 			building = true;
-			Vector3 pos = Camera.mainCamera.transform.position;
-			Vector3i current = OpenCog.Map.OCChunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
+			//Vector3 pos = Camera.mainCamera.transform.position;
+			//Vector3i current = OpenCog.Map.OCChunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
 			Vector3i? column = columnMap.GetClosestEmptyColumn(current.x, current.z, worldGenerationRadius);
 			
 			if (column == null)
