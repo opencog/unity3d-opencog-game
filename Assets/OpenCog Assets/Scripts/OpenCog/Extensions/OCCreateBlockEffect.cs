@@ -83,19 +83,19 @@ public class OCCreateBlockEffect : OCMonoBehaviour
     //---------------------------------------------------------------------------
 
     public void CreateBlock(Vector3i? point)
-		{
-				if(point.HasValue)
-				{
-					OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
+	{
+			if(point.HasValue)
+			{
+				OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
 
-					OCBlock block = map.GetBlockSet().GetBlock(_BlockType);
+				OCBlock block = map.GetBlockSet().GetBlock(_BlockType);
 
-					//block.SetDirection(GetDirection(-gameObject.transform.forward));
+				//block.SetDirection(GetDirection(-gameObject.transform.forward));
 
-					OCBlockData blockData = new OCBlockData(block, VectorUtil.Vector3ToVector3i(point.Value));
-					map.SetBlockAndRecompute(blockData, point.Value);
-				}
-		}
+				OCBlockData blockData = new OCBlockData(block, VectorUtil.Vector3ToVector3i(point.Value));
+				map.SetBlockAndRecompute(blockData, point.Value);
+			}
+	}
 
     //---------------------------------------------------------------------------
 

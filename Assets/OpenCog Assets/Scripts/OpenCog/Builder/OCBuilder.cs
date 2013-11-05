@@ -26,6 +26,7 @@ using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using System.Linq;
 using OpenCog.Map;
+using OpenCog.Actions;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -146,6 +147,16 @@ public class OCBuilder : OCMonoBehaviour
 			if(point.HasValue)
 			{
 				_map.SetBlockAndRecompute(new OpenCog.Map.OCBlockData(), point.Value);
+					
+				OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+				foreach(OCGoalController goalController in goalControllers)
+				{
+					if(point.Value == goalController.GoalBlockPos)
+					{
+						goalController.GoalBlockPos = Vector3i.zero;
+						goalController.UpdateGoal();
+					}
+				}
 			}
 		}
 		
@@ -160,6 +171,13 @@ public class OCBuilder : OCMonoBehaviour
 					OpenCog.Map.OCBlockData block = new OpenCog.Map.OCBlockData(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
 					block.SetDirection(GetDirection(-transform.forward));
 					_map.SetBlockAndRecompute(block, point.Value);
+						
+					OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+					foreach(OCGoalController goalController in goalControllers)
+					{
+						if(_selectedBlock.GetName() == goalController.BlockType)
+							goalController.UpdateGoal();
+					}
 				}
 			}
 		}

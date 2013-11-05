@@ -27,6 +27,7 @@ using OpenCog.Map;
 using GameObject = UnityEngine.GameObject;
 using System.Linq;
 using System.Collections.Generic;
+using OpenCog.Actions;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -85,6 +86,16 @@ public class OCDestroyBlockEffect : OCMonoBehaviour
 			{
 				OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
 				map.SetBlockAndRecompute(new OpenCog.Map.OCBlockData(), point.Value);
+				
+				OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+				foreach(OCGoalController goalController in goalControllers)
+				{
+					if(point.Value == goalController.GoalBlockPos)
+					{
+						goalController.GoalBlockPos = Vector3i.zero;
+						goalController.UpdateGoal();
+					}
+				}
 			}
 		}
 

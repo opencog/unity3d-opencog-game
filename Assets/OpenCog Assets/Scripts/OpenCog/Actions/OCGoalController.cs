@@ -93,7 +93,13 @@ public class OCGoalController : OCMonoBehaviour
 		get { return _goalBlockPos;}
 		set { _goalBlockPos = value;}
 	}
-			
+
+	public string BlockType 
+	{
+		get { return this._blockType; }
+		set { _blockType = value; }
+	}	
+		
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -113,14 +119,15 @@ public class OCGoalController : OCMonoBehaviour
 			
 		while (Application.isPlaying) 
 		{
-			yield return new WaitForSeconds (1.0f);
+			yield return new WaitForSeconds (10.0f);
 			UpdateGoal();
 		}
 	}
 		
 	public void UpdateGoal()
 	{
-
+		Debug.Log("In OCGoalController::UpdateGoal...");	
+		
 		List3D<OCChunk> chunks = _map.GetChunks ();
 
 		FindGoalBlockPositionInChunks(chunks);
@@ -165,6 +172,7 @@ public class OCGoalController : OCMonoBehaviour
 	
 	private void FindGoalBlockPositionInChunks(List3D<OCChunk> chunks)
 	{
+		//GoalBlockPos = Vector3i.zero;
 		Vector3 sourcePos = gameObject.transform.position;
 		Vector3 distanceVec = ((Vector3)GoalBlockPos) - sourcePos;
 			
