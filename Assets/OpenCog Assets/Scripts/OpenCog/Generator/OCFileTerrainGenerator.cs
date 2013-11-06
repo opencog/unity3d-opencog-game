@@ -30,6 +30,7 @@ public class OCFileTerrainGenerator
 	, {26, 26}		
 	, {35, 15}
 	, {46, 22}
+	, {47, 27}
 	, {62, 24}
 	, {90, 29}
 	};
