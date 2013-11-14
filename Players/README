@@ -1,8 +1,8 @@
-To download players, use wget:
+To download these untested players, use wget:
 
-wget -r http://buildbot.opencog.org/players/Unity3DGameWorldPlayer_Linux64 http://buildbot.opencog.org/players/Unity3DGameWorldPlayer_Linux64_Data/
+wget -m -np http://buildbot.opencog.org/players/Unity3DGameWorldPlayer_Linux64 http://buildbot.opencog.org/players/Unity3DGameWorldPlayer_Linux64_Data/
 
-On Windows, use http://gnuwin32.sourceforge.net/packages/wget.htm or https://sites.google.com/site/visualwget/a-download-manager-gui-based-on-wget-for-windows (eanble recursive under advanced options).
+On Windows, use http://gnuwin32.sourceforge.net/packages/wget.htm or https://sites.google.com/site/visualwget/a-download-manager-gui-based-on-wget-for-windows (eanble mirror and no-parent under download options, advanced, recurisve retrievel and recursive).
 
 /Players is a placeholder directory for buildbot to deposit players; please 
 do not commit or push files to this directory.
