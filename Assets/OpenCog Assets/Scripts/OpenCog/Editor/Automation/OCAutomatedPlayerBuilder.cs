@@ -22,8 +22,8 @@ using UnityEditor;
 namespace OpenCog
 {
 
-namespace Automation
-{
+		namespace Automation
+		{
 
 /// <summary>
 /// The OpenCog Automated Player Builder.  Builds standalone players and allows for unit testing.
@@ -33,121 +33,121 @@ namespace Automation
 #region Class Attributes
 
 #endregion 
-public class OCAutomatedPlayerBuilder //@TODO: coordinate with David and rename to OCAutomatedPlayerBuild
-{
+				public class OCAutomatedPlayerBuilder //@TODO: coordinate with David and rename to OCAutomatedPlayerBuild
+				{
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   #region Private Member Data
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   #endregion
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   #region Accessors and Mutators
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   #endregion
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   #region Public Member Functions
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
-  [MenuItem ("Build/BuildAll")]
-	static void BuildAll()
-	{
-		BuildStandaloneLinux32Player();
-		BuildStandaloneLinux64Player();
-		BuildStandaloneWindows32Player();
-		BuildStandaloneWindows64Player();
+						[MenuItem ("Build/BuildAll")]
+						static void BuildAll ()
+						{
+								BuildStandaloneLinux32Player ();
+								BuildStandaloneLinux64Player ();
+								BuildStandaloneWindows32Player ();
+								BuildStandaloneWindows64Player ();
 				
-		BuildStandaloneLinux64TestPlayer();			
-	}
+								BuildStandaloneLinux64TestPlayer ();			
+						}
 	
-	[MenuItem ("Build/BuildStandaloneLinux64Player")]
-	static void BuildStandaloneLinux64Player()
-	{			
-		string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
-		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux64);
-		BuildPipeline.BuildPlayer(scenes
+						[MenuItem ("Build/BuildStandaloneLinux64Player")]
+						static void BuildStandaloneLinux64Player ()
+						{			
+								string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+								EditorUserBuildSettings.SwitchActiveBuildTarget (BuildTarget.StandaloneLinux64);
+								BuildPipeline.BuildPlayer (scenes
 								  , "../Players/Unity3DGameWorldPlayer_Linux64"
-								  , BuildTarget.StandaloneLinux64, BuildOptions.None );
-	}
+								  , BuildTarget.StandaloneLinux64, BuildOptions.None);
+						}
 			
-	[MenuItem ("Build/BuildStandaloneLinux64TestPlayer")]
-	static void BuildStandaloneLinux64TestPlayer()
-	{
-		PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "TEST_AND_EXIT");
+						[MenuItem ("Build/BuildStandaloneLinux64TestPlayer")]
+						static void BuildStandaloneLinux64TestPlayer ()
+						{
+								PlayerSettings.SetScriptingDefineSymbolsForGroup (BuildTargetGroup.Standalone, "TEST_AND_EXIT");
 				
-		string[] scenes = { "Assets/Scenes/Game/Game.unity" };
-		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux64);
-		BuildPipeline.BuildPlayer(scenes
+								string[] scenes = { "Assets/Scenes/Game/Game.unity" };
+								EditorUserBuildSettings.SwitchActiveBuildTarget (BuildTarget.StandaloneLinux64);
+								BuildPipeline.BuildPlayer (scenes
 								  , "../Players/Unity3DGameWorldTestPlayer_Linux64"
-								  , BuildTarget.StandaloneLinux64, BuildOptions.None );
-	}			
+								  , BuildTarget.StandaloneLinux64, BuildOptions.None);
+						}			
 	
-	[MenuItem ("Build/BuildStandaloneLinux32Player")]
-	static void BuildStandaloneLinuxPlayer32()
-	{
-		string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
-		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux32);
-		BuildPipeline.BuildPlayer(scenes
+						[MenuItem ("Build/BuildStandaloneLinux32Player")]
+						static void BuildStandaloneLinux32Player ()
+						{
+								string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+								EditorUserBuildSettings.SwitchActiveBuildTarget (BuildTarget.StandaloneLinux);
+								BuildPipeline.BuildPlayer (scenes
 								  , "../Players/Unity3DGameWorldPlayer_Linux32"
-								  , BuildTarget.StandaloneLinux, BuildOptions.None );
-	}
+								  , BuildTarget.StandaloneLinux, BuildOptions.None);
+						}
 	
-	[MenuItem ("Build/BuildStandaloneWindows32Player")]
-	static void BuildStandaloneWindows32Player()
-	{
-		string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
-		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows32);
-		BuildPipeline.BuildPlayer(scenes
+						[MenuItem ("Build/BuildStandaloneWindows32Player")]
+						static void BuildStandaloneWindows32Player ()
+						{
+								string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+								EditorUserBuildSettings.SwitchActiveBuildTarget (BuildTarget.StandaloneWindows);
+								BuildPipeline.BuildPlayer (scenes
 								  , "../Players/Unity3DGameWorldPlayer_Windows32.exe"
-								  , BuildTarget.StandaloneWindows32, BuildOptions.None );
-	}
+								  , BuildTarget.StandaloneWindows, BuildOptions.None);
+						}
 	
-	[MenuItem ("Build/BuildStandaloneWindows64Player")]
-	static void BuildStandaloneWindows64Player()
-	{	
-		string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
-		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows64);
-		BuildPipeline.BuildPlayer(scenes
+						[MenuItem ("Build/BuildStandaloneWindows64Player")]
+						static void BuildStandaloneWindows64Player ()
+						{	
+								string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
+								EditorUserBuildSettings.SwitchActiveBuildTarget (BuildTarget.StandaloneWindows64);
+								BuildPipeline.BuildPlayer (scenes
 								  , "../Players/Unity3DGameWorldPlayer_Windows64.exe"
-								  , BuildTarget.StandaloneWindows64, BuildOptions.None );
-	}
+								  , BuildTarget.StandaloneWindows64, BuildOptions.None);
+						}
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   #endregion
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   #region Private Member Functions
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
   #endregion
 
-  /////////////////////////////////////////////////////////////////////////////
+						/////////////////////////////////////////////////////////////////////////////
 
-}// class OCAutomatedPlayerBuilder
+				}// class OCAutomatedPlayerBuilder
 
-}// namespace Automation
+		}// namespace Automation
 
 }// namespace OpenCog
 
