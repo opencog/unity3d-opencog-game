@@ -10,9 +10,9 @@ public class OCAutomatedPlayerBuilder
 	[MenuItem ("Build/BuildAll")]
 	static void BuildAll()
 	{
-		BuildStandaloneLinuxPlayer();
+		BuildStandaloneLinux32Player();
 		BuildStandaloneLinux64Player();
-		BuildStandaloneWindowsPlayer();
+		BuildStandaloneWindows32Player();
 		BuildStandaloneWindows64Player();
 	}
 	
@@ -26,23 +26,23 @@ public class OCAutomatedPlayerBuilder
 								  , BuildTarget.StandaloneLinux64, BuildOptions.None );
 	}
 	
-	[MenuItem ("Build/BuildStandaloneLinuxPlayer")]
-	static void BuildStandaloneLinuxPlayer()
+	[MenuItem ("Build/BuildStandaloneLinux32Player")]
+	static void BuildStandaloneLinux32Player()
 	{
 		string[] scenes = { "Assets/OpenCog Assets/Scenes/Game/Game.unity" };
-		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux);
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneLinux32);
 		BuildPipeline.BuildPlayer(scenes
-								  , "Players/Unity3DGameWorldPlayer_Linux"
+								  , "Players/Unity3DGameWorldPlayer_Linux32"
 								  , BuildTarget.StandaloneLinux, BuildOptions.None );
 	}
 	
-	[MenuItem ("Build/BuildStandaloneWindowsPlayer")]
-	static void BuildStandaloneWindowsPlayer()
+	[MenuItem ("Build/BuildStandaloneWindows32Player")]
+	static void BuildStandaloneWindows32Player()
 	{
 		string[] scenes = { "Assets/OpenCog Assets/Scenes/Game/Game.unity" };
-		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows);
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows32);
 		BuildPipeline.BuildPlayer(scenes
-								  , "Players/Unity3DGameWorldPlayer_Windows.exe"
+								  , "Players/Unity3DGameWorldPlayer_Windows32.exe"
 								  , BuildTarget.StandaloneWindows, BuildOptions.None );
 	}
 	
