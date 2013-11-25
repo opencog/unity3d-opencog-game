@@ -69,7 +69,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 	private string _mapName;
 
-	private int _floorHeight;
+	public int _floorHeight;
 
 	private bool _chunkLimitsInitialized;
 	private int _minChunkX;
