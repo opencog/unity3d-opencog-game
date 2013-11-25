@@ -393,6 +393,7 @@ public class OCObjectMapInfo
 			_type = OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
 
 			// Convert from unity coordinate to OAC coordinate.
+
 			this.position = Utility.VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
 			// Get rotation
 			_rotation = new Utility.Rotation (gameObject.transform.rotation);
@@ -433,6 +434,14 @@ public class OCObjectMapInfo
 				_width = OCObjectMapInfo.DEFAULT_AVATAR_WIDTH;
 				_height = OCObjectMapInfo.DEFAULT_AVATAR_HEIGHT;
 			}
+
+			if (gameObject.tag == "OCNPC" || gameObject.tag == "OCAGI" || gameObject.tag == "Player")
+			{
+				if (_height > 1.0f) // just to make sure that the center point of the character will not be in the block where the feet are
+				{
+					this.position = new UnityEngine.Vector3(this.position.x, this.position.y, this.position.z + 1.0f);	
+				}
+			}
 			
 			if (gameObject.name == "Hearth")
 			{
@@ -450,7 +459,8 @@ public class OCObjectMapInfo
 			{
 				UnityEngine.Debug.Log ("Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
 				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
-				this.AddProperty ("foodbowl", "TRUE", System.Type.GetType ("System.Boolean"));
+				this.AddProperty ("pickupable", "TRUE", System.Type.GetType ("System.Boolean"));
+				this.AddProperty ("holder", "none", System.Type.GetType ("System.String"));
 			}
 
 			// Get a property manager instance

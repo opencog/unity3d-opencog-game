@@ -750,6 +750,14 @@ namespace OpenCog.Embodiment
 			
 			// Position
 			UnityEngine.Vector3 currentPos = Utility.VectorUtil.ConvertToOpenCogCoord (go.transform.position);
+
+			if (go.tag == "OCNPC" || go.tag == "OCAGI" || go.tag == "Player")
+			{
+				if (mapInfo.Height > 1.0f) // just to make sure that the center point of the character will not be in the block where the feet are
+				{
+					currentPos = new UnityEngine.Vector3(currentPos.x, currentPos.y, currentPos.z + 1.0f);	
+				}
+			}
 	
 			if (go.tag == "OCA") {
 				// Fix the model center point problem.
