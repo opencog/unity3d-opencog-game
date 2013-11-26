@@ -498,6 +498,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     return true;
   }
 
+	public int getFloorHeight()
+	{
+		return _globalFloorHeight;
+	}
+
 	public IEnumerator ConnectOAC()
 	{
 		Debug.Log("In OCCOnnectorSingleton::ConnectOAC...");
