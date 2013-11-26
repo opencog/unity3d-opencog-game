@@ -78,6 +78,43 @@ public class OCFileTerrainGenerator
 		Substrate.AnvilRegionManager mcAnvilRegionManager = mcWorld.GetRegionManager();
 				
 		OpenCog.BlockSet.OCBlockSet blockSet = _map.GetBlockSet();
+        ////==================================================================================
+
+        ///MineCraftPlayer's Name
+        string MCPlayerName = "OCPlayer";
+        UnityEngine.Vector3 PlayerPosition = new Vector3();
+        /// player manager enable us to set and get a player 
+        Substrate.Core.IPlayerManager MCPlayerManager = mcWorld.GetPlayerManager();
+
+        /// creating an object for player
+        Substrate.Player MCPlayer = new Substrate.Player();
+
+        /// delete player with the specified name this is help full change any setting on the player
+        MCPlayerManager.DeletePlayer(MCPlayerName);
+       
+        /// sets the x,y,z position of the player
+        MCPlayer.Position.X = 10;
+        MCPlayer.Position.Y = 143;
+        MCPlayer.Position.Z = 10;
+        //sets the player to the world
+        MCPlayerManager.SetPlayer(MCPlayerName, MCPlayer);
+
+        //fetches a player from minecraft
+        MCPlayer = MCPlayerManager.GetPlayer(MCPlayerName);
+        if (MCPlayer == null)
+        {
+            Debug.Log("No such Player Check the Player Name again");
+
+        }        
+        PlayerPosition.x =(float) MCPlayer.Position.X;       
+        PlayerPosition.y = (float)MCPlayer.Position.Y;
+        PlayerPosition.z = (float)MCPlayer.Position.Z;
+        
+       
+        OCGetPlayer.Create(PlayerPosition);   
+
+
+        ///================================================================================
 				
 		//_map.GetSunLightmap().SetSunHeight(20, 4, 4);
 
