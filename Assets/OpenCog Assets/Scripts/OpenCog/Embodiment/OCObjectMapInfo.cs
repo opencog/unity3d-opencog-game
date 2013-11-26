@@ -533,16 +533,17 @@ public class OCObjectMapInfo
 			}
 			else
 			{
-				if (blockData.block.GetName().ToLower () == "air")
-				{
-//					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
-					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
-				}
-				else
-				{
-//					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
-					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
-				}
+				this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.block.GetName().ToLower (), System.Type.GetType("System.String"));
+//				if (blockData.block.GetName().ToLower () == "air")
+//				{
+////					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+//					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+//				}
+//				else
+//				{
+////					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
+//					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
+//				}
 			}
 			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
 		}
