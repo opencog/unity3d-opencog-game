@@ -127,6 +127,8 @@ namespace OpenCog.Embodiment
 		public void Start ()
 		{
 			_connector = OCConnectorSingleton.Instance;
+
+			_floorHeight = _connector.getFloorHeight();
 			
 			UnityEngine.Debug.Log (gameObject.name + " is started.");
 		}
@@ -864,7 +866,7 @@ namespace OpenCog.Embodiment
 //			_connector.HandleObjectAppearOrDisappear (mapinfo.ID, mapinfo.Type, true);
 //			_connector.SendTerrainInfoMessage (addedBlockList);
 //		
-//		}
+//		}``
 	
 		public IEnumerator PerceiveTerrain ()
 		{
@@ -932,7 +934,7 @@ namespace OpenCog.Embodiment
 												// Ok...now we have some globalz....
 												OpenCog.Map.OCBlockData globalBlock = map.GetBlock (iGlobalX, iGlobalY, iGlobalZ);
 					
-												if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > 55) ) {
+												if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > _floorHeight) ) {
 													//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
 													
 													
