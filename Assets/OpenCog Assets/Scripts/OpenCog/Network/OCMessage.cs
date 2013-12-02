@@ -45,254 +45,274 @@ namespace OpenCog.Network
 [Serializable]
 	
 #endregion
-public class OCMessage : IConvertible 
+public class OCMessage : IConvertible
 {
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#region Private Member Data
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 	
-	/// <summary>
-	/// The ID of source OCNetworkElement.
-	/// </summary>
-	private string _sourceID;
+/// <summary>
+/// The ID of source OCNetworkElement.
+/// </summary>
+private string _sourceID;
 		
-	/// <summary>
-	/// The ID of the target OCNetworkElement.
-	/// </summary>
-	private string _targetID;
+/// <summary>
+/// The ID of the target OCNetworkElement.
+/// </summary>
+private string _targetID;
 		
-	/// <summary>
-	/// The type of the message.
-	/// </summary>
-	private MessageType _type;
+/// <summary>
+/// The type of the message.
+/// </summary>
+private MessageType _type;
 		
-	private string _content;
+private string _content;
 			
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#region Accessors and Mutators
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 		
-	public string SourceID 
-	{
-		get { return this._sourceID;}
-		set { _sourceID = value;}
-	}
+public string SourceID
+{
+  get { return this._sourceID;}
+  set { _sourceID = value;}
+}
 
-	public string TargetID 
-	{
-		get { return this._targetID;}
-		set { _targetID = value;}
-	}
+public string TargetID
+{
+  get { return this._targetID;}
+  set { _targetID = value;}
+}
 
-	public MessageType Type 
-	{
-		get { return this._type;}
-		set { _type = value;}
-	}
+public MessageType Type
+{
+  get { return this._type;}
+  set { _type = value;}
+}
 		
-	public string MessageContent
-	{
-		get{ return _content; }
-		set{ _content = value; }
-	}
+public string MessageContent
+{
+  get{ return _content; }
+  set{ _content = value; }
+}
 			
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#region Public Member Functions
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 		
-	/// <summary>
-	/// Creates the message.
-	/// </summary>
-	/// <returns>
-	/// The message.
-	/// </returns>
-	/// <param name='sourceID'>
-	/// Source I.
-	/// </param>
-	/// <param name='targetID'>
-	/// Target I.
-	/// </param>
-	/// <param name='type'>
-	/// Type.
-	/// </param>
-	/// <param name='message'>
-	/// Message.
-	/// </param>
-	public static OCMessage CreateMessage(string sourceID, string targetID, MessageType type, string message = "")
-	{
-		return new OCMessage(sourceID, targetID, type, message);
-	}
+/// <summary>
+/// Creates the message.
+/// </summary>
+/// <returns>
+/// The message.
+/// </returns>
+/// <param name='sourceID'>
+/// Source I.
+/// </param>
+/// <param name='targetID'>
+/// Target I.
+/// </param>
+/// <param name='type'>
+/// Type.
+/// </param>
+/// <param name='message'>
+/// Message.
+/// </param>
+public static OCMessage CreateMessage(string sourceID, string targetID, MessageType type, string message = "")
+{
+  return new OCMessage(sourceID, targetID, type, message);
+}
 
-	public string ToString()
-	{
-		return _content;
-	}
+public string ToString()
+{
+  return _content;
+}
 	
-	public void FromString(string message)
-	{
-		_content = message;
-	}
+public void FromString(string message)
+{
+  _content = message;
+}
 
 	#region IConvertible implementation
-	public System.TypeCode GetTypeCode ()
-	{
-		throw new System.NotImplementedException ();
-	}
+public System.TypeCode GetTypeCode()
+{
+  throw new System.NotImplementedException();
+}
 
-	public bool ToBoolean (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public bool ToBoolean(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public char ToChar (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public char ToChar(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public sbyte ToSByte (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public sbyte ToSByte(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public byte ToByte (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public byte ToByte(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public short ToInt16 (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public short ToInt16(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public ushort ToUInt16 (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public ushort ToUInt16(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public int ToInt32 (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public int ToInt32(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public uint ToUInt32 (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public uint ToUInt32(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public long ToInt64 (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public long ToInt64(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public ulong ToUInt64 (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public ulong ToUInt64(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public float ToSingle (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public float ToSingle(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public double ToDouble (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public double ToDouble(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public decimal ToDecimal (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public decimal ToDecimal(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public System.DateTime ToDateTime (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public System.DateTime ToDateTime(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public string ToString (System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public string ToString(System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 
-	public object ToType (System.Type conversionType, System.IFormatProvider provider)
-	{
-		throw new System.NotImplementedException ();
-	}
+public object ToType(System.Type conversionType, System.IFormatProvider provider)
+{
+  throw new System.NotImplementedException();
+}
 		
 	#endregion
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#region Private Member Functions
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 	
 	
 			
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#region Other Members
 
-	//---------------------------------------------------------------------------		
+//---------------------------------------------------------------------------		
 		
-	public OCMessage (string sourceID, string targetID, MessageType type, string messageContents)
-	{
-		_sourceID = sourceID;
-		_targetID = targetID;
-		_type = type;
-		_content = messageContents;
-	}
+public OCMessage(string sourceID, string targetID, MessageType type, string messageContents)
+{
+  _sourceID = sourceID;
+  _targetID = targetID;
+  _type = type;
+  _content = messageContents;
+}
+  
+public OCMessage()
+{
+  _sourceID = "";
+  _targetID = "";
+  _type = OCMessage.MessageType.NONE;
+  _content = "";
+}  
 		
-	/// <summary>
-	/// Message types definition.
-	/// </summary>
-	public enum MessageType : int
-	{
-		NONE = 0
-	, STRING = 1
-	, LEARN = 2
-	, REWARD = 3
-	, SCHEMA = 4
-	, LS_CMD = 5
-	, ROUTER = 6
-	, CANDIDATE_SCHEMA = 7
-	, TICK = 8
-	, FEEDBACK = 9
-	, TRY = 10
-	, STOP_LEARNING = 11
-	/// <summary>
-	/// A custom message type for test purposes, to be removed.
-	/// </summary>
-	, RAW = 12
-	}
+/// <summary>
+/// Message types definition.
+/// </summary>
+public enum MessageType : int
+{
+  NONE = 0
+	,
+  STRING = 1
+	,
+  LEARN = 2
+	,
+  REWARD = 3
+	,
+  SCHEMA = 4
+	,
+  LS_CMD = 5
+	,
+  ROUTER = 6
+	,
+  CANDIDATE_SCHEMA = 7
+	,
+  TICK = 8
+	,
+  FEEDBACK = 9
+	,
+  TRY = 10
+	,
+  STOP_LEARNING = 11
+  /// <summary>
+  /// A custom message type for test purposes, to be removed.
+  /// </summary>
+	,
+  RAW = 12
+}
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 	#endregion
 
-	//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 }// class OCMessage
 
