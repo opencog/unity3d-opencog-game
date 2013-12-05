@@ -64,6 +64,7 @@ namespace Cubiquity
 					if(hit)
 					{
 						coloredCubesVolume.data.SetVoxel(resultX, resultY, resultZ, (QuantizedColor)paintColor);
+                        LoadMineCraftWorld.UpdateMcRegionForAddBlocks(new Vector3(resultX, resultY, resultZ));
 					}
 				}
 				else if(deleteMode)
@@ -72,6 +73,7 @@ namespace Cubiquity
 					if(hit)
 					{
 						coloredCubesVolume.data.SetVoxel(resultX, resultY, resultZ, new QuantizedColor(0,0,0,0));
+                        LoadMineCraftWorld.UpdateMcRegionForDeletedBlocks(new Vector3(resultX, resultY, resultZ));
 					}
 				}
 				else if(paintMode)
@@ -80,6 +82,7 @@ namespace Cubiquity
 					if(hit)
 					{
 						coloredCubesVolume.data.SetVoxel(resultX, resultY, resultZ, (QuantizedColor)paintColor);
+                        LoadMineCraftWorld.UpdateMcRegionForPaintBlocks(new Vector3(resultX, resultY, resultZ));
 					}
 				}
 				

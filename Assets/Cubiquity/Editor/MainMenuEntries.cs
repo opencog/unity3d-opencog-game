@@ -52,9 +52,10 @@ namespace Cubiquity
 		[MenuItem ("GameObject/Create Other/Colored Cubes Volume")]
 		static void CreateColoredCubesVolume()
 		{
-			int width = 256;
-			int height = 64;
-			int depth = 256;
+            UnityEngine.Vector3 dir = LoadMineCraftWorld.regionDimension();
+            int width = (int)dir.x;
+            int height = (int)dir.y;
+            int depth = (int)dir.z;
 			
 			ColoredCubesVolumeData data = ColoredCubesVolumeData.CreateEmptyVolumeData(new Region(0, 0, 0, width-1, height-1, depth-1));
 			
@@ -67,7 +68,7 @@ namespace Cubiquity
 			
 			// Call Initialize so we can start drawing into the volume right away.
 			
-			int floorThickness = 8;
+			int floorThickness = height;
 			QuantizedColor floorColor = new QuantizedColor(192, 192, 192, 255);
 			
 			for(int z = 0; z <= depth-1; z++)
