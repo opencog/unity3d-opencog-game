@@ -22,10 +22,7 @@ public class CreateMCRegion : MonoBehaviour
             return path;
         }
     }
-/// <summary>
-/// creates a chunk with 16x10x16 
-/// </summary>
-/// <remarks> this will be extended in order to be Scalable</remarks>
+
     public static void CreateRegion(){
         AnvilWorld world = AnvilWorld.Create(Dir);
         if (world == null)
@@ -33,20 +30,32 @@ public class CreateMCRegion : MonoBehaviour
             return;
         }
         IChunkManager icm = world.GetChunkManager();
-        ChunkRef chunk = icm.CreateChunk(0, 0);
-        chunk.IsTerrainPopulated = true;
+        for (int Cwidth = 0; Cwidth < 2; Cwidth++)
+        {
+            for (int Cdepth = 0; Cdepth < 2; Cdepth++)
+            {
+                ChunkRef chunk = icm.CreateChunk(Cwidth, Cdepth);
+                chunk.IsTerrainPopulated = true;
+                CreateChunck(chunk);
+            }            
+        
+        }
+        world.Save();        
+    }
+
+    static void CreateChunck(ChunkRef chunk)
+    {
         for (int x = 0; x < 16; x++)
         {
             for (int y = 0; y < 10; y++)
             {
                 for (int z = 0; z < 16; z++)
                 {
-                   
-                    chunk.Blocks.SetID(x, y, z, (int)BlockType.GOLD_BLOCK);                     
+
+                    chunk.Blocks.SetID(x, y, z, (int)BlockType.GOLD_BLOCK);
                 }
             }
-        }       
-        world.Save();        
+        }
     }
   
 }
