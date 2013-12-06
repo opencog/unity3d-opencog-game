@@ -17,9 +17,9 @@ namespace Cubiquity
 		[MenuItem ("GameObject/Create Other/Terrain Volume")]
 		static void CreateTerrainVolume()
 		{
-			int width = 128;
-			int height = 32;
-			int depth = 128;
+			int width = 32;
+			int height = 10;
+			int depth = 32;
 			
 			TerrainVolumeData data = TerrainVolumeData.CreateEmptyVolumeData(new Region(0, 0, 0, width-1, height-1, depth-1));
 			
@@ -52,35 +52,13 @@ namespace Cubiquity
 		[MenuItem ("GameObject/Create Other/Colored Cubes Volume")]
 		static void CreateColoredCubesVolume()
 		{
-            UnityEngine.Vector3 dir = LoadMineCraftWorld.regionDimension();
-            int width = (int)dir.x;
-            int height = (int)dir.y;
-            int depth = (int)dir.z;
+            int width = 32;
+            int height = 10;
+            int depth = 32;
 			
 			ColoredCubesVolumeData data = ColoredCubesVolumeData.CreateEmptyVolumeData(new Region(0, 0, 0, width-1, height-1, depth-1));
-			
-			ColoredCubesVolume.CreateGameObject(data);
-			
-			/*string path = Application.streamingAssetsPath + Path.DirectorySeparatorChar + RandomString() + ".vol";
-			
-			GameObject voxelGameObject = ColoredCubesVolumeFactory.CreateVolume("Voxel Terrain", new Region(0, 0, 0, width-1, height-1, depth-1), path);
-			ColoredCubesVolume coloredCubesVolume = voxelGameObject.GetComponent<ColoredCubesVolume>();*/
-			
-			// Call Initialize so we can start drawing into the volume right away.
-			
-			int floorThickness = height;
-			QuantizedColor floorColor = new QuantizedColor(192, 192, 192, 255);
-			
-			for(int z = 0; z <= depth-1; z++)
-			{
-				for(int y = 0; y < floorThickness; y++)
-				{
-					for(int x = 0; x <= width-1; x++)
-					{
-						data.SetVoxel(x, y, z, floorColor);
-					}
-				}
-			}
+            ColoredCubesVolume.CreateGameObject(data);
+            ColoredCubesVolume.MCSubstrate(data);
 		}
 	}
 }

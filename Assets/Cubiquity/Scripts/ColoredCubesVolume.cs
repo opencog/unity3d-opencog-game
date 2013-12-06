@@ -4,7 +4,9 @@ using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-
+using Substrate;
+using Substrate.Core;
+using Vector3 = UnityEngine.Vector3;
 namespace Cubiquity
 {
 	public struct CubiquityVertex 
@@ -98,7 +100,70 @@ namespace Cubiquity
 	        Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.0f);
 			Gizmos.DrawCube (transform.position - halfVoxelOffset + new Vector3(offsetX, offsetY, offsetZ), new Vector3 (width, height, depth));
 	    }
-		
+
+        //==================================================================
+        /// <summary>
+        /// gets MC map path
+        /// </summary>
+        public static string Dir
+        {
+            get
+            {
+                string MapName = "MCRegion";
+                string path = Path.Combine(Application.streamingAssetsPath, MapName);
+                return path;
+            }
+        }
+        /// <summary>
+        /// loades MC map using Substrate 
+        /// </summary>
+        /// <param name="data"></param>
+        public static void MCSubstrate(ColoredCubesVolumeData data)
+        {
+            if (Dir == null)
+            {
+                return;
+            }
+            AnvilWorld world = AnvilWorld.Open(Dir);
+            IChunkManager icm = world.GetChunkManager();
+            int i = 0;
+            int j = 0;
+            int k = 0;
+            //getting the dimension of the MC region by summing up the blocks in every chunk
+            foreach (ChunkRef chunk in icm)
+            {
+                i += chunk.Blocks.XDim;
+                j += chunk.Blocks.YDim;
+                k += chunk.Blocks.ZDim;
+            }
+
+            CreateCubiquityRegion(i, j, data);
+
+
+        }
+        /// <summary>
+        /// Creates a Substrate region using Cubiquity
+        /// </summary>
+        /// <param name="i">gets width of the Substrate region</param>
+        /// <param name="j">gets height of the Substrate region</param>
+        /// <param name="data">instance of ColoredCubesVolumeData uses to call SetVoxel </param>
+
+        public static void CreateCubiquityRegion(int i, int j, ColoredCubesVolumeData data)
+        {
+            for (int x = 0; x < i; x++)
+            {
+               
+                for (int y = 0; y < 10; y++)
+                {
+                    for (int z = 0; z < j; z++)
+                    {
+                       ///telling cubuquity to use the Substrate region and display to Unity
+                        data.SetVoxel(x, y, z, (QuantizedColor)Color.grey);
+                    }
+                }
+            }
+        }
+	//=======================================	
 		/*internal void Initialize()
 		{	
 			// This function might get called multiple times. E.g the user might call it striaght after crating the volume (so
@@ -159,7 +224,6 @@ namespace Cubiquity
 				if(CubiquityDLL.HasRootOctreeNode(data.volumeHandle.Value) == 1)
 				{		
 					uint rootNodeHandle = CubiquityDLL.GetRootOctreeNode(data.volumeHandle.Value);
-				
 					if(rootGameObject == null)
 					{					
 						rootGameObject = BuildGameObjectFromNodeHandle(rootNodeHandle, null);	
@@ -315,8 +379,7 @@ namespace Cubiquity
 			
 			if(parentGameObject)
 			{
-				newGameObject.transform.parent = parentGameObject.transform;
-				
+				newGameObject.transform.parent = parentGameObject.transform;				
 				Vector3 parentLowerCorner = parentGameObject.GetComponent<OctreeNodeData>().lowerCorner;
 				newGameObject.transform.localPosition = octreeNodeData.lowerCorner - parentLowerCorner;
 			}
