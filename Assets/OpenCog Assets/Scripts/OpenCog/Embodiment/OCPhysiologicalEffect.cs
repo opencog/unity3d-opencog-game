@@ -43,7 +43,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class OCPhysiologicalEffect : OCMonoBehaviour
+public class OCPhysiologicalEffect : OCScriptableObject
 {
 
 	//---------------------------------------------------------------------------
@@ -88,6 +88,12 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 	{
 		get { return _fitnessChange; }
 		set { _fitnessChange = value; }
+	}
+
+	public CostLevel CostLevelProp 
+	{
+		get { return _costLevel; }
+		set { _costLevel = value; }
 	}
 			
 	//---------------------------------------------------------------------------
