@@ -54,19 +54,19 @@ public class OCPhysiologicalEffect : OCScriptableObject
 	
 	private CostLevel _costLevel;
 
-	private float _energyIncrease = 0.0f;
+	private float _energyIncrease;
 
-	private float _fitnessChange = 0.0f;
+	private float _fitnessChange;
 
-	private OCPhysiologicalModel.AvatarMode _newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
+	private OCPhysiologicalModel.AvatarMode _newAvatarMode;
 
-	private Dictionary<string, float> _changeFactors = new Dictionary<string,float>();
+	private Dictionary<string, float> _changeFactors;
 
-	private List<string> _resetFactors = new List<string>();
+	private List<string> _resetFactors;
 
 	private float BASE_ENERGY_COST;
 
-	private Utility.Config config = Utility.Config.GetInstance();
+	private Utility.Config config;
 
 	//---------------------------------------------------------------------------
 
@@ -105,6 +105,16 @@ public class OCPhysiologicalEffect : OCScriptableObject
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+
+	public void OnEnable()
+	{
+			_energyIncrease = 0.0f;
+			_fitnessChange = 0.0f;
+			_newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
+			_changeFactors = new Dictionary<string,float>();
+			_resetFactors = new List<string>();
+			config = Utility.Config.GetInstance();
+	}
 
 	public void ApplyEffect(OCPhysiologicalModel model)
 	{

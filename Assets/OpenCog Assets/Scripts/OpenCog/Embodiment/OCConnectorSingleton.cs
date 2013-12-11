@@ -1702,7 +1702,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         
 		// Get the action elements from the actionPlan
         XmlNodeList list = actionPlan.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_ELEMENT);
-		
+
+		if(_actionController == null)
+			_actionController = GameObject.FindGameObjectWithTag("OCAGI").GetComponent<OCActionController>();
+
 		// list contains 'action' elements.
 		foreach(XmlNode actionNode in list)
 		{
@@ -1770,6 +1773,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						//actionArguments.EndTarget = vectorGameObject;
 						actionArguments.EndTarget = GameObject.Find("EndPointStub");
 						actionArguments.EndTarget.transform.position = new Vector3(x, z, y);
+						
+						{	
+							OCGoalController goalController = _actionController.gameObject.GetComponent<OCGoalController>();
+							goalController.BlockType = "Hearth";
+							goalController.FindGoalBlockPositionInChunks(_map.Chunks);
+						}
 					
 						break;	
 					// If it's an entity, then it's a grab or a consume. So the target is the battery.
@@ -1815,6 +1824,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 									console.AddConsoleEntry("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 								
 								}	
+
+								OCGoalController goalController = _actionController.gameObject.GetComponent<OCGoalController>();
+								goalController.BlockType = "battery";
+								goalController.FindGoalBlockPositionInChunks(_map.Chunks);
 							}
 							else
 							{
