@@ -7,6 +7,8 @@ using System.Text;
 using Substrate;
 using Substrate.Core;
 using Vector3 = UnityEngine.Vector3;
+using System.Collections.Generic;
+using System.Linq;
 namespace Cubiquity
 {
 	public struct CubiquityVertex 
@@ -27,6 +29,34 @@ namespace Cubiquity
 		// The name of the dataset to load from disk.
 		[SerializeField]
 		private ColoredCubesVolumeData mData = null;
+
+        #region private data types
+
+        private static int rows = 0;
+        private static int columns = 0;
+
+        #endregion
+
+        #region public properties
+
+        public static int NumberOfRows
+        {
+            get
+            {
+                return rows;
+            }
+        }
+
+        public static int NumberOfColumns
+        {
+            get
+            {
+                return columns;
+            }
+        }
+
+        #endregion 
+
 		public ColoredCubesVolumeData data
 	    {
 	        get { return this.mData; }
@@ -102,6 +132,7 @@ namespace Cubiquity
 	    }
 
         //==================================================================
+        #region getting dynamic path of MC map
         /// <summary>
         /// gets MC map path
         /// </summary>
@@ -114,6 +145,22 @@ namespace Cubiquity
                 return path;
             }
         }
+        #endregion 
+
+
+        #region AnvilWorld 
+
+        public static AnvilWorld World
+        {
+            get
+            {
+                AnvilWorld world = AnvilWorld.Open(Dir);
+                return world;
+            }
+        }
+
+        #endregion 
+
         /// <summary>
         /// loades MC map using Substrate 
         /// </summary>
@@ -126,21 +173,71 @@ namespace Cubiquity
             }
             AnvilWorld world = AnvilWorld.Open(Dir);
             IChunkManager icm = world.GetChunkManager();
-            int i = 0;
-            int j = 0;
-            int k = 0;
-            //getting the dimension of the MC region by summing up the blocks in every chunk
-            foreach (ChunkRef chunk in icm)
-            {
-                i += chunk.Blocks.XDim;
-                j += chunk.Blocks.YDim;
-                k += chunk.Blocks.ZDim;
-            }
-
-            CreateCubiquityRegion(i, j, data);
+           // List<ChunkRef> chunks = getChunks(icm);
+            CreateCubiquityRegion(rows, columns, data, icm);
 
 
         }
+
+        #region gets existing chunks from a region
+
+        public static List<ChunkRef> getChunks(IChunkManager icm)
+        {
+            List<ChunkRef> chunks = new List<ChunkRef>();
+
+            foreach (ChunkRef chunk in icm)
+            {
+                chunks.Add(chunk);
+            }
+            return chunks;
+        }
+
+        # endregion
+
+        #region retrives rows and columns of a given region using Substrate from MC map
+        /// <summary>
+        /// to get the regions row and columns
+        /// </summary>
+        /// <param name="world"></param>
+        public static void SetRowColomuns(AnvilWorld world)
+        {
+            IRegionManager irm = world.GetRegionManager();
+            List<int> matrices = new List<int>();
+            ///iterate the regions within a Substrate world(level.dat)
+            ///and it detects the number of regins. 
+            foreach (IRegion ir in irm)
+            {
+
+                for (int x = 0; x < 32; x++)
+                {
+                    int col = 0;
+                    for (int z = 0; z < 32; z++)
+                    {
+                        ChunkRef chunkref = ir.GetChunkRef(x, z);
+                        if (chunkref == null)
+                        {
+                            continue;
+                        }
+                        //if (chunkref != null)
+                        //{
+                        //    Mychunk.Enqueue(chunkref);
+                        //}
+                        col++;
+
+                    }
+                    if (col != 0)
+                        matrices.Add(col);
+                }
+
+            }
+            rows = matrices.Count;
+            columns = matrices.Max();
+        }
+
+        #endregion 
+
+
+
         /// <summary>
         /// Creates a Substrate region using Cubiquity
         /// </summary>
@@ -148,21 +245,81 @@ namespace Cubiquity
         /// <param name="j">gets height of the Substrate region</param>
         /// <param name="data">instance of ColoredCubesVolumeData uses to call SetVoxel </param>
 
-        public static void CreateCubiquityRegion(int i, int j, ColoredCubesVolumeData data)
+        public static void CreateCubiquityRegion(int rows, int Columns, ColoredCubesVolumeData data, IChunkManager icm)
         {
-            for (int x = 0; x < i; x++)
+            List<ChunkRef> chunks = getChunks(icm);
+            getChunks(icm);
+
+
+            for (int j = 0; j < rows; j++)
             {
-               
-                for (int y = 0; y < 10; y++)
+                for (int i = 0; i < columns; i++)
                 {
-                    for (int z = 0; z < j; z++)
-                    {
-                       ///telling cubuquity to use the Substrate region and display to Unity
-                        data.SetVoxel(x, y, z, (QuantizedColor)Color.grey);
-                    }
+                    ChunkRef chunk = icm.GetChunkRef(j, i);
+                    DrawAchunk(data, (i + 1), (j + 1), chunk);
                 }
             }
         }
+
+
+        #region draw Substrate chunk to Unity using Cubiquity
+
+        /// <summary>
+        /// Draw Substrate chunk on Unity using Cubiquity
+        /// </summary>
+        /// <param name="data">a reference to invoke SetVexel</param>
+        /// <param name="col">determines a chunk columns, for instance , col=1 first column witch start loopint at z=(16*(1-1)=0 to z=16*1=16  and 
+        /// col=2 second column that starts loopint at z=(16*(2-1))=16 to z=(16*2)=32 and so on </param>
+        /// <param name="row">determines a chunk rows,for instance, row=1 first row that starting looping at x=(16(1-1))=0 to x=(16*1)=16
+        /// </param>
+        /// <param name="chunk">a chunk reference for Substrate blocks</param>
+        /// <remarks> the first row will be changed until all the columns are drawn fully in Unity </remarks>
+        public static void DrawAchunk(ColoredCubesVolumeData data, int col, int row, ChunkRef chunk)
+        {
+            int StartColumns = 16 * (col - 1);
+            int StartRows = 16 * (row - 1);
+            for (int x = StartRows; x < 16 * row; x++)
+            {
+                for (int y = 0; y < 6; y++)
+                {
+                    for (int z = StartColumns; z < 16 * col; z++)
+                    {
+                        int color = chunk.Blocks.GetID(x % 16, y, z % 16);
+                        data.SetVoxel(z, y, x, (QuantizedColor)setColor(color));
+                    }
+
+                }
+
+            }
+        }
+
+        #endregion 
+
+
+
+        #region color mapping
+        /// <summary>
+        /// Substrate to Cubiquity color mapping
+        /// </summary>
+        /// <param name="id">Substrate color id to be mapped</param>
+        /// <returns></returns>
+
+        public static Color32 setColor(int id)
+        {
+            Dictionary<int, Color32> ColorType = new Dictionary<int, Color32>();
+            ColorType.Add(80, new Color32(255, 255, 255, 255));
+            ColorType.Add(41, new Color32(251, 216, 79, 255));
+            ColorType.Add(90, new Color32(44, 0, 107, 255));
+            ColorType.Add(22, new Color32(0, 59, 175, 255));
+            ColorType.Add(133, new Color32(4, 253, 0, 255));
+            if (ColorType.ContainsKey(id))
+            {
+                return ColorType[id];
+            }
+            return new Color32(0, 0, 0, 0);
+        }
+
+        #endregion
 	//=======================================	
 		/*internal void Initialize()
 		{	
