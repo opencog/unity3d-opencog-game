@@ -7,11 +7,17 @@ using UnityEditor;
 public class LoadMCEditor : MonoBehaviour
 {
 
-    [MenuItem("MineCraft Loading/Load Region")]
+    [MenuItem("MineCraft Loading/Load Small Region")]
     static void Init()
     {
-        CreateMCRegion.CreateRegion(); 
+        CreateMCRegion.CreateSquaredRegion();
        
-    }    
+    }
+    [MenuItem("MineCraft Loading/Load Large Region")]
+    static void LargeRegion()
+    {
+        CreateMCRegion.CreateLargeRegion();
+    }
+
 	
 }
