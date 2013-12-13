@@ -16384,3 +16384,37 @@
 [18:21:11][info   ]<>: Closing database connection...
 [18:21:11][info   ]<>: Connection closed successfully
 [18:21:11][trace  ]<>: Exiting ~Volume()
+[18:24:12][trace  ]<>: Entering Volume((0,0,0) to (31,9,31),...)
+[18:24:12][info   ]<>: Creating SQLitePager from 'D:/GitCubiquity/backUp/unity3d-opencog-game/Assets/StreamingAssets\5F7BDC72.vol'
+[18:24:12][info   ]<>: Failed to open 'D:/GitCubiquity/backUp/unity3d-opencog-game/Assets/StreamingAssets\5F7BDC72.vol'. Error message was: "unable to open database file"
+[18:24:12][info   ]<>: Attempting to create 'D:/GitCubiquity/backUp/unity3d-opencog-game/Assets/StreamingAssets\5F7BDC72.vol'
+[18:24:12][info   ]<>: Successfully created'D:/GitCubiquity/backUp/unity3d-opencog-game/Assets/StreamingAssets\5F7BDC72.vol'
+[18:24:12][debug  ]<>: The maximum number of uncompresed blocks has been set to 1000000, which is 603979776 bytes
+[18:24:12][trace  ]<>: Leaving Volume((0,0,0) to (31,9,31),...)
+[18:24:12][trace  ]<>: Created new colored cubes volume in slot 0
+[18:24:13][trace  ]<>: Paged block in in 0ms
+[18:24:13][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:24:13][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:24:13][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:24:13][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:24:13][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:24:13][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:24:13][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:24:13][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:26:25][trace  ]<>: Entering Volume((0,0,0) to (31,9,31),...)
+[18:26:25][info   ]<>: Creating SQLitePager from 'D:/GitCubiquity/backUp/unity3d-opencog-game/Assets/StreamingAssets\0DFD28D7.vol'
+[18:26:25][info   ]<>: Failed to open 'D:/GitCubiquity/backUp/unity3d-opencog-game/Assets/StreamingAssets\0DFD28D7.vol'. Error message was: "unable to open database file"
+[18:26:25][info   ]<>: Attempting to create 'D:/GitCubiquity/backUp/unity3d-opencog-game/Assets/StreamingAssets\0DFD28D7.vol'
+[18:26:25][info   ]<>: Successfully created'D:/GitCubiquity/backUp/unity3d-opencog-game/Assets/StreamingAssets\0DFD28D7.vol'
+[18:26:25][debug  ]<>: The maximum number of uncompresed blocks has been set to 1000000, which is 603979776 bytes
+[18:26:25][trace  ]<>: Leaving Volume((0,0,0) to (31,9,31),...)
+[18:26:25][trace  ]<>: Created new colored cubes volume in slot 1
+[18:26:25][trace  ]<>: Paged block in in 0ms
+[18:26:25][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:26:25][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:26:25][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:26:25][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:26:25][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:26:25][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:26:25][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)
+[18:26:25][trace  ]<>: Cubic surface extraction took 2ms (Region size = 32x32x32)

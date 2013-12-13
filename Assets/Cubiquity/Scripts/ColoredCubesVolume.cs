@@ -306,18 +306,9 @@ namespace Cubiquity
 
         public static Color32 setColor(int id)
         {
-            Dictionary<int, Color32> ColorType = new Dictionary<int, Color32>();
-            ColorType.Add(80, new Color32(255, 255, 255, 255));
-            ColorType.Add(41, new Color32(251, 216, 79, 255));
-            ColorType.Add(90, new Color32(44, 0, 107, 255));
-            ColorType.Add(22, new Color32(0, 59, 175, 255));
-            ColorType.Add(133, new Color32(4, 253, 0, 255));
-            if (ColorType.ContainsKey(id))
-            {
-                return ColorType[id];
-            }
-            return new Color32(0, 0, 0, 0);
+            return SubstrateIdToCubiquityColor.SetColor(id);
         }
+
 
         #endregion
 	//=======================================	
