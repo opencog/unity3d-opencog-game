@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using UnityEngine;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -59,7 +60,7 @@ public class OCPhysiologicalEffect : OCScriptableObject
 	private float _fitnessChange;
 
 	private OCPhysiologicalModel.AvatarMode _newAvatarMode;
-
+		
 	private Dictionary<string, float> _changeFactors;
 
 	private List<string> _resetFactors;
@@ -112,6 +113,12 @@ public class OCPhysiologicalEffect : OCScriptableObject
 			_fitnessChange = 0.0f;
 			_newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
 			_changeFactors = new Dictionary<string,float>();
+			_changeFactors["hunger"] = 0.5f;
+			_changeFactors["thirst"] = 0.5f;
+			//_changeFactors["energy"] = 0.5f;
+			//_changeFactors["fitness"] = 0.5f;
+			_changeFactors["pee_urgency"]	= 0.5f;
+			_changeFactors["poo_urgency"]	= 0.5f;
 			_resetFactors = new List<string>();
 			config = Utility.Config.GetInstance();
 	}

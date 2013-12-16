@@ -52,7 +52,7 @@ namespace OpenCog.Map
 
 #endregion
 public class OCMap : OCSingletonMonoBehaviour<OCMap>
-{
+{ 
 
 	//---------------------------------------------------------------------------
 
@@ -206,7 +206,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		get {return _WaypointsSceneObject;}
 	}
 		
-	public new static OCMap Instance
+	public new static OCMap Instance 
 	{
 		get
 		{
@@ -355,7 +355,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		
 	}
 
-	public bool IsPathOpen (UnityEngine.Transform characterTransform, float characterHeight, PathDirection intendedDirection, Vector3i targetPosition = default(Vector3i))
+	public bool IsPathOpen (UnityEngine.Transform characterTransform, float characterHeight, PathDirection intendedDirection, Vector3i targetPosition)
 	{
 		bool bPathIsOpen = false;
 		

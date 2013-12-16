@@ -438,6 +438,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardDrop
+			, default(Vector3i)
 			)
 		;
 	}
@@ -454,6 +455,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardClimb
+			, default(Vector3i)
 			)
 		;
 	}
@@ -470,6 +472,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardRun
+			, default(Vector3i)
 			)
 		;
 	}			
@@ -486,6 +489,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardJump
+			, default(Vector3i)
 			)
 		;
 	}
@@ -502,6 +506,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardWalk
+			, default(Vector3i)
 			)
 		;
 	}
@@ -518,6 +523,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardBlockEmpty
+			, default(Vector3i)
 			)
 		;
 	}
@@ -551,6 +557,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardBlockSolid
+			, default(Vector3i)
 			)
 		;
 	}
