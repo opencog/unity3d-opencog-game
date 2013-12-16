@@ -90,6 +90,8 @@ public class OCDestroyBlockEffect : OCMonoBehaviour
 			OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
 					
 			OCBlock blockType = map.GetBlock(point.Value).block;
+
+			map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
 			
 			foreach(OCGoalController goalController in goalControllers)
 			{
@@ -99,7 +101,6 @@ public class OCDestroyBlockEffect : OCMonoBehaviour
 				}
 			}
 			
-			map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
 		}
 	}
 
