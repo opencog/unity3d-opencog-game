@@ -1821,9 +1821,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						goalController.BlockType = "Hearth";
 						goalController.FindGoalBlockPositionInChunks(_map.Chunks);
 					
-					} else if(actionName == "destroy")
+					} else if(actionName == "destroy" || actionName == "create")
 					{
-						console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy block at [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+						console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy/create block at [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						
 						//actionArguments.EndTarget = vectorGameObject;
 						actionArguments.EndTarget = GameObject.Find("EndPointStub");
