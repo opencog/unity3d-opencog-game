@@ -437,12 +437,13 @@ public class OCObjectMapInfo
 
 			if (gameObject.tag == "OCNPC" || gameObject.tag == "OCAGI" || gameObject.tag == "Player")
 			{
-				if (_height > 1.0f) // just to make sure that the center point of the character will not be in the block where the feet are
+				if (_height > 1.1f) // just to make sure that the center point of the character will not be in the block where the feet are
 				{
 					this.position = new UnityEngine.Vector3(this.position.x, this.position.y, this.position.z + 1.0f);	
 				}
 			}
-			
+
+						
 			if (gameObject.name == "Hearth")
 			{
 				this.AddProperty("petHome", "TRUE", System.Type.GetType("System.Boolean"));	
@@ -480,7 +481,16 @@ public class OCObjectMapInfo
 			if (gameObjectName.Contains ("("))
 				gameObjectName = gameObjectName.Remove (gameObjectName.IndexOf ('('));
 
-			this.AddProperty ("class", gameObjectName, System.Type.GetType("System.String"));
+
+
+			// For Einstein puzzle
+			if (gameObject.name.Contains("_man"))
+			{
+				_id = _name;
+				this.AddProperty ("class", "people", System.Type.GetType("System.String"));
+			}
+			else
+			    this.AddProperty ("class", gameObjectName, System.Type.GetType("System.String"));
 		}
 		
 		public OCObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
