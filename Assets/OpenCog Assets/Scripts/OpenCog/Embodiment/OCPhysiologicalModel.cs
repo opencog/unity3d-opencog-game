@@ -230,6 +230,9 @@ public class OCPhysiologicalModel : OCMonoBehaviour
 		_basicFactorMap["thirst"] = new BasicPhysiologicalFactor("thirst", 0.0, _config.GetInt("DRINK_STOPS_PER_DAY"), _millisecondsPerTick);
 		_basicFactorMap["pee_urgency"] = new BasicPhysiologicalFactor("pee_urgency", 0.0, _config.GetInt("PEE_STOPS_PER_DAY"), _millisecondsPerTick);
 		_basicFactorMap["poo_urgency"] = new BasicPhysiologicalFactor("poo_urgency", 0.0, _config.GetInt("POO_STOPS_PER_DAY"), _millisecondsPerTick);
+		
+		//_basicFactorMap["energy"] = new BasicPhysiologicalFactor("energy", 0.0, _config.GetInt("ENERGY_STOPS_PER_DAY"), _millisecondsPerTick);
+		//_basicFactorMap["fitness"] = new BasicPhysiologicalFactor("fitness", 0.0, _config.GetInt("FITNESS_STOPS_PER_DAY"), _millisecondsPerTick);
 
 		_basicFactorList = new List<string>();
 		_basicFactorList.AddRange(_basicFactorMap.Keys);

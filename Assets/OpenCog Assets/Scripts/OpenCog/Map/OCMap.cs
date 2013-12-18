@@ -52,7 +52,7 @@ namespace OpenCog.Map
 
 #endregion
 public class OCMap : OCSingletonMonoBehaviour<OCMap>
-{
+{ 
 
 	//---------------------------------------------------------------------------
 
@@ -206,7 +206,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		get {return _WaypointsSceneObject;}
 	}
 		
-	public new static OCMap Instance
+	public new static OCMap Instance 
 	{
 		get
 		{
@@ -355,7 +355,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		
 	}
 
-	public bool IsPathOpen (UnityEngine.Transform characterTransform, float characterHeight, PathDirection intendedDirection)
+	public bool IsPathOpen (UnityEngine.Transform characterTransform, float characterHeight, PathDirection intendedDirection, Vector3i targetPosition)
 	{
 		bool bPathIsOpen = false;
 		
@@ -461,6 +461,14 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			if(GetBlock(viForwardChestHigh).IsSolid() || GetBlock(viForwardKneeHigh).IsSolid() || GetBlock(viForwardOneAboveHead).IsSolid())
 				bPathIsOpen = true;
 			break;
+			case PathDirection.AdjacentBlockEmpty:
+				if(GetBlock(targetPosition).IsEmpty())
+					bPathIsOpen = true;
+				break;
+			case PathDirection.AdjacentBlockSolid:
+				if(GetBlock(targetPosition).IsSolid())
+					bPathIsOpen = true;
+				break;
 		default:
 			Debug.Log ("Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
 			break;
@@ -764,7 +772,9 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		ForwardJump,
 		ForwardDrop,
 		ForwardBlockEmpty,
-		ForwardBlockSolid
+		ForwardBlockSolid,
+		AdjacentBlockEmpty,
+		AdjacentBlockSolid
 	};
 
 	//---------------------------------------------------------------------------

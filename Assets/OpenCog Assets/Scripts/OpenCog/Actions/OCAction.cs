@@ -438,6 +438,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardDrop
+			, default(Vector3i)
 			)
 		;
 	}
@@ -454,6 +455,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardClimb
+			, default(Vector3i)
 			)
 		;
 	}
@@ -470,6 +472,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardRun
+			, default(Vector3i)
 			)
 		;
 	}			
@@ -486,6 +489,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardJump
+			, default(Vector3i)
 			)
 		;
 	}
@@ -502,6 +506,7 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardWalk
+			, default(Vector3i)
 			)
 		;
 	}
@@ -518,9 +523,27 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardBlockEmpty
+			, default(Vector3i)
 			)
 		;
 	}
+
+			public static bool IsPathOpenForSourceAdjacentBlockEmpty(OCAction action, OCActionArgs args)
+			{
+				OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+				
+				CharacterController charController = 
+					args.Source.GetComponent<CharacterController>();
+				
+				return 
+					map.IsPathOpen
+						(	args.Source.transform
+						 , charController.height
+						 , OCMap.PathDirection.AdjacentBlockEmpty
+						 , VectorUtil.Vector3ToVector3i(args.EndTarget.transform.position)
+						 )
+						;
+			}
 
 	public static bool IsPathOpenForSourceForwardBlockSolid(OCAction action, OCActionArgs args)
 	{
@@ -534,14 +557,41 @@ public class OCAction : OCMonoBehaviour
 			(	args.Source.transform
 			, charController.height
 			, OCMap.PathDirection.ForwardBlockSolid
+			, default(Vector3i)
 			)
 		;
+	}
+
+	public static bool IsPathOpenForSourceAdjacentBlockSolid(OCAction action, OCActionArgs args)
+	{
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		
+		CharacterController charController = 
+			args.Source.GetComponent<CharacterController>();
+		
+		return 
+			map.IsPathOpen
+				(	args.Source.transform
+				 , charController.height
+				 , OCMap.PathDirection.AdjacentBlockSolid
+				 , VectorUtil.Vector3ToVector3i(args.EndTarget.transform.position)
+				 )
+				;
 	}
 
 //	public static bool IsPathNotOpenForSourceForwardBlock(OCAction action, OCActionArgs args)
 //	{
 //		return !IsPathOpenForSourceForwardBlock(action, args);
 //	}
+
+	public static bool IsEndTargetAdjacent(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+
+		Vector3 distance = targetPosition - sourcePosition;
+		return distance.sqrMagnitude <= 2.0f + float.Epsilon;
+	}
 
 	public static bool IsEndTargetForward(OCAction action, OCActionArgs args)
 	{
@@ -957,23 +1007,29 @@ public class OCAction : OCMonoBehaviour
 
 		foreach(OCDestroyBlockEffect dbfx in _DestroyBlockEffects)
 		{
-			Vector3i forward = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward);
-			Vector3i forwardUp = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + _Source.transform.up);
-			Vector3i forwardUp2x = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + 2*_Source.transform.up);	
-					
-			OCBlockData forwardBlock = _Map.GetBlock(forward);
-			OCBlockData forwardUpBlock = _Map.GetBlock(forwardUp);
-			OCBlockData forwardUp2xBlock = _Map.GetBlock(forwardUp2x);
-					
-			dbfx.DestroyBlock(forward);
-			dbfx.DestroyBlock(forwardUp);
-			dbfx.DestroyBlock(forwardUp2x);
+//			Vector3i forward = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward);
+//			Vector3i forwardUp = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + _Source.transform.up);
+//			Vector3i forwardUp2x = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward + 2*_Source.transform.up);	
+//					
+//			OCBlockData forwardBlock = _Map.GetBlock(forward);
+//			OCBlockData forwardUpBlock = _Map.GetBlock(forwardUp);
+//			OCBlockData forwardUp2xBlock = _Map.GetBlock(forwardUp2x);
+//					
+//			dbfx.DestroyBlock(forward);
+//			dbfx.DestroyBlock(forwardUp);
+//			dbfx.DestroyBlock(forwardUp2x);
+				
+			Vector3i targetPosition = VectorUtil.Vector3ToVector3i(args.EndTarget.transform.position);
+					OCBlockData targetBlock = _Map.GetBlock(targetPosition);
+
+					dbfx.DestroyBlock(targetPosition);
 					
 			args.EndTarget.transform.position = Vector3.zero;
 			args.StartTarget.transform.position = Vector3.zero;
 					
 			// This is just some example code for you Lake, that you can use to give energy to the robot after consuming a battery.
-			if((forwardBlock.block != null && forwardBlock.block.GetName() == "Battery") || (forwardUpBlock.block != null && forwardUpBlock.block.GetName() == "Battery") || (forwardUp2xBlock.block != null && forwardUp2xBlock.block.GetName() == "Battery"))
+			//if((forwardBlock.block != null && forwardBlock.block.GetName() == "Battery") || (forwardUpBlock.block != null && forwardUpBlock.block.GetName() == "Battery") || (forwardUp2xBlock.block != null && forwardUp2xBlock.block.GetName() == "Battery"))
+					if(targetBlock.block != null && targetBlock.block.GetName() == "Battery")
 			{
 				UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
 		

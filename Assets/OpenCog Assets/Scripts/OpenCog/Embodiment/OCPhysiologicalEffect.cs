@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using UnityEngine;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -43,7 +44,7 @@ namespace OpenCog.Embodiment
 [Serializable]
 	
 #endregion
-public class OCPhysiologicalEffect : OCMonoBehaviour
+public class OCPhysiologicalEffect : OCScriptableObject
 {
 
 	//---------------------------------------------------------------------------
@@ -54,19 +55,19 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 	
 	private CostLevel _costLevel;
 
-	private float _energyIncrease = 0.0f;
+	private float _energyIncrease;
 
-	private float _fitnessChange = 0.0f;
+	private float _fitnessChange;
 
-	private OCPhysiologicalModel.AvatarMode _newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
+	private OCPhysiologicalModel.AvatarMode _newAvatarMode;
+		
+	private Dictionary<string, float> _changeFactors;
 
-	private Dictionary<string, float> _changeFactors = new Dictionary<string,float>();
-
-	private List<string> _resetFactors = new List<string>();
+	private List<string> _resetFactors;
 
 	private float BASE_ENERGY_COST;
 
-	private Utility.Config config = Utility.Config.GetInstance();
+	private Utility.Config config;
 
 	//---------------------------------------------------------------------------
 
@@ -89,6 +90,12 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 		get { return _fitnessChange; }
 		set { _fitnessChange = value; }
 	}
+
+	public CostLevel CostLevelProp 
+	{
+		get { return _costLevel; }
+		set { _costLevel = value; }
+	}
 			
 	//---------------------------------------------------------------------------
 
@@ -99,6 +106,22 @@ public class OCPhysiologicalEffect : OCMonoBehaviour
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+
+	public void OnEnable()
+	{
+			_energyIncrease = 0.0f;
+			_fitnessChange = 0.0f;
+			_newAvatarMode = OCPhysiologicalModel.AvatarMode.ACTIVE;
+			_changeFactors = new Dictionary<string,float>();
+			_changeFactors["hunger"] = 0.5f;
+			_changeFactors["thirst"] = 0.5f;
+			//_changeFactors["energy"] = 0.5f;
+			//_changeFactors["fitness"] = 0.5f;
+			_changeFactors["pee_urgency"]	= 0.5f;
+			_changeFactors["poo_urgency"]	= 0.5f;
+			_resetFactors = new List<string>();
+			config = Utility.Config.GetInstance();
+	}
 
 	public void ApplyEffect(OCPhysiologicalModel model)
 	{
