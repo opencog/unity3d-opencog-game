@@ -81,6 +81,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	, { "jump_toward", TreeType.Character_Move }
 	, { "BuildBlockAtPosition", TreeType.Character_Create }
 	, { "MoveToCoordinate", TreeType.Character_Move }
+	, { "build_block", TreeType.Character_Create }
 	};
 			
 	// Assume that there's just one behaviour we'd like to execute at a given time
@@ -727,6 +728,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					if(_step.Arguments.ActionPlanID != null)
 					{
 						OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
+						OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
+
+						if(fadeOut != null)
+							fadeOut.enabled = true;
 					}
 				}
 						
@@ -748,6 +753,12 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //							OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);			
 								
 						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded);
+
+						OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
+						
+						if(fadeOut != null)
+							fadeOut.enabled = true;
+
 						_LastPlanID = null;		
 					}
 					_step = null;	
