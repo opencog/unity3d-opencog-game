@@ -730,6 +730,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						{
 							_PlanSucceeded = true;
 						}
+						else
+							_PlanSucceeded = false;
 					}
 							
 					if(_step.Behaviour.Name == "Character.Destroy" || _step.Arguments.ActionName == "eat")

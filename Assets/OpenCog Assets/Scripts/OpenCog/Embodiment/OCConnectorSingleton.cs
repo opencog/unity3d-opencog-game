@@ -1760,7 +1760,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			OCAction.OCActionArgs actionArguments = new OCAction.OCActionArgs();
 			
 			actionArguments.StartTarget = GameObject.Find("StartPointStub");
-			actionArguments.StartTarget.transform.position = GameObject.FindGameObjectWithTag("OCAGI").transform.position;			
+			actionArguments.StartTarget.transform.position = GameObject.FindGameObjectWithTag("OCAGI").transform.position;		
+			actionArguments.EndTarget = null;
 			
 			// 'action' elements contain 'params'
 			foreach(XmlNode actionParameterNode in actionParameters)
