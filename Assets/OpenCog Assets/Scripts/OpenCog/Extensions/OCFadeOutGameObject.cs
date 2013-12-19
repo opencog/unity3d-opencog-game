@@ -5,7 +5,7 @@ public class OCFadeOutGameObject : MonoBehaviour
 {
 	private float creationTime;
 	public float lifeTime = 2.0f;
-	public static float fadeTime = 2.0f;
+	public static float fadeTime = 1.0f;
 	private bool fading = false;
 	private float fadeStart;
 
