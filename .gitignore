@@ -202,6 +202,12 @@ Assembly-UnityScript-vs.unityproj
 Assembly-UnityScript.pidb
 Assembly-UnityScript.unityProj
 
+#Other system / generated files
+*.lock
+*.lock.meta
+*.log
+
+
 #############
 ## Signed Libraries
 #############
