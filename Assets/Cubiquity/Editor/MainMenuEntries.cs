@@ -51,18 +51,18 @@ namespace Cubiquity
 			}
 		}
 		
-		[MenuItem ("GameObject/Create Other/Colored Cubes Volume")]
-		static void CreateColoredCubesVolume()
-		{
-            AnvilWorld world = ColoredCubesVolume.World;
-            ColoredCubesVolume.SetRowColomuns(world);
-            int width = 16 * ColoredCubesVolume.NumberOfColumns;
-            int height = 10;
-            int depth = 16 * ColoredCubesVolume.NumberOfRows;
+        //[MenuItem ("GameObject/Create Other/Colored Cubes Volume")]
+        //static void CreateColoredCubesVolume()
+        //{
+        //    AnvilWorld world = ColoredCubesVolume.World;
+        //    ColoredCubesVolume.SetRowColomuns(world);
+        //    int width = 16 * ColoredCubesVolume.NumberOfColumns;
+        //    int height = 10;
+        //    int depth = 16 * ColoredCubesVolume.NumberOfRows;
 			
-			ColoredCubesVolumeData data = ColoredCubesVolumeData.CreateEmptyVolumeData(new Region(0, 0, 0, width-1, height-1, depth-1));
-            ColoredCubesVolume.CreateGameObject(data);
-            ColoredCubesVolume.MCSubstrate(data);
-		}
+        //    ColoredCubesVolumeData data = ColoredCubesVolumeData.CreateEmptyVolumeData(new Region(0, 0, 0, width-1, height-1, depth-1));
+        //    ColoredCubesVolume.CreateGameObject(data);
+        //    ColoredCubesVolume.MCSubstrate(data);
+        //}
 	}
 }
