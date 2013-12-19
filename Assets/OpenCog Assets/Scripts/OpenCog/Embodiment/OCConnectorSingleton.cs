@@ -1791,11 +1791,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //							z += 0.5f;
 //						}
 					
-//						string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
+						string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
 							
-//						UnityEngine.GameObject vectorGameObject = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_map.WaypointPrefab);
-//						vectorGameObject.name = gameObjectString;
-//						vectorGameObject.transform.parent = _map.WaypointsSceneObject.transform;
+						UnityEngine.GameObject vectorGameObject = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_map.WaypointPrefab);
+						vectorGameObject.name = gameObjectString;
+						vectorGameObject.transform.parent = _map.WaypointsSceneObject.transform;
 					
 						// Swapping Y and Z!!
 					
@@ -1804,7 +1804,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						// UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
 					
 						// SWAPPED:
-						//vectorGameObject.transform.position = new Vector3(x, z, y);
+						vectorGameObject.transform.position = new Vector3(x, z, y);
+					TextMesh textMesh = vectorGameObject.GetComponentInChildren<TextMesh>();
+					textMesh.text = sequence.ToString();
 						//UnityEngine.Debug.Log ("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
 
 					if(actionName == "walk")
@@ -1812,21 +1814,21 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 						console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 					
-						//actionArguments.EndTarget = vectorGameObject;
-						actionArguments.EndTarget = GameObject.Find("EndPointStub");
+						actionArguments.EndTarget = vectorGameObject;
+						//actionArguments.EndTarget = GameObject.Find("EndPointStub");
 						actionArguments.EndTarget.transform.position = new Vector3(x, z, y);
 						
 
-						OCGoalController goalController = _actionController.gameObject.GetComponent<OCGoalController>();
-						goalController.BlockType = "Hearth";
-						goalController.FindGoalBlockPositionInChunks(_map.Chunks);
+//						OCGoalController goalController = _actionController.gameObject.GetComponent<OCGoalController>();
+//						goalController.BlockType = "Hearth";
+//						goalController.FindGoalBlockPositionInChunks(_map.Chunks);
 					
-					} else if(actionName == "destroy" || actionName == "create")
+					} else if(actionName == "destroy" || actionName == "build_block")
 					{
 						console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy/create block at [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						
-						//actionArguments.EndTarget = vectorGameObject;
-						actionArguments.EndTarget = GameObject.Find("EndPointStub");
+						actionArguments.EndTarget = vectorGameObject;
+						//actionArguments.EndTarget = GameObject.Find("EndPointStub");
 						actionArguments.EndTarget.transform.position = new Vector3(x, z, y);
 					}
 					
@@ -1875,7 +1877,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							}	
 
 							OCGoalController goalController = _actionController.gameObject.GetComponent<OCGoalController>();
-							goalController.BlockType = "battery";
+							goalController.BlockType = "Battery";
 							goalController.FindGoalBlockPositionInChunks(_map.Chunks);
 						} else
 						{
