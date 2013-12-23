@@ -32,6 +32,7 @@ Trees:
 	Character_GirlBehaviour
 	Character_GhostBehaviour
 	Character_EmoteShow
+	Character_TurnLeftOrRight
 	Unknown
 
 Contexts:

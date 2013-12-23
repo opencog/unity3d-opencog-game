@@ -1810,7 +1810,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					textMesh.text = sequence.ToString();
 						//UnityEngine.Debug.Log ("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
 
-					if(actionName == "walk")
+					if(actionName == "walk" || actionName == "jump_toward")
 					{
 
 						console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);

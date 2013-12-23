@@ -83,7 +83,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 	private Dictionary<string, TreeType> _ActionNameDictionary = new Dictionary<string, TreeType>()
 	{ { "walk", TreeType.Character_Move }
-	, { "grab", TreeType.Character_Move }
+	, { "grab", TreeType.Character_TurnLeftOrRight }
 	, { "eat", TreeType.Character_Destroy }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
@@ -100,7 +100,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	private List< OCActionPlanStep >
 		_ActionPlanList;
 			
-	private Queue< OCActionPlanStep > _ActionPlanQueue;
+	private LinkedList< OCActionPlanStep > _ActionPlanQueue;
 			
 	private bool _PlanSucceeded = true;
 			
@@ -156,7 +156,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	public IEnumerator Start()
 	{
 		_TreeTypeDictionary = new Dictionary<TreeType, Tree>();
-		_ActionPlanQueue = new Queue<OCActionPlanStep>();
+		_ActionPlanQueue = new LinkedList<OCActionPlanStep>();
 				
 		foreach(TreeType type in Enum.GetValues( typeof(TreeType) ).Cast<TreeType>())
 		{
@@ -196,7 +196,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
 		firstStep.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
 
-		_ActionPlanQueue.Enqueue(firstStep);		
+		_ActionPlanQueue.AddLast(firstStep);		
 
 		RunningActions = new List<string>();
 		//RunningActions.Add("StandIdleShow");
@@ -658,7 +658,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		OCActionPlanStep actionPlanStep = new OCActionPlanStep();
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
-		_ActionPlanQueue.Enqueue(actionPlanStep);
+		_ActionPlanQueue.AddLast(actionPlanStep);
 		Debug.Log("Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
 	}
 			
@@ -674,7 +674,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		if(_step == null && _ActionPlanQueue.Count != 0)
 		{
-			_step = _ActionPlanQueue.Dequeue();
+			_step = _ActionPlanQueue.First();
+			_ActionPlanQueue.RemoveFirst();
+			Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 		} else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
 			_PlanSucceeded = true;
@@ -729,9 +731,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						if(sourcePosition == endPosition)
 						{
 							_PlanSucceeded = true;
-						}
-						else
+						} else
+						{
 							_PlanSucceeded = false;
+						}
 					}
 							
 					if(_step.Behaviour.Name == "Character.Destroy" || _step.Arguments.ActionName == "eat")
@@ -739,20 +742,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						_PlanSucceeded = endPosition == Vector3.zero;
 					}
 							
-					if(_step.Arguments.ActionName == "grab")
-					{
-						_PlanSucceeded = endPosition != startPosition && endPosition != null;
-					}
+//					if(_step.Arguments.ActionName == "grab")
+//					{
+//						_PlanSucceeded = endPosition != startPosition && endPosition != null;
+//					}
 							
 					if(_step.Arguments.ActionPlanID != null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries))
 					{
 						OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
-						OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
-
-						if(fadeOut != null)
-						{
-							fadeOut.enabled = true;
-						}
 
 						if(_step.Behaviour.Name != "Character.IdleShow" && !_step.Behaviour.Name.Contains("Behaviour"))
 						{
@@ -769,10 +766,22 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				_step.Behaviour.Reset();
 
 				// if we failed, retry last step
-				if(_PlanSucceeded == false)
+				if(_PlanSucceeded == false && OCActionPlanStep.MaxRetries > _step.Retry)
 				{
-					_ActionPlanQueue.Enqueue(_step);
+					_ActionPlanQueue.AddFirst(_step);
 					_step.Retry += 1;
+				} else if(_PlanSucceeded == false && OCActionPlanStep.MaxRetries <= _step.Retry)
+				{
+					_ActionPlanQueue.Clear();
+					_step = null;
+				} else
+				{
+					OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
+					
+					if(fadeOut != null)
+					{
+						fadeOut.enabled = true;
+					}
 				}
 						
 				if(_ActionPlanQueue.Count == 0)
@@ -786,11 +795,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 								
 						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded);
 
-						OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
-						
-						if(fadeOut != null)
+						if(_step != null)
 						{
-							fadeOut.enabled = true;
+							OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
+						
+							if(fadeOut != null)
+							{
+								fadeOut.enabled = true;
+							}
 						}
 
 						_LastPlanID = null;		
@@ -798,7 +810,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					_step = null;	
 				} else if(_LastPlanID != null)
 				{
-					_step = _ActionPlanQueue.Dequeue();
+					_step = _ActionPlanQueue.First();
+					_ActionPlanQueue.RemoveFirst();
+					Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 					if(_LastPlanID != _step.Arguments.ActionPlanID)
 					{
 						Debug.LogError("We've changed plans without reporting back to OpenCog!");
@@ -806,7 +820,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				} else
 				{	
 					_LastPlanID = _step.Arguments.ActionPlanID;
-					_step = _ActionPlanQueue.Dequeue();		
+					_step = _ActionPlanQueue.First();
+					_ActionPlanQueue.RemoveFirst();
+					Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 				}
 			}
 					
