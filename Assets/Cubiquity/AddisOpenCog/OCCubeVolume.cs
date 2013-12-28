@@ -9,26 +9,19 @@ using System.Collections.Generic;
 namespace OCCubiquity
 {
 
-    public class OCCubeVolume
+    public class OCCubeVolume:SubstrateIdToCubiquityColor
     {
         #region public properties
 
         public static string MapName = "TestScene1";
-        public static Cubiquity.ColoredCubesVolumeData Data
-        {
-            get;
-            set;
-        }
         public static string Dir
         {
             get
             {
-
                 string path = Path.Combine(Application.streamingAssetsPath, MapName);
                 return path;
             }
         }
-
 
         public static AnvilWorld World
         {
@@ -38,7 +31,6 @@ namespace OCCubiquity
                 if (Directory.Exists(Dir))
                 {
                     world = AnvilWorld.Open(Dir);
-
                 }
                 else
                 {
@@ -49,9 +41,6 @@ namespace OCCubiquity
         }
 
         #endregion
-
-
-
 
         public static int GetRegions()
         {
@@ -65,32 +54,23 @@ namespace OCCubiquity
             return numberOfRegions;
         }
 
-        public static void MCSubstrate(Cubiquity.ColoredCubesVolumeData data)
+        public  void MCSubstrate(Cubiquity.ColoredCubesVolumeData data)
         {
             if (Dir == null)
             {
                 return;
             }
-
             IRegionManager irm = World.GetRegionManager();
-            IChunkManager icm = World.GetChunkManager();
-            Data = data;
-            SubstrateIdToCubiquityColor.ColorType.Clear();
-            SubstrateIdToCubiquityColor.SetColor();
+            IChunkManager icm = World.GetChunkManager();            
+            SetColor();
             CreateCubiquityRegion(data, icm);
-
-
         }
 
-        public static void CreateCubiquityRegion(Cubiquity.ColoredCubesVolumeData data, IChunkManager icm)
+        public  void CreateCubiquityRegion(Cubiquity.ColoredCubesVolumeData data, IChunkManager icm)
         {
             AnvilRegionManager arm = World.GetRegionManager();
-
-
             foreach (AnvilRegion ar in arm)
             {
-
-
                 for (int j = 0; j < 32; j++)
                 {
                     for (int i = 0; i < 32; i++)
@@ -100,14 +80,9 @@ namespace OCCubiquity
                         {
                             DrawAchunk(data, (i), (j), chunk);
                         }
-
                     }
                 }
-
-
-
             }
-
         }
 
 
@@ -123,7 +98,7 @@ namespace OCCubiquity
         /// </param>
         /// <param name="chunk">a chunk reference for Substrate blocks</param>
         /// <remarks> the first row will be changed until all the columns are drawn fully in Unity </remarks>
-        public static void DrawAchunk(Cubiquity.ColoredCubesVolumeData data, int col, int row, ChunkRef chunk)
+        public  void DrawAchunk(Cubiquity.ColoredCubesVolumeData data, int col, int row, ChunkRef chunk)
         {
             int StartColumns = 16 * (col);
             int StartRows = 16 * (row);
@@ -133,31 +108,19 @@ namespace OCCubiquity
                 {
                     for (int z = StartColumns; z < 16 * (col + 1); z++)
                     {
-
-
-                        int blockId = chunk.Blocks.GetID(x % 16, y, z % 16);
-                        // Debug.Log(x + "   " + y + "   " + z + " color  " + color);
+                        int blockId = chunk.Blocks.GetID(x % 16, y, z % 16);                      
                         if (blockId != 0)
                         {
-
                             if (blockId > 150)
                                 data.SetVoxel(z, y, x, (Cubiquity.QuantizedColor)Color.black);
-
                             Color32 blockColor = MapColor(blockId, z, y, x);
-
                             if (blockColor.r != 0 && blockColor.g != 0 && blockColor.b != 0 && blockColor.a != 0)
                             {
-
                                 data.SetVoxel(z, y, x, (Cubiquity.QuantizedColor)blockColor);
-
                             }
-
-
                         }
                     }
-
                 }
-
             }
         }
 
@@ -170,9 +133,9 @@ namespace OCCubiquity
         /// <param name="id">Substrate MyColor id to be mapped</param>
         /// <returns></returns>
 
-        public static Color32 MapColor(int id, int x, int y, int z)
+        public  Color32 MapColor(int id, int x, int y, int z)
         {
-            return SubstrateIdToCubiquityColor.MapIdToColor(id, x, y, z);
+            return MapIdToColor(id, x, y, z);
         }
 
         #endregion
