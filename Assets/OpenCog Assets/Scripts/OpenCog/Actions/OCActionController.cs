@@ -713,6 +713,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
 					Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
 					Vector3 sourcePosition = _step.Arguments.Source.transform.position;
+							sourcePosition.y = sourcePosition.y - 0.5f;
 								
 					Vector3 startToEnd = endPosition - startPosition;
 					Vector3 sourceToEnd = endPosition - sourcePosition;		
@@ -727,8 +728,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 								
 						// use manhattan distance
 						//_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
-								
-						if(sourcePosition == endPosition)
+
+						if(VectorUtil.AreVectorsEqual(sourcePosition, endPosition))
 						{
 							_PlanSucceeded = true;
 						} else

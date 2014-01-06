@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using UnityEngine;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -76,6 +77,12 @@ public class VectorUtil : OCMonoBehaviour
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+
+	public static bool AreVectorsEqual(Vector3 left, Vector3 right)
+	{
+			Vector3 diffVector = right - left;
+			return Math.Abs(diffVector.x) <= 0.5f && Math.Abs(diffVector.y) <= 0.5f && Math.Abs(diffVector.z) <= 0.5f;
+	}
 
 	public static double NormalizeAngle(double angle)
 	{

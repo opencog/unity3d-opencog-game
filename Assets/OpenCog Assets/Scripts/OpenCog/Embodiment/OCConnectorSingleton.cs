@@ -1952,6 +1952,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			actionArguments.ActionPlanID = _currentPlanId;
 			actionArguments.SequenceID = sequence;
 			actionArguments.Source = UnityEngine.GameObject.FindGameObjectWithTag("OCAGI");
+			//actionArguments.Source.transform.SetY(actionArguments.Source.transform.position.y - 0.5f);
 			
 			// Lake's function here.
 			if(actionName != "say")
