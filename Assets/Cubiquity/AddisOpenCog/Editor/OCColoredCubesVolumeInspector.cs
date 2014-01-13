@@ -44,6 +44,8 @@ namespace OCCubiquity
                 if (GUILayout.Button("Fill All"))
                 {
                     scLoadedObject._cbColors = scLoadedObject._cbColors.Select(C => C = ForAllColors).ToList();
+                                       
+
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Separator();
@@ -58,8 +60,10 @@ namespace OCCubiquity
 
                 if (GUI.changed)
                 {
+                    EditorUtility.SetDirty(target);
                     EditorUtility.SetDirty(scLoadedObject);
                     EditorUtility.SetDirty(SubstrateIdToCubiquityColor.data);
+                   
                 }
             }
         }

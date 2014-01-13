@@ -27,12 +27,15 @@ namespace OCCubiquity
             {
                 foreach (Point p in cbobject._cb3DpointsPlusId)
                 {
-                    if (p.id == id)
-                    {
-                        SubstrateIdToCubiquityColor.data.SetVoxel(p.x, p.y, p.z, (Cubiquity.QuantizedColor)cubeColor);
-                    }
+                    
+                        if (p.id == id)
+                        {
+                            SubstrateIdToCubiquityColor.data.SetVoxel(p.x, p.y, p.z, (Cubiquity.QuantizedColor)cubeColor);
+                        }
+                    
                 }
             }
         }
+       
     }
 }
