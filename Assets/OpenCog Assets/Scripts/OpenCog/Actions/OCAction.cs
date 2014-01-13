@@ -143,7 +143,11 @@ public class OCAction : OCMonoBehaviour
 				}
 				shouldStart &= precondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldStart == false)
+				{
+					if(precondition.Method.Name != "IsNoEndTargetOrNotAnimating") 
+						Debug.LogWarning("In OCAction.ShouldStart, Precondition Failed: " + precondition.Method.Name);
 					break;
+				}
 			}
 			return shouldStart;
 		}
@@ -590,7 +594,18 @@ public class OCAction : OCMonoBehaviour
 		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
 
 		Vector3 distance = targetPosition - sourcePosition;
-		return distance.sqrMagnitude <= 2.0f + float.Epsilon;
+		return distance.sqrMagnitude <= (1.4f + float.Epsilon);
+	}
+
+	public static bool IsEndTargetAdjacentBelow(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+
+		sourcePosition = sourcePosition - args.Source.gameObject.transform.up;
+		
+		Vector3 distance = targetPosition - sourcePosition;
+		return distance.sqrMagnitude <= (1.4f + float.Epsilon);
 	}
 
 	public static bool IsEndTargetForward(OCAction action, OCActionArgs args)
@@ -957,7 +972,10 @@ public class OCAction : OCMonoBehaviour
 
 		foreach(OCCreateBlockEffect cbfx in _CreateBlockEffects)
 		{
-			cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward));
+			if(cbfx.CreationPos == OCCreateBlockEffect.CreationPosition.Forward)
+				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward));
+			else if(cbfx.CreationPos == OCCreateBlockEffect.CreationPosition.ForwardBelow)
+				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward - _Source.transform.up));
 		}
 
 		//@TODO: Fix this hack...

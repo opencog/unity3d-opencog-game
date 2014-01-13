@@ -462,11 +462,11 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				bPathIsOpen = true;
 			break;
 			case PathDirection.AdjacentBlockEmpty:
-				if(GetBlock(targetPosition).IsEmpty())
+				if(GetBlock(viForwardKneeHigh).IsEmpty())
 					bPathIsOpen = true;
 				break;
 			case PathDirection.AdjacentBlockSolid:
-				if(GetBlock(targetPosition).IsSolid())
+				if(GetBlock(viForwardKneeHigh).IsSolid())
 					bPathIsOpen = true;
 				break;
 		default:

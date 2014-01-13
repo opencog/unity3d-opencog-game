@@ -41,7 +41,7 @@ Contexts:
 Branch priority groups:
 	Unknown
 
-Actions (17: 1 - 18):
+Actions (20: 1 - 21):
 	StandIdleShow (1)
 	FallIdleShow (2)
 	AngryEmoteShow (3)
@@ -52,16 +52,19 @@ Actions (17: 1 - 18):
 	RunForwardMove (8)
 	FallForwardMove (9)
 	FlyForwardMove (10)
-	StandTurnLeftMove (11)
-	StandTurnRightMove (12)
-	JumpUpMove (13)
-	JumpDownMove (14)
-	HoldRightHandCreate (15)
-	StrikeLeftHandDestroy (16)
-	StandIdleTell (17)
-	Unknown (18)
+	WalkForwardLeftMove (11)
+	WalkForwardRightMove (12)
+	StandTurnLeftMove (13)
+	StandTurnRightMove (14)
+	JumpUpMove (15)
+	JumpDownMove (16)
+	HoldRightHandCreate (17)
+	HoldRightHandCreateBelow (18)
+	StrikeLeftHandDestroy (19)
+	StandIdleTell (20)
+	Unknown (21)
 
-Decorators (0: 19 - 19):
-	Unknown (19)
+Decorators (0: 22 - 22):
+	Unknown (22)
 
 Agent classes:

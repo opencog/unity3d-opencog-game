@@ -71,8 +71,14 @@ public class OCCreateBlockEffect : OCMonoBehaviour
 
     //---------------------------------------------------------------------------
         
+		public enum CreationPosition
+		{
+			Forward,
+			ForwardBelow
+		} 
 
-            
+		public CreationPosition CreationPos;
+
     //---------------------------------------------------------------------------
 
     #endregion

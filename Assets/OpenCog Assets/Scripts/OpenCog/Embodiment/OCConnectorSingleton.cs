@@ -1792,11 +1792,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //							z += 0.5f;
 //						}
 					
-						string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
+					string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
 							
-						UnityEngine.GameObject vectorGameObject = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_map.WaypointPrefab);
-						vectorGameObject.name = gameObjectString;
-						vectorGameObject.transform.parent = _map.WaypointsSceneObject.transform;
+					UnityEngine.GameObject vectorGameObject = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_map.WaypointPrefab);
+					vectorGameObject.name = gameObjectString;
+					vectorGameObject.transform.parent = _map.WaypointsSceneObject.transform;
 					
 						// Swapping Y and Z!!
 					
@@ -1805,7 +1805,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						// UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
 					
 						// SWAPPED:
-						vectorGameObject.transform.position = new Vector3(x, z, y);
+					vectorGameObject.transform.position = new Vector3(x, z, y);
 					TextMesh textMesh = vectorGameObject.GetComponentInChildren<TextMesh>();
 					textMesh.text = sequence.ToString();
 						//UnityEngine.Debug.Log ("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
@@ -1887,7 +1887,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						}
 						
 							
-					} // if (actionName == "grab" || actionName == "eat"
+					} 
+					// if (actionName == "grab" || actionName == "eat"
 //						else
 //						{
 //							// I'll bet the section below does nothing. Go home 
@@ -1906,7 +1907,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 ////								}
 ////							}	
 //						}
-					
+
 					break;
 				case "string":
 //						XmlNodeList stringParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.VECTOR_ELEMENT);
@@ -1922,21 +1923,20 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 												
 							console.AddConsoleEntry(toSay, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						}
-					}
-					
+
 						// We need to set the target to the avatar I guess....
-					UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
-				
-					for(int iAGI = 0; iAGI < agiArray.Length; iAGI++)
-					{
-						UnityEngine.GameObject agiObject = agiArray[iAGI];
+						UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
 						
-						endPointStub.transform.position = agiObject.transform.position;
+						for(int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+						{
+							UnityEngine.GameObject agiObject = agiArray[iAGI];
 							
-						actionArguments.EndTarget = endPointStub;
-						
-						break;
+							endPointStub.transform.position = agiObject.transform.position;
+							
+							actionArguments.EndTarget = endPointStub;
+						}
 					}
+
 					
 					break;
 
