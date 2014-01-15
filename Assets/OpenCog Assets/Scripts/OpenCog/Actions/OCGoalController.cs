@@ -192,8 +192,8 @@ public class OCGoalController : OCMonoBehaviour
 
 			foreach(OCAction action in actions)
 			{
-				action.EndTarget.transform.position = Vector3.zero;
-				action.StartTarget.transform.position = Vector3.zero;
+				if(action.EndTarget != null) action.EndTarget.transform.position = Vector3.zero;
+				if(action.StartTarget != null) action.StartTarget.transform.position = Vector3.zero;
 			}
 		}
 	}
