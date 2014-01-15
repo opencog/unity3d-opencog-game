@@ -33,6 +33,7 @@ Trees:
 	Character_GhostBehaviour
 	Character_EmoteShow
 	Character_TurnLeftOrRight
+	Character_TurnAndCreate
 	Unknown
 
 Contexts:

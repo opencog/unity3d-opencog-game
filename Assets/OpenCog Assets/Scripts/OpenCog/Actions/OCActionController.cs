@@ -87,9 +87,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	, { "eat", TreeType.Character_Destroy }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
-	, { "BuildBlockAtPosition", TreeType.Character_Create }
+	, { "BuildBlockAtPosition", TreeType.Character_TurnAndCreate }
 	, { "MoveToCoordinate", TreeType.Character_Move }
-	, { "build_block", TreeType.Character_Create }
+	, { "build_block", TreeType.Character_TurnAndCreate }
 	};
 			
 	// Assume that there's just one behaviour we'd like to execute at a given time
@@ -180,9 +180,19 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					
 			foreach(OCAction action in actions)
 			{
-				if((action.FullName.Contains(treeName) || treeName.Contains("Behaviour")) 
-					&& !(treeName == "GhostBehaviour" && action.name.Contains("Create"))
-					&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy"))
+				if(((action.FullName.Contains(treeName) || treeName.Contains("Behaviour")) 
+						&& !(treeName == "GhostBehaviour" && action.name.Contains("Create"))
+						&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy")))
+					|| (treeName == "TurnAndCreate" && action.FullName == "HoldRightHandCreate")
+					|| (treeName == "TurnAndCreate" && action.FullName == "HoldRightHandCreateBelow")
+					|| (treeName == "TurnAndCreate" && action.FullName == "StandTurnLeftMove")
+					|| (treeName == "TurnAndCreate" && action.FullName == "StandTurnRightMove")
+					|| (treeName == "TurnAndCreate" && action.FullName == "StandIdleShow")
+					|| (treeName == "TurnAndCreate" && action.FullName == "FallIdleShow")
+				  || (treeName == "TurnLeftOrRight" && action.FullName == "StandTurnLeftMove")
+					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandTurnRightMove")
+					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandIdleShow")
+					|| (treeName == "TurnLeftOrRight" && action.FullName == "FallIdleShow")
 				  )
 				{
 					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);

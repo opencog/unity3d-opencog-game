@@ -144,7 +144,7 @@ public class OCAction : OCMonoBehaviour
 				shouldStart &= precondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldStart == false)
 				{
-					if(precondition.Method.Name != "IsNoEndTargetOrNotAnimating") 
+					if(precondition.Method.Name != "IsNoEndTargetOrNotAnimating" && precondition.Method.Name != "IsSourceNotRunningAction") 
 						Debug.LogWarning("In OCAction.ShouldStart, Precondition Failed: " + precondition.Method.Name);
 					break;
 				}
