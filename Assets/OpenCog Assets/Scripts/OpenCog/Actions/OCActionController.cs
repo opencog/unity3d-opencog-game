@@ -83,7 +83,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 	private Dictionary<string, TreeType> _ActionNameDictionary = new Dictionary<string, TreeType>()
 	{ { "walk", TreeType.Character_Move }
-	, { "grab", TreeType.Character_TurnLeftOrRight }
+	, { "grab", TreeType.Character_BothHandsTransfer }
 	, { "eat", TreeType.Character_Destroy }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
@@ -193,6 +193,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandTurnRightMove")
 					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandIdleShow")
 					|| (treeName == "TurnLeftOrRight" && action.FullName == "FallIdleShow")
+					|| (treeName == "BothHandsTransfer" && action.FullName == "HoldBothHandsTransfer")
 				  )
 				{
 					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
@@ -750,12 +751,12 @@ public class OCActionController : OCMonoBehaviour, IAgent
 							
 					if(_step.Behaviour.Name == "Character.Destroy" || _step.Arguments.ActionName == "eat")
 					{
-						_PlanSucceeded = endPosition == Vector3.zero;
+						_PlanSucceeded = (endPosition == Vector3.zero || _step.Arguments.EndTarget == null);
 					}
 
 					if(_step.Arguments.ActionName == "grab")
 					{
-						_PlanSucceeded = OCAction.IsEndTargetAhead(null, _step.Arguments);
+						_PlanSucceeded = OCAction.IsEndTargetCloseForward(null, _step.Arguments);
 					}
 							
 //					if(_step.Arguments.ActionName == "grab")
@@ -790,7 +791,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				{
 					_ActionPlanQueue.Clear();
 					_step = null;
-				} else
+				} else if(_step.Arguments.EndTarget)
 				{
 					OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
 					
@@ -811,7 +812,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 								
 						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded);
 
-						if(_step != null)
+						if(_step != null && _step.Arguments.EndTarget != null)
 						{
 							OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
 						

@@ -93,6 +93,7 @@ public class OCAction : OCMonoBehaviour
 	private List<OCAnimationEffect> _AnimationEffects;
 	private List<OCCreateBlockEffect> _CreateBlockEffects;
 	private List<OCDestroyBlockEffect> _DestroyBlockEffects;
+	private List<OCTransferBlockEffect> _TransferBlockEffects;
 
 	private OCActionController _ActionController;
 
@@ -144,7 +145,7 @@ public class OCAction : OCMonoBehaviour
 				shouldStart &= precondition(this, new OCActionArgs(_Source, _StartTarget, _EndTarget));
 				if(shouldStart == false)
 				{
-					if(precondition.Method.Name != "IsNoEndTargetOrNotAnimating" && precondition.Method.Name != "IsSourceNotRunningAction") 
+							if((this.FullName == "WalkForwardLeftMove" || this.FullName == "HoldBothHandsTransfer") && precondition.Method.Name != "IsNoEndTargetOrNotAnimating" && precondition.Method.Name != "IsSourceNotRunningAction") 
 						Debug.LogWarning("In OCAction.ShouldStart, Precondition Failed: " + precondition.Method.Name);
 					break;
 				}
@@ -257,6 +258,9 @@ public class OCAction : OCMonoBehaviour
 
 		_DestroyBlockEffects =
 			gameObject.GetComponentsInChildren<OCDestroyBlockEffect>().ToList();
+
+		_TransferBlockEffects =
+			gameObject.GetComponentsInChildren<OCTransferBlockEffect>().ToList();
 
 		_Map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).LastOrDefault();
 
@@ -515,6 +519,40 @@ public class OCAction : OCMonoBehaviour
 		;
 	}
 
+	public static bool IsPathOpenForSourceForwardLeftWalk(OCAction action, OCActionArgs args)
+	{
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		
+		CharacterController charController = 
+			args.Source.GetComponent<CharacterController>();
+		
+		return 
+			map.IsPathOpen
+				(	args.Source.transform
+				 , charController.height
+				 , OCMap.PathDirection.ForwardLeftWalk
+				 , default(Vector3i)
+				 )
+				;
+	}
+
+	public static bool IsPathOpenForSourceForwardRightWalk(OCAction action, OCActionArgs args)
+	{
+		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		
+		CharacterController charController = 
+			args.Source.GetComponent<CharacterController>();
+		
+		return 
+			map.IsPathOpen
+				(	args.Source.transform
+				 , charController.height
+				 , OCMap.PathDirection.ForwardRightWalk
+				 , default(Vector3i)
+				 )
+				;
+	}
+
 	public static bool IsPathOpenForSourceForwardBlockEmpty(OCAction action, OCActionArgs args)
 	{
 		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
@@ -597,6 +635,15 @@ public class OCAction : OCMonoBehaviour
 		return distance.sqrMagnitude <= (1.4f + float.Epsilon);
 	}
 
+	public static bool IsEndTargetAdjacentOrDiagonal(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		
+		Vector3 distance = targetPosition - sourcePosition;
+		return distance.sqrMagnitude <= (2.5f + float.Epsilon);
+	}
+
 	public static bool IsEndTargetAdjacentBelow(OCAction action, OCActionArgs args)
 	{
 		Vector3 sourcePosition = args.Source.gameObject.transform.position;
@@ -618,6 +665,28 @@ public class OCAction : OCMonoBehaviour
 		float projection = Vector3.Dot(distance, sourceForward);
 		return projection >= 0.5f;
 	}
+
+	public static bool IsEndTargetLeft(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
+		
+		Vector3 distance = targetPosition - sourcePosition;
+		float projection = Vector3.Dot(distance, sourceLeft);
+		return projection >= 0.5f;
+	}
+
+	public static bool IsEndTargetRight(OCAction action, OCActionArgs args)
+	{
+		Vector3 sourcePosition = args.Source.gameObject.transform.position;
+		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
+		Vector3 sourceRight = args.Source.gameObject.transform.right;
+		
+		Vector3 distance = targetPosition - sourcePosition;
+		float projection = Vector3.Dot(distance, sourceRight);
+		return projection >= 0.5f;
+	}
 			
 	public static bool IsEndTargetCloseForward(OCAction action, OCActionArgs args)
 	{
@@ -627,7 +696,7 @@ public class OCAction : OCMonoBehaviour
 				
 		Vector3 distance = targetPosition - sourcePosition;
 		float projection = Vector3.Dot(distance, sourceForward);
-		return projection >= 0.5f && projection < 3.5;
+		return projection >= 0.25f && projection < 3.5;
 	}
 			
 	public static bool IsEndTargetFarForward(OCAction action, OCActionArgs args)
@@ -976,6 +1045,8 @@ public class OCAction : OCMonoBehaviour
 				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward));
 			else if(cbfx.CreationPos == OCCreateBlockEffect.CreationPosition.ForwardBelow)
 				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward - _Source.transform.up));
+			else if(cbfx.CreationPos == OCCreateBlockEffect.CreationPosition.Target)
+				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_EndTarget.transform.position));
 		}
 
 		//@TODO: Fix this hack...
@@ -1023,6 +1094,14 @@ public class OCAction : OCMonoBehaviour
 //			afx.Stop();
 //		}
 
+		foreach(OCTransferBlockEffect tbfx in _TransferBlockEffects)
+		{
+			Vector3i targetOrigin = VectorUtil.Vector3ToVector3i(args.EndTarget.transform.position);
+			Vector3i targetDestination = VectorUtil.Vector3ToVector3i(args.Source.transform.position + args.Source.transform.forward);
+			
+			tbfx.TransferBlock(targetOrigin, targetDestination);
+		}
+
 		foreach(OCDestroyBlockEffect dbfx in _DestroyBlockEffects)
 		{
 //			Vector3i forward = VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward);
@@ -1042,12 +1121,12 @@ public class OCAction : OCMonoBehaviour
 
 					dbfx.DestroyBlock(targetPosition);
 					
-			args.EndTarget.transform.position = Vector3.zero;
-			args.StartTarget.transform.position = Vector3.zero;
+					if(args.EndTarget) args.EndTarget.transform.position = Vector3.zero;
+					if(args.StartTarget) args.StartTarget.transform.position = Vector3.zero;
 					
 			// This is just some example code for you Lake, that you can use to give energy to the robot after consuming a battery.
 			//if((forwardBlock.block != null && forwardBlock.block.GetName() == "Battery") || (forwardUpBlock.block != null && forwardUpBlock.block.GetName() == "Battery") || (forwardUp2xBlock.block != null && forwardUp2xBlock.block.GetName() == "Battery"))
-					if(targetBlock.block != null && targetBlock.block.GetName() == "Battery")
+			if(targetBlock.block != null && targetBlock.block.GetName() == "Battery")
 			{
 				UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
 		
@@ -1059,7 +1138,8 @@ public class OCAction : OCMonoBehaviour
 				
 					OCPhysiologicalModel agiPhysModel = agiObject.GetComponent<OCPhysiologicalModel>();
 				
-					OCPhysiologicalEffect batteryEatEffect = new OCPhysiologicalEffect(OCPhysiologicalEffect.CostLevel.NONE);
+							OCPhysiologicalEffect batteryEatEffect = ScriptableObject.CreateInstance<OCPhysiologicalEffect>(); 
+							batteryEatEffect.CostLevelProp = OCPhysiologicalEffect.CostLevel.NONE;
 				
 					batteryEatEffect.EnergyIncrease = 0.2f;
 				

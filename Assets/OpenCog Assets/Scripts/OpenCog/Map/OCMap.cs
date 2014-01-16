@@ -279,6 +279,12 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			
 		OpenCog.Embodiment.OCPerceptionCollector perceptionCollector = OpenCog.Embodiment.OCPerceptionCollector.Instance;
 		
+		List<GameObject> batteries = GameObject.FindGameObjectsWithTag("OCBattery").ToList();
+			GameObject battery = batteries.Where(b => VectorUtil.AreVectorsEqual(b.transform.position, new Vector3((float)pos.x, (float)pos.y, (float)pos.z))).FirstOrDefault();
+			
+		List<GameObject> hearths = GameObject.FindGameObjectsWithTag("OCHearth").ToList();
+			GameObject hearth = hearths.Where(h => VectorUtil.AreVectorsEqual(h.transform.position, new Vector3((float)pos.x, (float)pos.y, (float)pos.z))).FirstOrDefault();
+
 		if (block.IsEmpty() && !oldBlock.IsEmpty())
 		{
 			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
@@ -290,13 +296,6 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				
 			if(perceptionCollector != null)
 				perceptionCollector.NotifyBatteryRemoved(pos);
-			
-				
-			List<GameObject> batteries = GameObject.FindGameObjectsWithTag("OCBattery").ToList();
-				GameObject battery = batteries.Where(b => b.transform.position == pos).FirstOrDefault();
-				
-			List<GameObject> hearths = GameObject.FindGameObjectsWithTag("OCHearth").ToList();
-				GameObject hearth = hearths.Where(h => h.transform.position == pos).FirstOrDefault();
 				
 			if(battery != default(GameObject) && battery != null)
 				GameObject.DestroyImmediate(battery);
@@ -314,7 +313,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			// Moved notify down...to AFTER the point where it is actually created...
 		}
 			
-		if(block.block != null && block.block.GetName() == "Battery")
+		if(block.block != null && block.block.GetName() == "Battery" && (battery == default(GameObject) || battery == null))
 		{
 			GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
 			if (batteryPrefab == null)
@@ -323,10 +322,10 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			}
 			else
 			{
-				GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
-				battery.transform.position = pos;
-				battery.name = "Battery";		
-				battery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
+				GameObject newBattery = (GameObject)GameObject.Instantiate(batteryPrefab);
+					newBattery.transform.position = pos;
+					newBattery.name = "Battery";		
+					newBattery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
 					
 				if(perceptionCollector != null)
 					perceptionCollector.NotifyBatteryAdded(pos);	
@@ -334,7 +333,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			
 		}
 			
-		if(block.block != null && block.block.GetName() == "Hearth")
+		if(block.block != null && block.block.GetName() == "Hearth" && (hearth == default(GameObject) || hearth == null))
 		{
 			GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
 			if (hearthPrefab == null)
@@ -343,10 +342,10 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			}
 			else
 			{
-				GameObject hearth = (GameObject)GameObject.Instantiate(hearthPrefab);
-				hearth.transform.position = pos;
-				hearth.name = "Hearth";		
-				hearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
+				GameObject newHearth = (GameObject)GameObject.Instantiate(hearthPrefab);
+					newHearth.transform.position = pos;
+					newHearth.name = "Hearth";		
+					newHearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
 					
 				if(perceptionCollector != null)
 					perceptionCollector.NotifyBlockAdded(pos);
@@ -360,6 +359,9 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		bool bPathIsOpen = false;
 		
 		Vector3i vCharForward = VectorUtil.Vector3ToVector3i(characterTransform.forward);
+		Vector3i vCharLeft = VectorUtil.Vector3ToVector3i(-characterTransform.right);
+		Vector3i vCharRight = VectorUtil.Vector3ToVector3i(characterTransform.right);
+
 		
 		//Debug.Log ("vFeetPosition = [" + vFeetPosition.x + ", " + vFeetPosition.y + ", " + vFeetPosition.z + "]");
 		//Debug.Log ("vFeetForwardPosition = [" + vFeetForwardPosition.x + ", " + vFeetForwardPosition.y + ", " + vFeetForwardPosition.z + "]");
@@ -421,6 +423,20 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			if (GetBlock (viForwardKneeHigh).IsEmpty () && GetBlock (viForwardChestHigh).IsEmpty ())
 				// And one block under in front
 				if (GetBlock (viForwardOneUnder).IsSolid ())
+					bPathIsOpen = true;	
+				break;
+		case PathDirection.ForwardLeftWalk:
+			// Requires two clear blocks in front
+			if (GetBlock (viForwardKneeHigh + vCharLeft).IsEmpty () && GetBlock (viForwardChestHigh + vCharLeft).IsEmpty ())
+				// And one block under in front
+				if (GetBlock (viForwardOneUnder + vCharLeft).IsSolid ())
+					bPathIsOpen = true;	
+				break;
+		case PathDirection.ForwardRightWalk:
+			// Requires two clear blocks in front
+			if (GetBlock (viForwardKneeHigh + vCharRight).IsEmpty () && GetBlock (viForwardChestHigh + vCharRight).IsEmpty ())
+				// And one block under in front
+				if (GetBlock (viForwardOneUnder + vCharRight).IsSolid ())
 					bPathIsOpen = true;	
 				break;
 		case PathDirection.ForwardRun:
@@ -766,6 +782,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	public enum PathDirection
 	{
 		ForwardWalk,
+		ForwardLeftWalk,
+		ForwardRightWalk,
 		ForwardRun,
 		ForwardClimb,
 		UpwardJump,

@@ -332,7 +332,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					}
 					if(SendMessage(message))
 					{
-						//UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+						UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 					} else
 					{
 						UnityEngine.Debug.Log("Error sending message from '" + message.SourceID + "' to '" +
@@ -1855,7 +1855,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 								endPointStub.transform.position = batteryObject.transform.position;
 								
 								// This is the one!	
-								actionArguments.EndTarget = endPointStub;
+								actionArguments.EndTarget = batteryObject;
 									
 								break;
 							}

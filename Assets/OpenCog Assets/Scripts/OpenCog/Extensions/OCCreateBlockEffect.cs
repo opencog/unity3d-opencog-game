@@ -73,6 +73,7 @@ public class OCCreateBlockEffect : OCMonoBehaviour
         
 		public enum CreationPosition
 		{
+			Target,
 			Forward,
 			ForwardBelow
 		} 

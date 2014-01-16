@@ -34,6 +34,7 @@ Trees:
 	Character_EmoteShow
 	Character_TurnLeftOrRight
 	Character_TurnAndCreate
+	Character_BothHandsTransfer
 	Unknown
 
 Contexts:
@@ -42,7 +43,7 @@ Contexts:
 Branch priority groups:
 	Unknown
 
-Actions (20: 1 - 21):
+Actions (21: 1 - 22):
 	StandIdleShow (1)
 	FallIdleShow (2)
 	AngryEmoteShow (3)
@@ -62,10 +63,11 @@ Actions (20: 1 - 21):
 	HoldRightHandCreate (17)
 	HoldRightHandCreateBelow (18)
 	StrikeLeftHandDestroy (19)
-	StandIdleTell (20)
-	Unknown (21)
-
-Decorators (0: 22 - 22):
+	HoldBothHandsTransfer (20)
+	StandIdleTell (21)
 	Unknown (22)
+
+Decorators (0: 23 - 23):
+	Unknown (23)
 
 Agent classes:

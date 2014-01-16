@@ -372,11 +372,11 @@ namespace OpenCog.Embodiment
 				strCacheIdList += cacheIDItem.ToString() + ", ";	
 			}
 			
-			UnityEngine.Debug.Log ("CacheIDList contains these ID's: " + strCacheIdList );
+			//UnityEngine.Debug.Log ("CacheIDList contains these ID's: " + strCacheIdList );
 			
 			
 			foreach (int oid in cacheIdList) {
-				UnityEngine.Debug.Log ("Now we're checking _mapInfoCache for the ID " + oid);
+				//UnityEngine.Debug.Log ("Now we're checking _mapInfoCache for the ID " + oid);
 				if (!_mapInfoCacheStatus [oid]) {
 					UnityEngine.Debug.Log ("We didn't find the ID " + oid);
 					// So...if the game object's boolean is false...
@@ -390,8 +390,8 @@ namespace OpenCog.Embodiment
 					// Finally we add it's gameobject id to a hashset of disappeared objects...
 					disappearedObjects.Add (oid);
 				}
-				else
-					UnityEngine.Debug.Log ("We found the ID " + oid);
+				//else
+					//UnityEngine.Debug.Log ("We found the ID " + oid);
 			}
 	
 			
@@ -631,12 +631,12 @@ namespace OpenCog.Embodiment
 				
 				if (v3iBatteryPosition == batteryDestructionPoint)
 				{
-					UnityEngine.Debug.Log ("We'll be searching the _mapInfoCache for an objeject with key '" + batteryObject.GetInstanceID() + "'");
+					//UnityEngine.Debug.Log ("We'll be searching the _mapInfoCache for an objeject with key '" + batteryObject.GetInstanceID() + "'");
 					
-					foreach (KeyValuePair<int, OpenCog.Embodiment.OCObjectMapInfo> pair in _mapInfoCache)
-					{
-						UnityEngine.Debug.Log ("In any case, there is a key '" + pair.Key + "' in it.");	
-					}
+//					foreach (KeyValuePair<int, OpenCog.Embodiment.OCObjectMapInfo> pair in _mapInfoCache)
+//					{
+//						UnityEngine.Debug.Log ("In any case, there is a key '" + pair.Key + "' in it.");	
+//					}
 					
 					// You're the one that I want! (the one that I want!) Ooh Ooh oooooooh!	
 					if (_mapInfoCache.ContainsKey(batteryObject.GetInstanceID()))
@@ -667,10 +667,10 @@ namespace OpenCog.Embodiment
 				
 				
 			}
-			else
-			{
-				UnityEngine.Debug.Log ("mapInfo == null, nothing to report.");	
-			}
+//			else
+//			{
+//				UnityEngine.Debug.Log ("mapInfo == null, nothing to report.");	
+//			}
 		}
 	
 		//---------------------------------------------------------------------------
