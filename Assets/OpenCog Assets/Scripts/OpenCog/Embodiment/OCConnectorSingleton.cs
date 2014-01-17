@@ -330,13 +330,19 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						continue;
 					}
-					if(SendMessage(message))
+
+					bool sendResult = SendMessage(message);
+
+					if(message.Type != OCMessage.MessageType.TICK && !message.MessageContent.Contains("physiology"))
 					{
-						UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
-					} else
-					{
-						UnityEngine.Debug.Log("Error sending message from '" + message.SourceID + "' to '" +
-							message.TargetID + "' type '" + message.Type + "': " + message.ToString());
+						if(sendResult)
+						{
+							UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+						} else
+						{
+							UnityEngine.Debug.Log("Error sending message from '" + message.SourceID + "' to '" +
+								message.TargetID + "' type '" + message.Type + "': " + message.ToString());
+						}
 					}
 				} else
 				{
