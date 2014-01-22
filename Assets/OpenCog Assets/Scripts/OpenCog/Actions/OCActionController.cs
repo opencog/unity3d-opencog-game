@@ -214,7 +214,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 		while(Application.isPlaying)
 		{
-			yield return new WaitForSeconds(1.0f / 240.0f);
+			yield return new WaitForSeconds(1.0f / 100.0f);
 			UpdateAI();
 		}
 	}
