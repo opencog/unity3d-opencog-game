@@ -262,7 +262,7 @@ public class OCAction : OCMonoBehaviour
 		_TransferBlockEffects =
 			gameObject.GetComponentsInChildren<OCTransferBlockEffect>().ToList();
 
-		_Map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).LastOrDefault();
+		_Map = OCMap.Instance;//(OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).LastOrDefault();
 
 		_ActionController = _Source.GetComponent<OCActionController>();
 
@@ -436,7 +436,7 @@ public class OCAction : OCMonoBehaviour
 			
 	public static bool IsPathOpenForSourceForwardDrop(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 				
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -453,7 +453,7 @@ public class OCAction : OCMonoBehaviour
 			
 	public static bool IsPathOpenForSourceForwardClimb(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -470,7 +470,7 @@ public class OCAction : OCMonoBehaviour
 			
 	public static bool IsPathOpenForSourceForwardRun(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 				
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -487,7 +487,7 @@ public class OCAction : OCMonoBehaviour
 			
 	public static bool IsPathOpenForSourceForwardJump(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 				
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -504,7 +504,7 @@ public class OCAction : OCMonoBehaviour
 
 	public static bool IsPathOpenForSourceForwardWalk(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;//OCMap.Instance;
 				
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -521,7 +521,7 @@ public class OCAction : OCMonoBehaviour
 
 	public static bool IsPathOpenForSourceForwardLeftWalk(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 		
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -538,7 +538,7 @@ public class OCAction : OCMonoBehaviour
 
 	public static bool IsPathOpenForSourceForwardRightWalk(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 		
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -555,7 +555,7 @@ public class OCAction : OCMonoBehaviour
 
 	public static bool IsPathOpenForSourceForwardBlockEmpty(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 				
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -572,7 +572,7 @@ public class OCAction : OCMonoBehaviour
 
 			public static bool IsPathOpenForSourceAdjacentBlockEmpty(OCAction action, OCActionArgs args)
 			{
-				OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+				OCMap map = OCMap.Instance;
 				
 				CharacterController charController = 
 					args.Source.GetComponent<CharacterController>();
@@ -589,7 +589,7 @@ public class OCAction : OCMonoBehaviour
 
 	public static bool IsPathOpenForSourceForwardBlockSolid(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 				
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -606,7 +606,7 @@ public class OCAction : OCMonoBehaviour
 
 	public static bool IsPathOpenForSourceAdjacentBlockSolid(OCAction action, OCActionArgs args)
 	{
-		OCMap map = (OCMap)GameObject.FindObjectOfType(typeof(OCMap));
+		OCMap map = OCMap.Instance;
 		
 		CharacterController charController = 
 			args.Source.GetComponent<CharacterController>();
@@ -1026,6 +1026,7 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus StartAction()
 	{
+		//float timeStart =	OCTime.TimeSinceLevelLoad;
 		//OCLogger.Debugging("Starting the " + FullName + " Action.");
 		if(_blockOnFail && _blockOnRunning)
 			_ActionController.RunningActions.Add(FullName);

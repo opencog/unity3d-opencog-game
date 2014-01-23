@@ -168,7 +168,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			if(!_map)
 			{
-				_map = UnityEngine.GameObject.Find("Map").GetComponent<OpenCog.Map.OCMap>() as OpenCog.Map.OCMap;
+				_map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find("Map").GetComponent<OpenCog.Map.OCMap>() as OpenCog.Map.OCMap;
 			}
 
 			return _map;

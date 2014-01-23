@@ -464,7 +464,7 @@ namespace OpenCog.Embodiment
 			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
 			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
 			
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
@@ -497,7 +497,7 @@ namespace OpenCog.Embodiment
 			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
 			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
 			
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
@@ -531,7 +531,7 @@ namespace OpenCog.Embodiment
 			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryCreationPoint);
 			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryCreationPoint);
 			
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryCreationPoint.x, batteryCreationPoint.y, batteryCreationPoint.z);
 			
@@ -603,7 +603,7 @@ namespace OpenCog.Embodiment
 			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryDestructionPoint);
 			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryDestructionPoint);
 			
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryDestructionPoint.x, batteryDestructionPoint.y, batteryDestructionPoint.z);
 			
@@ -886,7 +886,7 @@ namespace OpenCog.Embodiment
 				UnityEngine.Debug.Log ("Terra incognita...better start perceiving it...");
 				
 				List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo> ();
-				OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+				OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 				if (map == null)
 					UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveTerrain: map == null");

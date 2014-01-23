@@ -94,7 +94,7 @@ public class OCCreateBlockEffect : OCMonoBehaviour
 		{
 				if(point.HasValue)
 				{
-					OCMap map = (OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
+				OCMap map = OCMap.Instance;//(OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
 
 					OCBlock block = map.GetBlockSet().GetBlock(_BlockType);
 				

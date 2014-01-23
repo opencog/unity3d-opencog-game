@@ -129,7 +129,7 @@ public class OCGoalController : OCMonoBehaviour
 		
 	public IEnumerator Start()
 	{
-		_map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
+		_map = OCMap.Instance;//(OCMap)GameObject.FindObjectOfType (typeof(OCMap));
 			
 		_goalBlockType = 	_map.GetBlockSet().GetBlock(_blockType);
 				
