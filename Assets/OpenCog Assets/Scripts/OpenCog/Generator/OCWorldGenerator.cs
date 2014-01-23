@@ -1,11 +1,12 @@
 //#define TEST_AND_EXIT
 
-using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Threading;
+using UnityEngine;
 using OpenCog.BlockSet.BaseBlockSet;
+using OpenCog.Map;
 
 
 
@@ -26,7 +27,8 @@ public class OCWorldGenerator : MonoBehaviour {
 	void Awake() {
 		UnityEngine.Debug.Log ("OCWorldGenerator::Awake!");
 		map = GetComponent<OpenCog.Map.OCMap>();
-		
+		//map = OCMap.Instance;
+
 		if (MapName != string.Empty)
 		{
 			//Debug.Log ("In WorldGenerator, MapName defined");

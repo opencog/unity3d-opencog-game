@@ -393,6 +393,7 @@ public class OCObjectMapInfo
 			_type = OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
 
 			// Convert from unity coordinate to OAC coordinate.
+
 			this.position = Utility.VectorUtil.ConvertToOpenCogCoord (gameObject.transform.position);
 			// Get rotation
 			_rotation = new Utility.Rotation (gameObject.transform.rotation);
@@ -433,7 +434,16 @@ public class OCObjectMapInfo
 				_width = OCObjectMapInfo.DEFAULT_AVATAR_WIDTH;
 				_height = OCObjectMapInfo.DEFAULT_AVATAR_HEIGHT;
 			}
-			
+
+			if (gameObject.tag == "OCNPC" || gameObject.tag == "OCAGI" || gameObject.tag == "Player")
+			{
+				if (_height > 1.1f) // just to make sure that the center point of the character will not be in the block where the feet are
+				{
+					this.position = new UnityEngine.Vector3(this.position.x, this.position.y, this.position.z + 1.0f);	
+				}
+			}
+
+						
 			if (gameObject.name == "Hearth")
 			{
 				this.AddProperty("petHome", "TRUE", System.Type.GetType("System.Boolean"));	
@@ -450,7 +460,8 @@ public class OCObjectMapInfo
 			{
 				UnityEngine.Debug.Log ("Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
 				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
-				this.AddProperty ("foodbowl", "TRUE", System.Type.GetType ("System.Boolean"));
+				this.AddProperty ("pickupable", "TRUE", System.Type.GetType ("System.Boolean"));
+				this.AddProperty ("holder", "none", System.Type.GetType ("System.String"));
 			}
 
 			// Get a property manager instance
@@ -470,7 +481,16 @@ public class OCObjectMapInfo
 			if (gameObjectName.Contains ("("))
 				gameObjectName = gameObjectName.Remove (gameObjectName.IndexOf ('('));
 
-			this.AddProperty ("class", gameObjectName, System.Type.GetType("System.String"));
+
+
+			// For Einstein puzzle
+			if (gameObject.name.Contains("_man"))
+			{
+				_id = _name;
+				this.AddProperty ("class", "people", System.Type.GetType("System.String"));
+			}
+			else
+			    this.AddProperty ("class", gameObjectName, System.Type.GetType("System.String"));
 		}
 		
 		public OCObjectMapInfo(int chunkX, int chunkY, int chunkZ, int blockGlobalX, int blockGlobalY, int blockGlobalZ, OpenCog.Map.OCBlockData blockData)
@@ -523,16 +543,17 @@ public class OCObjectMapInfo
 			}
 			else
 			{
-				if (blockData.block.GetName().ToLower () == "air")
-				{
-//					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
-					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
-				}
-				else
-				{
-//					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
-					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
-				}
+				this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, blockData.block.GetName().ToLower (), System.Type.GetType("System.String"));
+//				if (blockData.block.GetName().ToLower () == "air")
+//				{
+////					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+//					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "0", System.Type.GetType("System.String"));
+//				}
+//				else
+//				{
+////					this.AddTag (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
+//					this.AddProperty (OCEmbodimentXMLTags.MATERIAL_ATTRIBUTE, "13", System.Type.GetType("System.String"));
+//				}
 			}
 			//mapinfo.AddProperty("color_name", "green", PropertyType.STRING);
 		}

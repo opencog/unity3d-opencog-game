@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Embodiment;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -128,10 +129,14 @@ public class OCGoalController : OCMonoBehaviour
 		
 	public IEnumerator Start()
 	{
-		_map = (OCMap)GameObject.FindObjectOfType (typeof(OCMap));
+		_map = OCMap.Instance;//(OCMap)GameObject.FindObjectOfType (typeof(OCMap));
 			
 		_goalBlockType = 	_map.GetBlockSet().GetBlock(_blockType);
 				
+		List3D<OCChunk> chunks = _map.GetChunks ();
+			
+		// Since this is probably bogging down the gameplay, switch it to block creation only.
+		FindGoalBlockPositionInChunks(chunks);
 			
 		while (Application.isPlaying) 
 		{
@@ -166,7 +171,8 @@ public class OCGoalController : OCMonoBehaviour
 					
 				OpenCog.Embodiment.OCPhysiologicalModel agiPhysModel = agiObject.GetComponent<OpenCog.Embodiment.OCPhysiologicalModel>();
 					
-				OpenCog.Embodiment.OCPhysiologicalEffect nearHomeEffect = new OpenCog.Embodiment.OCPhysiologicalEffect(OpenCog.Embodiment.OCPhysiologicalEffect.CostLevel.NONE);
+				OpenCog.Embodiment.OCPhysiologicalEffect nearHomeEffect = OCPhysiologicalEffect.CreateInstance<OCPhysiologicalEffect>();
+				nearHomeEffect.CostLevelProp = OpenCog.Embodiment.OCPhysiologicalEffect.CostLevel.NONE;
 			
 				nearHomeEffect.FitnessChange = integrityChange;
 					
@@ -186,8 +192,8 @@ public class OCGoalController : OCMonoBehaviour
 
 			foreach(OCAction action in actions)
 			{
-				action.EndTarget.transform.position = Vector3.zero;
-				action.StartTarget.transform.position = Vector3.zero;
+				if(action.EndTarget != null) action.EndTarget.transform.position = Vector3.zero;
+				if(action.StartTarget != null) action.StartTarget.transform.position = Vector3.zero;
 			}
 		}
 	}

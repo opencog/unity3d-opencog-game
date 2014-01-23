@@ -84,7 +84,7 @@ public class OCInventoryGUI : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 
 	public void Awake () {
-		OpenCog.Map.OCMap map = (OpenCog.Map.OCMap) GameObject.FindObjectOfType( typeof(OpenCog.Map.OCMap) );
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//(OpenCog.Map.OCMap) GameObject.FindObjectOfType( typeof(OpenCog.Map.OCMap) );
 		_blockSet = map.GetBlockSet();
 		_player = GameObject.FindGameObjectWithTag( "Player" );
 		_builder = (OpenCog.Builder.OCBuilder) _player.GetComponent<OpenCog.Builder.OCBuilder>();

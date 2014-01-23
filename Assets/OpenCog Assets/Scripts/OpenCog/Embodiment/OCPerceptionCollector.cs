@@ -127,6 +127,8 @@ namespace OpenCog.Embodiment
 		public void Start ()
 		{
 			_connector = OCConnectorSingleton.Instance;
+
+			_floorHeight = _connector.getFloorHeight();
 			
 			UnityEngine.Debug.Log (gameObject.name + " is started.");
 		}
@@ -370,11 +372,11 @@ namespace OpenCog.Embodiment
 				strCacheIdList += cacheIDItem.ToString() + ", ";	
 			}
 			
-			UnityEngine.Debug.Log ("CacheIDList contains these ID's: " + strCacheIdList );
+			//UnityEngine.Debug.Log ("CacheIDList contains these ID's: " + strCacheIdList );
 			
 			
 			foreach (int oid in cacheIdList) {
-				UnityEngine.Debug.Log ("Now we're checking _mapInfoCache for the ID " + oid);
+				//UnityEngine.Debug.Log ("Now we're checking _mapInfoCache for the ID " + oid);
 				if (!_mapInfoCacheStatus [oid]) {
 					UnityEngine.Debug.Log ("We didn't find the ID " + oid);
 					// So...if the game object's boolean is false...
@@ -388,8 +390,8 @@ namespace OpenCog.Embodiment
 					// Finally we add it's gameobject id to a hashset of disappeared objects...
 					disappearedObjects.Add (oid);
 				}
-				else
-					UnityEngine.Debug.Log ("We found the ID " + oid);
+				//else
+					//UnityEngine.Debug.Log ("We found the ID " + oid);
 			}
 	
 			
@@ -462,7 +464,7 @@ namespace OpenCog.Embodiment
 			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
 			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
 			
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
@@ -495,7 +497,7 @@ namespace OpenCog.Embodiment
 			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
 			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
 			
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(blockBuildPoint.x, blockBuildPoint.y, blockBuildPoint.z);
 			
@@ -529,7 +531,7 @@ namespace OpenCog.Embodiment
 			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryCreationPoint);
 			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryCreationPoint);
 			
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryCreationPoint.x, batteryCreationPoint.y, batteryCreationPoint.z);
 			
@@ -601,7 +603,7 @@ namespace OpenCog.Embodiment
 			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryDestructionPoint);
 			Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryDestructionPoint);
 			
-			OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryDestructionPoint.x, batteryDestructionPoint.y, batteryDestructionPoint.z);
 			
@@ -629,12 +631,12 @@ namespace OpenCog.Embodiment
 				
 				if (v3iBatteryPosition == batteryDestructionPoint)
 				{
-					UnityEngine.Debug.Log ("We'll be searching the _mapInfoCache for an objeject with key '" + batteryObject.GetInstanceID() + "'");
+					//UnityEngine.Debug.Log ("We'll be searching the _mapInfoCache for an objeject with key '" + batteryObject.GetInstanceID() + "'");
 					
-					foreach (KeyValuePair<int, OpenCog.Embodiment.OCObjectMapInfo> pair in _mapInfoCache)
-					{
-						UnityEngine.Debug.Log ("In any case, there is a key '" + pair.Key + "' in it.");	
-					}
+//					foreach (KeyValuePair<int, OpenCog.Embodiment.OCObjectMapInfo> pair in _mapInfoCache)
+//					{
+//						UnityEngine.Debug.Log ("In any case, there is a key '" + pair.Key + "' in it.");	
+//					}
 					
 					// You're the one that I want! (the one that I want!) Ooh Ooh oooooooh!	
 					if (_mapInfoCache.ContainsKey(batteryObject.GetInstanceID()))
@@ -665,10 +667,10 @@ namespace OpenCog.Embodiment
 				
 				
 			}
-			else
-			{
-				UnityEngine.Debug.Log ("mapInfo == null, nothing to report.");	
-			}
+//			else
+//			{
+//				UnityEngine.Debug.Log ("mapInfo == null, nothing to report.");	
+//			}
 		}
 	
 		//---------------------------------------------------------------------------
@@ -750,6 +752,14 @@ namespace OpenCog.Embodiment
 			
 			// Position
 			UnityEngine.Vector3 currentPos = Utility.VectorUtil.ConvertToOpenCogCoord (go.transform.position);
+
+			if (go.tag == "OCNPC" || go.tag == "OCAGI" || go.tag == "Player")
+			{
+				if (mapInfo.Height > 1.0f) // just to make sure that the center point of the character will not be in the block where the feet are
+				{
+					currentPos = new UnityEngine.Vector3(currentPos.x, currentPos.y, currentPos.z + 1.0f);	
+				}
+			}
 	
 			if (go.tag == "OCA") {
 				// Fix the model center point problem.
@@ -856,7 +866,7 @@ namespace OpenCog.Embodiment
 //			_connector.HandleObjectAppearOrDisappear (mapinfo.ID, mapinfo.Type, true);
 //			_connector.SendTerrainInfoMessage (addedBlockList);
 //		
-//		}
+//		}``
 	
 		public IEnumerator PerceiveTerrain ()
 		{
@@ -876,7 +886,7 @@ namespace OpenCog.Embodiment
 				UnityEngine.Debug.Log ("Terra incognita...better start perceiving it...");
 				
 				List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo> ();
-				OpenCog.Map.OCMap map = UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+				OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 				if (map == null)
 					UnityEngine.Debug.Log ("OCPerceptionCollector::PerceiveTerrain: map == null");
@@ -924,7 +934,7 @@ namespace OpenCog.Embodiment
 												// Ok...now we have some globalz....
 												OpenCog.Map.OCBlockData globalBlock = map.GetBlock (iGlobalX, iGlobalY, iGlobalZ);
 					
-												if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > 55) ) {
+												if ((!globalBlock.IsEmpty ()) && (globalBlock.block.GetName().ToLower() != "battery")  && (iGlobalY > _floorHeight) ) {
 													//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
 													
 													

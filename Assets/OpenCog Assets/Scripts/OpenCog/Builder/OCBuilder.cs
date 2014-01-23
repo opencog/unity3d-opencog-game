@@ -255,7 +255,7 @@ public class OCBuilder : OCMonoBehaviour
 	{
 		_cameraTrans = transform.GetComponentInChildren<UnityEngine.Camera>().transform;
 		_characterCollider = GetComponent<CharacterController>();
-		_map = (OpenCog.Map.OCMap)UnityEngine.GameObject.FindObjectOfType(typeof(OpenCog.Map.OCMap));
+		_map = OpenCog.Map.OCMap.Instance;//(OpenCog.Map.OCMap)UnityEngine.GameObject.FindObjectOfType(typeof(OpenCog.Map.OCMap));
 		_cursor = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_cursor);
 	}
 	

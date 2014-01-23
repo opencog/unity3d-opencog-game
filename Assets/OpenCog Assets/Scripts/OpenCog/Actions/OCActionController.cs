@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,11 +32,12 @@ using TreeType = BLOCBehaviours.TreeType;
 using System.Linq;
 using System.Xml;
 using OpenCog.Utility;
+
 //using OpenCog.Aspects;
 
 namespace OpenCog
 {
-	
+
 namespace Actions
 {
 
@@ -43,6 +45,7 @@ namespace Actions
 /// The OpenCog OCRobotAgent.
 /// </summary>
 #region Class Attributes
+
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
@@ -57,30 +60,36 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	//---------------------------------------------------------------------------
 			
 	[SerializeField]
-	private GameObject _defaultSource;
+	private GameObject
+		_defaultSource;
 			
 	[SerializeField]
-	private GameObject _defaultStartTarget;			
+	private GameObject
+		_defaultStartTarget;
 	
 	[SerializeField]
-	private GameObject _defaultEndTarget;
+	private GameObject
+		_defaultEndTarget;
 			
 	[SerializeField]
-	private TreeType _TreeType;
+	private TreeType
+		_TreeType;
+
 	private OCActionPlanStep _step = null;
+
 	private Hashtable _idleParams;
 	
 	private static Dictionary<string, string> builtinActionMap = new Dictionary<string, string>();
-			
 				
 	private Dictionary<string, TreeType> _ActionNameDictionary = new Dictionary<string, TreeType>()
 	{ { "walk", TreeType.Character_Move }
-	, { "grab", TreeType.Character_Move }
+	, { "grab", TreeType.Character_BothHandsTransfer }
 	, { "eat", TreeType.Character_Destroy }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
-	, { "BuildBlockAtPosition", TreeType.Character_Create }
+	, { "BuildBlockAtPosition", TreeType.Character_TurnAndCreate }
 	, { "MoveToCoordinate", TreeType.Character_Move }
+	, { "build_block", TreeType.Character_TurnAndCreate }
 	};
 			
 	// Assume that there's just one behaviour we'd like to execute at a given time
@@ -88,9 +97,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	// Our current queue of behaviours
 	[SerializeField]
-	private List< OCActionPlanStep > _ActionPlanList;		
+	private List< OCActionPlanStep >
+		_ActionPlanList;
 			
-	private Queue< OCActionPlanStep > _ActionPlanQueue;
+	private LinkedList< OCActionPlanStep > _ActionPlanQueue;
 			
 	private bool _PlanSucceeded = true;
 			
@@ -106,31 +116,32 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	//---------------------------------------------------------------------------
 
-	public TreeType TreeType 
+	public TreeType TreeType
 	{
 		get { return this._TreeType;}
-		set {	_TreeType = value;}
+		set { _TreeType = value;}
 	}
 
 	public List<string> RunningActions;
 
-	public GameObject DefaultEndTarget 
+	public GameObject DefaultEndTarget
 	{
-		get {return this._defaultEndTarget;}
-		set {_defaultEndTarget = value;}
+		get { return this._defaultEndTarget;}
+		set { _defaultEndTarget = value;}
 	}
 
-	public GameObject DefaultStartTarget 
+	public GameObject DefaultStartTarget
 	{
-		get {return this._defaultStartTarget;}
-		set {_defaultStartTarget = value;}
+		get { return this._defaultStartTarget;}
+		set { _defaultStartTarget = value;}
 	}
 			
-	public OCActionPlanStep Step 
+	public OCActionPlanStep Step
 	{
-		get {return this._step;}
-		set {_step = value;}
+		get { return this._step;}
+		set { _step = value;}
 	}		
+
 			
 	//---------------------------------------------------------------------------
 
@@ -142,37 +153,52 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	//---------------------------------------------------------------------------
 
-	public IEnumerator Start ()
+	public IEnumerator Start()
 	{
 		_TreeTypeDictionary = new Dictionary<TreeType, Tree>();
-		_ActionPlanQueue = new Queue<OCActionPlanStep>();
+		_ActionPlanQueue = new LinkedList<OCActionPlanStep>();
 				
-		foreach( TreeType type in Enum.GetValues( typeof(TreeType) ).Cast<TreeType>() )
+		foreach(TreeType type in Enum.GetValues( typeof(TreeType) ).Cast<TreeType>())
 		{
-			_TreeTypeDictionary.Add(type, BLOCBehaviours.InstantiateTree( type, this ));
+			_TreeTypeDictionary.Add(type, BLOCBehaviours.InstantiateTree(type, this));
 		}
 				
 		OCAction[] actions = gameObject.GetComponentsInChildren<OCAction>(true);
 				
-		foreach( Tree tree in _TreeTypeDictionary.Values )
+		foreach(Tree tree in _TreeTypeDictionary.Values)
 		{
 			if(tree == null)
+			{
 				continue;
-			int index = tree.Name.LastIndexOf(".")+1;
+			}
+			int index = tree.Name.LastIndexOf(".") + 1;
 			if(index < 0 || index > tree.Name.Count())
+			{
 				index = 0;
+			}
 			string treeName = tree.Name.Substring(index);					
 					
-			foreach( OCAction action in actions)
+			foreach(OCAction action in actions)
 			{
-				if(	   (action.FullName.Contains(treeName) || treeName.Contains("Behaviour")) 
-					&& !(treeName == "GhostBehaviour" && action.name.Contains("Create"))
-					&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy"))
+				if(((action.FullName.Contains(treeName) || treeName.Contains("Behaviour")) 
+						&& !(treeName == "GhostBehaviour" && action.name.Contains("Create"))
+						&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy")))
+					|| (treeName == "TurnAndCreate" && action.FullName == "HoldRightHandCreate")
+					|| (treeName == "TurnAndCreate" && action.FullName == "HoldRightHandCreateBelow")
+					|| (treeName == "TurnAndCreate" && action.FullName == "StandTurnLeftMove")
+					|| (treeName == "TurnAndCreate" && action.FullName == "StandTurnRightMove")
+					|| (treeName == "TurnAndCreate" && action.FullName == "StandIdleShow")
+					|| (treeName == "TurnAndCreate" && action.FullName == "FallIdleShow")
+				  || (treeName == "TurnLeftOrRight" && action.FullName == "StandTurnLeftMove")
+					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandTurnRightMove")
+					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandIdleShow")
+					|| (treeName == "TurnLeftOrRight" && action.FullName == "FallIdleShow")
+					|| (treeName == "BothHandsTransfer" && action.FullName == "HoldBothHandsTransfer")
 				  )
 				{
 					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
 							
-					tree.SetTickForward( actionTypeID, action.ExecuteBehave );
+					tree.SetTickForward(actionTypeID, action.ExecuteBehave);
 				}
 			}
 		}
@@ -181,15 +207,15 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
 		firstStep.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
 
-		_ActionPlanQueue.Enqueue(firstStep);		
+		_ActionPlanQueue.AddLast(firstStep);		
 
 		RunningActions = new List<string>();
 		//RunningActions.Add("StandIdleShow");
 
-		while (Application.isPlaying) 
+		while(Application.isPlaying)
 		{
-			yield return new WaitForSeconds (1.0f / 240.0f);
-			UpdateAI ();
+			yield return new WaitForSeconds(1.0f / 100.0f);
+			UpdateAI();
 		}
 	}
 	
@@ -209,7 +235,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //				//map.IsPathOpen(this.transform, characterHeight, Map.PathDirection.ForwardDrop);
 //			}
 
-	public void Update ()
+	public void Update()
 	{
 //		if(Time.frameCount%120 == 0)
 //		{
@@ -229,7 +255,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //				this.TestProprioception ();
 	}
 
-	public BehaveResult	 Tick (Tree sender, bool init)
+	public BehaveResult	 Tick(Tree sender, bool init)
 	{
 //			Debug.Log
 //			(
@@ -643,7 +669,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		OCActionPlanStep actionPlanStep = new OCActionPlanStep();
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
-		_ActionPlanQueue.Enqueue(actionPlanStep);
+		_ActionPlanQueue.AddLast(actionPlanStep);
 		Debug.Log("Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
 	}
 			
@@ -653,15 +679,16 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		_ActionPlanQueue.Clear();
 	}
 	
-	public void UpdateAI ()
+	public void UpdateAI()
 	{
 		_ActionPlanList = _ActionPlanQueue.ToList();		
 				
- 		if(_step == null && _ActionPlanQueue.Count != 0)
+		if(_step == null && _ActionPlanQueue.Count != 0)
 		{
-			_step = _ActionPlanQueue.Dequeue();
-		} 
-		else if(_step == null && _ActionPlanQueue.Count == 0)
+			_step = _ActionPlanQueue.First();
+			_ActionPlanQueue.RemoveFirst();
+			Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+		} else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
 			_PlanSucceeded = true;
 			OCActionPlanStep step = new OCActionPlanStep();
@@ -670,7 +697,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			_step = step;
 		}
 				
-		BehaveResult result = _step.Behaviour.Tick ();
+		BehaveResult result = _step.Behaviour.Tick();
 				
 //		if((_step.Behaviour.Name == _TreeTypeDictionary[TreeType.Character_IdleShow].Name) && result == BehaveResult.Success)
 //		{
@@ -690,11 +717,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				if(_step.Arguments.EndTarget != null)
 				{
 					if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
+					{
 						_PlanSucceeded &= result == BehaveResult.Success;
+					}
 							
 					Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
 					Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
 					Vector3 sourcePosition = _step.Arguments.Source.transform.position;
+							sourcePosition.y = sourcePosition.y - 0.5f;
 								
 					Vector3 startToEnd = endPosition - startPosition;
 					Vector3 sourceToEnd = endPosition - sourcePosition;		
@@ -708,37 +738,70 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						//_PlanSucceeded |= sourceToEnd.sqrMagnitude < startToEnd.sqrMagnitude;
 								
 						// use manhattan distance
-						_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
-								
-						if(sourcePosition == endPosition)
+						//_PlanSucceeded = sourceToEndManDist <= startToEndManDist;
+
+						if(VectorUtil.AreVectorsEqual(sourcePosition, endPosition))
+						{
 							_PlanSucceeded = true;
+						} else
+						{
+							_PlanSucceeded = false;
+						}
 					}
 							
 					if(_step.Behaviour.Name == "Character.Destroy" || _step.Arguments.ActionName == "eat")
 					{
-						_PlanSucceeded = endPosition == Vector3.zero;
+						_PlanSucceeded = (endPosition == Vector3.zero || _step.Arguments.EndTarget == null);
 					}
-							
+
 					if(_step.Arguments.ActionName == "grab")
 					{
-						_PlanSucceeded = endPosition != startPosition && endPosition != null;
+						_PlanSucceeded = OCAction.IsEndTargetCloseForward(null, _step.Arguments);
 					}
 							
-					if(_step.Arguments.ActionPlanID != null)
+//					if(_step.Arguments.ActionName == "grab")
+//					{
+//						_PlanSucceeded = endPosition != startPosition && endPosition != null;
+//					}
+							
+					if(_step.Arguments.ActionPlanID != null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries))
 					{
 						OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
+
+						if(_step.Behaviour.Name != "Character.IdleShow" && !_step.Behaviour.Name.Contains("Behaviour"))
+						{
+							Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
+						}		
 					}
 				}
 						
 //				if(!_PlanSucceeded)
 //					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
 					
-				if(_step.Behaviour.Name != "Character.IdleShow" && !_step.Behaviour.Name.Contains("Behaviour"))
-					Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));		
+
 				
 				_step.Behaviour.Reset();
+
+				// if we failed, retry last step
+				if(_PlanSucceeded == false && OCActionPlanStep.MaxRetries > _step.Retry)
+				{
+					_ActionPlanQueue.AddFirst(_step);
+					_step.Retry += 1;
+				} else if(_PlanSucceeded == false && OCActionPlanStep.MaxRetries <= _step.Retry)
+				{
+					_ActionPlanQueue.Clear();
+					_step = null;
+				} else if(_step.Arguments.EndTarget)
+				{
+					OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
+					
+					if(fadeOut != null)
+					{
+						fadeOut.enabled = true;
+					}
+				}
 						
-				if(_ActionPlanQueue.Count == 0) 
+				if(_ActionPlanQueue.Count == 0)
 				{
 					if(_LastPlanID != null)
 					{
@@ -748,22 +811,35 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //							OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);			
 								
 						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded);
+
+						if(_step != null && _step.Arguments.EndTarget != null)
+						{
+							OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
+						
+							if(fadeOut != null)
+							{
+								fadeOut.enabled = true;
+							}
+						}
+
 						_LastPlanID = null;		
 					}
 					_step = null;	
-				}
-				else if(_LastPlanID != null)
+				} else if(_LastPlanID != null)
 				{
-					_step = _ActionPlanQueue.Dequeue();
+					_step = _ActionPlanQueue.First();
+					_ActionPlanQueue.RemoveFirst();
+					Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 					if(_LastPlanID != _step.Arguments.ActionPlanID)
 					{
 						Debug.LogError("We've changed plans without reporting back to OpenCog!");
 					}
-				}
-				else
+				} else
 				{	
 					_LastPlanID = _step.Arguments.ActionPlanID;
-					_step = _ActionPlanQueue.Dequeue();		
+					_step = _ActionPlanQueue.First();
+					_ActionPlanQueue.RemoveFirst();
+					Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 				}
 			}
 					
@@ -772,13 +848,13 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		
 	}
 
-	public void	 Reset (Tree sender)
+	public void	 Reset(Tree sender)
 	{
 	}
 
-	public int	 SelectTopPriority (Tree sender, params int[] IDs)
+	public int	 SelectTopPriority(Tree sender, params int[] IDs)
 	{
-		return IDs [0];
+		return IDs[0];
 	}
 
 	//---------------------------------------------------------------------------
@@ -831,33 +907,38 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	public class OCActionPlanStep
 	{
 		private Behave.Runtime.Tree _behaviour;
+
 		private OCAction.OCActionArgs _arguments;
 		
-		public OCAction.OCActionArgs Arguments 
+		public OCAction.OCActionArgs Arguments
 		{
-			get 
+			get
 			{
 				return this._arguments;
 			}
-			set 
+			set
 			{
 				_arguments = value;
 			}
 		}
 
-		public Tree Behaviour 
+		public Tree Behaviour
 		{
-			get 
+			get
 			{
 				return this._behaviour;
 			}
-			set 
+			set
 			{
 				_behaviour = value;
 			}
 		}
+	
+		static public int MaxRetries = 5;
+		
+		public int Retry = 0;
 				
-		public override string ToString ()
+		public override string ToString()
 		{
 			return _behaviour.ToString() + ", " + _arguments.ToString(); 
 		}
@@ -899,11 +980,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	// TODO: Implement function below properly.
 	public static string GetOCActionNameFromMap(string methodName)
 	{
-		if (builtinActionMap.ContainsValue(methodName))
+		if(builtinActionMap.ContainsValue(methodName))
 		{
-			foreach (KeyValuePair<string, string> pair in builtinActionMap)
+			foreach(KeyValuePair<string, string> pair in builtinActionMap)
 			{
-				if (pair.Value == methodName) return pair.Key;
+				if(pair.Value == methodName)
+				{
+					return pair.Key;
+				}
 			}
 		}
 

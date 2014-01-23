@@ -75,7 +75,7 @@ public class OCExposePropertyFieldsAttribute : Attribute
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	public OCExposePropertyFieldsAttribute
+	public OCExposePropertyFieldsAttribute 
 		(OCExposure exposure = OCExposure.PropertiesAndFields)
 	{
 		_exposure = exposure;

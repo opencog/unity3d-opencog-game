@@ -83,7 +83,7 @@ public class OCStateChangesRegister : OCMonoBehaviour
 	// This is where states get registered... 
 	public static void RegisterState(UnityEngine.GameObject go, UnityEngine.Behaviour bh, string stateName)
 	{
-		System.Diagnostics.Debug.Assert(go != null && bh != null && stateName != null);
+		System.Diagnostics.Debug.Assert((go != null) && (bh != null) && (stateName != null));
 			
 		StateInfo aInfo = new StateInfo();
 		aInfo.gameObject = go;
