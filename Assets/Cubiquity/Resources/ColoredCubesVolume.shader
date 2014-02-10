@@ -12,7 +12,6 @@ Shader "ColoredCubesVolume"
       {
           float4 color : COLOR;
           float4 modelPos;
-          float3 worldPos;
       };
       
       #include "ColoredCubesVolumeUtilities.cginc"
@@ -36,7 +35,7 @@ Shader "ColoredCubesVolume"
       void surf (Input IN, inout SurfaceOutput o)
       {
       	// Compute the surface normal in the fragment shader.
-      	float3 surfaceNormal = normalize(cross(ddx(IN.worldPos.xyz), ddy(IN.worldPos.xyz)));
+      	float3 surfaceNormal = normalize(cross(ddx(IN.modelPos.xyz), ddy(IN.modelPos.xyz)));
       	
 	    //Add noise - we use model space to prevent noise scrolling if the volume moves.
 	    float noise = positionBasedNoise(float4(IN.modelPos.xyz, 0.1));

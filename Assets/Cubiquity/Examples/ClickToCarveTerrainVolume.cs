@@ -41,19 +41,17 @@ public class ClickToCarveTerrainVolume : MonoBehaviour
 			{
 				// Build a ray based on the current mouse position
 				Vector2 mousePos = Input.mousePosition;
-				Ray ray = Camera.main.ScreenPointToRay(new Vector3(mousePos.x, mousePos.y, 0));
-				Vector3 dir = ray.direction * 1000.0f; //The maximum distance our ray will be cast.
+				Ray ray = Camera.main.ScreenPointToRay(new Vector3(mousePos.x, mousePos.y, 0));				
 				
-				
-				// Perform the raycasting. If there's a hit the position will be stored in these floats.
-				float resultX, resultY, resultZ;
-				bool hit = TerrainVolumePicking.PickTerrainSurface(terrainVolume, ray.origin.x, ray.origin.y, ray.origin.z, dir.x, dir.y, dir.z, out resultX, out resultY, out resultZ);
+				// Perform the raycasting.
+				PickSurfaceResult pickResult;
+				bool hit = Picking.PickSurface(terrainVolume, ray, 1000.0f, out pickResult);
 				
 				// If we hit a solid voxel then create an explosion at this point.
 				if(hit)
 				{					
-					int range = 5;
-					DestroyVoxels((int)resultX, (int)resultY, (int)resultZ, range);
+					int range = 10;
+					DestroyVoxels((int)pickResult.volumeSpacePos.x, (int)pickResult.volumeSpacePos.y, (int)pickResult.volumeSpacePos.z, range);
 				}
 				
 				// Set this flag so the click won't be processed again next frame.

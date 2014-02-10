@@ -20,5 +20,12 @@ namespace Cubiquity
 			this.lowerCorner = lowerCorner;
 			this.upperCorner = upperCorner;
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("Region({0}, {1}, {2}, {3}, {4}, {5})", 
+				lowerCorner.x, lowerCorner.y, lowerCorner.z, 
+				upperCorner.x, upperCorner.y, upperCorner.z);
+		}
 	}
 }

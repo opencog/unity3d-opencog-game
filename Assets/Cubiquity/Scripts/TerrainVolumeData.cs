@@ -9,9 +9,9 @@ namespace Cubiquity
 	[System.Serializable]
 	public sealed class TerrainVolumeData : VolumeData
 	{
-		public static TerrainVolumeData CreateFromVoxelDatabase(Region region, string pathToVoxelDatabase)
+		public static TerrainVolumeData CreateFromVoxelDatabase(Paths basePath, string relativePathToVoxelDatabase)
 		{
-			return CreateFromVoxelDatabase<TerrainVolumeData>(region, pathToVoxelDatabase);
+			return CreateFromVoxelDatabase<TerrainVolumeData>(basePath, relativePathToVoxelDatabase);
 		}
 		
 		public static TerrainVolumeData CreateEmptyVolumeData(Region region)
@@ -19,9 +19,9 @@ namespace Cubiquity
 			return CreateEmptyVolumeData<TerrainVolumeData>(region);
 		}
 		
-		public static TerrainVolumeData CreateEmptyVolumeData(Region region, string pathToCreateVoxelDatabase)
+		public static TerrainVolumeData CreateEmptyVolumeData(Region region, Paths basePath, string relativePathToVoxelDatabase)
 		{
-			return CreateEmptyVolumeData<TerrainVolumeData>(region, pathToCreateVoxelDatabase);
+			return CreateEmptyVolumeData<TerrainVolumeData>(region, basePath, relativePathToVoxelDatabase);
 		}
 		
 		public MaterialSet GetVoxel(int x, int y, int z)
@@ -43,26 +43,34 @@ namespace Cubiquity
 		{
 			if(volumeHandle.HasValue)
 			{
-				if(x >= region.lowerCorner.x && y >= region.lowerCorner.y && z >= region.lowerCorner.z
-					&& x <= region.upperCorner.x && y <= region.upperCorner.y && z <= region.upperCorner.z)
+				if(x >= enclosingRegion.lowerCorner.x && y >= enclosingRegion.lowerCorner.y && z >= enclosingRegion.lowerCorner.z
+					&& x <= enclosingRegion.upperCorner.x && y <= enclosingRegion.upperCorner.y && z <= enclosingRegion.upperCorner.z)
 				{						
 					CubiquityDLL.SetVoxelMC(volumeHandle.Value, x, y, z, materialSet);
 				}
 			}
 		}
-
-		protected override void InitializeCubiquityVolume()
-		{	
-			// Make sure the Cubiquity library is installed.
-			Installation.ValidateAndFix();
-			
+		
+		protected override void InitializeEmptyCubiquityVolume(Region region)
+		{			
 			// This function might get called multiple times. E.g the user might call it striaght after crating the volume (so
 			// they can add some initial data to the volume) and it might then get called again by OnEnable(). Handle this safely.
-			if((volumeHandle == null) && (_region != null))
+			if(volumeHandle == null)
 			{
 				// Create an empty region of the desired size.
-				volumeHandle = CubiquityDLL.NewTerrainVolume(region.lowerCorner.x, region.lowerCorner.y, region.lowerCorner.z,
-					region.upperCorner.x, region.upperCorner.y, region.upperCorner.z, pathToVoxelDatabase, DefaultBaseNodeSize, 0, 0);
+				volumeHandle = CubiquityDLL.NewEmptyTerrainVolume(region.lowerCorner.x, region.lowerCorner.y, region.lowerCorner.z,
+					region.upperCorner.x, region.upperCorner.y, region.upperCorner.z, fullPathToVoxelDatabase, DefaultBaseNodeSize);
+			}
+		}
+
+		protected override void InitializeExistingCubiquityVolume()
+		{			
+			// This function might get called multiple times. E.g the user might call it striaght after crating the volume (so
+			// they can add some initial data to the volume) and it might then get called again by OnEnable(). Handle this safely.
+			if(volumeHandle == null)
+			{
+				// Create an empty region of the desired size.
+				volumeHandle = CubiquityDLL.NewTerrainVolumeFromVDB(fullPathToVoxelDatabase, DefaultBaseNodeSize);
 			}
 		}
 		

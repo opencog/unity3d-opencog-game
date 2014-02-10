@@ -9,6 +9,7 @@ namespace Cubiquity
 	{
 		public static void ValidateAndFix()
 		{
+#if !UNITY_EDITOR
 			if( (Application.platform != RuntimePlatform.WindowsEditor) &&
 				(Application.platform != RuntimePlatform.WindowsPlayer) )
 			{
@@ -79,65 +80,8 @@ namespace Cubiquity
 			{
 				Debug.LogWarning("The Cubiquity DLL was not found on startup, and this problem was not resolved.");
 			}
+#endif
 		}
-	
-		/*public static void ValidateAndFixWithPrompts()
-		{
-			string fileName = "CubiquityC.dll";
-	        string sourcePath = System.IO.Path.Combine(Application.streamingAssetsPath, "Cubiquity");
-	        string destPath =  @".";
-			
-			string canFixMessage = "This can be fixed automatically because we have a copy of the required DLL in the "
-				+ sourcePath + " folder. Would you like this file to be copied to the root of the project folder?";
-			string fixItMessage = "Yes, please fix this!";
-			string dontFixItMessage = "No, I know what I'm doing...";
-	
-	        // Use Path class to manipulate file and directory paths. 
-	        string sourceFile = System.IO.Path.Combine(sourcePath, fileName);
-	        string destFile = System.IO.Path.Combine(destPath, fileName);
-			
-			if(System.IO.File.Exists(destFile))
-			{
-				byte[] sourceChecksum = GetChecksum(sourceFile);
-				byte[] destChecksum = GetChecksum(destFile);
-				
-				bool checksumsMatch = true;
-				for(int i = 0; i < sourceChecksum.Length; i++)
-				{
-					if(sourceChecksum[i] != destChecksum[i])
-					{
-						checksumsMatch = false;
-						break;
-					}
-				}
-				
-				if(!checksumsMatch)
-				{
-					if(EditorUtility.DisplayDialog("Cubiquity DLL in project root appears to be the wrong version",
-						"This project is using the Cubiquity voxel terrain engine but the DLL in the root of the " + 
-						"project folder appears to be the wrong version (or corrupt). \n\n" + canFixMessage, fixItMessage, dontFixItMessage))
-					{
-						// The target file exists (it's just th wrong version) so we set the flag to overwrite.
-						System.IO.File.Copy(sourceFile, destFile, true);
-					}
-				}
-			}
-			else
-			{
-				if(EditorUtility.DisplayDialog("Cubiquity DLL not found in project root",
-					"This project is using the Cubiquity voxel terrain engine but the required DLL has not been found " + 
-					"in the root of the project folder. \n\n" + canFixMessage, fixItMessage, dontFixItMessage))
-				{
-					// The target file doesn't exist so we don't need to set the flag to overwrite.
-					System.IO.File.Copy(sourceFile, destFile, false);
-				}
-			}
-			
-			if(System.IO.File.Exists(destFile) == false)
-			{
-				Debug.LogWarning("The Cubiquity DLL was not found on startup, and this problem was not resolved.");
-			}
-		}*/
 		
 		// From http://stackoverflow.com/q/1177607
 		private static byte[] GetChecksum(string file)
