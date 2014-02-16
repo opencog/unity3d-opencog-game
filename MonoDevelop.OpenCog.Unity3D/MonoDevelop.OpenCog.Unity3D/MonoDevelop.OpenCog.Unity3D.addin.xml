@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Addin id          = "OpenCogExtensions"
+       namespace   = "MonoDevelop.OpenCog.Unity3D"
+       name        = "OpenCog's MonoDevelop Extensions for Unity"
+       author      = "Lake Watkins"
+       copyright   = "AGPLv3 + linking exception"
+       url         = "http://opencog.org/"
+       description = "C# file templates for Unity and other IDE extensions."
+       category    = "Unity File Templates"
+       version     = "0.2">
+    
+    <Dependencies>
+      <Addin id="::MonoDevelop.Ide" version="4.0"/>
+    </Dependencies>
+        
+    <Extension path = "/MonoDevelop/Ide/FileTemplates">
+        <FileTemplate id = "OCMonoBehaviour" file = "OCMonoBehaviour.xft.xml"/>
+        <FileTemplate id = "OCMonoBehaviourLite" file = "OCMonoBehaviourLite.xft.xml"/>
+    </Extension>
+    
+</Addin>
