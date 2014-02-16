@@ -33,13 +33,16 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyClass.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Test1.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="MonoDevelop.OpenCog.Unity3D.addin.xml" />
-    <None Include="OCMonoBehaviour.xft.xml" />
-    <None Include="OCMonoBehaviourLite.xft.xml" />
+    <EmbeddedResource Include="MonoDevelop.OpenCog.Unity3D.addin.xml" />
+    <EmbeddedResource Include="templates\OCMonoBehaviour.xft.xml" />
+    <EmbeddedResource Include="templates\OCMonoBehaviourLite.xft.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="templates\" />
   </ItemGroup>
 </Project>
