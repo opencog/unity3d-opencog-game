@@ -3,7 +3,7 @@
     
     <TemplateConfiguration>
         <_Name>OpenCog MonoBehaviour Script, Lite Version</_Name>
-        <Icon>md-text-file-icon</Icon>
+        <Icon>md-unityscript-file</Icon>
         <_Category>OpenCog</_Category>
         <LanguageName>C#</LanguageName>
         <_Description>Creates a OpenCog MonoBehaviour script for Unity without all the example implementations and annotations. Attach to GameObject.</_Description>
