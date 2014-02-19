@@ -105,6 +105,8 @@ public class OCAction : OCMonoBehaviour
 	[SerializeField]
 	private bool _blockOnRunning = true;
 
+	private bool _moveToTarget = false;
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -845,7 +847,7 @@ public class OCAction : OCMonoBehaviour
 		float projectionRight = Vector3.Dot(sourceGoal, sourceRight);
 		float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
 				
-		return (projectionLeft) > projectionRight && projectionLeft > projectionForward;
+		return (projectionLeft) >= projectionRight;// && projectionLeft >= projectionForward;
 	}
 			
 	public static bool IsEndTargetMoreRight(OCAction action, OCActionArgs args)
@@ -861,7 +863,7 @@ public class OCAction : OCMonoBehaviour
 		float projectionRight = Vector3.Dot(sourceGoal, sourceRight);
 		float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
 				
-		return projectionRight > (projectionLeft) && projectionRight > projectionForward;
+		return projectionRight > (projectionLeft);// && projectionRight > projectionForward;
 	}
 
 	public static bool IsNoEndTarget(OCAction action, OCActionArgs args)
@@ -1031,11 +1033,27 @@ public class OCAction : OCMonoBehaviour
 		if(_blockOnFail && _blockOnRunning)
 			_ActionController.RunningActions.Add(FullName);
 
+		//@TODO: Fix this hack...
+		if(Descriptors.Contains("Jump") || Descriptors.Contains("Climb"))
+		{
+			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
+			motor.enabled = false;
+			if(Descriptors.Contains("Jump"))
+				_moveToTarget = true;
+		}
+
 		// Start animation effects
 		if(_blockOnRunning || !_Source.animation.isPlaying)
 		{
 			foreach(OCAnimationEffect afx in _AnimationEffects)
 			{
+				if(_moveToTarget)
+				{
+					afx.MoveByX = Mathf.FloorToInt(_EndTarget.transform.position.x - _Source.transform.position.x + 0.5f);
+					afx.MoveByZ = Mathf.FloorToInt(_EndTarget.transform.position.y - _Source.transform.position.y + 0.5f);
+					// no idea why this one is negative
+					afx.MoveByY = -Mathf.FloorToInt(_EndTarget.transform.position.z - _Source.transform.position.z + 0.5f);
+				}
 				afx.Play();
 			}
 		}
@@ -1047,14 +1065,14 @@ public class OCAction : OCMonoBehaviour
 			else if(cbfx.CreationPos == OCCreateBlockEffect.CreationPosition.ForwardBelow)
 				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_Source.transform.position + _Source.transform.forward - _Source.transform.up));
 			else if(cbfx.CreationPos == OCCreateBlockEffect.CreationPosition.Target)
+			{
+				if(VectorUtil.AreVectorsEqual(_EndTarget.transform.position, _Source.transform.position))
+				{
+					Debug.LogError("Don't Build a Block on top of yourself");
+					return ActionStatus.EXCEPTION;
+				}
 				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_EndTarget.transform.position));
-		}
-
-		//@TODO: Fix this hack...
-		if(Descriptors.Contains("Jump") || Descriptors.Contains("Climb"))
-		{
-			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
-			motor.enabled = false;
+			}
 		}
 				
 		if(!Descriptors.Contains("Idle"))
@@ -1090,10 +1108,15 @@ public class OCAction : OCMonoBehaviour
 			_ActionController.RunningActions.Remove(FullName);
 
 		// End animation effects
-//		foreach(OCAnimationEffect afx in _AnimationEffects)
-//		{
-//			afx.Stop();
-//		}
+		foreach(OCAnimationEffect afx in _AnimationEffects)
+		{
+			if(_moveToTarget)
+			{
+				afx.Initialize();
+				_moveToTarget = false;
+			}
+			//afx.Stop();
+		}
 
 		foreach(OCTransferBlockEffect tbfx in _TransferBlockEffects)
 		{
