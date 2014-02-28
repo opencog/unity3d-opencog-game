@@ -112,7 +112,9 @@ public class OCGameStateManager : OCMonoBehaviour
 	}
 	
 	public void Update() {
-		Screen.lockCursor = !Screen.showCursor;
+
+		if(Application.platform != RuntimePlatform.LinuxPlayer)
+			Screen.lockCursor = !Screen.showCursor;
 		
 		if(Input.GetKeyDown(KeyCode.Tab)) {
 			Screen.showCursor = true;
