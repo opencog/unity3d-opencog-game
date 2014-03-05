@@ -23,7 +23,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Xml;
 using System.Linq;
-using System.Net.NetworkInformation;
+//using System.Net.NetworkInformation;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using IAsyncResult = System.IAsyncResult;
@@ -391,26 +391,31 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		UnityEngine.Debug.Log ("In InitializeNetworkElement, my GUID is " + VerificationGuid);
 		_ID = id;
 		_port = OCPortManager.AllocatePort();
-		
-		// http://stackoverflow.com/questions/1069103/how-to-get-my-own-ip-address-in-c
-		IEnumerable<NetworkInterface> networkInterfaces = 
-			from entry in System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
-			where entry.OperationalStatus.Equals (OperationalStatus.Up)
-			select entry;
-			
-		foreach (NetworkInterface networkInterface in networkInterfaces)
-		{
-			IPInterfaceProperties ipProperties = networkInterface.GetIPProperties();
-			UnicastIPAddressInformationCollection unicastAddresses = ipProperties.UnicastAddresses;
-				
-			foreach (UnicastIPAddressInformation unicastAddress in unicastAddresses)
-			{
-				if (unicastAddress.DuplicateAddressDetectionState == DuplicateAddressDetectionState.Preferred &&
-					unicastAddress.AddressPreferredLifetime != System.UInt32.MaxValue)
-						_IP = unicastAddress.Address;
-			}
-		}
-			
+
+// Temporarily reverted to:
+		_IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+
+// See: https://github.com/opencog/unity3d-opencog-game/issues/15#issuecomment-36709935
+
+//		// http://stackoverflow.com/questions/1069103/how-to-get-my-own-ip-address-in-c
+//		IEnumerable<NetworkInterface> networkInterfaces = 
+//			from entry in System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+//			where entry.OperationalStatus.Equals (OperationalStatus.Up)
+//			select entry;
+//			
+//		foreach (NetworkInterface networkInterface in networkInterfaces)
+//		{
+//			IPInterfaceProperties ipProperties = networkInterface.GetIPProperties();
+//			UnicastIPAddressInformationCollection unicastAddresses = ipProperties.UnicastAddresses;
+//				
+//			foreach (UnicastIPAddressInformation unicastAddress in unicastAddresses)
+//			{
+//				if (unicastAddress.DuplicateAddressDetectionState == DuplicateAddressDetectionState.Preferred &&
+//					unicastAddress.AddressPreferredLifetime != System.UInt32.MaxValue)
+//						_IP = unicastAddress.Address;
+//			}
+//		}
+
 		UnityEngine.Debug.Log ("IP Address detected: " + _IP);
 
 		// routerIpString appears to only be set in the obsoleted OldNetworkElement class in the old project...
