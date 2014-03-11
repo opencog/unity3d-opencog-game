@@ -1,0 +1,822 @@
+
+{
+  "actionTypes":
+ [ 
+       {
+	      "actionTypeCode":"BARCK_CODE",
+	      "name":"bark",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"ENTITY_and_FLOAT",
+	      "paramNames":["target","duration"],
+	      "helpText": "void bark([EntityID target [, float duration]])"
+        },
+       
+	  {
+	      "actionTypeCode":"TRICK_FOR_FOOD_CODE",
+	      "name":"trick_for_food",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void trick_for_food()"
+	  },
+	  
+     {
+	      "actionTypeCode":"EAT_CODE",
+	      "name":"eat",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"ROTATION",
+	      "paramNames":["target", "quantity"],
+	      "helpText": "void eat(EntityID target [, float quantity])"
+      },
+      
+      {
+      	  "actionTypeCode":"WALK_CODE",
+	      "name":"walk",
+	      "mandatoryParamTypes":"VECTOR_and_FLOAT",
+	      "optionalParamTypes":"ROTATION",
+	      "paramNames":["target", "speed", "frameOfReference"],
+	      "helpText": "void eat(EntityID target [, float quantity])"
+       
+      },
+      
+      {
+      	  "actionTypeCode":"MOVE_TO_OBJ_CODE",
+	      "name":"move_to_obj",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"ROTATION",
+	      "paramNames": ["target"],
+	      "helpText": "void move_to_obj(EntityID target)"
+       
+      },
+    
+     {
+      	  "actionTypeCode":"GRAB_CODE",
+	      "name":"grab",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["target", "rangeRadius"],
+	      "helpText": "Status grab(EntityID target [, float rangeRadius])"
+       
+      },
+   
+      {
+      	  "actionTypeCode":"DROP_CODE",
+	      "name":"drop",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames": [],
+	      "helpText": "void drop()"
+       
+      },
+   
+     {
+      	  "actionTypeCode":"SIT_CODE",
+	      "name":"sit",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText": "void sit([float duration])"
+       
+      },
+  
+      {
+      	  "actionTypeCode":"LIE_DOWN_CODE",
+	      "name":"lie_down",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText": "void lie_down([float duration])"
+       
+      },
+  
+      {
+      	  "actionTypeCode":"FLY_CODE",
+	      "name":"fly",
+	      "mandatoryParamTypes":"VECTOR",
+	      "optionalParamTypes":"FLOAT_and_ROTATION",
+	      "paramNames":  ["target", "speed", "frameOfReference"],
+	      "helpText": "void fly(Vector target [, float speed, Rotation frameOfReference])"
+       
+      },
+    
+      {
+      	  "actionTypeCode":"FLY_FOLLOW_CODE",
+	      "name":"fly_follow",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":  ["target"],
+	      "helpText": "void fly_follow(EntityID target)"       
+      },
+         
+       {
+      	  "actionTypeCode":"STRETCH_CODE",
+	      "name":"stretch",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":  [],
+	      "helpText": "void stretch()"       
+      },
+          
+       {
+      	  "actionTypeCode":"SCRATCH_SELF_NOSE_CODE",
+	      "name":"scratch_self_nose",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":  ["duration"],
+	      "helpText": "void scratch_self_nose([float duration])"       
+      },
+          
+       {
+      	  "actionTypeCode":"SCRATCH_SELF_RIGHT_EAR_CODE",
+	      "name":"scratch_self_right_ear",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":  ["duration"],
+	      "helpText": "void scratch_self_right_ear([float duration])"      
+      },
+     {
+      	  "actionTypeCode":"SCRATCH_SELF_LEFT_EAR_CODE",
+	      "name":"scratch_self_left_ear",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":  ["duration"],
+	      "helpText": "void scratchSelfLeftEar([float duration])"     
+      },
+       {
+      	  "actionTypeCode":"SCRATCH_SELF_NECK_CODE",
+	      "name":"scratch_self_neck",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":  ["duration"],
+	      "helpText": "void scratchSelfNeck([float duration])"     
+      },
+       
+       {
+      	  "actionTypeCode":"SCRATCH_SELF_RIGHT_SHOULDER_CODE",
+	      "name":"scratch_self_right_shoulder",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":  ["duration"],
+	      "helpText": "void scratchSelfRightShoulder([float duration])"     
+      },
+    
+       {
+      	  "actionTypeCode":"SCRATCH_SELF_LEFT_SHOULDER_CODE",
+	      "name":"scratch_self_left_shoulder",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":  ["duration"],
+	      "helpText": "void scratchSelfLeftShoulder([float duration])"    
+      },
+    
+       {
+      	  "actionTypeCode":"SCRATCH_GROUND_BACK_LEGS_CODE",
+	      "name":"scratch_ground_back_legs",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":  ["duration"],
+	      "helpText": "void scratchGroundBackLegs([float duration])"    
+      },
+    
+       {
+      	  "actionTypeCode":"RUN_IN_CIRCLE_CODE",
+	      "name":"run_in_circle",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":  ["duration"],
+	      "helpText": "void runInCircle([float duration])"    
+      },
+    
+       {
+      	  "actionTypeCode":"ANTICIPATE_PLAY_CODE",
+	      "name":"anticipate_play",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":  [],
+	      "helpText": "void anticipatePlay()"    
+      },
+      
+       {
+      	  "actionTypeCode":"BEG_CODE",
+	      "name":"beg",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":  [],
+	      "helpText": "void beg()"  
+      },
+    
+       {
+      	  "actionTypeCode":"HEEL_CODE",
+	      "name":"heel",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText": "void heel([float duration])"  
+      },
+     
+       {
+      	  "actionTypeCode":"HIDE_FACE_CODE",
+	      "name":"hide_face",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText": "void hideFace([float duration])"  
+      },
+      
+       {
+      	  "actionTypeCode":"PLAY_DEAD_CODE",
+	      "name":"play_dead",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames": [],
+	      "helpText": "void playDead()"
+      },
+      
+       {
+      	  "actionTypeCode":"FOLLOW_CODE",
+	      "name":"follow",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["target", "duration"],
+	      "helpText": "void follow(EntityID target[, float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"LICK_CODE",
+	      "name":"lick",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"ENTITY",
+	      "paramNames": ["target"],
+	      "helpText": "void lick([EntityID target])"
+      },
+     
+       {
+      	  "actionTypeCode":"NUDGE_TO_CODE",
+	      "name":"nudge_to",
+	      "mandatoryParamTypes":"ENTITY_and_VECTOR",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames": ["moveableObj", "target"],
+	      "helpText": "void nudge(EntityID moveableObj, Vector target)"
+      },
+     
+       {
+      	  "actionTypeCode":"TAP_DANCE_CODE",
+	      "name":"tap_dance",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText": "void tapDance([float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"BARE_TEETH_CODE",
+	      "name":"bare_teeth",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"ENTITY_and_FLOAT",
+	      "paramNames": ["target", "duration"],
+	      "helpText": "void bareTeeth([EntityID target [, float duration]])"
+      },
+      
+       {
+      	  "actionTypeCode":"GROWL_CODE",
+	      "name":"growl",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"ENTITY_and_FLOAT",
+	      "paramNames": ["target", "duration"],
+	      "helpText": "void growl([EntityID target [, float duration]])"
+      },
+     
+       {
+      	  "actionTypeCode":"LOOK_UP_TURN_HEAD_CODE",
+	      "name":"look_up_turn_head",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText": "void lookUpTurnHead([float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"WHINE_CODE",
+	      "name":"whine",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"ENTITY_and_FLOAT",
+	      "paramNames": ["target", "duration"],
+	      "helpText": "void whine([EntityID target [, float duration]])"
+      },
+      
+       {
+      	  "actionTypeCode":"SNIFF_CODE",
+	      "name":"sniff",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"ENTITY",
+	      "paramNames": ["target"],
+	      "helpText": "void sniff([EntityID target])"
+      },
+      
+       {
+      	  "actionTypeCode":"SNIFF_AT_CODE",
+	      "name":"sniff_at",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames": ["target"],
+	      "helpText": "void sniffAt(EntityID target)"
+      },
+      
+       {
+      	  "actionTypeCode":"SNIFF_PET_PART_CODE",
+	      "name":"sniff_pet_part",
+	      "mandatoryParamTypes":"ENTITY_and_INT",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["pet part"],
+	      "helpText": "void sniffPetPart(EntityID pet, integer part)"
+      },
+      
+       {
+      	  "actionTypeCode":"SNIFF_AVATAR_PART_CODE",
+	      "name":"sniff_avatar_part",
+	      "mandatoryParamTypes":"ENTITY_and_INT",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["avatar part"],
+	      "helpText": "void sniffAvatarPart(EntityID avatar, integer part)"
+      },
+      
+       {
+      	  "actionTypeCode":"SHAKE_HEAD_CODE",
+	      "name":"shake_head",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["duration"],
+	      "helpText": "void shakeHead([float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"EARS_BACK_CODE",
+	      "name":"ears_back",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["duration"],
+	      "helpText": "void earsBack([float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"EARS_TWITCH_CODE",
+	      "name":"ears_twitch",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["duration"],
+	      "helpText": "void earTwitch([float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"MOVE_HEAD_CODE",
+	      "name":"move_head",
+	      "mandatoryParamTypes":"VECTOR_ROTATION_and_FLOAT",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["toPosition", "rotate", "speed"],
+	      "helpText": "void moveHead(Vector toPosition, Rotation rotate, float speed)"
+      },
+      
+       {
+      	  "actionTypeCode":"WAKE_CODE",
+	      "name":"wake",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void wake()"
+      },
+      
+       {
+      	  "actionTypeCode":"SLEEP_CODE",
+	      "name":"sleep",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["duration"],
+	      "helpText": "void sleep([float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"DRINK_CODE",
+	      "name":"drink",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["target", "quantity"],
+	      "helpText": "void drink(EntityID target [, float quantity])"
+      },
+     
+       {
+      	  "actionTypeCode":"PEE_CODE",
+	      "name":"pee",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void pee()"
+      },
+      
+       {
+      	  "actionTypeCode":"POO_CODE",
+	      "name":"poo",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void poo()"
+      },
+     
+       {
+      	  "actionTypeCode":"WAG_CODE",
+	      "name":"wag",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["duration"],
+	      "helpText": "void wag([float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"TAIL_FLEX_CODE",
+	      "name":"tail_flex",
+	      "mandatoryParamTypes":"VECTOR",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["position", "duration"],
+	      "helpText": "void tailFlex(Vector position [, float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"CHEW_CODE",
+	      "name":"chew",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"ENTITY",
+	      "paramNames":["id"],
+	      "helpText": "void chew([EntityID id])"
+       },
+    
+       {
+      	  "actionTypeCode":"DREAM_CODE",
+	      "name":"dream",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"ENTITY",
+	      "paramNames":["id"],
+	      "helpText": "void dream(EntityID id)"
+      },
+      
+       {
+      	  "actionTypeCode":"TURN_CODE",
+	      "name":"turn",
+	      "mandatoryParamTypes":"ROTATION",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["direction"],
+	      "helpText": "void turn(Rotation direction)"
+      },
+      
+       {
+      	  "actionTypeCode":"ROTATE_CODE",
+	      "name":"rotate",
+	      "mandatoryParamTypes":"FLOAT",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["angle"],
+	      "helpText": "void rotate(float angle)"
+      },
+     
+       {
+      	  "actionTypeCode":"SCRATCH_OTHER_CODE",
+	      "name":"scratch_other",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["target", "duration"],
+	      "helpText": "void scratchOther(EntityID target [, float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"EARS_PERK_CODE",
+	      "name":"perk_ear",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames":["duration"],
+	      "helpText": "void earsPerk([float duration])"
+      } ,
+       {
+      	  "actionTypeCode":"JUMP_UP_CODE",
+	      "name":"jump_up",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void jump_up()"
+      },
+       
+       {
+      	  "actionTypeCode":"JUMP_TOWARD_CODE",
+	      "name":"jump_toward",
+	      "mandatoryParamTypes":"VECTOR",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["direction"],
+	      "helpText": "void jumpToward(Vector direction)"
+      },
+          
+       {
+      	  "actionTypeCode":"JUMP_FORWARD_CODE",
+	      "name":"jump_forward",
+	      "mandatoryParamTypes":"FLOAT",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["height"],
+	      "helpText": "void jumpForward(float height)"
+      },
+        
+       {
+      	  "actionTypeCode":"PAY_ATTENTION_CODE",
+	      "name":"pay_attention",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void payAttention()"
+      },
+      
+       {
+      	  "actionTypeCode":"VOMIT_CODE",
+	      "name":"vomit",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void vomit()"
+      } ,
+       
+       {
+      	  "actionTypeCode":"LEAN_ROCK_DANCE_CODE",
+	      "name":"lean_rock_dance",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void leanRockDance()"
+      },
+     
+       {
+      	  "actionTypeCode":"BACK_FLIP_CODE",
+	      "name":"back_flip",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void backFlip()"
+      },
+          
+       {
+      	  "actionTypeCode":"WIDEN_EYES_CODE",
+	      "name":"widen_eyes",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"INT",
+	      "paramNames": ["interval"],
+	      "helpText": "void widenEyes([short interval])"
+      },
+        
+       {
+      	  "actionTypeCode":"FEARFUL_POSTURE_CODE",
+	      "name":"fearful_posture",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames": [],
+	      "helpText":  "void fearfulPosture()"
+      },
+          
+       {
+      	  "actionTypeCode":"CLEAN_CODE",
+	      "name":"clean",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void clean([float duration])"
+      } ,
+       
+       {
+      	  "actionTypeCode":"BELCH_CODE",
+	      "name":"belch",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames": [],
+	      "helpText":  "void belch()"
+      } ,
+       
+       {
+      	  "actionTypeCode":"GREET_CODE",
+	      "name":"greet",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames": ["target"],
+	      "helpText":  "void greet(EntityID target)"
+      },
+       
+       {
+      	  "actionTypeCode":"DANCE1_CODE",
+	      "name":"dance1",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void dance1([float duration])"
+      },
+       
+       {
+      	  "actionTypeCode":"LOOK_RIGHT_CODE",
+	      "name":"look_right",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void lookRight([float duration])"
+      } ,
+      
+       {
+      	  "actionTypeCode":"LOOK_LEFT_CODE",
+	      "name":"look_left",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void lookLeft([float duration])"
+      },
+        
+       {
+      	  "actionTypeCode":"KICK_LEFT_CODE",
+	      "name":"kick_left",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void kickLeft([float duration])"
+      },
+      
+       {
+      	  "actionTypeCode":"KICK_RIGHT_CODE",
+	      "name":"kick_right",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void kickRight([float duration])"
+      },
+        
+       {
+      	  "actionTypeCode":"LEFT_EAR_PERK_CODE",
+	      "name":"left_ear_perk",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void leftEarPerk([float duration])"
+      },
+       {
+      	  "actionTypeCode":"RIGHT_EAR_PERK_CODE",
+	      "name":"right_ear_perk",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void rightEarPerk([float duration])"
+      },
+       
+       {
+      	  "actionTypeCode":"LEFT_EAR_BACK_CODE",
+	      "name":"left_ear_back",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void leftEarBack([float duration])"
+      },
+       
+       {
+      	  "actionTypeCode":"RIGHT_EAR_BACK_CODE",
+	      "name":"right_ear_back",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void rightEarBack([float duration])"
+      },
+       
+       {
+      	  "actionTypeCode":"LEFT_EAR_TWITCH_CODE",
+	      "name":"left_ear_twitch",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void leftEarTwitch([float duration])"
+      },
+      {
+      	  "actionTypeCode":"RIGHT_EAR_TWITCH_CODE",
+	      "name":"right_ear_twitch",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void rightEarTwitch([float duration])"
+      },
+       {
+      	  "actionTypeCode":"ANGRY_EYES_CODE",
+	      "name":"angry_eyes",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void angryEyes([float duration])"
+      } ,
+       {
+      	  "actionTypeCode":"SAD_EYES_CODE",
+	      "name":"sad_eyes",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText":  "void sad_eyes([float duration])"
+      },  
+       
+       {
+      	  "actionTypeCode":"HAPPY_EYES_CODE",
+	      "name":"happy_eyes",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText": "void happyEyes([float duration])"
+      },
+      {
+      	  "actionTypeCode":"CLOSE_EYES_CODE",
+	      "name":"close_eyes",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["duration"],
+	      "helpText": "void closeEyes([float duration])"
+      },
+        
+       {
+      	  "actionTypeCode":"BITE_CODE",
+	      "name":"bite",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"FLOAT",
+	      "paramNames": ["target", "intensity"],
+	      "helpText": "void bite(EntityID target [, float intensity])"
+      },
+        
+       {
+      	  "actionTypeCode":"PET_CODE",
+	      "name":"pet",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":  ["target"],
+	      "helpText": "void pet(EntityID target)"
+      },
+          
+       {
+      	  "actionTypeCode":"KICK_CODE",
+	      "name":"kick",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":  ["target"],
+	      "helpText": "void kick(EntityID target)"
+      },
+       
+       {
+      	  "actionTypeCode":"GROUP_COMMAND_CODE",
+	      "name":"group_command",
+	      "mandatoryParamTypes":"STRING",
+	      "optionalParamTypes":"STRING_and_STRING",
+	      "paramNames":  ["target", "command", "parameters"],
+	      "helpText": "void kick(EntityID target)"
+      },
+          
+       {
+      	  "actionTypeCode":"RECEIVE_LATEST_GROUP_COMMANDS_CODE",
+	      "name":"receive_latest_group_commands",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":  [],
+	      "helpText": "void receive_latest_group_commands()"
+      },
+       {
+      	  "actionTypeCode":"LOOK_AT_CODE",
+	      "name":"look_at",
+	      "mandatoryParamTypes":"ENTITY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["target"],
+	      "helpText": "void look_at( EntityID target )"
+      },
+        
+       {
+      	  "actionTypeCode":"SAY_CODE",
+	      "name":"say",
+	      "mandatoryParamTypes":"STRING",
+	      "optionalParamTypes":"STRING",
+	      "paramNames":["message", "target"],
+	      "helpText": "void say( string message, string target )"
+      },
+      
+       {
+      	  "actionTypeCode":"BUILD_BLOCK_CODE",
+	      "name":"build_block",
+	      "mandatoryParamTypes":"VECTOR_and_STRING",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["position", "blockType"],
+	      "helpText": "void build_block(Vector position[, int direction])"
+      },
+      
+       {
+      	  "actionTypeCode":"DESTROY_BLOCK_CODE",
+	      "name":"destroy_block",
+	      "mandatoryParamTypes":"VECTOR",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":["position"],
+	      "helpText": "void destroy_block(Vector position)"
+      },
+     
+       {
+      	  "actionTypeCode":"DO_NOTHING_CODE",
+	      "name":"do_nothing",
+	      "mandatoryParamTypes":"EMPTY",
+	      "optionalParamTypes":"EMPTY",
+	      "paramNames":[],
+	      "helpText": "void do_nothing()"
+      }
+   ] 
+}
