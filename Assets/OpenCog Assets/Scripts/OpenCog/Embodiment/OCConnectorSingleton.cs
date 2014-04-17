@@ -231,7 +231,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
-   
+
 	new void Update()
 	{
 		// Invoke base network element function to do networking stuffs in 
@@ -509,6 +509,14 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		//_actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
 		// TODO: Removed due to new call structure for updating action statuses. Nothing to do really..just needs remembering.
 		//OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
+
+		XmlDocument doc = new XmlDocument();
+		doc.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<oc:action-plan xmlns:oc=\"http://www.opencog.org/brain\" demand=\"\"entity-id=\"OAC_npc\" id=\"0\">\n<action name=\"step_forward\" sequence=\"1\"/>\n</oc:action-plan>");
+
+		XmlNodeList list = doc.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
+		XmlElement root = (XmlElement)list.Item(0);//MakeXMLElementRoot(doc);
+
+		ParseActionPlanElement(root);
 
 		return true;
 	}
