@@ -284,6 +284,7 @@ public class LoadCommand : Console.ConsoleCommand
 		
 			// TODO Set agentType and agentTraits in the future.
 			// leave agentType and agentTraits to null just for test.
+
 			connector.Init (agentName, null, null, masterId, masterName);
 
 			yield return StartCoroutine(connector.ConnectOAC());

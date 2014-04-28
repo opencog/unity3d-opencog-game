@@ -215,10 +215,30 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		RunningActions = new List<string>();
 		//RunningActions.Add("StandIdleShow");
 
+		// vvvv Testing Nil's action for the SantaFe problem vvvv
+		/////////////////////////////////////////////////////////////////////////////////
+
+		XmlDocument doc = new XmlDocument();
+		doc.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<oc:action-plan xmlns:oc=\"http://www.opencog.org/brain\" demand=\"\" entity-id=\"OAC_AGI_Robot\" id=\"0\">\n<action name=\"step_forward\" sequence=\"1\"/>\n</oc:action-plan>");
+		
+		XmlNodeList list = doc.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
+		XmlElement root = (XmlElement)list.Item(0);//MakeXMLElementRoot(doc);
+
+		CharacterController charControl = gameObject.GetComponent<CharacterController>();
+		bool tryParse = true;
+
+		/////////////////////////////////////////////////////////////////////////////////
+
 		while(Application.isPlaying)
 		{
 			yield return new WaitForSeconds(1.0f / 100.0f);
 			UpdateAI();
+
+			if(tryParse && charControl.isGrounded)
+			{
+				OCConnectorSingleton.Instance.ParseActionPlanElement(root);
+				tryParse = false;
+			}
 		}
 	}
 	

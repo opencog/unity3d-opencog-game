@@ -510,13 +510,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		// TODO: Removed due to new call structure for updating action statuses. Nothing to do really..just needs remembering.
 		//OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
 
-		XmlDocument doc = new XmlDocument();
-		doc.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<oc:action-plan xmlns:oc=\"http://www.opencog.org/brain\" demand=\"\"entity-id=\"OAC_npc\" id=\"0\">\n<action name=\"step_forward\" sequence=\"1\"/>\n</oc:action-plan>");
 
-		XmlNodeList list = doc.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
-		XmlElement root = (XmlElement)list.Item(0);//MakeXMLElementRoot(doc);
-
-		ParseActionPlanElement(root);
 
 		return true;
 	}
@@ -1720,7 +1714,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	 *
 	 * @param element meta action in xml format
 	 */
-	private void ParseActionPlanElement(XmlElement actionPlan)
+	public void ParseActionPlanElement(XmlElement actionPlan)
 	{
 		// TODO: Determine if we need this:
 		bool adjustCoordinate = false;
@@ -1772,10 +1766,18 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			
 			// Prepare a new actionArgs object
 			OCAction.OCActionArgs actionArguments = new OCAction.OCActionArgs();
+			GameObject avatar = GameObject.FindGameObjectWithTag("OCAGI");
 			
 			actionArguments.StartTarget = GameObject.Find("StartPointStub");
-			actionArguments.StartTarget.transform.position = GameObject.FindGameObjectWithTag("OCAGI").transform.position;		
+			actionArguments.StartTarget.transform.position = avatar.transform.position;		
 			actionArguments.EndTarget = null;
+
+			// Create a Stub goal when one is not specified:
+			if(actionParameters.Count == 0 && actionName == "step_forward")
+			{
+				actionArguments.EndTarget = GameObject.Find ("EndPointStub");
+				actionArguments.EndTarget.transform.position = avatar.transform.position + avatar.transform.forward;
+			}
 			
 			// 'action' elements contain 'params'
 			foreach(XmlNode actionParameterNode in actionParameters)
