@@ -1773,6 +1773,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			actionArguments.EndTarget = null;
 
 			// Create a Stub goal when one is not specified:
+			// @TODO: Generalize this or remove the requirement that actions have goals.
 			if(actionParameters.Count == 0 && actionName == "step_forward")
 			{
 				actionArguments.EndTarget = GameObject.Find ("EndPointStub");
