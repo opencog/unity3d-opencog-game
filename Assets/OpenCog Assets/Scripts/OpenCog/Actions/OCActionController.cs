@@ -667,6 +667,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	public void LoadActionPlanStep(string actionName, OCAction.OCActionArgs arguments)
 	{
+        Debug.Log("OCActionController::LoadActionPlanStep: " + actionName);
 		TreeType treeType = _ActionNameDictionary[actionName];
 		Tree tree = _TreeTypeDictionary[treeType];
 		OCActionPlanStep actionPlanStep = new OCActionPlanStep();
