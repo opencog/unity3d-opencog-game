@@ -1787,7 +1787,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 				XmlElement actionParameterElement = (XmlElement)actionParameterNode;
 				
 				// Get attributes from actionParameterElement
-				string actionParameterType = actionParameterElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);	
+				string actionParameterType = actionParameterElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
 				
 				switch(actionParameterType)
 				{
