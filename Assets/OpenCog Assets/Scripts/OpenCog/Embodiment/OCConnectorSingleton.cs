@@ -1775,7 +1775,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// Create a Stub goal when one is not specified:
 			// @TODO: Generalize this or remove the requirement that actions have goals.
 			if(actionParameters.Count == 0 &&
-               (actionName == "step_forward" || actionName == "rotate_left" || actionName == "rotate_right")
+               (actionName == "step_forward" || actionName == "rotate_left" || actionName == "rotate_right"))
 			{
 				actionArguments.EndTarget = GameObject.Find ("EndPointStub");
 				actionArguments.EndTarget.transform.position = avatar.transform.position + avatar.transform.forward;
