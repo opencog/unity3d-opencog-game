@@ -93,6 +93,30 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	, { "BuildBlockAtPosition", TreeType.Character_TurnAndCreate }
 	, { "MoveToCoordinate", TreeType.Character_Move }
 	, { "build_block", TreeType.Character_TurnAndCreate }
+	, { "idle", TreeType.Character_IdleShow }
+	, { "activate", TreeType.Character_Activate }
+	, { "step_backward", TreeType.Character_BackwardMove }
+	, { "build_block_forward", TreeType.Character_Create }
+  , { "step_down", TreeType.Character_DownMove }
+	, { "emote", TreeType.Character_EmoteShow }
+  , { "face_toward", TreeType.Character_FaceShow }
+  , { "say_idle", TreeType.Character_IdleTell }
+  , { "kick", TreeType.Character_KickActivate }
+  , { "activate_left", TreeType.Character_LeftHandActivate }
+	, { "eat_left", TreeType.Character_LeftHandDestroy }
+  , { "step_left", TreeType.Character_LeftMove }
+	, { "morph", TreeType.Character_Morph }
+	, { "release", TreeType.Character_Release }
+	, { "activate_right", TreeType.Character_RightHandActivate }
+	, { "build_block_right", TreeType.Character_RightHandCreate }
+	, { "step_right", TreeType.Character_RightMove }
+	, { "show", TreeType.Character_Show }
+	, { "transfer", TreeType.Character_Transfer }
+  , { "destroy_block", TreeType.Character_TurnAndDestroy }
+  , { "rotate_left_or_right", TreeType.Character_TurnLeftOrRight }
+  , { "step_up", TreeType.Character_UpMove }
+	, { "girl_behaviour", TreeType.Character_GirlBehaviour }
+  , { "ghost_behaviour", TreeType.Character_GhostBehaviour }
 	};
 			
 	// Assume that there's just one behaviour we'd like to execute at a given time
@@ -206,9 +230,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			}
 		}
 				
-		OCActionPlanStep firstStep = new OCActionPlanStep();
+		OCActionPlanStep firstStep = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
 		firstStep.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
+				KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
+				firstStep.Arguments.ActionName = keyValuePair.Key;
 
 		_ActionPlanQueue.AddLast(firstStep);		
 
@@ -690,7 +716,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
         Debug.Log("OCActionController::LoadActionPlanStep: " + actionName);
 		TreeType treeType = _ActionNameDictionary[actionName];
 		Tree tree = _TreeTypeDictionary[treeType];
-		OCActionPlanStep actionPlanStep = new OCActionPlanStep();
+				OCActionPlanStep actionPlanStep = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
 		_ActionPlanQueue.AddLast(actionPlanStep);
@@ -715,9 +741,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		} else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
 			_PlanSucceeded = true;
-			OCActionPlanStep step = new OCActionPlanStep();
+			OCActionPlanStep step = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 			step.Behaviour = _TreeTypeDictionary[_TreeType];
 			step.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
+					KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
+					step.Arguments.ActionName = keyValuePair.Key;
 			_step = step;
 		}
 				
@@ -796,6 +824,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						{
 							Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
 						}		
+					}
+							else if(_step.Arguments.ActionPlanID == null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries) && OCConnectorSingleton.Instance.IsEstablished )
+					{
+								OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, _PlanSucceeded);
 					}
 				}
 						
@@ -927,46 +959,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	//---------------------------------------------------------------------------
 			
-	[Serializable]
-	public class OCActionPlanStep
-	{
-		private Behave.Runtime.Tree _behaviour;
-
-		private OCAction.OCActionArgs _arguments;
-		
-		public OCAction.OCActionArgs Arguments
-		{
-			get
-			{
-				return this._arguments;
-			}
-			set
-			{
-				_arguments = value;
-			}
-		}
-
-		public Tree Behaviour
-		{
-			get
-			{
-				return this._behaviour;
-			}
-			set
-			{
-				_behaviour = value;
-			}
-		}
 	
-		static public int MaxRetries = 5;
-		
-		public int Retry = 0;
-				
-		public override string ToString()
-		{
-			return _behaviour.ToString() + ", " + _arguments.ToString(); 
-		}
-	}
 			
 	// TODO: This cose is just a set of stubs to get rid of an error.
 	//public static event ActionCompleteHandler globalActionCompleteEvent;
