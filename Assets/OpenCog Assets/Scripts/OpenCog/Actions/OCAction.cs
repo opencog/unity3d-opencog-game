@@ -991,13 +991,16 @@ public class OCAction : OCMonoBehaviour
 			if(IsSourceRunningAction(this, null))
 			{
 				Debug.LogWarning(" -- Action Failed: " + FullName);
+
+						if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
+						{
+							_ActionController.Step.Arguments.ActionName = FullName;
+							OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, false);	
+						}
+
 			}
 
-					if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
-					{
-						_ActionController.Step.Arguments.ActionName = FullName;
-						OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, false);	
-					}
+
 					
 			return ActionStatus.FAILURE;
 		}
