@@ -825,10 +825,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 							Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
 						}		
 					}
-							else if(_step.Arguments.ActionPlanID == null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries) && OCConnectorSingleton.Instance.IsEstablished )
-					{
-								OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, _PlanSucceeded);
-					}
+//							else if(_step.Arguments.ActionPlanID == null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries) && OCConnectorSingleton.Instance.IsEstablished )
+//					{
+//								OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, _PlanSucceeded);
+//					}
 				}
 						
 //				if(!_PlanSucceeded)

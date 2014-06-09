@@ -728,7 +728,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		actionElement.SetAttribute("action-instance-name", step.Arguments.ActionName + step.ID);
 		
 		//bool result = (status == ActionResult.Status.SUCCESS ? true : false);
-		actionElement.SetAttribute("result-state", "true"); //successful or failed
+		actionElement.SetAttribute("result-state", status.ToString()); //successful or failed
 		if (step.Arguments.Source.GetInstanceID() == step.Arguments.StartTarget.GetInstanceID()) {
 			actionElement.SetAttribute("target", _brainID);
 		} else {

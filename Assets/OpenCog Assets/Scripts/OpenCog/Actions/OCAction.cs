@@ -980,8 +980,8 @@ public class OCAction : OCMonoBehaviour
 			{
 				Debug.Log(" -- Action Failed, but will not block: " + FullName);
 				
-//				if(args.ActionPlanID != null)
-//					OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);
+//						if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
+//							OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, false);		
 			}
 	
 			return ActionStatus.SUCCESS;
@@ -992,6 +992,12 @@ public class OCAction : OCMonoBehaviour
 			{
 				Debug.LogWarning(" -- Action Failed: " + FullName);
 			}
+
+					if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
+					{
+						_ActionController.Step.Arguments.ActionName = FullName;
+						OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, false);	
+					}
 					
 			return ActionStatus.FAILURE;
 		}
@@ -1022,7 +1028,13 @@ public class OCAction : OCMonoBehaviour
 //					
 //			return ActionStatus.FAILURE;
 //		}
-				
+
+//				if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
+//				{
+//					_ActionController.Step.Arguments.ActionName = FullName;
+//					OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, false);	
+//				}
+
 		return ActionStatus.FAILURE;
 	}
 			
@@ -1184,8 +1196,11 @@ public class OCAction : OCMonoBehaviour
 		if(!Descriptors.Contains("Idle"))
 			Debug.LogWarning("Ending Action: " + FullName);
 			
-//		if(args.ActionPlanID != null)
-//			OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);				
+				if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
+				{
+					_ActionController.Step.Arguments.ActionName = FullName;
+					OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, true);	
+				}		
 			
 		return ActionStatus.SUCCESS;
 	}
