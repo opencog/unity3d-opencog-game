@@ -3,6 +3,47 @@ using System.Collections;
 
 namespace Cubiquity
 {	
+	/**
+	 * Stores an *approximate* color value with a limited bit-depth.
+	 *
+	 * The QuantizedColor structure is used to represent the color of the cubes in a colored cubes volume. It provides similar
+	 * functionality to the standard Unity color classes (Color and Color32) but stores the colors with reduced precision.
+	 * This means that if you write a value into one of the color components and then read it back, then the value which 
+	 * you get may not be exactly the same as the value you wrote.
+	 *
+	 * We deliberately implement this unusual behavior because it makes it more likely that adjacent voxels will actually
+	 * have the same quantized  color value. This has a couple of benefits for our system:
+	 *
+	 * There are a couple of reasons why it is desirable for the QuantizedColor class to exhibit this unusual behavior.
+	 * 
+	 * 1. It reduces the size of each voxel in memory, which can become significant when a volume can contain hundreds
+	 * of millions of voxels.
+	 * 
+	 * 2. It makes it more likely that adjacent voxels will have the same color value. This improves compression of the voxel
+	 * data and also improves rendering performance as adjacent voxels with the same color can be combined.
+	 *
+	 * The effects of quantization may be observed if you try to create smooth gradients, but other than they should
+	 * generally not be visible. Precision is sufficient for most purposes and the quantization artifacts are further hidden
+	 * by applying noise, lighting, and other special effects.
+	 *
+	 * The code below shows some ways of creating and initializing a QuantizedColor:
+	 *
+	 * ...
+	 *
+	 * Because the QuantizedColor is a structure (rather than a class) you can actually skip the initialization by the 'new'
+	 * operator and just get straight to assigning the values:
+	 *
+	 * ...
+	 * 
+	 * It is important to remember that a QuantizedColor is passed by value rather than by reference. As such, you should
+	 * not use the code below to set a voxel value:
+	 *
+	 * ...
+	 *
+	 * But you should do something like the following instead:
+	 *
+	 * ...
+	 */
 	public struct QuantizedColor
 	{
 		private static int MaxInOutValue = byte.MaxValue;

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a467b57751622004082f4212005e51c7
+guid: d2519ee8e8e93df4db9e111b4e855264
 TextureImporter:
   serializedVersion: 2
   mipmaps:
@@ -30,16 +30,7 @@ TextureImporter:
   nPOTScale: 1
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 0
-  spriteExtrude: 1
-  spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: .5, y: .5}
-  spritePixelsToUnits: 100
   alphaIsTransparency: 0
   textureType: -1
   buildTargetSettings: []
-  spriteSheet:
-    sprites: []
-  spritePackingTag: 
   userData: 

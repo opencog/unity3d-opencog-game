@@ -30,9 +30,9 @@ using UnityEngine;
 namespace Cubiquity
 {
 	[System.Serializable]
-	public class Vector3i
+	public struct Vector3i
 	{
-		public int x = 0, y = 0, z = 0;
+		public int x, y, z;
 		public static readonly Vector3i zero = new Vector3i(0, 0, 0);
 		public static readonly Vector3i one = new Vector3i(1, 1, 1);
 		public static readonly Vector3i forward = new Vector3i(0, 0, 1);
@@ -40,13 +40,7 @@ namespace Cubiquity
 		public static readonly Vector3i up = new Vector3i(0, 1, 0);
 		public static readonly Vector3i down = new Vector3i(0, -1, 0);
 		public static readonly Vector3i left = new Vector3i(-1, 0, 0);
-		public static readonly Vector3i right = new Vector3i(1, 0, 0);
-	
-	
-		public Vector3i()
-		{
-		}
-	
+		public static readonly Vector3i right = new Vector3i(1, 0, 0);	
 		
 		public Vector3i(int x, int y, int z)
 		{
@@ -60,6 +54,7 @@ namespace Cubiquity
 		{
 			this.x = x;
 			this.y = y;
+			this.z = 0;
 		}
 	
 	
@@ -182,10 +177,6 @@ namespace Cubiquity
 		
 		public static bool operator ==(Vector3i a, Vector3i b)
 		{
-			if(a == null || b == null)
-			{
-				return a == null && b == null;
-			}
 			return a.x == b.x &&
 				   a.y == b.y && 
 				   a.z == b.z;
@@ -194,10 +185,6 @@ namespace Cubiquity
 		
 		public static bool operator !=(Vector3i a, Vector3i b)
 		{
-			if(a == null || b == null)
-			{
-				return !(a == null && b == null);
-			}
 			return a.x != b.x || 
 				   a.y != b.y ||
 				   a.z != b.z;

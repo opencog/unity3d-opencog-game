@@ -13,22 +13,17 @@ namespace Cubiquity
 	 
 	    static void Update ()
 	    {
-			// According to the docs this is very slow, but I don't know a better way. The code below finds all volumes
-			// and calls their syncronize() function to update the geometry. Althoughthe volume can be set to execute in
-			// edit mode, the update function is then only called when an event such as a mouse movement occurs. But for
-			// progressive loading of the volume we want continuous events.
-			Object[] volumes = Object.FindObjectsOfType(typeof(ColoredCubesVolume));
-			foreach(Object volume in volumes)
+			if(!EditorApplication.isPlayingOrWillChangePlaymode)
 			{
-				ColoredCubesVolume coloredCubesVolume = volume as ColoredCubesVolume;
-				coloredCubesVolume.Synchronize();
-			}
-			
-			Object[] terrainVolumes = Object.FindObjectsOfType(typeof(TerrainVolume));
-			foreach(Object volume in terrainVolumes)
-			{
-				TerrainVolume terrainVolume = volume as TerrainVolume;
-				terrainVolume.Synchronize();
+				// In play mode the volume syncing is driven by a coroutine, but this doesn't run in edit mode. We could try
+				// syncing when an action occurs (such as a terrain modification) but this doesn't give us background loading
+				// of the terrain. Therefore we use maintain and use a global list of currently enabled volume components.
+				// Note that a previous version of this code used 'FindObjectsOfType' for this purpose, but it appeared
+				// unreliable (possibly when volums were in a hierarchy - this was never quite clear).
+				foreach(Volume volume in Volume.allEnabledVolumes)
+				{
+					volume.Synchronize();
+				}
 			}
 	    }
 	}
