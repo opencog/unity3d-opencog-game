@@ -39,7 +39,6 @@
   <ItemGroup>
     <EmbeddedResource Include="MonoDevelop.OpenCog.Unity3D.addin.xml" />
     <EmbeddedResource Include="templates\OCMonoBehaviour.xft.xml" />
-    <EmbeddedResource Include="templates\OCMonoBehaviourLite.xft.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="templates\" />

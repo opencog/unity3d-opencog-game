@@ -25,7 +25,6 @@
         
     <Extension path = "/MonoDevelop/Ide/FileTemplates">
         <FileTemplate id = "OCMonoBehaviour" file="templates/OCMonoBehaviour.xft.xml"/>
-        <FileTemplate id = "OCMonoBehaviourLite" file="templates/OCMonoBehaviourLite.xft.xml"/>
     </Extension>
     
 </Addin>
