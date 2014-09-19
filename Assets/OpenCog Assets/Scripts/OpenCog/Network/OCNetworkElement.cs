@@ -218,6 +218,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Update()
 	{
+		UnityEngine.Debug.Log ("Updating...");
+
 		if (_isEstablished)
 		{
 			if (!_isListening)
@@ -736,7 +738,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	protected void Pulse()
 	{
-		//UnityEngine.Debug.Log ("Pulsing...");
+		UnityEngine.Debug.Log ("Pulsing...");
 			
 		if(_messageQueue.Count > 0)
 		{
