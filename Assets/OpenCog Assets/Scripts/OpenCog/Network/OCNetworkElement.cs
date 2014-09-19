@@ -742,7 +742,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			
 		if(_messageQueue.Count > 0)
 		{
-//			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
+			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
 				
 //			lock(_messageQueue)
 //			{
