@@ -312,7 +312,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="message">An unread message</param>
 	public void PullMessage(OCMessage message)
 	{
-//		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
+		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
 		lock(_messageQueue)
 		{
 //			UnityEngine.Debug.Log ("Enqueueing a message (I hate this code!!)");
