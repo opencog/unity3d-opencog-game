@@ -418,7 +418,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 //			}
 //		}
 
-		UnityEngine.Debug.Log ("IP Address detected: " + _IP);
+		UnityEngine.Debug.Log ("IP:Port Address detected: " + _IP + ":" + _port);
 
 		// routerIpString appears to only be set in the obsoleted OldNetworkElement class in the old project...
 		//_routerIP = IPAddress.Parse(this.routerIpString);
