@@ -175,6 +175,10 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 //				try
 //				{
 					UnityEngine.Debug.Log ("Accepting socket from listener...");
+
+                    // Wait for 10 seconds just to see if this fixes
+                    // the OC <-> Unity connecting bug
+                    yield return new UnityEngine.WaitForSeconds(10.0f);
 						
 					_workSocket = _listener.AcceptSocket();
 					
