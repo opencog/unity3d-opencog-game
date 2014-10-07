@@ -240,7 +240,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			base.Update();	
 			
-			if(_actionStatusesUpdated == false)
+			if(_isInitialized && _actionStatusesUpdated == false)
 			{
 				UpdateActionStatuses();
 				
@@ -690,7 +690,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //	        actionElement.SetAttribute("available", available ? "true" : "false");
 //		}
 
-		OCMessage message = OCMessage.CreateMessage(this.ID.ToString(), this.BrainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
 		lock(_messageSendingLock)
 		{

@@ -60,7 +60,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 	//---------------------------------------------------------------------------
 		
-
+	private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
 	
 	// Settings of this network element instance.
 	protected string _ID;
@@ -351,7 +351,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	private void Initialize()
 	{
-
+			_isInitialized = true;
 	}
 		
 	private void StartHandling()
@@ -737,48 +737,53 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	protected void Pulse()
 	{
 		//UnityEngine.Debug.Log ("Pulsing...");
-			
-		if(_messageQueue.Count > 0)
+		
+		if(_isInitialized)
 		{
-//			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
-				
-//			lock(_messageQueue)
-//			{
-//				int messageNumer = 0;
-//					
-//				foreach (OCMessage aMessage in _messageQueue)
-//				{
-//					UnityEngine.Debug.Log ("Message number " + messageNumer + " contains: " + aMessage.ToString());
-//				}
-//			}
-				
-			//long startTime = DateTime.Now.Ticks;
-			Queue<OCMessage> messagesToProcess;
-			lock(_messageQueue)
-			{
-				messagesToProcess = new Queue<OCMessage>(_messageQueue);
-				_messageQueue.Clear();
-			}
-				
-			//UnityEngine.Debug.Log ("Weird copy from _messageQueue to messagesToProcess is complete! Time to get loopy!");
-				
-			foreach(OCMessage msg in messagesToProcess)
-			{
-				if(msg == null)
-				{
-					UnityEngine.Debug.Log("Null message to process.");
-				}
 
-//				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
-				
-				bool mustExit = ProcessNextMessage(msg);
-				
-				if(mustExit)
+			if(_messageQueue.Count > 0)
+			{
+	//			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
+					
+	//			lock(_messageQueue)
+	//			{
+	//				int messageNumer = 0;
+	//					
+	//				foreach (OCMessage aMessage in _messageQueue)
+	//				{
+	//					UnityEngine.Debug.Log ("Message number " + messageNumer + " contains: " + aMessage.ToString());
+	//				}
+	//			}
+					
+				//long startTime = DateTime.Now.Ticks;
+				Queue<OCMessage> messagesToProcess;
+				lock(_messageQueue)
 				{
-					UnityEngine.Debug.Log ("Must....EXIT.....");
-					break;
+					messagesToProcess = new Queue<OCMessage>(_messageQueue);
+					_messageQueue.Clear();
+				}
+					
+				//UnityEngine.Debug.Log ("Weird copy from _messageQueue to messagesToProcess is complete! Time to get loopy!");
+					
+				foreach(OCMessage msg in messagesToProcess)
+				{
+					if(msg == null)
+					{
+						UnityEngine.Debug.Log("Null message to process.");
+					}
+
+	//				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
+					
+					bool mustExit = ProcessNextMessage(msg);
+					
+					if(mustExit)
+					{
+						UnityEngine.Debug.Log ("Must....EXIT.....");
+						break;
+					}
 				}
 			}
+
 		}
 //		else
 //			UnityEngine.Debug.Log ("_messageQueue.Count == 0");
