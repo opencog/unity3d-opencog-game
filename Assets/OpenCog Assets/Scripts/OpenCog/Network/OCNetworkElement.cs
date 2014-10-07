@@ -218,6 +218,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Update()
 	{
+		UnityEngine.Debug.Log ("Updating...");
+
 		if (_isEstablished)
 		{
 			if (!_isListening)
@@ -310,7 +312,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="message">An unread message</param>
 	public void PullMessage(OCMessage message)
 	{
-//		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
+		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(OCMessage)");
 		lock(_messageQueue)
 		{
 //			UnityEngine.Debug.Log ("Enqueueing a message (I hate this code!!)");
@@ -416,7 +418,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 //			}
 //		}
 
-		UnityEngine.Debug.Log ("IP Address detected: " + _IP);
+		UnityEngine.Debug.Log ("IP:Port Address detected: " + _IP + ":" + _port);
 
 		// routerIpString appears to only be set in the obsoleted OldNetworkElement class in the old project...
 		//_routerIP = IPAddress.Parse(this.routerIpString);
@@ -736,12 +738,25 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	protected void Pulse()
 	{
-		//UnityEngine.Debug.Log ("Pulsing...");
+		UnityEngine.Debug.Log ("Pulsing...");
 		
 		if(_isInitialized)
 		{
-
-			if(_messageQueue.Count > 0)
+			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
+				
+//			lock(_messageQueue)
+//			{
+//				int messageNumer = 0;
+//					
+//				foreach (OCMessage aMessage in _messageQueue)
+//				{
+//					UnityEngine.Debug.Log ("Message number " + messageNumer + " contains: " + aMessage.ToString());
+//				}
+//			}
+				
+			//long startTime = DateTime.Now.Ticks;
+			Queue<OCMessage> messagesToProcess;
+			lock(_messageQueue)
 			{
 	//			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
 					

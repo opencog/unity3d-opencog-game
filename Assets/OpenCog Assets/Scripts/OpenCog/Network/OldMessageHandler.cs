@@ -148,6 +148,8 @@ namespace OpenCog.Network
 		/// </returns>
 		public string parse(string inputLine)
 		{
+            UnityEngine.Debug.Log("OldMessageHandler.parse(" + inputLine + ")");
+
 			string answer = null;
 			
 			char selector = inputLine[0];
