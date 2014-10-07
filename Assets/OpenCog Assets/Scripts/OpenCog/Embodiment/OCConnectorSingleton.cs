@@ -61,7 +61,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	//---------------------------------------------------------------------------
 
-	private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
+	//private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
 
 	// Basic attributes of this avatar.
 	private string _baseID;    /** For example "NPC" */

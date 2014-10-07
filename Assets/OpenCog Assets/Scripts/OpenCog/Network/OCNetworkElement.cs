@@ -55,12 +55,12 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 {
 
 	//---------------------------------------------------------------------------
-
+ 
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
 		
-	private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
+	protected bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
 	
 	// Settings of this network element instance.
 	protected string _ID;
@@ -771,7 +771,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	//			}
 					
 				//long startTime = DateTime.Now.Ticks;
-				Queue<OCMessage> messagesToProcess;
+				//Queue<OCMessage> messagesToProcess;
 				lock(_messageQueue)
 				{
 					messagesToProcess = new Queue<OCMessage>(_messageQueue);
