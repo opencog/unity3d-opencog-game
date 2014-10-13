@@ -64,6 +64,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
 	private bool _isLoaded = false;
 
+
 	// Basic attributes of this avatar.
 	private string _baseID;    /** For example "NPC" */
 	private string _brainID;   /** For example "OAC_NPC" */
@@ -274,7 +275,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		_messageSendingTimer += UnityEngine.Time.fixedDeltaTime;
         
-		if(_messageSendingTimer >= _messageSendingInterval)
+		if(_messageSendingTimer >= _messageSendingInterval)// && _isInitialized)
 		{
 			//UnityEngine.Debug.Log ("OCConnectorSingleton::FixedUpdate sending messages at " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
 			SendMessages();
@@ -516,7 +517,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		// TODO: Removed due to new call structure for updating action statuses. Nothing to do really..just needs remembering.
 		//OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
 
-
+		//_isInitialized = true;
 
 		return true;
 	}
@@ -589,7 +590,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public override bool ProcessNextMessage(OCMessage message)
 	{
-//		UnityEngine.Debug.Log("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
+		//UnityEngine.Debug.Log("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
     
 		if(message.Type == OCMessage.MessageType.FEEDBACK)
 		{

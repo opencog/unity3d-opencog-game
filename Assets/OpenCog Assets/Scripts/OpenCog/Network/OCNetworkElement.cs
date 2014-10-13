@@ -218,6 +218,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Update()
 	{
+		//UnityEngine.Debug.Log("Updating...");
+
 		if (_isEstablished)
 		{
 			if (!_isListening)
@@ -445,6 +447,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				
 		//StartCoroutine(_listener.Listen());
 		//StartCoroutine(RequestMessage(1));
+
+		_isNEInitialized = true;
 	}
 	
 	/// <summary>
@@ -457,6 +461,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		//_listener.Stop();
 		Disconnect();
 		OCPortManager.ReleasePort(_port);
+
+		_isNEInitialized = false;
 	}
 		
 	protected System.Collections.IEnumerator Connect()
@@ -739,8 +745,6 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		//UnityEngine.Debug.Log ("Pulsing...");
 		
 		if(_isNEInitialized)
-		{
-
 			if(_messageQueue.Count > 0)
 			{
 	//			UnityEngine.Debug.Log ("We gots messages! " + _messageQueue.Count + " in fact!");
@@ -784,7 +788,6 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				}
 			}
 
-		}
 //		else
 //			UnityEngine.Debug.Log ("_messageQueue.Count == 0");
 	}
