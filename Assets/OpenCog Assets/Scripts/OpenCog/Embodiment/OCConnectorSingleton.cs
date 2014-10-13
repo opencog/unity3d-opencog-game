@@ -590,7 +590,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public override bool ProcessNextMessage(OCMessage message)
 	{
-		//UnityEngine.Debug.Log("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
+//		UnityEngine.Debug.Log("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
     
 		if(message.Type == OCMessage.MessageType.FEEDBACK)
 		{

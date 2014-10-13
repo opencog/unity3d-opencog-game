@@ -55,7 +55,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 {
 
 	//---------------------------------------------------------------------------
-
+ 
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
@@ -292,7 +292,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="messages">A list of unread messages</param>
 	public void PullMessage(List<OCMessage> messages)
 	{
-		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(List<OCMessage> messages)");
+//		UnityEngine.Debug.Log ("OCNetworkElement::PullMessage(List<OCMessage> messages)");
 		lock(_messageQueue)
 		{
 			foreach(OCMessage msg in messages)
@@ -418,7 +418,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 //			}
 //		}
 
-		UnityEngine.Debug.Log ("IP Address detected: " + _IP);
+		UnityEngine.Debug.Log ("IP:Port Address detected: " + _IP + ":" + _port);
 
 		// routerIpString appears to only be set in the obsoleted OldNetworkElement class in the old project...
 		//_routerIP = IPAddress.Parse(this.routerIpString);
@@ -742,7 +742,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	protected void Pulse()
 	{
-		//UnityEngine.Debug.Log ("Pulsing...");
+//		UnityEngine.Debug.Log ("Pulsing...");
 		
 		if(_isNEInitialized)
 			if(_messageQueue.Count > 0)

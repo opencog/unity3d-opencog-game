@@ -209,7 +209,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			{
 				if(((action.FullName.Contains(treeName) || treeName.Contains("Behaviour")) 
 						&& !(treeName == "GhostBehaviour" && action.name.Contains("Create"))
-						&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy")))
+						&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy"))
+						&& !(treeName == "GhostBehaviour" && action.name.Contains("HoldBothHandsTransfer"))
+						&& !(treeName == "GirlBehaviour" && action.name.Contains("HoldBothHandsTransfer")))
 					|| (treeName == "TurnAndCreate" && action.FullName == "HoldRightHandCreate")
 					|| (treeName == "TurnAndCreate" && action.FullName == "HoldRightHandCreateBelow")
 					|| (treeName == "TurnAndCreate" && action.FullName == "StandTurnLeftMove")
@@ -223,9 +225,15 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					|| (treeName == "BothHandsTransfer" && action.FullName == "HoldBothHandsTransfer")
 				  )
 				{
-					int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
+					// whatever, this is awful... I evidently fail at logic...
+					if(  !(treeName == "LeftMove" && action.FullName == "StandTurnLeftMove")
+					   && !(treeName == "RightMove" && action.FullName == "StandTurnRightMove"))
+					{
+							int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
 							
-					tree.SetTickForward(actionTypeID, action.ExecuteBehave);
+							tree.SetTickForward(actionTypeID, action.ExecuteBehave);
+					}
+
 				}
 			}
 		}
