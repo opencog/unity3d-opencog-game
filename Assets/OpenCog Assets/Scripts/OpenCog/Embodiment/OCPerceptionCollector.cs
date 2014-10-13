@@ -141,7 +141,7 @@ namespace OpenCog.Embodiment
 			_mapInfoCacheKeys = _mapInfoCache.Keys.ToList();
 			_mapInfoCacheNames = _mapInfoCache.Values.Select(o => o.name).ToList();
 			// Check if OCConnector has been initialized (a.k.a connecting to the router).
-			if (!_connector.IsInitialized) {
+			if (!_connector.IsInitialized){// || !_connector.IsLoaded) {
 				return;
 			}
 			

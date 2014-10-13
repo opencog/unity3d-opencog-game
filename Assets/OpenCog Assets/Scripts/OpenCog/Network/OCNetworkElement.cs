@@ -60,7 +60,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 	//---------------------------------------------------------------------------
 		
-	private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
+	private bool _isNEInitialized = false; // Flag to check if the OAC to this avatar is alive.
 	
 	// Settings of this network element instance.
 	protected string _ID;
@@ -351,7 +351,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	private void Initialize()
 	{
-			_isInitialized = true;
+			_isNEInitialized = true;
 	}
 		
 	private void StartHandling()
@@ -738,7 +738,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		//UnityEngine.Debug.Log ("Pulsing...");
 		
-		if(_isInitialized)
+		if(_isNEInitialized)
 		{
 
 			if(_messageQueue.Count > 0)

@@ -62,6 +62,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	//---------------------------------------------------------------------------
 
 	private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
+	private bool _isLoaded = false;
 
 	// Basic attributes of this avatar.
 	private string _baseID;    /** For example "NPC" */
@@ -143,6 +144,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	public bool IsInitialized // Old property: IsInit(), old member var: isOacAlive
 	{
 		get { return _isInitialized; }
+	}
+
+	public bool IsLoaded
+	{
+		get { return _isLoaded; }
 	}
 
 //		/**
@@ -598,7 +604,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
             
 			string neId = tokens[2];
 			OCLogger.Info("Successfully loaded '" + neId + "'.");
-			_isInitialized = true;
+			_isInitialized = true;//_isLoaded = true;
 		} else
 		if(message.ToString().StartsWith(SUCCESS_UNLOAD))
 		{
@@ -608,12 +614,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// Format: SUCCESS UNLOAD NetworkElement_id avatar_id
 			string neId = tokens[2];
 			UnityEngine.Debug.Log("!!! Successfully unloaded '" + neId + "'.");
-			_isInitialized = false;
+			_isInitialized = false;//_isLoaded = false;
 		} else
 		{
 //			UnityEngine.Debug.Log ("Processing an interesting message type!");
 			// Get the plain text of this message(in XML format) and parse it.
-			if(_isInitialized)
+			if(_isInitialized)//if(_isLoaded)
 			{
 				// Parse the message only when oac is ready.
 				ParseXML(message.ToString());
