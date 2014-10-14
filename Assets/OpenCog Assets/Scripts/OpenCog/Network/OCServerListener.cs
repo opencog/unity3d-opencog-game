@@ -57,7 +57,8 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 	private TcpListener _listener;
 	private OCNetworkElement _networkElement;
 	private OCMessageHandler _messageHandler;
-	private System.Net.Sockets.Socket _workSocket;
+	private System.Net.Sockets.Socket _dataSocket;
+	private System.Net.Sockets.Socket _controlSocket;
 	private bool _isReady;
 			
 	//---------------------------------------------------------------------------
@@ -83,9 +84,14 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		set { _isReady = value; }
 	}
 		
-	public System.Net.Sockets.Socket WorkSocket
+	public System.Net.Sockets.Socket DataSocket
 	{
-		get { return _workSocket; }	
+		get { return _dataSocket; }	
+	}
+
+	public System.Net.Sockets.Socket ControlSocket
+	{
+		get { return _controlSocket; }
 	}
 			
 	//---------------------------------------------------------------------------
@@ -162,7 +168,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		{
 			if(!_listener.Pending())
 			{
-				UnityEngine.Debug.Log (System.DateTime.Now.ToString ("HH:mm:ss.fff") + ": Nope, not pending...");
+				//UnityEngine.Debug.Log (System.DateTime.Now.ToString ("HH:mm:ss.fff") + ": Nope, not pending...");
 				if (_shouldStop)
 					UnityEngine.Debug.Log("Which is funny, because IT SHOULDN'T BE HERE BECAUSE _shouldStop IS TRUE!!");	
 				// If listener is not pending, sleep for a while to relax the CPU.
@@ -174,11 +180,21 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 					
 //				try
 //				{
-					UnityEngine.Debug.Log ("Accepting socket from listener...");
+					//UnityEngine.Debug.LogWarning ("Accepting sockets from listener...");
 						
-					_workSocket = _listener.AcceptSocket();
+					if(_dataSocket == null && _listener.Pending())
+					{
+						UnityEngine.Debug.LogWarning ("Accepting data socket from listener...");
+						_dataSocket = _listener.AcceptSocket();
+					}
+
+					if(_controlSocket == null && _listener.Pending())
+					{
+						UnityEngine.Debug.LogWarning ("Accepting control socket from listener...");
+						_controlSocket = _listener.AcceptSocket();
+					}
 					
-					UnityEngine.Debug.Log ("Socket accepted...");
+					UnityEngine.Debug.LogWarning ("Sockets accepted...");
 					
 					OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
 					console.AddConsoleEntry("Callback received, initializing MessageHandler...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
@@ -188,8 +204,12 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 					_shouldStop = true;
 					
 					UnityEngine.Debug.Log ("_shouldStop is now TRUE!");
-					
-					new OldMessageHandler(OCNetworkElement.Instance, _workSocket).start();
+
+					if(_dataSocket != null)
+						new OldMessageHandler(OCNetworkElement.Instance, _dataSocket).start();
+
+					if(_controlSocket != null)
+						new OldMessageHandler(OCNetworkElement.Instance, _controlSocket).start();
 					
 					console.AddConsoleEntry("MessageHandler online, ready to receive messages!", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
 					
