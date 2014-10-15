@@ -19,6 +19,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
@@ -84,7 +85,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		set { _isReady = value; }
 	}
 		
-	public System.Net.Sockets.Socket Sockets
+	public List<System.Net.Sockets.Socket> Sockets
 	{
 		get { return _sockets; }	
 	}
