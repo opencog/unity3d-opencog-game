@@ -18,6 +18,7 @@
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
