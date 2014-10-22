@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Reflection;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
-using Debug = UnityEngine.Debug;
+using UnityEngine.Debug;
 using Enum = System.Enum;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
@@ -136,7 +136,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 		}
 		catch(ArgumentException ae)
 		{
-			Debug.LogError
+			UnityEngine.Debug.LogError
 				("In OCLogger.OnEnable: Failed to construct [" + ae.Message + "]");
 		}
 		CurrentLevel = logLevel;
