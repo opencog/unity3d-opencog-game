@@ -26,6 +26,8 @@ using OpenCog.Character;
 using OpenCog.Embodiment;
 using OpenCog.Extensions;
 using OpenCog.Network;
+using OpenCog.Debug;
+using OpenCog.Utility;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using OCEmbodimentXMLTags = OpenCog.OCEmbodimentXMLTags;
 using OCEmotionalExpression = OpenCog.OCEmotionalExpression;
@@ -460,6 +462,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		_feelingValueMap = new Dictionary<string, float>();
 		_demandValueMap = new Dictionary<string, float>();
 		UnityEngine.Debug.Log("_demandValueMap instantiated...");
+		Debug.Log("_demandValueMap instantiated...");
 		_perceptedAgents = new Dictionary<int, string>();
 
 		if(Map != null)
