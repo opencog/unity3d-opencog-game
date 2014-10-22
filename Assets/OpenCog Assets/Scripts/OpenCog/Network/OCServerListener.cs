@@ -109,7 +109,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 //		if (_networkElement != null)
 //			OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + " is enabled.");
 //		else
-//			OCLogger.Debugging("Cannot emit OnEnable message with _networkElement.gameObject.name because _networkElement == null");
+//			OCLogger.Debug("Cannot emit OnEnable message with _networkElement.gameObject.name because _networkElement == null");
 	}
 		
 	/// <summary>
@@ -121,7 +121,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 //			OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
 //				" is disabled.");
 //		else
-//			OCLogger.Debugging("Cannot emit OnDisable message with _networkElement.gameObject.name because _networkElement == null");	
+//			OCLogger.Debug("Cannot emit OnDisable message with _networkElement.gameObject.name because _networkElement == null");	
 	}
 
 	/// <summary>

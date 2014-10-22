@@ -309,7 +309,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			_networkElement.NotifyNewMessages(numberOfMessages);
 			answer = OCNetworkElement.OK_MESSAGE;
 
-              OCLogger.Debugging("onLine: Notified about [" + 
+              OCLogger.Debug("onLine: Notified about [" +
 			          numberOfMessages + "] messages in Router.");
 		}
 		else
@@ -331,7 +331,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			// Get unavalable element id.
 			string id = token.Current.ToString();
 
-            OCLogger.Debugging("onLine: Unavailable element message received for [" + id + "].");
+            OCLogger.Debug("onLine: Unavailable element message received for [" + id + "].");
 			_networkElement.MarkAsUnavailable(id);
 			answer = OCNetworkElement.OK_MESSAGE;
 		}
@@ -353,7 +353,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		{	
 			string id = token.Current.ToString();
 
-              OCLogger.Debugging("onLine: Available element message received for [" + 
+              OCLogger.Debug("onLine: Available element message received for [" + 
 			          id + "].");
 			_networkElement.MarkAsAvailable(id);
 			answer = OCNetworkElement.OK_MESSAGE;
@@ -375,7 +375,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		if(_state == READING_MESSAGES)
 		{
 			// A previous message was already read.
-			OCLogger.Debugging("onLine: From [" + _messageFrom +
+			OCLogger.Debug("onLine: From [" + _messageFrom +
 			          "] to [" + _messageTo +
 			          "] Type [" + _messageType + "]");
 		

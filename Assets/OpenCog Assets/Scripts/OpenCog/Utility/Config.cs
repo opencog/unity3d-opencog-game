@@ -130,7 +130,7 @@ public class Config
 	            {
 					// TODO: Debug.isDebugBuild??
 	                //if (Debug.isDebugBuild)
-                        OCLogger.Debugging("Invalid format at line " + linenumber +": '" + line + "'");
+                        OCLogger.Debug("Invalid format at line " + linenumber +": '" + line + "'");
 	            }
 	            if (table.ContainsKey(tokens[0])) 
 	            {
@@ -139,7 +139,7 @@ public class Config
 	            }
 	            else
 	            {
-                    OCLogger.Debugging("Ignoring unknown parameter name '" + tokens[0] + "' at line "
+                    OCLogger.Debug("Ignoring unknown parameter name '" + tokens[0] + "' at line "
                             + linenumber + ".");
 	        	}           
 	        }

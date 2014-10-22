@@ -117,7 +117,7 @@ public class OCWorldGenerator : MonoBehaviour {
 	private IEnumerator GenerateColumn(int cx, int cz) {
 		if (MapName == string.Empty)
 		{
-			//OCLogger.Debugging("Let's make a column in [" + cx + ", " + cz + "]!");
+			//OCLogger.Debug("Let's make a column in [" + cx + ", " + cz + "]!");
 			yield return StartCoroutine( terrainGenerator.Generate(cx, cz) );
 			yield return null;
 			

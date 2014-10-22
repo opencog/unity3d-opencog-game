@@ -184,7 +184,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 	/// <param name='message'>
 	/// Log info object, usually a string.
 	/// </param>
-	public static void Debugging(System.Object message)
+	public static void Debug(System.Object message)
 	{
 		if (Instance != null)
 			Instance.Log(LogLevel.DEBUG, message, true);
