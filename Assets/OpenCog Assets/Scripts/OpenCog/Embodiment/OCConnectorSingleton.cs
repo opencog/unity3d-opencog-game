@@ -26,7 +26,6 @@ using OpenCog.Character;
 using OpenCog.Embodiment;
 using OpenCog.Extensions;
 using OpenCog.Network;
-using OpenCog.Debug;
 using OpenCog.Utility;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using OCEmbodimentXMLTags = OpenCog.OCEmbodimentXMLTags;
@@ -463,6 +462,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		_demandValueMap = new Dictionary<string, float>();
 		UnityEngine.Debug.Log("_demandValueMap instantiated...");
 		Debug.Log("_demandValueMap instantiated...");
+		OCLogger.Debugging("_demandValueMap instantiated...");
 		_perceptedAgents = new Dictionary<int, string>();
 
 		if(Map != null)
