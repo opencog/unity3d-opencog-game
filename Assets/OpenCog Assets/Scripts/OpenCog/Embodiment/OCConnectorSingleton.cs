@@ -402,7 +402,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		OCLogger.Debug("sending block structure signal: \n" + BeautifyXmlText(doc));
+		OCLogger.Debugging("sending block structure signal: \n" + BeautifyXmlText(doc));
         
 		lock(_messageSendingLock)
 		{
@@ -462,7 +462,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		_demandValueMap = new Dictionary<string, float>();
 		UnityEngine.Debug.Log("_demandValueMap instantiated...");
 		Debug.Log("_demandValueMap instantiated...");
-		OCLogger.Debug("_demandValueMap instantiated...");
+		OCLogger.Debugging("_demandValueMap instantiated...");
 		_perceptedAgents = new Dictionary<int, string>();
 
 		if(Map != null)
@@ -953,7 +953,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 	   	
-		OCLogger.Debug("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
+		OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
 	   	
 		lock(_messagesToSend)
 		{
@@ -1017,7 +1017,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		OCLogger.Debug("sending move action result: \n" + BeautifyXmlText(doc));
+		OCLogger.Debugging("sending move action result: \n" + BeautifyXmlText(doc));
         
 		lock(_messageSendingLock)
 		{
@@ -1094,7 +1094,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
-		OCLogger.Debug("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+		OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
 		lock(_messageSendingLock)
 		{
@@ -1233,7 +1233,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
-		OCLogger.Debug("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+		OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
 		lock(_messageSendingLock)
 		{
@@ -1472,7 +1472,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		OCLogger.Debug("sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
+		OCLogger.Debugging("sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
         
 		lock(_messagesToSend)
 		{
@@ -1508,7 +1508,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 				"' from player but I am not connected to an OAC.");
 			return;
 		}
-		OCLogger.Debug("Avatar[" + _ID + "]: Received '" + text + "' from player.");
+		OCLogger.Debugging("Avatar[" + _ID + "]: Received '" + text + "' from player.");
 
 		// Avoid creating messages if the destination (avatar brain) isn't available 
 		if(!IsElementAvailable(_brainID))
@@ -1599,7 +1599,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// group all demands to be updated only once
 			_demandValueMap[demand] = value;
 
-			OCLogger.Debug("Avatar[" + _ID + "] -> parsePsiDemandElement: Demand '" + demand + "' value '" + value + "'.");
+			OCLogger.Debugging("Avatar[" + _ID + "] -> parsePsiDemandElement: Demand '" + demand + "' value '" + value + "'.");
 		}
 	}
 
@@ -1619,7 +1619,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// group all feelings to be updates only once
 			_feelingValueMap[feeling] = value;
 
-			//OCLogger.Debug("Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
+			//OCLogger.Debugging("Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
 		}
 
 		// Update feelings of this avatar.
@@ -2134,7 +2134,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        
 	        
 			string xmlText = BeautifyXmlText(doc);
-			//OCLogger.Debug("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
+			//OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
 	            
 			// Construct a string message.
 			OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);

@@ -278,11 +278,11 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="newMessagesNum">number of new arriving messages</param>
 	public void NotifyNewMessages(int newMessagesNum)
 	{
-		OCLogger.Debug("Notified about new messages in Router.");
+		OCLogger.Debugging("Notified about new messages in Router.");
 		lock(_unreadMessagesLock)
 		{
 			_unreadMessagesCount += newMessagesNum;
-			OCLogger.Debug("Unread messages [" + _unreadMessagesCount + "]");
+			OCLogger.Debugging("Unread messages [" + _unreadMessagesCount + "]");
 		}
 	}
 	

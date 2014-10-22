@@ -179,12 +179,12 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 		
 	/// <summary>
 	/// Logs some Debugging info with the specified message, usually a string.
-	/// Avoid using Debug as the function name.
+	/// Avoid using Debug as the function name as it collids with UnityEngine.Debug
 	/// </summary>
 	/// <param name='message'>
 	/// Log info object, usually a string.
 	/// </param>
-	public static void Debug(System.Object message)
+	public static void Debugging(System.Object message)
 	{
 		if (Instance != null)
 			Instance.Log(LogLevel.DEBUG, message, true);
