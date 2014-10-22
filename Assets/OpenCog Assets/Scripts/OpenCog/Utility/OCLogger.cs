@@ -246,7 +246,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 			method = frame.GetMethod();
 
 			callingMethod = method.ReflectedType.Name + "::" + method.Name;
-            logToPrint += callingMethod + ": "
+            logToPrint += callingMethod + ": ";
 		}
 
         logToPrint += message.ToString();
