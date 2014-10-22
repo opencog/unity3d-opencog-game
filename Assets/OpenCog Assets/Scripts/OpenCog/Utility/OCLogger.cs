@@ -234,7 +234,7 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 
         string now = System.DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss:fff");
         
-		string logToPrint = "[" + now + "] [" + level.ToString() + "] "
+		string logToPrint = "[" + now + "] [" + level.ToString() + "] ";
 
 		if(showTrace)
 		{
