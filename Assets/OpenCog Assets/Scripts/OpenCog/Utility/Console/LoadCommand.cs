@@ -28,7 +28,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using Vector3 = UnityEngine.Vector3;
 using Quaternion = UnityEngine.Quaternion;
-using UnityEngine.Debug;
+using Debug = UnityEngine.Debug;
 using OpenCog.Actions;
 
 //The private field is assigned but its value is never used

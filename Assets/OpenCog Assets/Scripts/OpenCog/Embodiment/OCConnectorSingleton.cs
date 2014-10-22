@@ -461,7 +461,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		_feelingValueMap = new Dictionary<string, float>();
 		_demandValueMap = new Dictionary<string, float>();
 		UnityEngine.Debug.Log("_demandValueMap instantiated...");
-		Debug.Log("_demandValueMap instantiated...");
 		OCLogger.Debugging("_demandValueMap instantiated...");
 		_perceptedAgents = new Dictionary<int, string>();
 

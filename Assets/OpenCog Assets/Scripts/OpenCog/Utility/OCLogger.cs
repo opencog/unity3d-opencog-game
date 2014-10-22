@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Reflection;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
-using UnityEngine.Debug;
+using Debug = UnityEngine.Debug;
 using Enum = System.Enum;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
