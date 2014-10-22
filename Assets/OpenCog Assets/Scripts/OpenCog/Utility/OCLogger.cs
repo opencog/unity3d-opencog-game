@@ -232,7 +232,9 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 			return;
 		}
 
-		string logToPrint;
+        string now = System.DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss:fff");
+        
+		string logToPrint = "[" + now + "] [" + level.ToString() + "] "
 
 		if(showTrace)
 		{
@@ -243,14 +245,12 @@ public class OCLogger : OCSingletonScriptableObject< OCLogger >
 			frame = trace.GetFrame(2);
 			method = frame.GetMethod();
 
-			string callingMethod = method.ReflectedType.Name + "::" + method.Name;
-			logToPrint = "[" + level.ToString() + "] " +
-                                callingMethod + ": " + message.ToString();
+			callingMethod = method.ReflectedType.Name + "::" + method.Name;
+            logToPrint += callingMethod + ": "
 		}
-		else
-		{
-			logToPrint = "[" + level.ToString() + "] " + message.ToString();
-		}
+
+        logToPrint += message.ToString();
+
 		if(level <= _currentLevel)
 		{
 			/** 
