@@ -11,7 +11,7 @@ GENERATE_TICK_MESSAGE = true
 # Proxy config
 #
 MY_ID = PROXY
-MY_IP = 10.0.25.30
+MY_IP = 10.0.25.62
 MY_PORT = 16315
 
 
