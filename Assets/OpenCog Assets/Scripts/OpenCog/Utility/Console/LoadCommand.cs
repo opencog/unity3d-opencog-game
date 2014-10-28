@@ -40,10 +40,10 @@ namespace OpenCog.Utility.Console
 {
 
 /// <summary>
-/// The OpenCog LoadCommand.
+/// The OpenCog Console LoadCommand.
 /// </summary>
 #region Class Attributes
-	[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
 	
@@ -205,13 +205,7 @@ public class LoadCommand : Console.ConsoleCommand
 		{
 		}
 		
-		private string CreateRandomAgentName ()
-		{
-			int randomID = UnityEngine.Random.Range (1, 100);
-			string[] baseNames = { "Hazuki", "Bender", "Bozwollocks", "Wolverine", "Bumblebee", "OompaLoompa" };
-			int baseNameIndex = UnityEngine.Random.Range (0, baseNames.Length);
-			return baseNames [baseNameIndex] + randomID.ToString ();
-		}
+
 
 		/// <summary>
 		/// FIXME: I am testing this wrapper/nested coroutine to determine whether or not it can perform the functions required of it.
@@ -239,7 +233,7 @@ public class LoadCommand : Console.ConsoleCommand
 			float xFront = 3.0f * (float)Math.Sin ((eulerAngle.y / 180) * Math.PI);
 
 			//add the position data together. 
-			UnityEngine.Vector3 newPos = new Vector3(position.x + xFront, position.y, position.z + zFront);
+			UnityEngine.Vector3 newPos = new Vector3(position.x + xFront, position.y + 2, position.z + zFront);
 
 			// TODO Currently we use the tag "player". However, when there are multiple 
 			// players in the world, we need to figure out a way to identify.
@@ -256,72 +250,7 @@ public class LoadCommand : Console.ConsoleCommand
 			//yield break;
 		}
 
-		/// <summary>
-		/// Gives functionality to the 'load' console command. 
-		/// </summary>
-		/// <returns>Failure, success, or a coroutine concerned with making a connection to the embodiment.</returns>
-		/// <param name="agentName">The name of the agent to instantiate.</param>
-		/// <param name="spawnPosition">The position at which to instantiate the agent.</param>
-		private IEnumerator LoadAgent (UnityEngine.Vector3 spawnPosition, string agentName, string masterName = "", string masterId = "")
-		{
-			//get the spawn position in terms of the grid
-			spawnPosition.x = (float)((int)spawnPosition.x);
-			spawnPosition.y = (float)((int)spawnPosition.y);
-			spawnPosition.z = (float)((int)spawnPosition.z);
 
-			// Instantiate an OCAvatar in front of the player.
-			
-			//Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
-			//instantiate the game object, specified by NPCAgent at  point spawn position and rotated as per the identity Quaternion (that is, not at all)
-			UnityEngine.GameObject agentClone = (GameObject)UnityEngine.Object.Instantiate (_NPCAgent, spawnPosition, Quaternion.identity);
-
-			//All agents belong to the Characters parent game object.
-			agentClone.transform.parent = GameObject.Find("Characters").transform;
-
-			//the _NPCAgent should have come with an OCActionController
-			OCActionController agiAC = agentClone.GetComponent<OCActionController>();
-
-			//
-			agiAC.DefaultEndTarget = GameObject.Find("EndPointStub");
-			agiAC.DefaultStartTarget = GameObject.Find("StartPointStub");
-			
-			//Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
-			//
-			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
-			UnityEngine.Debug.Log ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
-			//Debug.Log ("connector is" + (connector == null ? " null " : " not null"));
-
-
-			//Ensure our agent is properly named
-			if (agentName == "")
-				agentName = CreateRandomAgentName ();
-			agentClone.name = agentName;
-       
-        
-//			if (agentClone != null) {
-//				if (!OCARepository.AddOCA (agentClone)) {
-//					// An avatar with given name is already there.
-//					yield break;
-//				}
-//				Debug.Log ("Add avatar[" + agentName + "] to avatar map.");
-//			}
-
-			//initialize the connector
-			connector.Init (agentName, null, null, masterId, masterName);
-
-			//and try to connect
-			yield return StartCoroutine(connector.ConnectOAC());
-		
-			//if we failed to initialize the connector
-			if (!connector.IsInitialized) {
-
-				// OAC is not loaded normally, destroy the avatar instance.
-				Debug.LogError ("Cannot connect to the OAC, avatar loading failed.");
-				connector.SaveAndExit ();
-				Destroy (agentClone);
-			} 
-
-		}
 			
 		//---------------------------------------------------------------------------
 
