@@ -42,9 +42,10 @@ namespace OpenCog.Character
 		private static IEnumerator AtRunTime(UnityEngine.Vector3 spawnPosition, GameObject agentPrefab, string agentName = "", string masterName = "", string masterId = "")
 		{
 			//get the spawn position in terms of the grid
-			spawnPosition.x = (float)((int)spawnPosition.x);
+			spawnPosition.x = (float)((int)spawnPosition.x); 
 			spawnPosition.y = (float)((int)spawnPosition.y);
-			spawnPosition.z = (float)((int)spawnPosition.z);
+			spawnPosition.z = (float)((int)spawnPosition.z); 
+
 
 
 			//Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
