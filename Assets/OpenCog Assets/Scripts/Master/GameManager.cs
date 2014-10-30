@@ -17,6 +17,8 @@
 
 #region Usings, Namespaces, and Pragmas
 
+using OpenCog.Character;
+
 #endregion
 
 //The private field is assigned but its value is never used
@@ -30,37 +32,60 @@ namespace OpenCog.Master
 	public class GameManager:OCSingletonMonoBehaviour<GameManager>
 	{
 		//---------------------------------------------------------------------------
-		#region 					  Private Member Data
+		#region 					  Protected Member Data
 		//---------------------------------------------------------------------------
 
+		protected CharacterManager _characterManager; 
+		public static CharacterManager character{get{return Instance._characterManager;}}
 
 
 
 
 		//---------------------------------------------------------------------------
 		#endregion
-		#region 				Singleton Accessors and Mutators
+		#region 						Singleton Stuff
 		//---------------------------------------------------------------------------
 
 
 		//Do not let anyone instantiate this (not that monobehaviors should be instantiated in the first place)
+		//By the way, typically speaking, don't initialize in constructors for monobehaviors
 		protected GameManager(){}
+	
+		/// <summary>This initialization function creates the submanagers, and will be called automatically by the SingletonMonoBehavior's Awake()</summary>
+		protected override void Initialize()
+		{
+			DontDestroyOnLoad(this);
 
-		//Singleton pattern Instance accessor!
+			//Create the character manager!
+			_characterManager = CharacterManager.New ();
+
+		}
+
+		/// <summary>Singleton pattern Instance accessor!</summary>
 		public static GameManager Instance
 		{
 			get
 			{
 				//the Singleton pattern handles everything about instantiation for us, including searching
 				//the game for a pre-existing object.
-				GameManager gm = OCSingletonMonoBehaviour<GameManager>.GetInstance() as GameManager;
+				return GetInstance<GameManager>() ;
 
-				//this is the line that will prevent the gameObject from being destroyed between scenes.
-				DontDestroyOnLoad(gm.gameObject);
-				return gm;
 			}
 
 		}
+
+		//---------------------------------------------------------------------------
+		#endregion
+		#region 				Temporary
+		//---------------------------------------------------------------------------
+
+		//guarenteed to be called after 'awake'
+		public void Start()
+		{
+
+		}
+
+
 		#endregion
 
 		//---------------------------------------------------------------------------

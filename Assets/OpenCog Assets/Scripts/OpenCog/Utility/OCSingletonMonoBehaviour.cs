@@ -32,7 +32,7 @@ namespace OpenCog
 	{
 
 		/// <summary>The singleton instance.</summary>
-		private static T _instance = null;
+		protected static T _instance = null;
 
 		//With Unity, there is more than one way to get that very first instance of the singleton. This accounts for the drag and drop onto a game object method.
 		//In practice, it is possible that a Singleton could be dragged onto a game object and have a DoNotDestroyOnLoad on it.
@@ -47,7 +47,7 @@ namespace OpenCog
 		public void Awake()
 		{
 			//if the instance doesn't exist, good work, we're on target
-			if(_instance == null) _instance = this;
+			if(_instance == null) _instance = this as T;
 
 			//Annihilate any accidentally created new instances.
 			if(this != _instance)
@@ -55,6 +55,17 @@ namespace OpenCog
 				Destroy(this.gameObject);
 				Destroy(this);
 			}
+
+			//initialize any properly created instances
+			else
+			{
+				this.Initialize ();
+			}
+		}
+
+		/// <summary>Exists to be overwritten. Kept virtual to work as a fallback when a derived class has no necessary initialization.</summary>
+		protected virtual void Initialize()
+		{
 		}
 
 		/// <summary>An accessor function which can be used by derived classes only, that will attempt to instantiate the Singleton if it does not already exist, through Instantiate()</summary>
@@ -73,7 +84,7 @@ namespace OpenCog
 		}
 
 		/// <summary> Instantiate this singleton instance. </summary>
-		private static bool Instantiate<U>() where U : T
+		protected static bool Instantiate<U>() where U : T
 		{
 			//Assert that we're not already instantiated
 			if(_instance != null)

@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Master;
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
@@ -243,8 +244,8 @@ public class LoadCommand : Console.ConsoleCommand
 			string masterId = playerObject.GetInstanceID ().ToString ();
 			string masterName = playerObject.name;
 
-			//will continue to run LoadAgent 
-			yield return StartCoroutine(LoadAgent(newPos, agentName, masterName, masterId));
+			//Attack of the top level management decisions!
+			yield return StartCoroutine(GameManager.character.load.AtRunTime(newPos, _NPCAgent,agentName, masterName, masterId));
 
 			//this is unnecessary
 			//yield break;
