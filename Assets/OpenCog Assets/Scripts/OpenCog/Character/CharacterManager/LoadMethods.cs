@@ -25,17 +25,20 @@ namespace OpenCog.Character
 	
 	public partial class CharacterManager:OCSingletonMonoBehaviour<CharacterManager>
 	{
+		///<summary><para>Access this interface's methods using GameManager.Character.load.*</para>
+		///<para>This interface exposes a subcatagory of CharacterManager methods, which should be used for loading characters.</para></summary>
 		public interface LoadMethods
 		{
 			IEnumerator AtRunTime(UnityEngine.Vector3 spawnPosition, GameObject agentPrefab, string agentName = "", string masterName = "", string masterId = "");
 		}
 
-		///<summary>A subcatagory of CharacterManager methods, which should be used for loading characters</summary>
+		///<summary><para>Access this class's methods using GameManager.Character.load.*</para>
+		/// <para>A subcatagory of CharacterManager methods, which should be used for loading characters. Nested in CharacterManager, its functions are exposed to the outside through the LoadMethods interface.</para></summary>
 		protected class _LoadMethods:OCSingletonMonoBehaviour<_LoadMethods>, LoadMethods
 		{
 			protected _LoadMethods(){}
 
-			/// <summary>This initialization function will be called automatically by the SingletonMonoBehavior's Awake()</summary>
+			/// <summary>This initialization function will be called automatically by the SingletonMonoBehavior's Awake().</summary>
 			protected override void Initialize()
 			{
 				//shouldn't be destroyed with scenes. 

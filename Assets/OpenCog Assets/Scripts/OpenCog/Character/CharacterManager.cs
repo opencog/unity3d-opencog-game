@@ -41,7 +41,7 @@ namespace OpenCog.Character
 	// -----------------------------------
 
 	/// <summary>
-	/// <para>To make use of the methods in this class, reference: </para><para>`GameManager.character` </para><para></para>
+	/// <para>To make use of the methods in this class, reference: </para><para>GameManager.character.* </para><para></para>
 	/// This is a top-level manager for in-game avatars and other characters. 
 	/// It is to be owned and managed exclusively by GameManager. 
 	/// </summary>
