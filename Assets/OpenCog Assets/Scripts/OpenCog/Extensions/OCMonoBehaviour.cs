@@ -25,150 +25,116 @@ using OCID = System.Guid;
 namespace OpenCog.Extensions
 {
 
-/// <summary>
-/// The OpenCog MonoBehaviour base class.
-/// </summary>
-#region Class Attributes
-
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-[OCExposePropertyFields]
-[Serializable]
-#endregion
-public class OCMonoBehaviour : MonoBehaviour
-{
-
-	//---------------------------------------------------------------------------
-
-	#region Private Member Data
-
-	//---------------------------------------------------------------------------
-
-	private OCID _ID;
-
-	//---------------------------------------------------------------------------
-
+	/// <summary>
+	/// The OpenCog MonoBehaviour base class.
+	/// </summary>
+	#region Class Attributes
+	[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+	[OCExposePropertyFields]
+	[Serializable]
 	#endregion
 
-	//---------------------------------------------------------------------------
-
-	#region Accessors and Mutators
-
-	//---------------------------------------------------------------------------
-
-	public OCID ID 
+	public class OCMonoBehaviour : MonoBehaviour
 	{
-		get {return _ID;}
-	}		
-		
-		
-	//---------------------------------------------------------------------------
+		private OCID _ID;
 
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-	#region Public Member Functions
-
-	//---------------------------------------------------------------------------
-
-	//Example Safe Invoke
-	//@TODO: Write Safe StartCoroutine and Safe Instantiate
-
-	/// <summary>
-	/// Invoke the specified task with parameter time.
-	/// </summary>
-	/// <param name='task'>
-	/// The delegate Task.
-	/// </param>
-	/// <param name='time'>
-	/// The time parameter to pass to the task.
-	/// </param>
-	public void Invoke(Task task, float time)
-	{
-		Invoke(task.Method.Name, time);
-	}
-
-	/// <summary>
-	/// Gets the first component that implements the specified interface.
-	/// </summary>
-	/// <returns>
-	/// The first component that implements the specified interface.
-	/// </returns>
-	/// <typeparam name='I'>
-	/// The type of interface implemented by the component.
-	/// </typeparam>
-	public I GetInterfaceComponent<I>() where I : class
-	{
-		return GetComponent(typeof(I)) as I;
-	}
-
-	/// <summary>
-	/// Finds a list of objects that implement the specified interface.
-	/// </summary>
-	/// <returns>
-	/// A list of objects that implement the specified interface.
-	/// </returns>
-	/// <typeparam name='I'>
-	/// The type of interface implemented by the objects in the list.
-	/// </typeparam>
-	public static List<I> FindObjectsOfInterface<I>() where I : class
-	{
-		MonoBehaviour[] monoBehaviours = (MonoBehaviour[])UnityEngine.Object.FindObjectsOfType(typeof(MonoBehaviour));
-		List<I> list = new List<I>();
-	
-		foreach(MonoBehaviour behaviour in monoBehaviours)
+		public OCID ID 
 		{
-			I component = behaviour.GetComponent(typeof(I)) as I;
-	 
-			if(component != null)
-			{
-				list.Add(component);
-			}
+			get {return _ID;}
+		}		
+
+		//---------------------------------------------------------------------------
+
+		#region Public Member Functions
+
+		//---------------------------------------------------------------------------
+
+		//Example Safe Invoke
+		//@TODO: Write Safe StartCoroutine and Safe Instantiate
+
+		/// <summary>
+		/// Invoke the specified task with parameter time.
+		/// </summary>
+		/// <param name='task'>
+		/// The delegate Task.
+		/// </param>
+		/// <param name='time'>
+		/// The time parameter to pass to the task.
+		/// </param>
+		public void Invoke(Task task, float time)
+		{
+			Invoke(task.Method.Name, time);
 		}
-	 
-		return list;
-	}
 
-	//---------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the first component that implements the specified interface.
+		/// </summary>
+		/// <returns>
+		/// The first component that implements the specified interface.
+		/// </returns>
+		/// <typeparam name='I'>
+		/// The type of interface implemented by the component.
+		/// </typeparam>
+		public I GetInterfaceComponent<I>() where I : class
+		{
+			return GetComponent(typeof(I)) as I;
+		}
 
-	#endregion
+		/// <summary>
+		/// Finds a list of objects that implement the specified interface.
+		/// </summary>
+		/// <returns>
+		/// A list of objects that implement the specified interface.
+		/// </returns>
+		/// <typeparam name='I'>
+		/// The type of interface implemented by the objects in the list.
+		/// </typeparam>
+		public static List<I> FindObjectsOfInterface<I>() where I : class
+		{
+			MonoBehaviour[] monoBehaviours = (MonoBehaviour[])UnityEngine.Object.FindObjectsOfType(typeof(MonoBehaviour));
+			List<I> list = new List<I>();
+		
+			foreach(MonoBehaviour behaviour in monoBehaviours)
+			{
+				I component = behaviour.GetComponent(typeof(I)) as I;
+		 
+				if(component != null)
+				{
+					list.Add(component);
+				}
+			}
+		 
+			return list;
+		}
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
-	#region Private Member Functions
+		#endregion
 
-	//---------------------------------------------------------------------------
-            
-    
-            
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
-	#endregion
+		#region Other Members
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------        
 
-	#region Other Members
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OpenCog.OCMonoBehaviour"/>
+		/// class.  Generally, intitialization should occur in the Start function.
+		/// </summary>
+		public OCMonoBehaviour()
+		{
+			_ID = Guid.NewGuid();
+		}
 
-	//---------------------------------------------------------------------------        
+		public delegate void Task(float time);
 
-	/// <summary>
-	/// Initializes a new instance of the <see cref="OpenCog.OCMonoBehaviour"/>
-	/// class.  Generally, intitialization should occur in the Start function.
-	/// </summary>
-	public OCMonoBehaviour()
-	{
-		_ID = Guid.NewGuid();
-	}
+		//---------------------------------------------------------------------------
 
-	public delegate void Task(float time);
+		#endregion
 
-	//---------------------------------------------------------------------------
+		//---------------------------------------------------------------------------
 
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-}// class OCMonoBehaviour
+	}// class OCMonoBehaviour
 
 }// namespace OpenCog.Extensions
 
