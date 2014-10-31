@@ -2090,8 +2090,6 @@ GameObject:
   - 20: {fileID: 2000000}
   - 124: {fileID: 12400000}
   - 92: {fileID: 9200000}
-  - 81: {fileID: 8100000}
-  - 114: {fileID: 11400020}
   m_Layer: 0
   m_Name: camera
   m_TagString: Untagged
@@ -4613,13 +4611,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: .0219999999
---- !u!81 &8100000
-AudioListener:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100272}
-  m_Enabled: 0
 --- !u!92 &9200000
 Behaviour:
   m_ObjectHideFlags: 1
@@ -4960,17 +4951,6 @@ MonoBehaviour:
   _EndTarget: {fileID: 0}
   _blockOnFail: 1
   _blockOnRunning: 1
---- !u!114 &11400020
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100272}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d0d5bdf0c3e3e74a9066758e40d9131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
