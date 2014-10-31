@@ -173,6 +173,8 @@ public class OCBlockSet : OCScriptableObject
 	private void ReloadBlocksIfNecessary()
 	{
 		bool allNull = true;
+		
+
 
 		for (int i = 0; i < _blocks.Length; i ++)
 		{

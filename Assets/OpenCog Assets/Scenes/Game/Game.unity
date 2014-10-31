@@ -10784,7 +10784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 039b870304c6d4648b991cbc4d5ec52b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _blockSet: {fileID: 11400000, guid: ca0099266270eec49b07367d37c209f2, type: 2}
+  _blockSet: {fileID: 0}
   _floorHeight: 0
   _BatteryPrefab: {fileID: 100000, guid: 7bf39f7182877fe44a1cd1f6dca12884, type: 2}
   _BatteriesSceneObject: {fileID: 1765427238}
@@ -11784,10 +11784,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1689473160}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f6bc1ddbfc9881409c8700377813bf0, type: 3}
+  m_Script: {fileID: 11500000, guid: d4389afcc14c8f7478d2c64d46325462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NPCAvatarMember: {fileID: 100282, guid: 54168ecf08d37134a96ef1633ac49fd8, type: 2}
 --- !u!114 &1689473164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11796,7 +11795,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1689473160}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10a634864e3bcb4499504cb8446ef7bc, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b7bb2d33a39afc46b83049afc0aaf30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1689473165
@@ -11807,9 +11806,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1689473160}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09070efe3114303479128a3b7c83b056, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a1ad042df17c9c4eba8939a6fc151e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NPCAvatarMember: {fileID: 1813306216}
 --- !u!114 &1689473166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11818,7 +11818,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1689473160}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e590feda7b16684793c4588da6d0501, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d6dad37c9282c9488f27bba51c432fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1689473167
@@ -11829,7 +11829,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1689473160}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4adc8144881cf02488dccca13b0f07b9, type: 3}
+  m_Script: {fileID: 11500000, guid: 22df8cc9852920849b2ed5313243acf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1689473168
@@ -11840,7 +11840,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1689473160}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32b75afd7fddaa94bba00ae8c8614e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: b1acc8b49aefc344f96d7f6927c25178, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1694210820
@@ -11897,6 +11897,10 @@ Prefab:
     - target: {fileID: 11400004, guid: 13a75b0e4ac000741ac7ab22b8651f2b, type: 2}
       propertyPath: MapName
       value: test_planner_map_small
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 13a75b0e4ac000741ac7ab22b8651f2b, type: 2}
+      propertyPath: _blockSet
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 13a75b0e4ac000741ac7ab22b8651f2b, type: 2}
