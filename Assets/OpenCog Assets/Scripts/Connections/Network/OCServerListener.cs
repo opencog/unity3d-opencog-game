@@ -230,6 +230,10 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 			}
 		}
 	}
+
+	new public void Awake()
+	{
+	}
 		
 	/// <summary>
 	/// Initializes this instance.  Set default values here.

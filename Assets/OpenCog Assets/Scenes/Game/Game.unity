@@ -10852,7 +10852,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _blockSet: {fileID: 11400000, guid: ca0099266270eec49b07367d37c209f2, type: 2}
+  _mapName: 
   _floorHeight: 0
+  _chunkLimitsInitialized: 0
+  _minChunkX: 0
+  _minChunkY: 0
+  _minChunkZ: 0
+  _maxChunkX: 0
+  _maxChunkY: 0
+  _maxChunkZ: 0
   _BatteryPrefab: {fileID: 100000, guid: 7bf39f7182877fe44a1cd1f6dca12884, type: 2}
   _BatteriesSceneObject: {fileID: 1765427238}
   _HearthPrefab: {fileID: 100000, guid: e34af36af01600d43aed2ad161db7402, type: 2}

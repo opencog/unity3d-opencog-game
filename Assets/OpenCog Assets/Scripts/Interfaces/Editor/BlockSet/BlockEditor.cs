@@ -26,7 +26,7 @@ public class BlockEditor {
 				glass.SetInterior( interior );
 			}
 
-			int atlas = EditorGUIUtils.Popup( "Atlas", block.AtlasID, blockSet.Atlases );
+			int atlas = BlockEditorUtils.Popup( "Atlas", block.AtlasID, blockSet.Atlases );
 			block.AtlasID = atlas;
 		
 			int light = EditorGUILayout.IntField("Light", block.GetLight());
@@ -124,7 +124,7 @@ public class BlockEditor {
 				Rect faceRet = atlas.ToRect(face);
 				faceRet = Mul(faceRet, rectMatrix*invertY);
 				GUI.DrawTexture(texturePosition, texture);
-				EditorGUIUtils.DrawRect( faceRet, Color.green );
+				BlockEditorUtils.DrawRect( faceRet, Color.green );
 			}
 			
 			if(Event.current.type == EventType.MouseDown && Event.current.button == 0 && mouseInRect) {

@@ -93,7 +93,7 @@ public class OCTrackball : OCMonoBehaviour
 			Vector3 delta = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 			
 			Vector3 axis = Vector3.Cross(lever, delta);
-			axis = Camera.mainCamera.transform.TransformDirection(axis);
+			axis = Camera.main.transform.TransformDirection(axis);
 			transform.Rotate(axis, delta.magnitude*5, Space.World);
 			
 			Debug.DrawLine(transform.position, transform.position+lever, Color.green);

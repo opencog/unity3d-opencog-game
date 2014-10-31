@@ -46,6 +46,7 @@ namespace Actions
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
+#pragma warning disable 0414
 #endregion
 public class OCAction : OCMonoBehaviour
 {
@@ -840,12 +841,12 @@ public class OCAction : OCMonoBehaviour
 		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
 		Vector3 sourceRight = args.Source.gameObject.transform.right;
 		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
-		Vector3 sourceForward = args.Source.gameObject.transform.forward;
+		//Vector3 sourceForward = args.Source.gameObject.transform.forward;
 				
 		Vector3 sourceGoal = targetPosition - sourcePosition;
 		float projectionLeft = Vector3.Dot(sourceGoal, sourceLeft);
 		float projectionRight = Vector3.Dot(sourceGoal, sourceRight);
-		float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
+		//float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
 				
 		return (projectionLeft) >= projectionRight;// && projectionLeft >= projectionForward;
 	}
@@ -856,12 +857,12 @@ public class OCAction : OCMonoBehaviour
 		Vector3 targetPosition = args.EndTarget.gameObject.transform.position;
 		Vector3 sourceRight = args.Source.gameObject.transform.right;
 		Vector3 sourceLeft = -args.Source.gameObject.transform.right;
-		Vector3 sourceForward = args.Source.gameObject.transform.forward;
+		//Vector3 sourceForward = args.Source.gameObject.transform.forward;
 				
 		Vector3 sourceGoal = targetPosition - sourcePosition;
 		float projectionLeft = Vector3.Dot(sourceGoal, sourceLeft);
 		float projectionRight = Vector3.Dot(sourceGoal, sourceRight);
-		float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
+		//float projectionForward = Vector3.Dot(sourceGoal, sourceForward);
 				
 		return projectionRight > (projectionLeft);// && projectionRight > projectionForward;
 	}
@@ -1167,9 +1168,12 @@ public class OCAction : OCMonoBehaviour
 			//if((forwardBlock.block != null && forwardBlock.block.GetName() == "Battery") || (forwardUpBlock.block != null && forwardUpBlock.block.GetName() == "Battery") || (forwardUp2xBlock.block != null && forwardUp2xBlock.block.GetName() == "Battery"))
 			if(targetBlock.block != null && targetBlock.block.GetName() == "Battery")
 			{
-				UnityEngine.GameObject[] agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI");
-		
-				for (int iAGI = 0; iAGI < agiArray.Length; iAGI++)
+				UnityEngine.GameObject[] agiArray;
+				agiArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCAGI") as GameObject[];
+
+				
+				int iAGI = 0; 
+				if(iAGI < agiArray.Length) 
 				{
 					UnityEngine.GameObject agiObject = agiArray[iAGI];
 				
@@ -1183,8 +1187,7 @@ public class OCAction : OCMonoBehaviour
 					batteryEatEffect.EnergyIncrease = 0.2f;
 				
 					agiPhysModel.ProcessPhysiologicalEffect(batteryEatEffect);
-				
-					break;
+
 				}		
 			}
 		}

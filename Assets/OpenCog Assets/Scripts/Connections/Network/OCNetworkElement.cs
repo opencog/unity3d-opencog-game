@@ -49,7 +49,7 @@ namespace OpenCog.Network
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
-	
+#pragma warning disable 0414
 #endregion
 public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 {
@@ -70,8 +70,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	private int _port;
 		
 	// Settings of router.
-	private string _routerID;
-
+	private string _routerID = null;
 	private IPAddress _routerIP;
 
 	private int _routerPort;
@@ -199,7 +198,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <summary>
 	/// Called when the script instance is being loaded.
 	/// </summary>
-	public void Awake()
+	new public void Awake()
 	{
 		Initialize();
 		OCLogger.Fine(this.name + " is awake.");
@@ -348,10 +347,12 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 	//---------------------------------------------------------------------------
 	
+
+
 	/// <summary>
 	/// Initializes this instance.  Set default values here.
 	/// </summary>
-	private void Initialize()
+	new private void Initialize()
 	{
 			_isNEInitialized = true;
 	}

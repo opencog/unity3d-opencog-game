@@ -8,6 +8,8 @@ using UnityEngine;
 using OpenCog.BlockSet.BaseBlockSet;
 using OpenCog.Map;
 
+#pragma warning disable 0414
+
 
 
 [AddComponentMenu("VoxelEngine/WorldGenerator")]
@@ -78,7 +80,7 @@ public class OCWorldGenerator : MonoBehaviour {
 		if (MapName == String.Empty)
 		{
 			building = true;
-			Vector3 pos = Camera.mainCamera.transform.position;
+			Vector3 pos = Camera.main.transform.position;
 			Vector3i current = OpenCog.Map.OCChunk.ToChunkPosition( (int)pos.x, (int)pos.y, (int)pos.z );
 			Vector3i? column = columnMap.GetClosestEmptyColumn(current.x, current.z, worldGenerationRadius);
 			

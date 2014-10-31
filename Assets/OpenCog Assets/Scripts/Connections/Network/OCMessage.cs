@@ -138,7 +138,7 @@ public class OCMessage : IConvertible
 		return new OCMessage(sourceID, targetID, type, message);
 	}
 
-	public string ToString()
+	new public string ToString()
 	{
 		return _content;
 	}

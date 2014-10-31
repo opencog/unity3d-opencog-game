@@ -60,7 +60,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 
 	private bool _isShowingPanel = true;
 	// the skin the console will use
-	private UnityEngine.GUISkin _panelSkin;
+	private UnityEngine.GUISkin _panelSkin = null;
 	// style for label
 	private UnityEngine.GUIStyle _boxStyle;
 	// A map from feeling names to textures. The texture needs to be created dynamically

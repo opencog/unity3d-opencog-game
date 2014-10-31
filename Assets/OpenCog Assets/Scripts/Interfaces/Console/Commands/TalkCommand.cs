@@ -137,7 +137,7 @@ public class TalkCommand : Console.ConsoleCommand
 		}
 		
 		public override string Run(ArrayList arguments) {
-        string text = string.Join(" ", arguments.ToArray(typeof(string)) as string[]);
+       // string text = string.Join(" ", arguments.ToArray(typeof(string)) as string[]);
         // Send the message to all avatars.
 				//@TODO: Reimplement the talk command...
 //        foreach (GameObject go in OCARepository.GetAllOCA()) 

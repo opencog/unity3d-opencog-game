@@ -153,13 +153,16 @@ public class ActionCommand : Console.ConsoleCommand
 			string actionName = (string)arguments [2];
 			string targetEndName = (string)arguments [3];
 
+
 			// Get the appropriate agent and gameobject		
-			OCActionController actionController = 
-				GameObject.FindSceneObjectsOfType(typeof(OCActionController))
-				.	Where(ac => (ac as OCActionController).gameObject.name == sourceName)
-				. Cast<OCActionController>()
-				. FirstOrDefault()
-			;
+			OCActionController actionController = null;
+			OCActionController[] actionControllers = Object.FindObjectsOfType(typeof(OCActionController)) as OCActionController[];
+
+			foreach(OCActionController ac in actionControllers)
+			{
+				if(ac.gameObject.name == sourceName)
+					actionController = ac;
+			}
 			
 			if (actionController == null)
 				return "No Action Controller script on agent \"" + sourceName + "\".";

@@ -62,7 +62,7 @@ public class BlockSetEditor : Editor {
 		EditorGUIUtility.LookLikeControls();
 		
 		Mode oldMode = mode;
-		mode = (Mode)EditorGUIUtils.Toolbar(mode);
+		mode = (Mode)BlockEditorUtils.Toolbar(mode);
 		EditorGUILayout.Separator();
 		if(mode != oldMode) EditorGUIUtility.keyboardControl = 0;
 		
@@ -107,7 +107,7 @@ public class BlockSetEditor : Editor {
 		OCAtlas[] list = blockSet.Atlases;
 		GUILayout.BeginVertical(GUI.skin.box, GUILayout.ExpandWidth(true));
 		{
-			selectedAtlas = EditorGUIUtils.DrawList(selectedAtlas, list);
+			selectedAtlas = BlockEditorUtils.DrawList(selectedAtlas, list);
 			EditorGUILayout.Separator();
 		
 			GUILayout.BeginHorizontal();
@@ -117,7 +117,7 @@ public class BlockSetEditor : Editor {
 					GUI.changed = true;
 				}
 				if(GUILayout.Button("Remove") && selectedAtlas != -1) {
-					Undo.RegisterUndo(blockSet, "Remove atlas");
+					Undo.RecordObject (blockSet, "Remove atlas");
 					ArrayUtility.RemoveAt<OCAtlas>(ref list, selectedAtlas);
 					selectedAtlas = Mathf.Clamp(selectedAtlas, 0, list.Length - 1);
 					GUI.changed = true;

@@ -49,6 +49,7 @@ namespace Actions
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
 [Serializable]
+#pragma warning disable 0414
 #endregion
 public class OCActionController : OCMonoBehaviour, IAgent
 {
@@ -781,16 +782,16 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						_PlanSucceeded &= result == BehaveResult.Success;
 					}
 							
-					Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
+					//Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
 					Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
 					Vector3 sourcePosition = _step.Arguments.Source.transform.position;
 							sourcePosition.y = sourcePosition.y - 0.5f;
 								
-					Vector3 startToEnd = endPosition - startPosition;
-					Vector3 sourceToEnd = endPosition - sourcePosition;		
+					//Vector3 startToEnd = endPosition - startPosition;
+					//Vector3 sourceToEnd = endPosition - sourcePosition;		
 							
-					float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
-					float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
+					//float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
+					//float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
 							
 					if(_step.Behaviour.Name == "Character.Move" || _step.Arguments.ActionName == "walk" || _step.Arguments.ActionName == "jump_toward")
 					{

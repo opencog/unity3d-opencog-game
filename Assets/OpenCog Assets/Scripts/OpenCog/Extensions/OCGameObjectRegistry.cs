@@ -15,7 +15,7 @@ namespace OpenCog.Extensions
 			_gameObjectRegistry = new Dictionary<int, UnityEngine.GameObject>();
 		}
 		
-		public new static OCGameObjectRegistry Instance
+		public static OCGameObjectRegistry Instance
 		{
 			get
 			{

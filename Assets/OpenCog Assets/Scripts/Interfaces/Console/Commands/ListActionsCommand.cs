@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using UnityEngine;
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
@@ -142,13 +143,16 @@ public class ListActionsCommand : Console.ConsoleCommand
 				return "Wrong number of arguments";
 
 			string agentName = (string)arguments [0];
+
 			// Get the appropriate agent's actionController
-			OCActionController actionController = 
-				GameObject.FindSceneObjectsOfType(typeof(OCActionController))
-				.	Where(ac => (ac as OCActionController).gameObject.name == agentName)
-				. Cast<OCActionController>()
-				. FirstOrDefault()
-			;
+			OCActionController actionController = null;
+			OCActionController[] actionControllers = Object.FindObjectsOfType(typeof(OCActionController)) as OCActionController[];
+			
+			foreach(OCActionController ac in actionControllers)
+			{
+				if(ac.gameObject.name == agentName)
+					actionController = ac;
+			}
 			
 			string result = actionController.gameObject.name + "'s actions: ";
 			bool first = true;

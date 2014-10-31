@@ -129,7 +129,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// <summary>
 	/// Called when the script instance is being loaded.
 	/// </summary>
-	public void Awake()
+	new public void Awake()
 	{
 		Initialize();
 		OCLogger.Fine(gameObject.name + " is awake.");
@@ -140,7 +140,9 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	public void Start()
 	{
-		Input.eatKeyPressOnTextFieldFocus = false;
+		//FIXME: This was previously supposed to keep keyboard input from controlling the
+		//character. That no longer works.
+		//Input.eatKeyPressOnTextFieldFocus = false;
 		
 		
 		_panelHeight = Screen.height * 0.30f;
@@ -403,7 +405,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// <summary>
 	/// Initializes this instance.  Set default values here.
 	/// </summary>
-	private void Initialize()
+	new private void Initialize()
 	{
 		// TODO:
 		//Input.eatKeyPressOnTextFieldFocus = false;
@@ -560,7 +562,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		{
 			return false;
 		}
-		ArrayList tokens = SplitCommandLine(context);
+		//ArrayList tokens = SplitCommandLine(context);
         
 		ArrayList possibilities = new ArrayList();
 		// Find possible completions

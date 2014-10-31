@@ -1585,7 +1585,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	private void ParsePsiDemandElement(XmlElement element)
 	{
-		string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
+		//string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
 
 		// Parse all demands and add them to a map.
 		XmlNodeList list = element.GetElementsByTagName(OCEmbodimentXMLTags.DEMAND_ELEMENT);
@@ -1605,7 +1605,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private void ParseEmotionalFeelingElement(XmlElement element)
 	{
 //		UnityEngine.Debug.Log ("OCConnectorSingleton::ParseEmotionalFeelingElement");
-		string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
+		//string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
 
 		// Parse all feelings and add them to a map.
 		XmlNodeList list = element.GetElementsByTagName(OCEmbodimentXMLTags.FEELING_ELEMENT);
@@ -1759,7 +1759,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	public void ParseActionPlanElement(XmlElement actionPlan)
 	{
 		// TODO: Determine if we need this:
-		bool adjustCoordinate = false;
+		//bool adjustCoordinate = false;
 		
 		OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
 		
@@ -1900,7 +1900,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					XmlElement entityElement = (XmlElement)entityParameterChildren.Item(0);
 						
 					int entityID = System.Int32.Parse(entityElement.GetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE));
-					string entityType = entityElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
+					//string entityType = entityElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
 					
 					if(actionName == "grab" || actionName == "eat")
 					{

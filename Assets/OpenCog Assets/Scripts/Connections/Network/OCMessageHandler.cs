@@ -276,7 +276,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 
 	//---------------------------------------------------------------------------
 	
-	private void Initialize()
+	new private void Initialize()
 	{
 		UnityEngine.Debug.Log ("OCMessageHandler::Initialize");
 			

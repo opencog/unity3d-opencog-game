@@ -247,8 +247,8 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	{
 		// left inset, bottom right 
 		int inset = 3;
-		int width = 200;
-		Rect window = new Rect(inset, Screen.height - Screen.height / 3 - inset, width, Screen.height / 3);
+		//int width = 200;
+		//Rect window = new Rect(inset, Screen.height - Screen.height / 3 - inset, width, Screen.height / 3);
 
 		// TODO: Verify that action list is gone.
 //		if(_selectedAvatar == null)
@@ -564,7 +564,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	private void ActionWindow(int id)
 	{
 		_panelScrollPosition = GUILayout.BeginScrollView(_panelScrollPosition);
-		GUIStyle commandStyle = new GUIStyle();
+		//GUIStyle commandStyle = new GUIStyle();
 
 
 		// Use the selected avatar, or use the player object if no avatar selected
@@ -605,8 +605,8 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	{
 		float w = WIDTH;
 		float h = HEIGHT;
-		float top = Screen.height / 2;
-		float left = Screen.width / 2;
+		//float top = Screen.height / 2;
+		//float left = Screen.width / 2;
 		
 		_barTexture = new Texture2D((int)w, (int)h);
 		

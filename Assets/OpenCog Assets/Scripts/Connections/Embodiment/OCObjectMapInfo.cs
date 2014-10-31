@@ -526,13 +526,13 @@ public class OCObjectMapInfo
 				
 				if (blockType.ToLower() != "air")
 				{
-					string balls = "lol";
-					string lol = balls + "lol";	
+					//string balls = "lol";
+					//string lol = balls + "lol";	
 				}
 				
 				//UnityEngine.Debug.Log ("BlockData.GetType = " + blockType);	
 			} catch (System.Exception ex) {
-				
+				UnityEngine.Debug.Log ("ERROR:" + ex.Message);
 			}
 			
 			if (blockData.block == null)
