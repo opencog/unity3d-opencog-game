@@ -11,8 +11,12 @@ GENERATE_TICK_MESSAGE = true
 # Proxy config
 #
 MY_ID = PROXY
+<<<<<<< HEAD
 MY_IP = 127.0.0.1
 #My_IP = 10.0.25.41
+=======
+MY_IP = 10.0.25.62
+>>>>>>> UnitTest_Spydr
 MY_PORT = 16315
 
 
@@ -20,8 +24,12 @@ MY_PORT = 16315
 # Router config
 #
 ROUTER_ID = ROUTER
-ROUTER_IP = 10.0.25.30
+<<<<<<< HEAD
+ROUTER_IP = 192.168.50.2
 #ROUTER_IP = 10.0.25.104
+=======
+ROUTER_IP = 10.0.25.30
+>>>>>>> UnitTest_Spydr
 ROUTER_PORT = 16312
 
 #

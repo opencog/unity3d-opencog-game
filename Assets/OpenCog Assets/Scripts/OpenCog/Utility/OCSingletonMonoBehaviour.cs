@@ -17,155 +17,101 @@
 
 using System;
 using System.Collections;
-using OpenCog.Attributes;
-using OpenCog.Extensions;
-using ProtoBuf;
 using UnityEngine;
-using OpenCog.Serialization;
-using OpenCog.Embodiment;
-using OpenCog.Network;
+using OpenCog.Extensions;
 
 namespace OpenCog
 {
 
-/// <summary>
-/// The OpenCog Singleton for MonoBehaviours.  Any class which inherits 
-/// from this will be a singleton, monobehaviour.
-/// </summary>
-#region Class Attributes
-
-#endregion
-public class OCSingletonMonoBehaviour<T> : OCMonoBehaviour
+	/// <summary>
+	/// The OpenCog Singleton for MonoBehaviours.  Any class which inherits 
+	/// from this will be a singleton, monobehaviour.
+	/// </summary>
+	public class OCSingletonMonoBehaviour<T> : OCMonoBehaviour
 	where T : OCMonoBehaviour 
-{
-
-	//---------------------------------------------------------------------------
-
-	#region Private Member Data
-
-	//---------------------------------------------------------------------------
-		
-	/// <summary>
-	/// The singleton instance.
-	/// </summary>
-	private static T _instance = null;
-		
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-	#region Accessors and Mutators
-
-	//---------------------------------------------------------------------------
-		
-	/// <summary>
-	/// Gets the singleton instance.
-	/// </summary>
-	/// <value>
-	/// The instance of this singleton.
-	/// </value>
-//	protected static T Instance
-//	{
-//		get
-//		{
-//			if(_instance == null && !Instantiate())
-//			{
-//				Debug.LogError
-//				( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " 
-//				+ typeof(T) 
-//				+ " does not exist and could not be instantiated."
-//				);
-//			}
-//				
-//			return _instance;
-//		}
-//	}
-		
-	protected static U GetInstance<U>() where U : T
 	{
-		if(_instance == null && !Instantiate<U>())
+
+		/// <summary>The singleton instance.</summary>
+		protected static T _instance = null;
+
+		//With Unity, there is more than one way to get that very first instance of the singleton. This accounts for the drag and drop onto a game object method.
+		//In practice, it is possible that a Singleton could be dragged onto a game object and have a DoNotDestroyOnLoad on it.
+		//Then when another scene is loaded with the same class dragged onto another game object, we could end up in a situation with 
+		//a second instance coming awake. Uh oh! This will help us address that problem.
+
+		//in the event that we expect attributes to be dragged onto new singleton scripts to modify in-game behavior,
+		//it should be quite possible to override this Awake function in subclasses and load in 'new' attributes
+		//to the old instance of the singleton before destroying the new/unnecessary one. 
+
+		//FIXME: This code has never been tested. Remove this note when it has been.
+		public void Awake()
 		{
-			Debug.LogError
-			( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " 
-			+ typeof(U) 
-			+ " does not exist and could not be instantiated."
-			);
+			//if the instance doesn't exist, good work, we're on target
+			if(_instance == null) _instance = this as T;
+
+			//Annihilate any accidentally created new instances.
+			if(this != _instance)
+			{
+				Destroy(this.gameObject);
+				Destroy(this);
+			}
+
+			//initialize any properly created instances
+			else
+			{
+				this.Initialize ();
+			}
 		}
-			
-		return (U)_instance;	
-	}
-		
-	
-			
-	//---------------------------------------------------------------------------
 
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-	#region Public Member Functions
-
-	//---------------------------------------------------------------------------
-
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-	#region Private Member Functions
-
-	//---------------------------------------------------------------------------
-			
-	/// <summary>
-	/// Instantiate this singleton instance.
-	/// </summary>
-	private static bool Instantiate<U>() where U : T
-	{
-		//Assert that we're not already instantiated
-		if(_instance != null)
+		/// <summary>Exists to be overwritten. Kept virtual to work as a fallback when a derived class has no necessary initialization.</summary>
+		protected virtual void Initialize()
 		{
-			throw new 
-				OCException("In OCSingletonMonoBehaviour.Instantiate, we're already " +
-					"instantiated!");
 		}
-			
-		//Find one in the scene if we've added a prefab for it.
-		_instance = (T)FindObjectOfType(typeof(U));
-			
-		//Otherwise create a new object for our monobehaviour singleton.
-		if(_instance == null)
+
+		/// <summary>An accessor function which can be used by derived classes only, that will attempt to instantiate the Singleton if it does not already exist, through Instantiate()</summary>
+		protected static U GetInstance<U>() where U : T
 		{
-			GameObject gameObject = 
-				new GameObject(typeof(U).ToString(), typeof(U));
+			//The AND (&&) property in C# uses lazy evaluation. This means
+			//it will only called Instantiate if _instance == null. 
+			// Logical OR (||) is also lazy. 
+			if(_instance == null && !Instantiate<U>())
+			{
+				Debug.LogError( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " + typeof(U) + " does not exist and could not be instantiated. Confusion abounds.");
+			}
+
+			//cast the instance to type U and send it on its way. 
+			return (U)_instance;	
+		}
+
+		/// <summary> Instantiate this singleton instance. </summary>
+		protected static bool Instantiate<U>() where U : T
+		{
+			//Assert that we're not already instantiated
+			if(_instance != null)
+			{
+				throw new OCException("In OCSingletonMonoBehaviour.Instantiate does not have a null _instance.");
+			}
 				
-			_instance = gameObject.GetComponent<U>();		
+			//Find one in the scene if we've dragged it to the screen. (The awake function should catch this,
+			//but we'll give it a try anyway, particularly in case Instantiate somehow gets called before Awake)
+			_instance = (T)FindObjectOfType(typeof(U));
+				
+			//Otherwise create a new object for our monobehaviour singleton.
+			if(_instance == null)
+			{
+				//by the way, name it after our class so that we can identify it in the inspector
+				GameObject gameObject = new GameObject(typeof(U).ToString(), typeof(U));
+
+				//and nab out the instance
+				_instance = gameObject.GetComponent<U>();		
+			}
+
+			//assuming no catastrophic failure, this should always be true.
+			return _instance != null;
 		}
-			
-		return _instance != null;
-	}
-					
-					
-	//---------------------------------------------------------------------------
+						
 
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-	#region Member Classes
-
-	//---------------------------------------------------------------------------		
-
-	//---------------------------------------------------------------------------
-
-	#endregion
-
-	//---------------------------------------------------------------------------
-
-}// class OCSingletonMonoBehaviour
-
+	}// class OCSingletonMonoBehaviour
 }// namespace OpenCog.Utility
 
 

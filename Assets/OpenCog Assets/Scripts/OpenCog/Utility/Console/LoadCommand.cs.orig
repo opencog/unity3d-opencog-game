@@ -221,6 +221,21 @@ public class LoadCommand : Console.ConsoleCommand
 
 			//if it does not exist, we cannot run this wrapper
 			if (playerObject == null) {
+<<<<<<< HEAD
+				UnityEngine.Debug.Log ("No object tagged with player.");
+				yield return "No object tagged with player.";
+			}
+
+			// Record the player's position and make the OCAvatar spawn near it.
+			UnityEngine.Vector3 playerPos = playerObject.transform.position;
+			
+			//UnityEngine.Debug.Log ("PlayerPos = [" + playerPos.x + ", " + playerPos.y + ", " + playerPos.z + "]");
+
+			// Calculate the player's forward direction
+			UnityEngine.Vector3 eulerAngle = playerObject.transform.rotation.eulerAngles;
+			
+			//UnityEngine.Debug.Log ("eulerAngle = [" + eulerAngle.x + ", " + eulerAngle.y + ", " + eulerAngle.z + "]");
+=======
 				Debug.LogError("No object tagged with player.");
 				yield break;
 			}
@@ -228,14 +243,60 @@ public class LoadCommand : Console.ConsoleCommand
 			//we want to place it ahead of the player
 			UnityEngine.Vector3 eulerAngle = playerObject.transform.rotation.eulerAngles;
 			UnityEngine.Vector3 position = playerObject.transform.position;
+>>>>>>> UnitTest_Spydr
 
 			//find a position slightly in front of us
 			float zFront = 3.0f * (float)Math.Cos ((eulerAngle.y / 180) * Math.PI);
 			float xFront = 3.0f * (float)Math.Sin ((eulerAngle.y / 180) * Math.PI);
+<<<<<<< HEAD
+			
+			UnityEngine.Vector3 spawnPosition = new UnityEngine.Vector3(playerPos.x + xFront, playerPos.y + 2, playerPos.z + zFront);
+			spawnPosition.x = (float)((int)spawnPosition.x);
+			spawnPosition.y = (float)((int)spawnPosition.y);
+			spawnPosition.z = (float)((int)spawnPosition.z);
+			
+			//UnityEngine.Debug.Log ("spawnPosition = [" + spawnPosition.x + ", " + spawnPosition.y + ", " + spawnPosition.z + "]");
+
+			// Instantiate an OCAvatar in front of the player.
+			
+			//UnityEngine.Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
+			
+			agentClone = (GameObject)UnityEngine.Object.Instantiate (_NPCAgent, spawnPosition, Quaternion.identity);
+			agentClone.transform.parent = GameObject.Find("Characters").transform;
+			OCActionController agiAC = agiAC = agentClone.GetComponent<OCActionController>();
+			agiAC.DefaultEndTarget = GameObject.Find("EndPointStub");
+			agiAC.DefaultStartTarget = GameObject.Find("StartPointStub");
+			
+			//UnityEngine.Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
+
+			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+			
+			UnityEngine.Debug.Log ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
+			
+			//UnityEngine.Debug.Log ("connector is" + (connector == null ? " null " : " not null"));
+
+			if (agentName == "")
+				agentName = CreateRandomAgentName ();
+			
+			//UnityEngine.Debug.Log("We shall name him '" + agentName + "'");
+        
+			agentClone.name = agentName;
+        
+//			if (agentClone != null) {
+//				if (!OCARepository.AddOCA (agentClone)) {
+//					// An avatar with given name is already there.
+//					yield break;
+//				}
+//				UnityEngine.Debug.Log ("Add avatar[" + agentName + "] to avatar map.");
+//			}
+			
+			// Get the player id as the master id of the avatar.
+=======
 
 			//add the position data together. 
 			UnityEngine.Vector3 newPos = new Vector3(position.x + xFront, position.y + 2, position.z + zFront);
 
+>>>>>>> UnitTest_Spydr
 			// TODO Currently we use the tag "player". However, when there are multiple 
 			// players in the world, we need to figure out a way to identify.
 			// TODO Set agentType and agentTraits in the future.
@@ -247,8 +308,20 @@ public class LoadCommand : Console.ConsoleCommand
 			//Attack of the top level management decisions!
 			yield return StartCoroutine(GameManager.character.load.AtRunTime(newPos, _NPCAgent,agentName, masterName, masterId));
 
+<<<<<<< HEAD
+			yield return StartCoroutine(connector.ConnectOAC());
+		
+			if (!connector.IsInitialized) {
+				// OAC is not loaded normally, destroy the avatar instance.
+				UnityEngine.Debug.LogError ("Cannot connect to the OAC, avatar loading failed.");
+				connector.SaveAndExit ();
+				Destroy (agentClone);
+				yield break;
+			} 
+=======
 			//this is unnecessary
 			//yield break;
+>>>>>>> UnitTest_Spydr
 		}
 
 
