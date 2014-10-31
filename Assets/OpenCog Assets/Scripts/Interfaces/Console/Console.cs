@@ -140,9 +140,8 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	public void Start()
 	{
-		//FIXME: This was previously supposed to keep keyboard input from controlling the
-		//character. That no longer works.
-		//Input.eatKeyPressOnTextFieldFocus = false;
+		//FIXME: I believe this is supposed to get the arrow keys. There has to be a better way.
+		Input.eatKeyPressOnTextFieldFocus = false;
 		
 		
 		_panelHeight = Screen.height * 0.30f;
