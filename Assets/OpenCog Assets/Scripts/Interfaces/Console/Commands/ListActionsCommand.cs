@@ -147,11 +147,18 @@ public class ListActionsCommand : Console.ConsoleCommand
 			// Get the appropriate agent's actionController
 			OCActionController actionController = null;
 			OCActionController[] actionControllers = Object.FindObjectsOfType(typeof(OCActionController)) as OCActionController[];
-			
+
+	
 			foreach(OCActionController ac in actionControllers)
 			{
 				if(ac.gameObject.name == agentName)
 					actionController = ac;
+			}
+
+			if(actionController == null)
+			{
+				//If there is not currently an agent, then...
+				return "There are no agent by this name with an OCActionController component. Use /load to create one.";
 			}
 			
 			string result = actionController.gameObject.name + "'s actions: ";
