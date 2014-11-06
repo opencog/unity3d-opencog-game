@@ -67,7 +67,7 @@ public class OCPhysiologicalEffect : OCScriptableObject
 
 	private float BASE_ENERGY_COST;
 
-	private Utility.Config config;
+	private OCConfig config;
 
 	//---------------------------------------------------------------------------
 
@@ -120,13 +120,13 @@ public class OCPhysiologicalEffect : OCScriptableObject
 			_changeFactors["pee_urgency"]	= 0.5f;
 			_changeFactors["poo_urgency"]	= 0.5f;
 			_resetFactors = new List<string>();
-			config = Utility.Config.GetInstance();
+			config = OCConfig.Instance;
 	}
 
 	public void ApplyEffect(OCPhysiologicalModel model)
 	{
 		// Update energy
-		model.Energy -= GetActionCost((float)model.Fitness);
+		model.Energy -= getActionCost((float)model.Fitness);
 		model.Energy += _energyIncrease;
         
 		model.Fitness += _fitnessChange;
@@ -196,7 +196,7 @@ public class OCPhysiologicalEffect : OCScriptableObject
      * Calculate the actual energy cost according to BASE_ENERGY_COST, fitness and level.
      * Higher energy cost is produced with lower fitness, higher BASE_ENERGY_COST and level.
      */
-	public float GetActionCost(float fitness)
+	public float getActionCost(float fitness)
 	{
 		return (float)(1.5 - fitness) * ((int)_costLevel * BASE_ENERGY_COST);
 	}
@@ -236,7 +236,7 @@ public class OCPhysiologicalEffect : OCScriptableObject
 	{
 		_costLevel = level;
 		// MAX_ACTION_NUM is the number of normal actions possible on a full battery charge.
-		this.BASE_ENERGY_COST = 1.0f / config.GetInt("MAX_ACTION_NUM");
+		this.BASE_ENERGY_COST = 1.0f / config.getInt("MAX_ACTION_NUM");
 	}
 
 	//---------------------------------------------------------------------------
