@@ -158,6 +158,12 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 		//_settings["TEST_AND_EXIT"] = "false";  //Use #define TEST_AND_EXIT instead...
 		_settings["test"] = "";// will be "internal_XGA" in case of buildbot
 		_settings["quit"] = "false";// should be "true" in case of buildbot 
+
+		_settings["UNITTEST_WORLD"] = false;
+		_settings["UNITTEST_EMBODIMENT"] = false;
+		_settings["UNITTEST_BLOCK"] = false;
+		_settings["UNITTEST_PLAN"] = false;
+		_settings["UNITTEST_SECONDPLAN"] = false;
 	}
 		
 	/// <summary>
