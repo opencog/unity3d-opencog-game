@@ -1,0 +1,104 @@
+# -----------------------------------------------------------------------------
+# Properties  used for configuring NetworkElements
+# -----------------------------------------------------------------------------
+
+# Generate tick message is used in the petaverse's trunk version, but not in the demo branch 
+# So you must set this parameter properly...
+#
+GENERATE_TICK_MESSAGE = true
+
+#
+# Proxy config
+#
+MY_ID = PROXY
+<<<<<<< HEAD
+MY_IP = 127.0.0.1
+#My_IP = 10.0.25.41
+=======
+MY_IP = 10.0.25.62
+>>>>>>> UnitTest_Spydr
+MY_PORT = 16315
+
+
+#
+# Router config
+#
+ROUTER_ID = ROUTER
+<<<<<<< HEAD
+ROUTER_IP = 192.168.50.2
+#ROUTER_IP = 10.0.25.104
+=======
+ROUTER_IP = 10.0.25.30
+>>>>>>> UnitTest_Spydr
+ROUTER_PORT = 16312
+
+#
+# Router config
+#
+SPAWNER_ID = SPAWNER
+
+#
+# Unread messages management
+# NOTE: Using milliseconds as unit for UNREAD_MESSAGES_CHECK_INTERVAL parameter   
+UNREAD_MESSAGES_CHECK_INTERVAL  = 100
+UNREAD_MESSAGES_RETRIEVAL_LIMIT = -1
+MAX_MESSAGES_IN_BUFFER = 100
+
+#
+# Flag to control usage of ACK messages (OK, FAILED)
+#
+NO_ACK_MESSAGES = true
+
+#
+# Sleep time in serverLoop if idle (no message received or processed) 
+#
+SERVER_LOOP_SLEEP_TIME = 100
+
+#
+# Interval between time ticks (in milliseconds)
+#
+TICK_INTERVAL = 500
+
+#
+# Number of simulated milliseconds per tick 
+#
+# Default value == TICK_INTERVAL => simulated time == real time
+MILLISECONDS_PER_TICK = 500
+# For accelerating the simulated time (useful for automated tests), 
+# this value must/may be increased, as bellow: 
+# MILLISECONDS_PER_TICK = 5000
+
+#
+# Parameters for controlling Physiological feelings:
+#
+#Default values:
+#EAT_STOPS_PER_DAY = 150
+#DRINK_STOPS_PER_DAY = 225
+#PEE_STOPS_PER_DAY = 100
+#POO_STOPS_PER_DAY = 50
+#
+# Twice faster:
+#EAT_STOPS_PER_DAY = 300
+#DRINK_STOPS_PER_DAY = 450
+#PEE_STOPS_PER_DAY = 200
+#POO_STOPS_PER_DAY = 100
+
+#
+# Interval between messages sending (in milliseconds)
+#
+MESSAGE_SENDING_INTERVAL = 100
+
+#
+# Golden standard generation flags
+#
+
+# true or false
+GENERATE_GOLD_STANDARD = false
+# filename where golden standard message will be recorded 
+GOLD_STANDARD_FILENAME = GoldStandards.txt
+
+
+# This is the VisibilityMap tile side
+# half of the LocalSpaceMap2D grid side (xDim | yDim) is a good value
+VISIBILITY_MAP_TILES_PER_SIDE = 64
+
