@@ -245,7 +245,7 @@ public class LoadCommand : Console.ConsoleCommand
 			string masterName = playerObject.name;
 
 			//Attack of the top level management decisions!
-			yield return StartCoroutine(GameManager.character.load.AtRunTime(newPos, _NPCAgent,agentName, masterName, masterId));
+			yield return StartCoroutine(GameManager.entity.load.AtRunTime(newPos, _NPCAgent,agentName, masterName, masterId));
 
 			//this is unnecessary
 			//yield break;

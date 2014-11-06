@@ -20,7 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenCog.Attributes;
-using OpenCog.Character;
+using OpenCog.Entities;
 using OpenCog.Extensions;
 using Component = UnityEngine.Component;
 using GameObject = UnityEngine.GameObject;

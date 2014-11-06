@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Xml;
 using OpenCog.Actions;
 using OpenCog.Attributes;
-using OpenCog.Character;
+using OpenCog.Entities;
 using OpenCog.Embodiment;
 using OpenCog.Extensions;
 using OpenCog.Network;

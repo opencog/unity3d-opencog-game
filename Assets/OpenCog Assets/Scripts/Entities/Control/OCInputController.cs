@@ -30,7 +30,7 @@ using UnityEngine;
 
 #endregion
 
-namespace OpenCog.Character
+namespace OpenCog.Entities
 {
 
 /// <summary>

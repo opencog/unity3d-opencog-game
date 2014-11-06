@@ -17,7 +17,8 @@
 
 #region Usings, Namespaces, and Pragmas
 
-using OpenCog.Character;
+using OpenCog.Entities;
+using OpenCog.Worlds;
 
 #endregion
 
@@ -29,14 +30,25 @@ using OpenCog.Character;
 
 namespace OpenCog.Master
 {
+	// TODO
+	// This class is INCOMPLETE in its functionality and refactoring; it is concieved of as a top-level manager for the entire game. It is concieved
+	// of as owning many subordinate managers.
+
+	//This class should eventually consume the GameStateManager.
+
+	/// <summary>
+	/// A top level class and singleton for triggering top-level tasks such as saving and loading the various components of the game. 
+	/// </summary>
 	public class GameManager:OCSingletonMonoBehaviour<GameManager>
 	{
 		//---------------------------------------------------------------------------
-		#region 					  Protected Member Data
+		#region 					  Sub-Managers
 		//---------------------------------------------------------------------------
 
-		protected CharacterManager _characterManager; 
-		public static CharacterManager character{get{return Instance._characterManager;}}
+		protected EntityManager _entityManager; 
+		public static EntityManager entity{get{return Instance._entityManager;}}
+		protected WorldManager _worldManager;
+		public static WorldManager world{get{return Instance._worldManager;}}
 
 
 
@@ -57,7 +69,7 @@ namespace OpenCog.Master
 			DontDestroyOnLoad(this);
 
 			//Create the character manager!
-			_characterManager = CharacterManager.New ();
+			_entityManager = EntityManager.New ();
 
 		}
 

@@ -25,84 +25,96 @@ using System;
 #pragma warning disable 0414
 #endregion
 
-namespace OpenCog.Entities
+namespace OpenCog.Worlds
 {
 	// TODO
 	// This class is INCOMPLETE in its functionality and refactoring; it is concieved of as a top-level manager for Entities
 	//
-	// A note on what is going on with the EntityManager folder:
+	// A note on what is going on with the WorldManager folder:
 	// ----------------------------------
-	// It is believed that EntityManager will eventually contain a large number of methods which can be grouped into subclasses. For example, there may be 20 ways
-	// to send data for: loading a character, moving a character, artificially constructing a path, giving orders, etc. In order to neatly sort all of these methods,
+	// It is believed that WorldManager will eventually contain a large number of methods which can be grouped into subclasses. For example, there may be 20 ways
+	// to send data for: loading a map, saving a map, doing raycasting, editing a map, etc. In order to neatly sort all of these methods,
 	// keep them accessible to the outside, and yet prevent anyone else from instantiating the classes, we are doing the following:
 	//
 	//		1. Placing the method-group helper-sub-classes (ie: Load) into their own files (breaking them up for easy browsing)
-	//		2. Keeping them nested in EntityManager as protected classes (so the outside world can't instantiate them)
+	//		2. Keeping them nested in WorldManager as protected classes (so the outside world can't instantiate them)
 	//		3. Using the 'partial class' keyword combo to satisfy points 1 and 2 (each of the files mentioned in part 1 will then be wrapped in `public partial class etc.`)
 	//		4. Exposing the protected class's method prototypes to the outside world using a public interface (which can't be instantiated on its own)
 	//
 	// -----------------------------------
-
+	
 	/// <summary>
-	/// <para>To make use of the methods in this class, reference: </para><para>GameManager.character.* </para><para></para>
+	/// <para>To make use of the methods in this class, reference: </para><para>.* </para><para></para>
 	/// This is a top-level manager for in-game avatars and other characters. 
 	/// It is to be owned and managed exclusively by GameManager. 
 	/// </summary>
 	///
-
-	public partial class EntityManager:OCSingletonMonoBehaviour<EntityManager>
+	
+	public partial class WorldManager:OCSingletonMonoBehaviour<WorldManager>
 	{
 		//-------------------------------------------------------------------------
 		#region 						  Child Functionality
 		//-------------------------------------------------------------------------
-		//The methods for loading characters to the screen
-		private _LoadMethods _loadMethods;
-		public LoadMethods load {get{return (_loadMethods ?? _LoadMethods.New()) as LoadMethods;}}
+		//The methods for manipulating blocks to the screen
+		private _VoxelMethods _voxelMethods;
+		public VoxelMethods voxels {get{return (_voxelMethods ?? _VoxelMethods.New()) as VoxelMethods;}}
 
-
+		
 		//A little clarity on the ?? operator:
 		//The form return(first_expression ?? second_expression) implies that it will attempt to return 
 		//the first expression unless it finds a null; else it will return the second expression.
 		//Or that it will return its loadMethods or try to create a new one, addressing a situation
 		//where .load is called before Awake();
+		
+		
+		
+		//---------------------------------------------------------------------------
+		#endregion
+		#region 				Private Member Variables
+		//---------------------------------------------------------------------------
 
+
+		private OpenCog.Map.OCMap _map;
 
 
 		//---------------------------------------------------------------------------
 		#endregion
 		#region 				Singleton Stuff
 		//---------------------------------------------------------------------------
-
+		
 		//Do not let anyone instantiate this (not that monobehaviors should be instantiated in the first place)
-		protected EntityManager(){}
-
+		protected WorldManager(){}
+		
 		/// <summary>This initialization function creates the submanagers, and will be called automatically by the SingletonMonoBehavior's Awake()</summary>
 		protected override void Initialize()
 		{
 			//shouldn't be destroyed with scenes. 
 			DontDestroyOnLoad(this);
+
+			//get the map instance!
+			_map = OpenCog.Map.OCMap.Instance;
 			
-			//Create a new set of load methods
-			_loadMethods = _LoadMethods.New();
+			//Create a new set of  methods
+			_voxelMethods = _VoxelMethods.New();
 			
 		}
 		
-
-
+		
+		
 		/// <summary>Used to instantiate this class. It should only be called once. It will supply a single instance, and then throw an error
 		/// if it is called a second time.</summary>
-		public static EntityManager New()
+		public static WorldManager New()
 		{
 			//This is not a true Singleton; we only want one ever built and then we want gameManager to throw errors if we failed
 			if(_instance)
 			{
-				throw new OCException( "Two CharacterManagers exist and this is forbidden. Permit GameManager to handle EntityManager internally.");
-
+				throw new OCException( "Two WorldManagers exist and this is forbidden. Permit GameManager to handle WorldManager internally.");
+				
 			}
-
+			
 			//the Singleton pattern handles everything about instantiation for us, including searching
 			//the game for a pre-existing object.
-			EntityManager cm = GetInstance<EntityManager>();
+			WorldManager cm = GetInstance<WorldManager>();
 			
 			//this is the line that will prevent the gameObject from being destroyed between scenes.
 			DontDestroyOnLoad(cm.gameObject);
@@ -111,6 +123,6 @@ namespace OpenCog.Entities
 		#endregion
 		
 		//---------------------------------------------------------------------------
-
+		
 	}
 }

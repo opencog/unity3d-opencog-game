@@ -20,20 +20,20 @@ using System;
 #pragma warning disable 0414
 #endregion
 
-namespace OpenCog.Character
+namespace OpenCog.Entities
 {
 	
-	public partial class CharacterManager:OCSingletonMonoBehaviour<CharacterManager>
+	public partial class EntityManager:OCSingletonMonoBehaviour<EntityManager>
 	{
 		///<summary><para>Access this interface's methods using GameManager.Character.load.*</para>
-		///<para>This interface exposes a subcatagory of CharacterManager methods, which should be used for loading characters.</para></summary>
+		///<para>This interface exposes a subcatagory of EntityManager methods, which should be used for loading characters.</para></summary>
 		public interface LoadMethods
 		{
 			IEnumerator AtRunTime(UnityEngine.Vector3 spawnPosition, GameObject agentPrefab, string agentName = "", string masterName = "", string masterId = "");
 		}
 
 		///<summary><para>Access this class's methods using GameManager.Character.load.*</para>
-		/// <para>A subcatagory of CharacterManager methods, which should be used for loading characters. Nested in CharacterManager, its functions are exposed to the outside through the LoadMethods interface.</para></summary>
+		/// <para>A subcatagory of EntityManager methods, which should be used for loading characters. Nested in EntityManager, its functions are exposed to the outside through the LoadMethods interface.</para></summary>
 		protected class _LoadMethods:OCSingletonMonoBehaviour<_LoadMethods>, LoadMethods
 		{
 			protected _LoadMethods(){}
@@ -50,10 +50,10 @@ namespace OpenCog.Character
 			/// if it is called a second time.</summary>
 			public static _LoadMethods New()
 			{
-				//THERE CAN ONLY BE ONE (and it must be created by the CharacterManager)
+				//THERE CAN ONLY BE ONE (and it must be created by the EntityManager)
 				if(_instance)
 				{
-					throw new OCException( "Two CharacterManager.LoadMethods exist and this is forbidden.");
+					throw new OCException( "Two EntityManager.LoadMethods exist and this is forbidden.");
 
 				}
 				

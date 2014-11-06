@@ -25,7 +25,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
-using OpenCog.Character;
+using OpenCog.Entities;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -81,7 +81,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	private string _lastLine = "";
 
 	// TODO: (Scratch that) Search this file for the object below and re-enable all calls to it.
-	//OpenCog.Character.OCInputController _inputController; // InputController to capture and return the consumer of input.
+	//OpenCog.Entities.OCInputController _inputController; // InputController to capture and return the consumer of input.
 	GameObject _player = null;
 
 
@@ -154,7 +154,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		//_inputController = (GameObject.FindWithTag("CharacterInputController") as GameObject).GetComponent<CharacterInputController>();
 
 		_player = GameObject.FindGameObjectWithTag("Player");
-		//_inputController = OpenCog.Character.OCInputController.Instance;
+		//_inputController = OpenCog.Entities.OCInputController.Instance;
 
 
 		// Initialise position

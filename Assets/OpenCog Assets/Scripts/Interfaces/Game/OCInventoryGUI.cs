@@ -24,7 +24,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
-using OpenCog.Character;
+using OpenCog.Entities;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414

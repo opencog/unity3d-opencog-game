@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenCog.Actions;
 using OpenCog.Attributes;
-using OpenCog.Character;
+using OpenCog.Entities;
 using OpenCog.Extensions;
 using GameObject = UnityEngine.GameObject;
 using ImplicitFields = ProtoBuf.ImplicitFields;
