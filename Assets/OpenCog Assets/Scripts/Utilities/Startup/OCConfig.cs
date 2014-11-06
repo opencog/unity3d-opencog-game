@@ -234,7 +234,10 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 	    }
 		}
 	}
-	
+
+	/// <summary>
+	/// Handles configuration by reading in the arguments we recieved from the command line. 
+	/// </summary>
 	public void LoadFromCommandLine()
 	{
 		string[] args = System.Environment.GetCommandLineArgs();

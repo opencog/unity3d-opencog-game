@@ -443,6 +443,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			{
 				OCConfig.Instance.LoadFromTextAsset(configFile);
 			}
+
+			//Load any important command line arguments *over and on top of* the text asset (which in this case, should command line arguments be present, will serve
+			//as something of a default. 
 			OCConfig.Instance.LoadFromCommandLine();
 		}
     
@@ -886,13 +889,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = new OCMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
-    OCLogger.Warn("sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
+	    OCLogger.Warn("sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
 
-    lock (_messageSendingLock)
-    {
-        _messagesToSend.Add(message);
-    }
-  }
+	    lock (_messageSendingLock)
+	    {
+	        _messagesToSend.Add(message);
+	    }
+	  }
 	
 	
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
@@ -901,7 +904,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		if(isAppear)
 		{
 			UnityEngine.Debug.Log("Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
-		} else
+		} 
+		else
 		{
 			UnityEngine.Debug.Log("Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		}

@@ -35,7 +35,7 @@ namespace OpenCog
 {
 
 /// <summary>
-/// The OpenCog OCGameStateManager.
+/// The OpenCog OCGameStateManager. Controls behaviors like pausing.
 /// </summary>
 #region Class Attributes
 
@@ -109,18 +109,22 @@ public class OCGameStateManager : OCMonoBehaviour
 	public void Start() {
 		Screen.showCursor = false;
 		_player = GameObject.FindGameObjectWithTag("Player");
+			IsPause = false;
 	}
 	
+
 	public void Update() {
 
 		if(Application.platform != RuntimePlatform.LinuxPlayer)
 			Screen.lockCursor = !Screen.showCursor;
 		
+		// allow for screenshots?
 		if(Input.GetKeyDown(KeyCode.Tab)) {
 			Screen.showCursor = true;
 			Screen.lockCursor = false;
 		}
 		
+		//pause le game!
 		if(Input.GetKeyDown(KeyCode.Escape)) {
 			IsPause = !IsPause;
 			_player.GetComponent<OCInputController>().enabled = !IsPause;
