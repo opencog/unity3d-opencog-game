@@ -25,48 +25,24 @@ namespace OpenCog
 		namespace Automation
 		{
 
-/// <summary>
-/// The OpenCog Automated Player Builder.  Builds standalone players and allows for unit testing.
-/// Example commandline usage:
-/// "C:\Program Files (x86)\Unity\Editor\Unity.exe" -batchMode -quit -nographics -projectPath C:\project -executeMethod OCAutomatedPlayerBuilder.BuildAll
-/// </summary>
-#region Class Attributes
+				/// <summary>
+				/// The OpenCog Automated Player Builder.  Builds standalone players and allows for unit testing.
+				/// Example commandline usage:
+				/// "C:\Program Files (x86)\Unity\Editor\Unity.exe" -batchMode -quit -nographics -projectPath C:\project -executeMethod OCAutomatedPlayerBuilder.BuildAll
+				/// </summary>
+				#region Class Attributes
 
-#endregion 
+				#endregion 
 				public class OCAutomatedPlayerBuilder //@TODO: coordinate with David and rename to OCAutomatedPlayerBuild
 				{
 
+						/////////////////////////////////////////////////////////////////////////////		
+  						#region Public Member Functions
 						/////////////////////////////////////////////////////////////////////////////
 
-  #region Private Member Data
-
-						/////////////////////////////////////////////////////////////////////////////
-
-  
-
-						/////////////////////////////////////////////////////////////////////////////
-
-  #endregion
-
-						/////////////////////////////////////////////////////////////////////////////
-
-  #region Accessors and Mutators
-
-						/////////////////////////////////////////////////////////////////////////////
-
-  
-
-						/////////////////////////////////////////////////////////////////////////////
-
-  #endregion
-
-						/////////////////////////////////////////////////////////////////////////////
-
-  #region Public Member Functions
-
-						/////////////////////////////////////////////////////////////////////////////
-
+						#if UNITY_PRO_LICENSE
 						[MenuItem ("Build/BuildAll")]
+						#endif
 						static void BuildAll ()
 						{
 								BuildStandaloneLinux32Player ();
@@ -77,7 +53,9 @@ namespace OpenCog
 								BuildStandaloneLinux64TestPlayer ();			
 						}
 	
+						#if UNITY_PRO_LICENSE
 						[MenuItem ("Build/BuildStandaloneLinux64Player")]
+						#endif
 						static void BuildStandaloneLinux64Player ()
 						{			
 								string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
@@ -86,8 +64,10 @@ namespace OpenCog
 								  , "../Players/Unity3DGameWorldPlayer_Linux64"
 								  , BuildTarget.StandaloneLinux64, BuildOptions.None);
 						}
-			
+						
+						#if UNITY_PRO_LICENSE
 						[MenuItem ("Build/BuildStandaloneLinux64TestPlayer")]
+						#endif
 						static void BuildStandaloneLinux64TestPlayer ()
 						{
 								PlayerSettings.SetScriptingDefineSymbolsForGroup (BuildTargetGroup.Standalone, "TEST_AND_EXIT");
@@ -97,9 +77,11 @@ namespace OpenCog
 								BuildPipeline.BuildPlayer (scenes
 								  , "../Players/Unity3DGameWorldTestPlayer_Linux64"
 								  , BuildTarget.StandaloneLinux64, BuildOptions.None);
-						}			
-	
+						}		
+
+						#if UNITY_PRO_LICENSE
 						[MenuItem ("Build/BuildStandaloneLinux32Player")]
+						#endif
 						static void BuildStandaloneLinux32Player ()
 						{
 								string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
@@ -109,7 +91,9 @@ namespace OpenCog
 								  , BuildTarget.StandaloneLinux, BuildOptions.None);
 						}
 	
+						#if UNITY_PRO_LICENSE
 						[MenuItem ("Build/BuildStandaloneWindows32Player")]
+						#endif
 						static void BuildStandaloneWindows32Player ()
 						{
 								string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
@@ -118,8 +102,9 @@ namespace OpenCog
 								  , "../Players/Unity3DGameWorldPlayer_Windows32.exe"
 								  , BuildTarget.StandaloneWindows, BuildOptions.None);
 						}
-	
+						#if UNITY_PRO_LICENSE
 						[MenuItem ("Build/BuildStandaloneWindows64Player")]
+						#endif
 						static void BuildStandaloneWindows64Player ()
 						{	
 								string[] scenes = { "Assets/Scenes/Game/Game.unity"};//, "Assets/Scenes/MainMenu/MainMenu.unity", "Assets/Scenes/BlockSetViewer/BlockSetViewer.unity" };
@@ -128,22 +113,11 @@ namespace OpenCog
 								  , "../Players/Unity3DGameWorldPlayer_Windows64.exe"
 								  , BuildTarget.StandaloneWindows64, BuildOptions.None);
 						}
-
+						
+						/////////////////////////////////////////////////////////////////////////////
+  						#endregion
 						/////////////////////////////////////////////////////////////////////////////
 
-  #endregion
-
-						/////////////////////////////////////////////////////////////////////////////
-
-  #region Private Member Functions
-
-						/////////////////////////////////////////////////////////////////////////////
-
-						/////////////////////////////////////////////////////////////////////////////
-
-  #endregion
-
-						/////////////////////////////////////////////////////////////////////////////
 
 				}// class OCAutomatedPlayerBuilder
 
