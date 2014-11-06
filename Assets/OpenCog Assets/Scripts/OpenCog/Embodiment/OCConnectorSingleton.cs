@@ -708,28 +708,28 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	}
   
-  public void HandleOtherAgentActionResult(OCActionPlanStep step, bool status)
-  {
-    // don't report actions that game from us.
-    // don't report actions without an action summary (these are from trying
-    // to do non-existant actions).
+	public void HandleOtherAgentActionResult(OCActionPlanStep step, bool status)
+	{
+		// don't report actions that game from us.
+		// don't report actions without an action summary (these are from trying
+		// to do non-existant actions).
 		///TODO: Find a different way to check for this...
 //    if (ar.avatar == gameObject.GetComponent<Avatar>() || ar.action == null) {
 //        //Debug.LogWarning("skipping action result from " + ar.avatar);
 //        return;
 //    }
 
-    // the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
+		// the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
 
-    string timestamp = GetCurrentTimestamp();
-    XmlDocument doc = new XmlDocument();
-    XmlElement root = MakeXMLElementRoot(doc);
+		string timestamp = GetCurrentTimestamp();
+		XmlDocument doc = new XmlDocument();
+		XmlElement root = MakeXMLElementRoot(doc);
 
-    XmlElement agentSignal = (XmlElement) root.AppendChild(doc.CreateElement("agent-signal"));
-    agentSignal.SetAttribute("id", gameObject.GetInstanceID().ToString());
-	agentSignal.SetAttribute("type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
-    agentSignal.SetAttribute("timestamp", timestamp);
-    XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
+		XmlElement agentSignal = (XmlElement)root.AppendChild(doc.CreateElement("agent-signal"));
+		agentSignal.SetAttribute("id", gameObject.GetInstanceID().ToString());
+		agentSignal.SetAttribute("type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
+		agentSignal.SetAttribute("timestamp", timestamp);
+		XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
 
 		// note that the name and the action-instance-name are different
 		// ie: name = kick , while action-instance-name = kick2342
@@ -738,21 +738,27 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		//bool result = (status == ActionResult.Status.SUCCESS ? true : false);
 		actionElement.SetAttribute("result-state", status.ToString().ToLower()); //successful or failed
-		if (step.Arguments.Source.GetInstanceID() == step.Arguments.StartTarget.GetInstanceID()) {
+		if(step.Arguments.Source.GetInstanceID() == step.Arguments.StartTarget.GetInstanceID())
+		{
 			actionElement.SetAttribute("target", _brainID);
-		} else {
+		} else
+		{
 			actionElement.SetAttribute("target", step.Arguments.StartTarget.GetInstanceID().ToString());
 		}
 
 		// currently we only process the avatar and ocobject type, other types in EmbodimentXMLTages can is to be added when needed.
 		// if you add other types such as BLOCK_OBJECT_TYPE, you should also modify PAI::processAgentActionWithParameters in opencog
 		string targetType = step.Arguments.StartTarget.tag;
-		if (targetType == "OCA" || targetType == "Player" || targetType == "OCAGI")// it's an avatar
+		if(targetType == "OCA" || targetType == "Player" || targetType == "OCAGI")
+		{// it's an avatar
 			actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
-		else if (targetType == "OCObject") // it's an object
-			actionElement.SetAttribute("target-type",OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
-		else
+		} else if(targetType == "OCObject")
+		{ // it's an object
+			actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
+		} else
+		{
 			Debug.LogWarning("Error target type: " + targetType + " in action: " + step.Arguments.ActionName);
+		}
 				 
 		XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 
@@ -766,11 +772,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 				entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, step.Arguments.EndTarget.GetInstanceID().ToString());
 
 				if(step.Arguments.EndTarget.tag == "OCObject")
+				{
 					entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
-				else
+				} else
+				{
 					entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
-			}
-			else
+				}
+			} else
 			{
 				UnityEngine.Vector3 vec = step.Arguments.EndTarget.transform.position;
 				param.SetAttribute("type", "vector");
@@ -886,13 +894,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = new OCMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
-    OCLogger.Warn("sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
+		OCLogger.Warn("sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
 
-    lock (_messageSendingLock)
-    {
-        _messagesToSend.Add(message);
-    }
-  }
+		lock(_messageSendingLock)
+		{
+			_messagesToSend.Add(message);
+		}
+	}
 	
 	
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
@@ -942,7 +950,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			actionElement.SetAttribute("name", "disappear");
 			actionElement.SetAttribute("action-instance-name", "disappear" + (++_disappearActionCount).ToString());
-			actionElement.SetAttribute("remove", "true");
+			//actionElement.SetAttribute("remove", "true");
 		}
 	
 		actionElement.SetAttribute("result-state", "true"); 
@@ -1415,6 +1423,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		// Create a terrain-info element and append to root element.
 		XmlElement mapInfo = (XmlElement)root.AppendChild(doc.CreateElement(messageTag));
 		mapInfo.SetAttribute("map-name", _mapName);
+		//mapInfo.SetAttribute("name", _mapName);
 		
 		
 		// ORIGINAL:
@@ -1466,6 +1475,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
  
 		XmlElement signal = (XmlElement)root.AppendChild(doc.CreateElement("finished-first-time-percept-terrian-signal"));
 		signal.SetAttribute("timestamp", timestamp);
+		//signal.SetAttribute("name", "finished-first-time-percept-terrian-signal");
 	
 		//OCStringMessage message = new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
 		
@@ -1817,9 +1827,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// Create a Stub goal when one is not specified:
 			// @TODO: Generalize this or remove the requirement that actions have goals.
 			if(actionParameters.Count == 0 &&
-               (actionName == "step_forward" || actionName == "rotate_left" || actionName == "rotate_right"))
+				(actionName == "step_forward" || actionName == "rotate_left" || actionName == "rotate_right"))
 			{
-				actionArguments.EndTarget = GameObject.Find ("EndPointStub");
+				actionArguments.EndTarget = GameObject.Find("EndPointStub");
 				actionArguments.EndTarget.transform.position = avatar.transform.position + avatar.transform.forward;
 			}
 			
@@ -2259,6 +2269,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
 		actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
 		actionElement.SetAttribute("status", success ? "done" : "error");
+		actionElement.SetAttribute("name", planId);
 		
 //	  	System.IO.StringWriter stringWriter = new System.IO.StringWriter();
 //		XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
