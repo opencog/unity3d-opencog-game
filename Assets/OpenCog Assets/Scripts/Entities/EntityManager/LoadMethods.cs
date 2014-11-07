@@ -127,7 +127,11 @@ namespace OpenCog.Entities
 					Debug.LogError ("Cannot connect to the OAC, avatar loading failed.");
 					connector.SaveAndExit ();
 					Destroy (agentClone);
+
+					yield return "failure";
 				} 
+				else
+					yield return "success";
 				
 			}
 			

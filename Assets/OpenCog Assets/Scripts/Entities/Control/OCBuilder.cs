@@ -169,11 +169,11 @@ public class OCBuilder : OCMonoBehaviour
 				if(empty)
 				{
 					OpenCog.Map.OCBlockData block = OCBlockData.CreateInstance<OCBlockData>().Init(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
-					block.SetDirection(GetDirection(-transform.forward));
+					block.SetDirection(-transform.forward);
 					_map.SetBlockAndRecompute(block, point.Value);
 						
 					OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
-						
+
 					foreach(OCGoalController goalController in goalControllers)
 					{
 						if(goalController.GoalBlockType == _selectedBlock)
@@ -289,27 +289,7 @@ public class OCBuilder : OCMonoBehaviour
 		return null;
 	}
 	
-	private static OpenCog.Map.OCBlockDirection GetDirection(UnityEngine.Vector3 dir)
-	{
-		if(UnityEngine.Mathf.Abs(dir.z) >= UnityEngine.Mathf.Abs(dir.x))
-		{
-			// 0 или 180
-			if(dir.z >= 0)
-			{
-				return OpenCog.Map.OCBlockDirection.Z_PLUS;
-			}
-			return OpenCog.Map.OCBlockDirection.Z_MINUS;
-		}
-		else
-		{
-			// 90 или 270
-			if(dir.x >= 0)
-			{
-				return OpenCog.Map.OCBlockDirection.X_PLUS;
-			}
-			return OpenCog.Map.OCBlockDirection.X_MINUS;
-		}
-	}
+	
 			
 	//---------------------------------------------------------------------------
 

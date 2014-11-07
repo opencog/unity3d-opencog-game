@@ -59,6 +59,8 @@ namespace OpenCog.Entities
 		private _LoadMethods _loadMethods;
 		public LoadMethods load {get{return (_loadMethods ?? _LoadMethods.New()) as LoadMethods;}}
 
+	
+
 
 		//A little clarity on the ?? operator:
 		//The form return(first_expression ?? second_expression) implies that it will attempt to return 
@@ -86,6 +88,8 @@ namespace OpenCog.Entities
 			_loadMethods = _LoadMethods.New();
 			
 		}
+
+		//protected static EntityManager AsParentOf{get{return _instance;}}
 		
 
 

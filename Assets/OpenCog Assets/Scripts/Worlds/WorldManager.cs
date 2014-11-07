@@ -15,12 +15,15 @@
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
-using OpenCog.Actions;
 using UnityEngine;
 using System;
+
+
+using OpenCog.Map;
 
 #pragma warning disable 0414
 #endregion
@@ -70,11 +73,14 @@ namespace OpenCog.Worlds
 		
 		//---------------------------------------------------------------------------
 		#endregion
-		#region 				Private Member Variables
+		#region 				Protected Member Variables
 		//---------------------------------------------------------------------------
 
+		//reveal specifically, easily, and only to child classes (ie, we know they exist already)
+		private OCMap _map;
+		protected static OCMap map{get{return (_instance._map ?? _instance.GetMap()) as OCMap;}}
 
-		private OpenCog.Map.OCMap _map;
+
 
 
 		//---------------------------------------------------------------------------
@@ -91,13 +97,20 @@ namespace OpenCog.Worlds
 			//shouldn't be destroyed with scenes. 
 			DontDestroyOnLoad(this);
 
-			//get the map instance!
-			_map = OpenCog.Map.OCMap.Instance;
+			GetMap();
 			
 			//Create a new set of  methods
 			_voxelMethods = _VoxelMethods.New();
 			
 		}
+		protected OCMap GetMap()
+		{
+			//get the map instance!
+			_map = OCMap.Instance;
+			return _map;
+		}
+
+		//protected static WorldManager AsParentOf{get{return _instance;}}
 		
 		
 		
@@ -114,11 +127,11 @@ namespace OpenCog.Worlds
 			
 			//the Singleton pattern handles everything about instantiation for us, including searching
 			//the game for a pre-existing object.
-			WorldManager cm = GetInstance<WorldManager>();
+			WorldManager wm = GetInstance<WorldManager>();
 			
 			//this is the line that will prevent the gameObject from being destroyed between scenes.
-			DontDestroyOnLoad(cm.gameObject);
-			return cm;
+			DontDestroyOnLoad(wm.gameObject);
+			return wm;
 		}
 		#endregion
 		

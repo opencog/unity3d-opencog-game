@@ -86,6 +86,28 @@ namespace OpenCog.Map
 		public bool IsFluid() {
 			return block is OpenCog.BlockSet.BaseBlockSet.OCFluidBlock;
 		}
+
+		public void SetDirection(UnityEngine.Vector3 dir)
+		{
+			if(UnityEngine.Mathf.Abs(dir.z) >= UnityEngine.Mathf.Abs(dir.x))
+			{
+				// 0 или 180
+				if(dir.z >= 0)
+				{
+					this.direction = OCBlockDirection.Z_PLUS;
+				}
+				this.direction = OCBlockDirection.Z_MINUS;
+			}
+			else
+			{
+				// 90 или 270
+				if(dir.x >= 0)
+				{
+					this.direction = OCBlockDirection.X_PLUS;
+				}
+				this.direction = OCBlockDirection.X_MINUS;
+			}
+		}
 	
 	}
 }

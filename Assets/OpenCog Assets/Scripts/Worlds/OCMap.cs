@@ -223,6 +223,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	#region Public Member Functions
 
 	//---------------------------------------------------------------------------
+	
+
 
 	public void SetBlockAndRecompute (OCBlockData block, Vector3i pos)
 	{

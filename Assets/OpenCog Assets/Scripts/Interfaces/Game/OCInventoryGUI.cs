@@ -14,6 +14,8 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Worlds;
+using OpenCog.Master;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -123,6 +125,7 @@ public class OCInventoryGUI : OCMonoBehaviour
 		OpenCog.BlockSet.BaseBlockSet.OCBlock selected = _builder.SelectedBlock;
 		selected = DrawInventory(_blockSet, ref scrollPosition, selected);
 		_builder.SelectedBlock = selected;
+		GameManager.world.voxels.selectedBlock = selected;
     }
 
 	private static OpenCog.BlockSet.BaseBlockSet.OCBlock DrawInventory(OpenCog.BlockSet.OCBlockSet blockSet, ref UnityEngine.Vector2 scrollPosition, OpenCog.BlockSet.BaseBlockSet.OCBlock selected) {

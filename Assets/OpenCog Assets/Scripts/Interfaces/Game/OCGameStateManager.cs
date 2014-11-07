@@ -112,8 +112,14 @@ public class OCGameStateManager : OCMonoBehaviour
 			IsPause = false;
 	}
 	
+	/// <summary>
+	/// The main update loop for OCGameStateManager. This function is responsible for pausing, 
+	/// and also handles unit tests.
+	/// </summary>
+	public void Update() 
+	{
+		
 
-	public void Update() {
 
 		if(Application.platform != RuntimePlatform.LinuxPlayer)
 			Screen.lockCursor = !Screen.showCursor;

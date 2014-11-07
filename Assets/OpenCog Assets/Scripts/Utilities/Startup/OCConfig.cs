@@ -40,40 +40,19 @@ using OpenCog;
 #endregion
 public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 {
-
-	//---------------------------------------------------------------------------
-
 	#region Private Member Data
 
-	//---------------------------------------------------------------------------
-
 	private static Hashtable _settings = new Hashtable();
-
-	//---------------------------------------------------------------------------
-
+	
 	#endregion
-
-	//---------------------------------------------------------------------------
-
 	#region Accessors and Mutators
-
 	//---------------------------------------------------------------------------
 
-	public static OCConfig Instance
-	{
-		get {
-			return GetInstance<OCConfig>();
-		}
-	}
+	public static OCConfig Instance{get {return GetInstance<OCConfig>();}}
 			
 	//---------------------------------------------------------------------------
-
 	#endregion
-		
-	//---------------------------------------------------------------------------
-
 	#region Public Member Functions
-
 	//---------------------------------------------------------------------------
 		
 	/// <summary>

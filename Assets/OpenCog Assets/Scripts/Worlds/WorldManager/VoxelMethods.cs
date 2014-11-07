@@ -11,11 +11,17 @@
 
 
 
+
+
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
-using OpenCog.Actions;
 using UnityEngine;
 using System;
+
+
+using OpenCog.Map;
+using OpenCog.BlockSet.BaseBlockSet; //OcBlock
+using OpenCog.Utility; //vectorUtils
 
 #pragma warning disable 0414
 #endregion
@@ -29,6 +35,9 @@ namespace OpenCog.Worlds
 		///<para>This interface exposes a subcatagory of WorldManager methods, which should be used for exiting the voxel map.</para></summary>
 		public interface VoxelMethods
 		{
+
+			OCBlock selectedBlock {get;set;}
+			void AddSelectedVoxel(Vector3 location, Vector3 direction, OCBlock type);
 			//put classes to expose here
 
 		}
@@ -37,6 +46,11 @@ namespace OpenCog.Worlds
 		/// <para>A subcatagory of WorldManager methods, which should be used for Voxeling characters. Nested in WorldManager, its functions are exposed to the outside through the VoxelMethods interface.</para></summary>
 		protected class _VoxelMethods:OCSingletonMonoBehaviour<_VoxelMethods>, VoxelMethods
 		{
+
+			protected OCBlock _selectedBlock;
+			public OCBlock selectedBlock{get{return _selectedBlock;}set{_selectedBlock = value;}}
+
+			#region 										Singleton Stuff
 			protected _VoxelMethods(){}
 
 			/// <summary>This initialization function will be called automatically by the SingletonMonoBehavior's Awake().</summary>
@@ -54,7 +68,7 @@ namespace OpenCog.Worlds
 				//THERE CAN ONLY BE ONE (and it must be created by the WorldManager)
 				if(_instance)
 				{
-					throw new OCException( "Two WorldManager.VoxelMethods exist and this is forbidden.");
+					throw new OCException("Two WorldManager.VoxelMethods exist and this is forbidden.");
 
 				}
 				
@@ -65,23 +79,38 @@ namespace OpenCog.Worlds
 
 			}
 
+			#endregion
+			#region 									Functionality
+
 			/// <summary>
 			/// This function is responsible for adding a voxel to the map. Because our voxel engine is about to change, this function will take two approaches
 			/// to reducing later refactoring. 1) this function relies on the idea that there is a selected block type (so it does not need to be *passed* the
 			/// block type) and 2) this public function will wrap a private function that handles any pixelland-dependent code
 			/// </summary>
-			public bool AddSelectedVoxel(Vector3 location)
+			public void AddSelectedVoxel(Vector3 location, Vector3 direction, OCBlock type)
 			{
-				return AddSelectedVoxelPixelland(location);
-			}
-			protected bool AddSelectedVoxelPixelland(Vector3 location)
-			{
-				OpenCog.Map.OCBlockData block = OCBlockData.CreateInstance<OCBlockData>().Init(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
-				block.SetDirection(GetDirection(-transform.forward));
-				_map.SetBlockAndRecompute(block, point.Value);
+				AddSelectedVoxelPixelland(location, direction, type);
 			}
 
+			protected void AddSelectedVoxelPixelland(Vector3 location, Vector3 direction, OCBlock type)
+			{
+				//create a block to fill with dataz
+				OCBlockData block = OCBlockData.CreateInstance<OCBlockData>();
 
+				//get the location in vector3i form
+				Vector3i location3i = VectorUtil.Vector3ToVector3i(location);
+
+				//initialize the block
+				block.Init(type, location3i);
+
+				//set its direction (which should be calculated using GetDirection on -transform.forward)
+				block.SetDirection(direction);
+
+				//and set the block
+				map.SetBlockAndRecompute(block, location3i);
+			}
+
+			#endregion
 
 		}
 	}
