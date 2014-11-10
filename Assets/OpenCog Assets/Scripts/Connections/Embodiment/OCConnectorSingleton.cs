@@ -950,7 +950,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			actionElement.SetAttribute("name", "disappear");
 			actionElement.SetAttribute("action-instance-name", "disappear" + (++_disappearActionCount).ToString());
-			//actionElement.SetAttribute("remove", "true");
+			//if(targetType == OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE)
+			//	actionElement.SetAttribute("remove", "true");
 		}
 	
 		actionElement.SetAttribute("result-state", "true"); 

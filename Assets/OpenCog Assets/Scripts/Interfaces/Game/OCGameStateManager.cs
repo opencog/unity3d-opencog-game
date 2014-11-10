@@ -66,32 +66,54 @@ public class OCGameStateManager : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 		
-	private static OCGameStateManager Manager {
-		get {
+	private static OCGameStateManager Manager
+	{
+		get
+		{
 			if(_manager == null)
-					_manager = (OCGameStateManager) GameObject.FindObjectOfType( typeof(OCGameStateManager) );
+			{
+				_manager = (OCGameStateManager)GameObject.FindObjectOfType(typeof(OCGameStateManager));
+			}
 
 			return _manager;
 		}
 	}
 
-	public static bool IsPause {
-		set {
-			if(value) Time.timeScale = 1f/10000f;
-			if(!value) Time.timeScale = 1;
+	public static bool IsPause
+	{
+		set
+		{
+			if(value)
+			{
+				Time.timeScale = 1f / 10000f;
+			}
+			if(!value)
+			{
+				Time.timeScale = 1;
+			}
 			Screen.showCursor = value;
-			if(value) Manager.SendMessage("OnPause", SendMessageOptions.DontRequireReceiver);
-			if(!value) Manager.SendMessage("OnResume", SendMessageOptions.DontRequireReceiver);
+			if(value)
+			{
+				Manager.SendMessage("OnPause", SendMessageOptions.DontRequireReceiver);
+			}
+			if(!value)
+			{
+				Manager.SendMessage("OnResume", SendMessageOptions.DontRequireReceiver);
+			}
 		}
-		get {
+		get
+		{
 			return Time.timeScale <= 0.0001f;
 		}
 	}
-	public static bool IsPlaying {
-		set {
+	public static bool IsPlaying
+	{
+		set
+		{
 			IsPause = !value;
 		}
-		get {
+		get
+		{
 			return !IsPause;
 		}
 	}
@@ -106,22 +128,29 @@ public class OCGameStateManager : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-	public void Start() {
+	public void Start()
+	{
 		Screen.showCursor = false;
 		_player = GameObject.FindGameObjectWithTag("Player");
+		IsPause = false;
 	}
 	
-	public void Update() {
+	public void Update()
+	{
 
 		if(Application.platform != RuntimePlatform.LinuxPlayer)
+		{
 			Screen.lockCursor = !Screen.showCursor;
+		}
 		
-		if(Input.GetKeyDown(KeyCode.Tab)) {
+		if(Input.GetKeyDown(KeyCode.Tab))
+		{
 			Screen.showCursor = true;
 			Screen.lockCursor = false;
 		}
 		
-		if(Input.GetKeyDown(KeyCode.Escape)) {
+		if(Input.GetKeyDown(KeyCode.Escape))
+		{
 			IsPause = !IsPause;
 			_player.GetComponent<OCInputController>().enabled = !IsPause;
 			_player.GetComponent<OCCharacterMotor>().enabled = !IsPause;

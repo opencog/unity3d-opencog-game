@@ -117,14 +117,14 @@ namespace OpenCog.Embodiment
 			
 	public static bool HasBoundaryChuncks = false; // if has auto generated boundary chunks, like the stairs around the map
 	
-		/// <summary>
-		/// Called when the script instance is being loaded.
-		/// </summary>
-		new public void Awake ()
-		{
-			Initialize ();
-			OCLogger.Fine (gameObject.name + " is awake.");
-		}
+	/// <summary>
+	/// Called when the script instance is being loaded.
+	/// </summary>
+	new public void Awake()
+	{
+		Initialize();
+		OCLogger.Fine(gameObject.name + " is awake.");
+	}
 	
 	/// <summary>
 	/// Use this for initialization
@@ -494,7 +494,7 @@ namespace OpenCog.Embodiment
 		OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 			
 		connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
-		connector.SendTerrainInfoMessage(removedBlockList);
+		//connector.SendTerrainInfoMessage(removedBlockList);
 	}
 		
 	public void NotifyBlockAdded(Vector3i blockBuildPoint)
@@ -507,8 +507,8 @@ namespace OpenCog.Embodiment
 //			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
 //			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
 			
-			Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
-			//Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
+		Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(blockBuildPoint);
+		//Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(blockBuildPoint);
 			
 		OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
@@ -541,12 +541,12 @@ namespace OpenCog.Embodiment
 //			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
 //			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
 			
-			//Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryCreationPoint);
-			//Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryCreationPoint);
+		//Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryCreationPoint);
+		//Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryCreationPoint);
 			
-			//OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+		//OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
-			//OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryCreationPoint.x, batteryCreationPoint.y, batteryCreationPoint.z);
+		//OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryCreationPoint.x, batteryCreationPoint.y, batteryCreationPoint.z);
 			
 		// IMPORTANT: SWAPPING OUT Y AND Z HERE AGAIN!!
 		// ORIGINAL:
@@ -617,12 +617,12 @@ namespace OpenCog.Embodiment
 //			uint blockY = (uint)(hitPoint.Y % worldData.ChunkBlockHeight);
 //			uint blockZ = (uint)(hitPoint.Z % worldData.ChunkBlockDepth);
 			
-			//Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryDestructionPoint);
-			//Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryDestructionPoint);
+		//Vector3i chunkPosition = OpenCog.Map.OCChunk.ToChunkPosition(batteryDestructionPoint);
+		//Vector3i localPosition = OpenCog.Map.OCChunk.ToLocalPosition(batteryDestructionPoint);
 			
-			//OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
+		//OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
-			//OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryDestructionPoint.x, batteryDestructionPoint.y, batteryDestructionPoint.z);
+		//OpenCog.Map.OCBlockData globalBlock = map.GetBlock(batteryDestructionPoint.x, batteryDestructionPoint.y, batteryDestructionPoint.z);
 			
 		// IMPORTANT: SWAPPING OUT Y AND Z HERE AGAIN!!
 		// ORIGINAL:
@@ -638,7 +638,7 @@ namespace OpenCog.Embodiment
 			
 		UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
 			
-			//int batteryIDToRemove = 0;
+		//int batteryIDToRemove = 0;
 			
 		for(int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
 		{
@@ -660,7 +660,7 @@ namespace OpenCog.Embodiment
 				{
 					mapInfo = _mapInfoCache[batteryObject.GetInstanceID()];
 						
-						//batteryIDToRemove = batteryObject.GetInstanceID();
+					//batteryIDToRemove = batteryObject.GetInstanceID();
 				}
 					
 				//UnityEngine.GameObject.Destroy (batteryObject);
@@ -669,11 +669,21 @@ namespace OpenCog.Embodiment
 			
 		if(mapInfo != null)
 		{
-			List<OCObjectMapInfo> addedBlockList = new List<OCObjectMapInfo>();
-			
-			addedBlockList.Add(mapInfo);
+			List<OCObjectMapInfo> removedBlockList = new List<OCObjectMapInfo>();
+
+			float y = mapInfo.position.y;
+			float z = mapInfo.position.z;
 				
-				//OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+			mapInfo.position.Set(mapInfo.position.x, z, y);
+
+			removedBlockList.Add(mapInfo);
+				
+			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
+				
+			connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
+			//connector.SendTerrainInfoMessage(removedBlockList);
+				
+			//OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 				
 			//connector.HandleObjectAppearOrDisappear(mapInfo.ID, mapInfo.Type, false);
 			//connector.SendTerrainInfoMessage(addedBlockList);	
@@ -700,14 +710,14 @@ namespace OpenCog.Embodiment
 	
 	//---------------------------------------------------------------------------
 		
-		/// <summary>
-		/// Initializes this instance.  Set default values here.
-		/// </summary>
-		new private void Initialize ()
-		{
-			// Obtain components of this OCAvatar.
-			_connector = OCConnectorSingleton.Instance;
-			_id = GameObject.FindGameObjectWithTag("OCAGI").GetInstanceID();
+	/// <summary>
+	/// Initializes this instance.  Set default values here.
+	/// </summary>
+	new private void Initialize()
+	{
+		// Obtain components of this OCAvatar.
+		_connector = OCConnectorSingleton.Instance;
+		_id = GameObject.FindGameObjectWithTag("OCAGI").GetInstanceID();
 			
 		foreach(OCStateChangesRegister.StateInfo ainfo in OCStateChangesRegister.StateList)
 		{			
@@ -1110,8 +1120,8 @@ namespace OpenCog.Embodiment
 				UnityEngine.Debug.Log("0.00001 BitCoins says this never happens!! IT'S A STRING FFS WAARHEHFSHJKSJKSH!");
 			}
 				
-				// Now we query the local _stateInfoCache (a dictionary with stateInfo objects as the key...and a vague object as the value...
-				//System.Object old = _stateInfoCache [stateInfo];
+			// Now we query the local _stateInfoCache (a dictionary with stateInfo objects as the key...and a vague object as the value...
+			//System.Object old = _stateInfoCache [stateInfo];
 				
 			// And we compare that vague object to...the behaviour...in the form of an object...
 			if(!System.Object.Equals(_stateInfoCache[stateInfo], valObj))
