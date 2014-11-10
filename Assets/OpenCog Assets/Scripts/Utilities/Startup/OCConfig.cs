@@ -55,10 +55,15 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 	#region Public Member Functions
 	//---------------------------------------------------------------------------
 		
+	public OCConfig()
+	{
+		Defaults();
+	}
+
 	/// <summary>
 	/// Raises the enable event for the OCConfig.
 	/// </summary>
-	public void OnEnable()
+	public void Defaults()
 	{
 		_settings["GENERATE_TICK_MESSAGE"] = "true";
 
@@ -138,11 +143,11 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 		_settings["test"] = "";// will be "internal_XGA" in case of buildbot
 		_settings["quit"] = "false";// should be "true" in case of buildbot 
 
-		_settings["UNITTEST_WORLD"] = false;
-		_settings["UNITTEST_EMBODIMENT"] = false;
-		_settings["UNITTEST_BLOCK"] = false;
-		_settings["UNITTEST_PLAN"] = false;
-		_settings["UNITTEST_SECONDPLAN"] = false;
+		_settings["UNITTEST_WORLD"] = "false";
+		_settings["UNITTEST_EMBODIMENT"] = "false";
+		_settings["UNITTEST_BLOCK"] = "false";
+		_settings["UNITTEST_PLAN"] = "false";
+		_settings["UNITTEST_SECONDPLAN"] = "false";
 	}
 		
 	/// <summary>
@@ -295,7 +300,16 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 	    } else {
 	        return DEFAULT;
 	    }
-	}		
+	}	
+
+	public bool getBool(string paramName, bool DEFAULT=false)
+	{
+		if (_settings.ContainsKey(paramName)) {
+			return bool.Parse((string)_settings[paramName]);
+		} else {
+			return DEFAULT;
+		}
+	}
 
 	//---------------------------------------------------------------------------
 

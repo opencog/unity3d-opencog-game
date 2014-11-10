@@ -101,6 +101,9 @@ namespace OpenCog.Worlds
 			
 			//Create a new set of  methods
 			_voxelMethods = _VoxelMethods.New();
+
+			//parenting
+			_voxelMethods.gameObject.transform.parent = this.gameObject.transform;
 			
 		}
 		protected OCMap GetMap()

@@ -29,7 +29,7 @@ namespace OpenCog.Entities
 		///<para>This interface exposes a subcatagory of EntityManager methods, which should be used for loading characters.</para></summary>
 		public interface LoadMethods
 		{
-			IEnumerator AtRunTime(UnityEngine.Vector3 spawnPosition, GameObject agentPrefab, string agentName = "", string masterName = "", string masterId = "");
+			IEnumerator AtRunTime(UnityEngine.Vector3 spawnPosition, GameObject agentPrefab, string agentName = "", string masterName = "", string masterId = "", System.Action<string> report = null);
 		}
 
 		///<summary><para>Access this class's methods using GameManager.Character.load.*</para>
@@ -63,14 +63,23 @@ namespace OpenCog.Entities
 
 			}
 
+			// Note, lambda expressions (ie myLamb = (x) => successBool = (bool)(x == "true")) are *terrifying* to look at
+			// and can use up a lot of memory, but they're really good for returning values from IEnumerators/coroutines;
+			// especially ones we don't expect will be called frquently
 
 			/// <summary>
-			/// Gives functionality to the 'load' console command. 
+			/// Allows entities to be loaded to the screen at any point while the game is running
 			/// </summary>
 			/// <returns>Failure, success, or a coroutine concerned with making a connection to the embodiment.</returns>
-			/// <param name="agentName">The name of the agent to instantiate.</param>
 			/// <param name="spawnPosition">The position at which to instantiate the agent.</param>
-			public IEnumerator AtRunTime(UnityEngine.Vector3 spawnPosition, GameObject agentPrefab, string agentName = "", string masterName = "", string masterId = "")
+			/// <param name="agentPrefab">The prefab to instantiate.</param>
+			/// <param name="agentName">The name of the agent to instantiate.</param>
+			/// <param name="masterName">The owner of the instance</param>
+			/// <param name="masterId">The id of the instance</param>
+			/// <param name="report">An Action that can be constructed easily with a lambda expression which will report back the string "true" if it successfully
+			///  created the agent and the string "false" if it was unsuccessful in creating the agent.</param>
+			public IEnumerator AtRunTime(UnityEngine.Vector3 spawnPosition, GameObject agentPrefab, string agentName = "", string masterName = "", string masterId = "", 
+			                             System.Action<string> report = null)  //The lambda expression enter-er gets its own line, because it's SCARY!
 			{
 				//get the spawn position in terms of the grid
 				spawnPosition.x = (float)((int)spawnPosition.x); 
@@ -128,10 +137,12 @@ namespace OpenCog.Entities
 					connector.SaveAndExit ();
 					Destroy (agentClone);
 
-					yield return "failure";
+					if(report != null)
+						report("false");
 				} 
 				else
-					yield return "success";
+					if(report != null)
+						report("true");
 				
 			}
 			

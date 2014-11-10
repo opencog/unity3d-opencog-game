@@ -70,15 +70,31 @@ public class OCGameStateManager : OCMonoBehaviour
 		get {
 			if(_manager == null)
 					_manager = (OCGameStateManager) GameObject.FindObjectOfType( typeof(OCGameStateManager) );
-
+			if(_manager == null)
+					throw new OCException("OCGameStateManager was requested, and cannot be found in scene");
 			return _manager;
 		}
 	}
+	
+		//A discussion of Time.timeScale:
+		//The scale at which the time is passing. This can be used for slow motion effects. When timeScale is 1.0 
+		//the time is passing as fast as realtime. When timeScale is 0.5 the time is passing 2x slower than realtime.
+		//When timeScale is set to zero the game is basically paused if all your functions are frame rate independent.
+		//ie: FixedUpdate will not be called, and deltaTime will be essentially 0. 
+
+		//so my question here is: why the devil does the pause functionality make the game *slow* but not set
+		//Time.timeScale to 0f? No comments :( Let me research
+
+		//AHA! If you set Time.timeScale to 0f, the whole scene pauses. Nothing can be unpaused. BUT if you set
+		//Timescale really really small, SOooooo small it would take a year for anything to happen, you can set
+		//other animations to happen at full speed and have, for example, the HUD or pause screen animating while the
+		//rest of the game is paused
+
 
 	public static bool IsPause {
 		set {
 			if(value) Time.timeScale = 1f/10000f;
-			if(!value) Time.timeScale = 1;
+			if(!value) Time.timeScale = 1f;
 			Screen.showCursor = value;
 			if(value) Manager.SendMessage("OnPause", SendMessageOptions.DontRequireReceiver);
 			if(!value) Manager.SendMessage("OnResume", SendMessageOptions.DontRequireReceiver);

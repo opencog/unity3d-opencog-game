@@ -86,6 +86,9 @@ namespace OpenCog.Entities
 			
 			//Create a new set of load methods
 			_loadMethods = _LoadMethods.New();
+
+			//for easy catagorization!
+			_loadMethods.gameObject.transform.parent = this.gameObject.transform;
 			
 		}
 

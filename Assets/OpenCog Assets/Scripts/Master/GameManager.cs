@@ -68,8 +68,13 @@ namespace OpenCog.Master
 		{
 			DontDestroyOnLoad(this);
 
-			//Create the character manager!
+			//Create the child managers!
 			_entityManager = EntityManager.New ();
+			_worldManager = WorldManager.New ();
+
+			//parenting!
+			_entityManager.gameObject.transform.parent = this.gameObject.transform;
+			_worldManager.gameObject.transform.parent = this.gameObject.transform;
 
 		}
 
