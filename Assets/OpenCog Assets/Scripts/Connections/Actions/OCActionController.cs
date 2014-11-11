@@ -42,7 +42,7 @@ namespace Actions
 {
 
 /// <summary>
-/// The OpenCog OCRobotAgent.
+/// The OpenCog Action Controller.
 /// </summary>
 #region Class Attributes
 
@@ -209,17 +209,17 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			foreach(OCAction action in actions)
 			{
 				if(((action.FullName.Contains(treeName) || treeName.Contains("Behaviour")) 
-						&& !(treeName == "GhostBehaviour" && action.name.Contains("Create"))
-						&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy"))
-						&& !(treeName == "GhostBehaviour" && action.name.Contains("HoldBothHandsTransfer"))
-						&& !(treeName == "GirlBehaviour" && action.name.Contains("HoldBothHandsTransfer")))
+					&& !(treeName == "GhostBehaviour" && action.name.Contains("Create"))
+					&& !(treeName == "GhostBehaviour" && action.name.Contains("Destroy"))
+					&& !(treeName == "GhostBehaviour" && action.name.Contains("HoldBothHandsTransfer"))
+					&& !(treeName == "GirlBehaviour" && action.name.Contains("HoldBothHandsTransfer")))
 					|| (treeName == "TurnAndCreate" && action.FullName == "HoldRightHandCreate")
 					|| (treeName == "TurnAndCreate" && action.FullName == "HoldRightHandCreateBelow")
 					|| (treeName == "TurnAndCreate" && action.FullName == "StandTurnLeftMove")
 					|| (treeName == "TurnAndCreate" && action.FullName == "StandTurnRightMove")
 					|| (treeName == "TurnAndCreate" && action.FullName == "StandIdleShow")
 					|| (treeName == "TurnAndCreate" && action.FullName == "FallIdleShow")
-				  || (treeName == "TurnLeftOrRight" && action.FullName == "StandTurnLeftMove")
+					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandTurnLeftMove")
 					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandTurnRightMove")
 					|| (treeName == "TurnLeftOrRight" && action.FullName == "StandIdleShow")
 					|| (treeName == "TurnLeftOrRight" && action.FullName == "FallIdleShow")
@@ -227,12 +227,12 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				  )
 				{
 					// whatever, this is awful... I evidently fail at logic...
-					if(  !(treeName == "LeftMove" && action.FullName == "StandTurnLeftMove")
-					   && !(treeName == "RightMove" && action.FullName == "StandTurnRightMove"))
+					if(!(treeName == "LeftMove" && action.FullName == "StandTurnLeftMove")
+						&& !(treeName == "RightMove" && action.FullName == "StandTurnRightMove"))
 					{
-							int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
+						int actionTypeID = (int)Enum.Parse(typeof(BLOCBehaviours.ActionType), action.FullName);
 							
-							tree.SetTickForward(actionTypeID, action.ExecuteBehave);
+						tree.SetTickForward(actionTypeID, action.ExecuteBehave);
 					}
 
 				}
@@ -242,8 +242,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		OCActionPlanStep firstStep = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 		firstStep.Behaviour = _TreeTypeDictionary[_TreeType];
 		firstStep.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
-				KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
-				firstStep.Arguments.ActionName = keyValuePair.Key;
+		KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
+		firstStep.Arguments.ActionName = keyValuePair.Key;
 
 		_ActionPlanQueue.AddLast(firstStep);		
 
@@ -722,10 +722,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	public void LoadActionPlanStep(string actionName, OCAction.OCActionArgs arguments)
 	{
-        Debug.Log("OCActionController::LoadActionPlanStep: " + actionName);
+		Debug.Log("OCActionController::LoadActionPlanStep: " + actionName);
 		TreeType treeType = _ActionNameDictionary[actionName];
 		Tree tree = _TreeTypeDictionary[treeType];
-				OCActionPlanStep actionPlanStep = OCScriptableObject.CreateInstance<OCActionPlanStep>();
+		OCActionPlanStep actionPlanStep = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
 		_ActionPlanQueue.AddLast(actionPlanStep);
@@ -753,8 +753,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			OCActionPlanStep step = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 			step.Behaviour = _TreeTypeDictionary[_TreeType];
 			step.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
-					KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
-					step.Arguments.ActionName = keyValuePair.Key;
+			KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
+			step.Arguments.ActionName = keyValuePair.Key;
 			_step = step;
 		}
 				
@@ -785,7 +785,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					//Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
 					Vector3 endPosition = _step.Arguments.EndTarget.transform.position;
 					Vector3 sourcePosition = _step.Arguments.Source.transform.position;
-							sourcePosition.y = sourcePosition.y - 0.5f;
+					sourcePosition.y = sourcePosition.y - 0.5f;
 								
 					//Vector3 startToEnd = endPosition - startPosition;
 					//Vector3 sourceToEnd = endPosition - sourcePosition;		

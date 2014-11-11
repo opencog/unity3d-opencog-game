@@ -897,6 +897,15 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = new OCMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
+<<<<<<< HEAD
+	    OCLogger.Warn("sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
+
+	    lock (_messageSendingLock)
+	    {
+	        _messagesToSend.Add(message);
+	    }
+	  }
+=======
 		OCLogger.Warn("sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
 
 		lock(_messageSendingLock)
@@ -904,6 +913,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		}
 	}
+>>>>>>> origin
 	
 	
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 

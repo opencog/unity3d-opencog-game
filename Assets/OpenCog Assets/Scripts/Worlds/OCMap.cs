@@ -62,10 +62,11 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 	// TODO: SerializeField necessary here?
 	[SerializeField]
-	private OpenCog.BlockSet.OCBlockSet _blockSet;
-	private List3D<OCChunk> _chunks = new List3D<OCChunk> ();
-	private OpenCog.Map.Lighting.OCSunLightMap _sunLightmap = new OpenCog.Map.Lighting.OCSunLightMap ();
-	private OpenCog.Map.Lighting.OCLightMap _lightmap = new OpenCog.Map.Lighting.OCLightMap ();
+	private OpenCog.BlockSet.OCBlockSet
+		_blockSet;
+	private List3D<OCChunk> _chunks = new List3D<OCChunk>();
+	private OpenCog.Map.Lighting.OCSunLightMap _sunLightmap = new OpenCog.Map.Lighting.OCSunLightMap();
+	private OpenCog.Map.Lighting.OCLightMap _lightmap = new OpenCog.Map.Lighting.OCLightMap();
 
 	private string _mapName;
 
@@ -82,22 +83,28 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	private OCChunk _lastRequestedChunk;
 		
 	[SerializeField]
-	private GameObject _BatteryPrefab;
+	private GameObject
+		_BatteryPrefab;
 		
 	[SerializeField]
-	private GameObject _BatteriesSceneObject;
+	private GameObject
+		_BatteriesSceneObject;
 		
 	[SerializeField]
-	private GameObject _HearthPrefab;
+	private GameObject
+		_HearthPrefab;
 		
 	[SerializeField]
-	private GameObject _HearthsSceneObject;		
+	private GameObject
+		_HearthsSceneObject;		
 		
 	[SerializeField]
-	private GameObject _WaypointPrefab;
+	private GameObject
+		_WaypointPrefab;
 		
 	[SerializeField]
-	private GameObject _WaypointsSceneObject;
+	private GameObject
+		_WaypointsSceneObject;
 
 	//---------------------------------------------------------------------------
 
@@ -178,35 +185,35 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		
 	public GameObject BatteryPrefab
 	{
-		get {return _BatteryPrefab;}
+		get { return _BatteryPrefab;}
 	}
 		
 	public GameObject BatteriesSceneObject
 	{
-		get {return _BatteriesSceneObject;}
+		get { return _BatteriesSceneObject;}
 	}
 		
 	public GameObject HearthPrefab
 	{
-		get {return _HearthPrefab;}
+		get { return _HearthPrefab;}
 	}
 		
 	public GameObject HearthsSceneObject
 	{
-		get {return _HearthsSceneObject;}
+		get { return _HearthsSceneObject;}
 	}		
 		
 	public GameObject WaypointPrefab
 	{
-		get {return _WaypointPrefab;}
+		get { return _WaypointPrefab;}
 	}
 		
 	public GameObject WaypointsSceneObject
 	{
-		get {return _WaypointsSceneObject;}
+		get { return _WaypointsSceneObject;}
 	}
 		
-	public static OCMap Instance 
+	public static OCMap Instance
 	{
 		get
 		{
@@ -226,7 +233,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	
 
 
-	public void SetBlockAndRecompute (OCBlockData block, Vector3i pos)
+	public void SetBlockAndRecompute(OCBlockData block, Vector3i pos)
 	{
 		//MethodInfo info = this.GetType().GetMember("SetBlockAndRecompute")[0] as MethodInfo;
 
@@ -244,73 +251,92 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			
 		OCBlockData oldBlock = GetBlock(pos);
 
-		SetBlock (block, pos);
+		SetBlock(block, pos);
 
 		// Convert the global coordinate of the block to the chunk coordinates.
-		Vector3i chunkPos = OCChunk.ToChunkPosition (pos);
+		Vector3i chunkPos = OCChunk.ToChunkPosition(pos);
 
 		UpdateChunkLimits(chunkPos);
 
 		// Convert the global coordinate of the block to the coordinate within the chunk.
-		Vector3i localPos = OCChunk.ToLocalPosition (pos);
+		Vector3i localPos = OCChunk.ToLocalPosition(pos);
 		
-		SetDirty (chunkPos);
+		SetDirty(chunkPos);
 
 		// If on the lower boundary of a chunk...set the neighbouring chunk to dirty too.
-		if (localPos.x == 0)
-			SetDirty (chunkPos - Vector3i.right);
-		if (localPos.y == 0)
-			SetDirty (chunkPos - Vector3i.up);
-		if (localPos.z == 0)
-			SetDirty (chunkPos - Vector3i.forward);
+		if(localPos.x == 0)
+		{
+			SetDirty(chunkPos - Vector3i.right);
+		}
+		if(localPos.y == 0)
+		{
+			SetDirty(chunkPos - Vector3i.up);
+		}
+		if(localPos.z == 0)
+		{
+			SetDirty(chunkPos - Vector3i.forward);
+		}
 
 		// If on the upper boundary of a chunk...set the neighbouring chunk to dirty too.
-		if (localPos.x == OCChunk.SIZE_X - 1)
-			SetDirty (chunkPos + Vector3i.right);
-		if (localPos.y == OCChunk.SIZE_Y - 1)
-			SetDirty (chunkPos + Vector3i.up);
-		if (localPos.z == OCChunk.SIZE_Z - 1)
-			SetDirty (chunkPos + Vector3i.forward);
+		if(localPos.x == OCChunk.SIZE_X - 1)
+		{
+			SetDirty(chunkPos + Vector3i.right);
+		}
+		if(localPos.y == OCChunk.SIZE_Y - 1)
+		{
+			SetDirty(chunkPos + Vector3i.up);
+		}
+		if(localPos.z == OCChunk.SIZE_Z - 1)
+		{
+			SetDirty(chunkPos + Vector3i.forward);
+		}
 		
-		OpenCog.Map.Lighting.OCSunLightComputer.RecomputeLightAtPosition (this, pos);
-		OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition (this, pos);
+		OpenCog.Map.Lighting.OCSunLightComputer.RecomputeLightAtPosition(this, pos);
+		OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition(this, pos);
 		
-		UpdateMeshColliderAfterBlockChange ();
+		UpdateMeshColliderAfterBlockChange();
 // TODO: uncomment when aspect stuff is in place?
 //		asp.OnExit(null);
 			
 		OpenCog.Embodiment.OCPerceptionCollector perceptionCollector = OpenCog.Embodiment.OCPerceptionCollector.Instance;
 		
 		List<GameObject> batteries = GameObject.FindGameObjectsWithTag("OCBattery").ToList();
-			GameObject battery = batteries.Where(b => VectorUtil.AreVectorsEqual(b.transform.position, new Vector3((float)pos.x, (float)pos.y, (float)pos.z))).FirstOrDefault();
+		GameObject battery = batteries.Where(b => VectorUtil.AreVectorsEqual(b.transform.position, new Vector3((float)pos.x, (float)pos.y, (float)pos.z))).FirstOrDefault();
 			
 		List<GameObject> hearths = GameObject.FindGameObjectsWithTag("OCHearth").ToList();
-			GameObject hearth = hearths.Where(h => VectorUtil.AreVectorsEqual(h.transform.position, new Vector3((float)pos.x, (float)pos.y, (float)pos.z))).FirstOrDefault();
+		GameObject hearth = hearths.Where(h => VectorUtil.AreVectorsEqual(h.transform.position, new Vector3((float)pos.x, (float)pos.y, (float)pos.z))).FirstOrDefault();
 
-		if (block.IsEmpty() && !oldBlock.IsEmpty())
+		if(block.IsEmpty() && !oldBlock.IsEmpty())
 		{
-			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
+			UnityEngine.Debug.Log("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
 				
-			if(perceptionCollector != null)
+			if(perceptionCollector != null && oldBlock.block.GetName() != "Battery")
+			{
 				perceptionCollector.NotifyBlockRemoved(pos);
+			}
 			
 			// I'm going to take a gamble here...since NotifyBatteryRemoved only does its work when it finds a battery at this location...it should be ok...
 				
-			if(perceptionCollector != null)
+			if(perceptionCollector != null && oldBlock.block.GetName() == "Battery")
 				perceptionCollector.NotifyBatteryRemoved(pos);
 				
 			if(battery != default(GameObject) && battery != null)
+			{
 				GameObject.DestroyImmediate(battery);
+			}
 			if(hearth != default(GameObject) && hearth != null)
+			{
 				GameObject.DestroyImmediate(hearth);
+			}
 				
 			if(perceptionCollector != null)
+			{
 				perceptionCollector.PerceiveWorld();
+			}
 			
-		}
-		else
+		} else
 		{
-			UnityEngine.Debug.Log ("OCMap::SetBlockAndRecompute: block.IsEmpty = false -> inferring creation.");
+			UnityEngine.Debug.Log("OCMap::SetBlockAndRecompute: block.IsEmpty = false -> inferring creation.");
 				
 			// Moved notify down...to AFTER the point where it is actually created...
 		}
@@ -318,19 +344,20 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		if(block.block != null && block.block.GetName() == "Battery" && (battery == default(GameObject) || battery == null))
 		{
 			GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
-			if (batteryPrefab == null)
+			if(batteryPrefab == null)
 			{
-				UnityEngine.Debug.Log ("OCBuilder::Update, batteryPrefab == null");
-			}
-			else
+				UnityEngine.Debug.Log("OCBuilder::Update, batteryPrefab == null");
+			} else
 			{
 				GameObject newBattery = (GameObject)GameObject.Instantiate(batteryPrefab);
-					newBattery.transform.position = pos;
-					newBattery.name = "Battery";		
-					newBattery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
+				newBattery.transform.position = pos;
+				newBattery.name = "Battery";		
+				newBattery.transform.parent = OCMap.Instance.BatteriesSceneObject.transform;
 					
 				if(perceptionCollector != null)
-					perceptionCollector.NotifyBatteryAdded(pos);	
+				{
+					perceptionCollector.NotifyBatteryAdded(pos);
+				}	
 			}
 			
 		}
@@ -338,25 +365,26 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		if(block.block != null && block.block.GetName() == "Hearth" && (hearth == default(GameObject) || hearth == null))
 		{
 			GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
-			if (hearthPrefab == null)
+			if(hearthPrefab == null)
 			{
-				UnityEngine.Debug.Log ("OCBuilder::Update, hearthPrefab == null");
-			}
-			else
+				UnityEngine.Debug.Log("OCBuilder::Update, hearthPrefab == null");
+			} else
 			{
 				GameObject newHearth = (GameObject)GameObject.Instantiate(hearthPrefab);
-					newHearth.transform.position = pos;
-					newHearth.name = "Hearth";		
-					newHearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
+				newHearth.transform.position = pos;
+				newHearth.name = "Hearth";		
+				newHearth.transform.parent = OCMap.Instance.HearthsSceneObject.transform;
 					
 				if(perceptionCollector != null)
+				{
 					perceptionCollector.NotifyBlockAdded(pos);
+				}
 			}
 		}
 		
 	}
 
-	public bool IsPathOpen (UnityEngine.Transform characterTransform, float characterHeight, PathDirection intendedDirection, Vector3i targetPosition)
+	public bool IsPathOpen(UnityEngine.Transform characterTransform, float characterHeight, PathDirection intendedDirection, Vector3i targetPosition)
 	{
 		bool bPathIsOpen = false;
 		
@@ -368,7 +396,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		//Debug.Log ("vFeetPosition = [" + vFeetPosition.x + ", " + vFeetPosition.y + ", " + vFeetPosition.z + "]");
 		//Debug.Log ("vFeetForwardPosition = [" + vFeetForwardPosition.x + ", " + vFeetForwardPosition.y + ", " + vFeetForwardPosition.z + "]");
 		
-		UnityEngine.Vector3 vFeet = new UnityEngine.Vector3 (characterTransform.position.x, characterTransform.position.y, characterTransform.position.z);
+		UnityEngine.Vector3 vFeet = new UnityEngine.Vector3(characterTransform.position.x, characterTransform.position.y, characterTransform.position.z);
 				
 		vFeet.y -= (characterHeight / 2);
 				
@@ -380,12 +408,12 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		Vector3i viStandingOnForward = VectorUtil.Vector3ToVector3i(vFeetForward);
 		//Debug.Log ("Forward of standing on world block: [" + viStandingOnForward.x + ", " + viStandingOnForward.y + ", " + viStandingOnForward.z + "]");
 				
-		Vector3i viLowerBody = new Vector3i (viStandingOn.x, viStandingOn.y, viStandingOn.z);
-		viLowerBody += new Vector3i (0, 1, 0);
+		Vector3i viLowerBody = new Vector3i(viStandingOn.x, viStandingOn.y, viStandingOn.z);
+		viLowerBody += new Vector3i(0, 1, 0);
 		//Debug.Log ("Lower body inhabits world block: [" + viLowerBody.x + ", " + viLowerBody.y + ", " + viLowerBody.z + "]");
 		
-		Vector3i viUpperBody = new Vector3i (viLowerBody.x, viLowerBody.y, viLowerBody.z);
-		viUpperBody += new Vector3i (0, 1, 0);
+		Vector3i viUpperBody = new Vector3i(viLowerBody.x, viLowerBody.y, viLowerBody.z);
+		viUpperBody += new Vector3i(0, 1, 0);
 		//Debug.Log ("Upper body inhabits world block: [" + viUpperBody.x + ", " + viUpperBody.y + ", " + viUpperBody.z + "]");
 		
 		// Prepare some block vectors to use later.
@@ -419,76 +447,101 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		//Debug.Log ("Forward lower block is: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
 		//Debug.Log ("Forward upper block is: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
 		
-		switch (intendedDirection) {
+		switch(intendedDirection)
+		{
 		case PathDirection.ForwardWalk:
 			// Requires two clear blocks in front
-			if (GetBlock (viForwardKneeHigh).IsEmpty () && GetBlock (viForwardChestHigh).IsEmpty ())
+			if(GetBlock(viForwardKneeHigh).IsEmpty() && GetBlock(viForwardChestHigh).IsEmpty())
 				// And one block under in front
-				if (GetBlock (viForwardOneUnder).IsSolid ())
-					bPathIsOpen = true;	
-				break;
+				if(GetBlock(viForwardOneUnder).IsSolid())
+				{
+					bPathIsOpen = true;
+				}	
+			break;
 		case PathDirection.ForwardLeftWalk:
 			// Requires two clear blocks in front
-			if (GetBlock (viForwardKneeHigh + vCharLeft).IsEmpty () && GetBlock (viForwardChestHigh + vCharLeft).IsEmpty ())
+			if(GetBlock(viForwardKneeHigh + vCharLeft).IsEmpty() && GetBlock(viForwardChestHigh + vCharLeft).IsEmpty())
 				// And one block under in front
-				if (GetBlock (viForwardOneUnder + vCharLeft).IsSolid ())
-					bPathIsOpen = true;	
-				break;
+				if(GetBlock(viForwardOneUnder + vCharLeft).IsSolid())
+				{
+					bPathIsOpen = true;
+				}	
+			break;
 		case PathDirection.ForwardRightWalk:
 			// Requires two clear blocks in front
-			if (GetBlock (viForwardKneeHigh + vCharRight).IsEmpty () && GetBlock (viForwardChestHigh + vCharRight).IsEmpty ())
+			if(GetBlock(viForwardKneeHigh + vCharRight).IsEmpty() && GetBlock(viForwardChestHigh + vCharRight).IsEmpty())
 				// And one block under in front
-				if (GetBlock (viForwardOneUnder + vCharRight).IsSolid ())
-					bPathIsOpen = true;	
-				break;
+				if(GetBlock(viForwardOneUnder + vCharRight).IsSolid())
+				{
+					bPathIsOpen = true;
+				}	
+			break;
 		case PathDirection.ForwardRun:
 			// Requires two clear blocks for the next 3 forwards
-			if (GetBlock (viForwardKneeHigh).IsEmpty() && GetBlock (viForwardChestHigh).IsEmpty())
-				if (GetBlock (viTwoForwardKneeHigh).IsEmpty() && GetBlock (viTwoForwardChestHigh).IsEmpty())
-					if (GetBlock (viThreeForwardKneeHigh).IsEmpty() && GetBlock (viThreeForwardChestHigh).IsEmpty())
-						if (GetBlock (viForwardOneUnder).IsSolid () && GetBlock (viTwoForwardOneUnder).IsSolid () && GetBlock (viThreeForwardOneUnder).IsSolid ())
+			if(GetBlock(viForwardKneeHigh).IsEmpty() && GetBlock(viForwardChestHigh).IsEmpty())
+				if(GetBlock(viTwoForwardKneeHigh).IsEmpty() && GetBlock(viTwoForwardChestHigh).IsEmpty())
+					if(GetBlock(viThreeForwardKneeHigh).IsEmpty() && GetBlock(viThreeForwardChestHigh).IsEmpty())
+						if(GetBlock(viForwardOneUnder).IsSolid() && GetBlock(viTwoForwardOneUnder).IsSolid() && GetBlock(viThreeForwardOneUnder).IsSolid())
+						{
 							bPathIsOpen = true;
+						}
 			break;
 		case PathDirection.ForwardClimb:
 			// Requires a solid block lower front
-			if (GetBlock (viForwardKneeHigh).IsSolid())
+			if(GetBlock(viForwardKneeHigh).IsSolid())
 				// And two empty blocks above that
-				if (GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneAboveHead).IsEmpty ())
+				if(GetBlock(viForwardChestHigh).IsEmpty() && GetBlock(viForwardOneAboveHead).IsEmpty())
+				{
 					bPathIsOpen = true;
+				}
 			break;
 		case PathDirection.ForwardDrop:
 			// Requires 3 empty block in front, chest high, knee high and 1 underground
-			if (GetBlock (viForwardKneeHigh).IsEmpty() && GetBlock (viForwardChestHigh).IsEmpty () && GetBlock (viForwardOneUnder).IsEmpty ())
+			if(GetBlock(viForwardKneeHigh).IsEmpty() && GetBlock(viForwardChestHigh).IsEmpty() && GetBlock(viForwardOneUnder).IsEmpty())
+			{
 				bPathIsOpen = true;
+			}
 			break;
 		case PathDirection.UpwardJump:
 			// Requires two empty blocks above
-			if (GetBlock (viOneAboveHead).IsEmpty () && GetBlock (viTwoAboveHead).IsEmpty ())
+			if(GetBlock(viOneAboveHead).IsEmpty() && GetBlock(viTwoAboveHead).IsEmpty())
+			{
 				bPathIsOpen = true;
+			}
 			break;
 		case PathDirection.ForwardJump:
 			// Requires two empty blocks above, and one empty blocks in front of the higher of those
-			if (GetBlock (viOneAboveHead).IsEmpty () && GetBlock (viTwoAboveHead).IsEmpty () && GetBlock (viForwardTwoAboveHead).IsEmpty ())
+			if(GetBlock(viOneAboveHead).IsEmpty() && GetBlock(viTwoAboveHead).IsEmpty() && GetBlock(viForwardTwoAboveHead).IsEmpty())
+			{
 				bPathIsOpen = true;
+			}
 			break;
 		case PathDirection.ForwardBlockEmpty:
 			if(GetBlock(viForwardChestHigh).IsEmpty() && GetBlock(viForwardKneeHigh).IsEmpty() && GetBlock(viForwardOneAboveHead).IsEmpty())
+			{
 				bPathIsOpen = true;
+			}
 			break;
 		case PathDirection.ForwardBlockSolid:
 			if(GetBlock(viForwardChestHigh).IsSolid() || GetBlock(viForwardKneeHigh).IsSolid() || GetBlock(viForwardOneAboveHead).IsSolid())
+			{
 				bPathIsOpen = true;
+			}
 			break;
-			case PathDirection.AdjacentBlockEmpty:
-				if(GetBlock(viForwardKneeHigh).IsEmpty())
-					bPathIsOpen = true;
-				break;
-			case PathDirection.AdjacentBlockSolid:
-				if(GetBlock(viForwardKneeHigh).IsSolid())
-					bPathIsOpen = true;
-				break;
+		case PathDirection.AdjacentBlockEmpty:
+			if(GetBlock(viForwardKneeHigh).IsEmpty())
+			{
+				bPathIsOpen = true;
+			}
+			break;
+		case PathDirection.AdjacentBlockSolid:
+			if(GetBlock(viForwardKneeHigh).IsSolid())
+			{
+				bPathIsOpen = true;
+			}
+			break;
 		default:
-			Debug.Log ("Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
+			Debug.Log("Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
 			break;
 		}
 		
@@ -503,23 +556,27 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	/// <param name='chunkPos'>
 	/// Chunk position coordinates.
 	/// </param>
-	public void SetDirty (Vector3i chunkPos)
+	public void SetDirty(Vector3i chunkPos)
 	{
-		OCChunk chunk = GetChunk (chunkPos);
-		if (chunk != null)
-			chunk.GetChunkRendererInstance ().SetDirty ();
+		OCChunk chunk = GetChunk(chunkPos);
+		if(chunk != null)
+		{
+			chunk.GetChunkRendererInstance().SetDirty();
+		}
 	}
 	
-	public void AddCollidersSync ()
+	public void AddCollidersSync()
 	{
-		Transform[] objects = GetComponentsInChildren<Transform> ();
+		Transform[] objects = GetComponentsInChildren<Transform>();
  
-		for (int i = 0; i < objects.Length; i++) {
-			if (objects [i].gameObject.renderer) {
-				Debug.Log ("We found us a " + objects [i].gameObject.GetType ().ToString ());
+		for(int i = 0; i < objects.Length; i++)
+		{
+			if(objects[i].gameObject.renderer)
+			{
+				Debug.Log("We found us a " + objects[i].gameObject.GetType().ToString());
 				
-				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
-				MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
+				MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
+				MeshCollider myCollider = objects[i].gameObject.AddComponent<MeshCollider>();
 				
 				myCollider.sharedMesh = null;
 				
@@ -527,121 +584,133 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				
 				myCollider.enabled = true;
 				
-				Debug.Log ("i: " + objects [i].name);
-				Debug.Log ("Center: " + myCollider.bounds.center.ToString ());
-				Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
+				Debug.Log("i: " + objects[i].name);
+				Debug.Log("Center: " + myCollider.bounds.center.ToString());
+				Debug.Log("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
 			}
 		}
 	}
 	
-	public void UpdateMeshColliderAfterBlockChange ()
+	public void UpdateMeshColliderAfterBlockChange()
 	{
-		StartCoroutine (StartUpdateMeshColliderAfterBlockChange ());	
+		StartCoroutine(StartUpdateMeshColliderAfterBlockChange());	
 	}
 
-	public void AddColliders ()
+	public void AddColliders()
 	{
-		StartCoroutine (StartAddColliders ());
+		StartCoroutine(StartAddColliders());
 	}
 
-	public void SetBlock (OpenCog.BlockSet.BaseBlockSet.OCBlock block, Vector3i pos)
+	public void SetBlock(OpenCog.BlockSet.BaseBlockSet.OCBlock block, Vector3i pos)
 	{
-		SetBlock (OCBlockData.CreateInstance<OCBlockData>().Init(block, pos), pos);
+		SetBlock(OCBlockData.CreateInstance<OCBlockData>().Init(block, pos), pos);
 	}
 
-	public void SetBlock (OpenCog.BlockSet.BaseBlockSet.OCBlock block, int x, int y, int z)
+	public void SetBlock(OpenCog.BlockSet.BaseBlockSet.OCBlock block, int x, int y, int z)
 	{
-		SetBlock (OCBlockData.CreateInstance<OCBlockData>().Init(block, new Vector3i(x, y, z)), x, y, z);
+		SetBlock(OCBlockData.CreateInstance<OCBlockData>().Init(block, new Vector3i(x, y, z)), x, y, z);
 	}
 	
-	public void SetBlock (OCBlockData block, Vector3i pos)
+	public void SetBlock(OCBlockData block, Vector3i pos)
 	{
-		SetBlock (block, pos.x, pos.y, pos.z);
+		SetBlock(block, pos.x, pos.y, pos.z);
 	}
 
-	public void SetBlock (OCBlockData block, int x, int y, int z)
+	public void SetBlock(OCBlockData block, int x, int y, int z)
 	{
-		OCChunk chunk = GetChunkInstance (OCChunk.ToChunkPosition (x, y, z));
-		if (chunk != null)
-			chunk.SetBlock (block, OCChunk.ToLocalPosition (x, y, z));
+		OCChunk chunk = GetChunkInstance(OCChunk.ToChunkPosition(x, y, z));
+		if(chunk != null)
+		{
+			chunk.SetBlock(block, OCChunk.ToLocalPosition(x, y, z));
+		}
 	}
 	
-	public OCBlockData GetBlock (Vector3i pos)
+	public OCBlockData GetBlock(Vector3i pos)
 	{
-		return GetBlock (pos.x, pos.y, pos.z);
+		return GetBlock(pos.x, pos.y, pos.z);
 	}
 
-	public OCBlockData GetBlock (int x, int y, int z)
+	public OCBlockData GetBlock(int x, int y, int z)
 	{
 		OCChunk chunk = null;
 			
-		if (_lastRequestedChunk != null)
+		if(_lastRequestedChunk != null)
 		{
-			Vector3i requestedChunkPosition = OCChunk.ToChunkPosition (x, y, z);
-			if (requestedChunkPosition.x == _lastRequestedChunk.GetPosition().x)
-				if (requestedChunkPosition.y == _lastRequestedChunk.GetPosition().y)
-					if (requestedChunkPosition.z == _lastRequestedChunk.GetPosition().z)
+			Vector3i requestedChunkPosition = OCChunk.ToChunkPosition(x, y, z);
+			if(requestedChunkPosition.x == _lastRequestedChunk.GetPosition().x)
+				if(requestedChunkPosition.y == _lastRequestedChunk.GetPosition().y)
+					if(requestedChunkPosition.z == _lastRequestedChunk.GetPosition().z)
+					{
 						chunk = _lastRequestedChunk;
+					}
 		}
 				
-		if (chunk == null)
+		if(chunk == null)
 		{
-			chunk = GetChunk (OCChunk.ToChunkPosition (x, y, z));
+			chunk = GetChunk(OCChunk.ToChunkPosition(x, y, z));
 			_lastRequestedChunk = chunk;		
 		}
 			
-		if (chunk == null)
+		if(chunk == null)
+		{
 			return OCBlockData.CreateInstance<OCBlockData>();
-		return chunk.GetBlock (OCChunk.ToLocalPosition (x, y, z));
+		}
+		return chunk.GetBlock(OCChunk.ToLocalPosition(x, y, z));
 	}
 	
-	public int GetMaxY (int x, int z)
+	public int GetMaxY(int x, int z)
 	{
-		Vector3i chunkPos = OCChunk.ToChunkPosition (x, 0, z);
-		chunkPos.y = _chunks.GetMax ().y;
-		Vector3i localPos = OCChunk.ToLocalPosition (x, 0, z);
+		Vector3i chunkPos = OCChunk.ToChunkPosition(x, 0, z);
+		chunkPos.y = _chunks.GetMax().y;
+		Vector3i localPos = OCChunk.ToLocalPosition(x, 0, z);
 		
-		for (; chunkPos.y >= 0; chunkPos.y--) {
+		for(; chunkPos.y >= 0; chunkPos.y--)
+		{
 			localPos.y = OCChunk.SIZE_Y - 1;
-			for (; localPos.y >= 0; localPos.y--) {
-				OCChunk chunk = _chunks.SafeGet (chunkPos);
-				if (chunk == null)
+			for(; localPos.y >= 0; localPos.y--)
+			{
+				OCChunk chunk = _chunks.SafeGet(chunkPos);
+				if(chunk == null)
+				{
 					break;
-				OCBlockData block = chunk.GetBlock (localPos);
-				if (block != null && !block.IsEmpty ())
-					return OCChunk.ToWorldPosition (chunkPos, localPos).y;
+				}
+				OCBlockData block = chunk.GetBlock(localPos);
+				if(block != null && !block.IsEmpty())
+				{
+					return OCChunk.ToWorldPosition(chunkPos, localPos).y;
+				}
 			}
 		}
 		
 		return 0;
 	}
 
-		public OCChunk GetChunk (Vector3i chunkPos)
+	public OCChunk GetChunk(Vector3i chunkPos)
 	{
-		return _chunks.SafeGet (chunkPos);
+		return _chunks.SafeGet(chunkPos);
 	}
 	
-	public List3D<OCChunk> GetChunks ()
+	public List3D<OCChunk> GetChunks()
 	{
 		return _chunks;
 	}
 	
-	public OpenCog.Map.Lighting.OCSunLightMap GetSunLightmap ()
+	public OpenCog.Map.Lighting.OCSunLightMap GetSunLightmap()
 	{
 		return _sunLightmap;
 	}
 	
-	public OpenCog.Map.Lighting.OCLightMap GetLightmap ()
+	public OpenCog.Map.Lighting.OCLightMap GetLightmap()
 	{
 		return _lightmap;
 	}
 	
-	public void SetBlockSet (OpenCog.BlockSet.OCBlockSet blockSet)
+	public void SetBlockSet(OpenCog.BlockSet.OCBlockSet blockSet)
 	{
 		_blockSet = blockSet;
 	}
 
-	public OpenCog.BlockSet.OCBlockSet GetBlockSet ()
+	public OpenCog.BlockSet.OCBlockSet GetBlockSet()
 	{
 		return _blockSet;
 	}
@@ -664,7 +733,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	/// </param>
 	public void UpdateChunkLimits(Vector3i chunkPosition)
 	{
-		if (_chunkLimitsInitialized)
+		if(_chunkLimitsInitialized)
 		{
 			_minChunkX = Mathf.Min(chunkPosition.x, _minChunkX);
 			_minChunkY = Mathf.Min(chunkPosition.y, _minChunkY);
@@ -673,8 +742,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			_maxChunkX = Mathf.Max(chunkPosition.x, _maxChunkX);
 			_maxChunkY = Mathf.Max(chunkPosition.x, _maxChunkY);
 			_maxChunkZ = Mathf.Max(chunkPosition.x, _maxChunkZ);
-		}
-		else
+		} else
 		{
 			_minChunkX = chunkPosition.x;
 			_minChunkY = chunkPosition.y;
@@ -688,20 +756,22 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		}
 	}
 
-	private IEnumerator StartUpdateMeshColliderAfterBlockChange ()
+	private IEnumerator StartUpdateMeshColliderAfterBlockChange()
 	{
-		Transform[] objects = GetComponentsInChildren<Transform> ();
+		Transform[] objects = GetComponentsInChildren<Transform>();
 		
 		yield return null;
 		
-		for (int i = objects.Length -1; i >= 0; i--) {
-			if (objects [i] != null && objects [i].gameObject != null && objects [i].gameObject.renderer) {
-				MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
-				MeshCollider myCollider = objects [i].gameObject.GetComponent<MeshCollider> ();
+		for(int i = objects.Length -1; i >= 0; i--)
+		{
+			if(objects[i] != null && objects[i].gameObject != null && objects[i].gameObject.renderer)
+			{
+				MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
+				MeshCollider myCollider = objects[i].gameObject.GetComponent<MeshCollider>();
 
-				if (myCollider == null) 
+				if(myCollider == null)
 				{
-					myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
+					myCollider = objects[i].gameObject.AddComponent<MeshCollider>();
 				}
 					
 				myCollider.sharedMesh = null;
@@ -717,20 +787,22 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		}
 	}
 
-	private IEnumerator StartAddColliders ()
+	private IEnumerator StartAddColliders()
 	{
-		Transform[] objects = GetComponentsInChildren<Transform> ();
+		Transform[] objects = GetComponentsInChildren<Transform>();
 		
 		yield return null;
  
-		for (int i = objects.Length -1; i >= 0; i--) {
-			if (objects[i] != null && objects [i].gameObject.renderer) {
+		for(int i = objects.Length -1; i >= 0; i--)
+		{
+			if(objects[i] != null && objects[i].gameObject.renderer)
+			{
 				//Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
 								
-				if (objects[i].gameObject.GetComponent<MeshCollider>() == null)
+				if(objects[i].gameObject.GetComponent<MeshCollider>() == null)
 				{
-					MeshFilter myFilter = objects [i].gameObject.GetComponent<MeshFilter> ();
-					MeshCollider myCollider = objects [i].gameObject.AddComponent<MeshCollider> ();
+					MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
+					MeshCollider myCollider = objects[i].gameObject.AddComponent<MeshCollider>();
 					
 					myCollider.sharedMesh = null;
 
@@ -745,14 +817,17 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	}
 
 
-	public OCChunk GetChunkInstance (Vector3i chunkPos)
+	public OCChunk GetChunkInstance(Vector3i chunkPos)
 	{
-		if (chunkPos.y < 0)
+		if(chunkPos.y < 0)
+		{
 			return null;
-		OCChunk chunk = GetChunk (chunkPos);
-		if (chunk == null) {
-			chunk = new OCChunk (this, chunkPos);
-			_chunks.AddOrReplace (chunk, chunkPos);
+		}
+		OCChunk chunk = GetChunk(chunkPos);
+		if(chunk == null)
+		{
+			chunk = new OCChunk(this, chunkPos);
+			_chunks.AddOrReplace(chunk, chunkPos);
 		}
 		return chunk;
 	}
@@ -795,7 +870,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		ForwardBlockSolid,
 		AdjacentBlockEmpty,
 		AdjacentBlockSolid
-	};
+	}
+	;
 
 	//---------------------------------------------------------------------------
 

@@ -12,11 +12,14 @@ GENERATE_TICK_MESSAGE = true
 #
 MY_ID = PROXY
 <<<<<<< HEAD
-MY_IP = 127.0.0.1
+My_IP = 10.0.25.62
+#MY_IP = 127.0.0.1
 #My_IP = 10.0.25.41
 =======
-MY_IP = 10.0.25.62
->>>>>>> UnitTest_Spydr
+#NY_IP = 192.168.0.102
+#MY_IP = 127.0.0.1
+My_IP = 10.0.25.41
+>>>>>>> origin
 MY_PORT = 16315
 
 
@@ -25,11 +28,13 @@ MY_PORT = 16315
 #
 ROUTER_ID = ROUTER
 <<<<<<< HEAD
-ROUTER_IP = 192.168.50.2
+ROUTER_IP = 158.132.58.132
+#ROUTER_IP = 10.0.25.30
 #ROUTER_IP = 10.0.25.104
 =======
-ROUTER_IP = 10.0.25.30
->>>>>>> UnitTest_Spydr
+#ROUTER_IP = 10.0.25.30
+ROUTER_IP = 192.168.50.2
+>>>>>>> origin
 ROUTER_PORT = 16312
 
 #

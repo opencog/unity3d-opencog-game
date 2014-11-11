@@ -71,9 +71,16 @@ public class OCGameStateManager : OCMonoBehaviour
 		get
 		{
 			if(_manager == null)
+<<<<<<< HEAD
 					_manager = (OCGameStateManager) GameObject.FindObjectOfType( typeof(OCGameStateManager) );
 			if(_manager == null)
 					throw new OCException("OCGameStateManager was requested, and cannot be found in scene");
+=======
+			{
+				_manager = (OCGameStateManager)GameObject.FindObjectOfType(typeof(OCGameStateManager));
+			}
+
+>>>>>>> origin
 			return _manager;
 		}
 	}
@@ -93,10 +100,25 @@ public class OCGameStateManager : OCMonoBehaviour
 		//rest of the game is paused
 
 
+<<<<<<< HEAD
 	public static bool IsPause {
 		set {
 			if(value) Time.timeScale = 1f/10000f;
 			if(!value) Time.timeScale = 1f;
+=======
+	public static bool IsPause
+	{
+		set
+		{
+			if(value)
+			{
+				Time.timeScale = 1f / 10000f;
+			}
+			if(!value)
+			{
+				Time.timeScale = 1;
+			}
+>>>>>>> origin
 			Screen.showCursor = value;
 			if(value)
 			{
@@ -138,6 +160,7 @@ public class OCGameStateManager : OCMonoBehaviour
 	{
 		Screen.showCursor = false;
 		_player = GameObject.FindGameObjectWithTag("Player");
+<<<<<<< HEAD
 			IsPause = false;
 	}
 	
@@ -149,20 +172,37 @@ public class OCGameStateManager : OCMonoBehaviour
 	{
 		
 
+=======
+		IsPause = false;
+	}
+	
+	public void Update()
+	{
+>>>>>>> origin
 
 		if(Application.platform != RuntimePlatform.LinuxPlayer)
 		{
 			Screen.lockCursor = !Screen.showCursor;
 		}
 		
+<<<<<<< HEAD
 		// allow for screenshots?
 		if(Input.GetKeyDown(KeyCode.Tab)) {
+=======
+		if(Input.GetKeyDown(KeyCode.Tab))
+		{
+>>>>>>> origin
 			Screen.showCursor = true;
 			Screen.lockCursor = false;
 		}
 		
+<<<<<<< HEAD
 		//pause le game!
 		if(Input.GetKeyDown(KeyCode.Escape)) {
+=======
+		if(Input.GetKeyDown(KeyCode.Escape))
+		{
+>>>>>>> origin
 			IsPause = !IsPause;
 			_player.GetComponent<OCInputController>().enabled = !IsPause;
 			_player.GetComponent<OCCharacterMotor>().enabled = !IsPause;
