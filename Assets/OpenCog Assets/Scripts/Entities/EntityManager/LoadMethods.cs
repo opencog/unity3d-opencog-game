@@ -130,10 +130,11 @@ namespace OpenCog.Entities
 				yield return StartCoroutine(connector.ConnectOAC());
 				
 				//if we failed to initialize the connector
-				if (!connector.IsInitialized) {
+				if (!connector.IsInitialized) 
+				{
 					
 					// OAC is not loaded normally, destroy the avatar instance.
-					Debug.LogError ("Cannot connect to the OAC, avatar loading failed.");
+					Debug.LogError ("LoadMethods.AtRunTime is reporting !connector.Initialize. Cannot connect to the OAC, avatar loading failed.");
 					connector.SaveAndExit ();
 					Destroy (agentClone);
 
@@ -141,9 +142,13 @@ namespace OpenCog.Entities
 						report("false");
 				} 
 				else
+				{
+					Debug.Log ("LoadMethods.AtRunTime is reporting connector.Initialized");
 					if(report != null)
 						report("true");
-				
+				}
+
+				yield break;
 			}
 			
 			private string CreateRandomAgentName ()

@@ -440,8 +440,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 					GUILayout.Label(entry.msg, _commandStyle);
 					GUILayout.FlexibleSpace();
 				}
-				else
-				if(entry.type == ConsoleEntry.Type.SAY)
+				else if(entry.type == ConsoleEntry.Type.SAY)
 				{
 					// Display talk in green
 					_commandStyle.normal.textColor = Color.black;
@@ -450,8 +449,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 					GUILayout.Label(entry.msg, _commandStyle);
 					GUILayout.FlexibleSpace();
 				}
-				else
-				if(entry.type == ConsoleEntry.Type.COMMAND)
+				else if(entry.type == ConsoleEntry.Type.COMMAND)
 				{
 					// Display commands in blue
 					_commandStyle.normal.textColor = Color.black;
@@ -460,8 +458,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 					GUILayout.Label(entry.msg, _commandStyle);
 					GUILayout.FlexibleSpace();
 				}
-				else
-				if(entry.type == ConsoleEntry.Type.RESULT)
+				else if(entry.type == ConsoleEntry.Type.RESULT)
 				{
 					// Display results in black
 					_commandStyle.normal.textColor = Color.black;

@@ -687,7 +687,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				_clientSocket = null;
 				return false;
 			}
-			else
+			//else
 				//UnityEngine.Debug.Log ("Seems we're connected...");
 
 			

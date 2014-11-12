@@ -539,34 +539,33 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			_firstRun = false;
 			
-			// First step, connect to the router.
-			int timeout = 100;
+			// First step, attempting connecting to the router 5 times which, at ~18 seconds per attempt, should take roughly 100 seconds.
+			int timeout = 5;
 			while(!base._isEstablished && timeout > 0)
 			{
-				StartCoroutine(base.Connect());
-	
-				yield return new UnityEngine.WaitForSeconds(0.5f);
+				yield return StartCoroutine(base.Connect());
 				timeout--;
 			}
 	
-			if(timeout == 0)
+			if(timeout <= 0)
 			{
-				OCLogger.Error("Breaking");
+				OCLogger.Error("Connection attempt timed out.");
 				yield break;
 			}
 	
 			// Second step, check if spawner is available to spawn an OAC instance.
-			bool isSpawnerAlive = IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID"));
 			timeout = 60;
-			while(!isSpawnerAlive && timeout > 0)
+			do
 			{
+				if(IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID"))) break;
+
 				OCLogger.Info("Waiting for spawner...");
 				yield return new UnityEngine.WaitForSeconds(1f);
-				isSpawnerAlive = IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID"));
 				timeout--;
-			}
+
+			}while(timeout > 0);
 	
-			if(!isSpawnerAlive)
+			if(timeout <= 0)
 			{
 				OCLogger.Error("Spawner is not available, OAC can not be launched.");
 				yield break;
@@ -574,8 +573,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			// Finally, load the OAC by sending "load agent" command to spawner.
 			LoadOAC();
-			timeout = 100;
+
+			timeout = 10;
+
+			//TODO: This looks breakable.
 			// Wait some time for OAC to be ready.
+
+
 			while(!_isInitialized && timeout > 0)
 			{
 				yield return new UnityEngine.WaitForSeconds(1f);

@@ -133,7 +133,7 @@ namespace OpenCog.Interfaces.Game
 		#region 					Configuration
 
 		protected bool[] configurations = new bool[numTests];
-	
+		public bool editorSaysToRun = false;
 
 		protected void GetConfiguration()
 		{
@@ -272,20 +272,32 @@ namespace OpenCog.Interfaces.Game
 		public IEnumerator RunTests()
 		{
 
+
 			//wait until the game is running such that we can be pretty sure everything's 'start' already run (Since this coroutine is 
 			//initialized in a Start()) By this point, things like OcWorldGenerator, etc, should already all be initialized, and so
 			//a legit OCConfig file should be loaded.
-			yield return new UnityEngine.WaitForEndOfFrame();
+			yield return new UnityEngine.WaitForFixedUpdate();
 
 			//INITIALIZE!
+			//-----------------------------------
 			//get our own configurations
-			FakeConfiguration();
+
+			if(this.editorSaysToRun)FakeConfiguration();
+			else GetConfiguration();
+
+			//make sure all the bools are set to true and haasConcluded = false
 			RefreshResults();
+
+			//make sure we have everything dragged into the ditor properly.
 			TestInitialization();
 
 			//unpause game to get the tests up and running (the manager will do all it's own work of ensuring it exists, as it ought to have been dragged to stage; 
 			//I don't need to worry about it; and it must be initialized by this time so I don't have to test for it.)
 			OCGameStateManager.IsPlaying = true;
+
+
+			//RUN THE TESTS!
+			//-----------------------------------
 
 			//run the tests in order
 			for(int i = 0; i < numTests; i++)
@@ -299,6 +311,8 @@ namespace OpenCog.Interfaces.Game
 				Debug.Log ("One or more of the Unit Tests Failed");
 			}
 
+			this.hasConcluded = true;
+
 		}
 		
 		#endregion
@@ -309,15 +323,27 @@ namespace OpenCog.Interfaces.Game
 			//we're going to break the action out because we don't care about memory management right here and we 
 			//want to clearly see what we're doing
 			bool didConnect = false;
-			System.Action<string> report = ((x) => (didConnect = (bool)(x == "true")));
 
-			yield return StartCoroutine(GameManager.entity.load.AtRunTime(embodimentSpawn, embodimentPrefab,"unitTestAgent","","", report));
+			System.Action<string> report = x => didConnect = (String.Compare(x, "true") == 0);
+
+			//get the player object, if it exists
+			UnityEngine.GameObject playerObject = GameObject.FindGameObjectWithTag ("Player");
+			string masterId = playerObject.GetInstanceID ().ToString ();
+			string masterName = playerObject.name;
+
+			yield return StartCoroutine(GameManager.entity.load.AtRunTime(embodimentSpawn, embodimentPrefab,"", masterName,masterId, report));
 
 			if(didConnect == false)
 			{
+				Debug.Log ("Testing the Embodiment, Failed");
 				results[(int)TestTypes.EMBODIMENT] = false;
 				result = false;
 			}
+			else
+			{
+				Debug.Log ("Testing the Embodiment, Succeeded");
+			}
+			yield break;
 		
 		}
 		protected IEnumerator TestBattery()

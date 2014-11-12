@@ -12762,16 +12762,17 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1913997062}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52aec2f65de763c4292287b4c76e1d73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  editorSaysToRun: 1
   embodimentSpawn: {x: -136, y: 150, z: -4}
   embodimentPrefab: {fileID: 100282, guid: 54168ecf08d37134a96ef1633ac49fd8, type: 2}
   batteryPosition: {x: -136, y: 130, z: -10}
   batteryDirection: {x: 1, y: 0, z: 0}
-  batteryBlockOnHUD: {x: 0, y: 0}
+  batteryBlockOnHUD: {x: 5, y: 2}
 --- !u!1 &1933667568
 GameObject:
   m_ObjectHideFlags: 0
