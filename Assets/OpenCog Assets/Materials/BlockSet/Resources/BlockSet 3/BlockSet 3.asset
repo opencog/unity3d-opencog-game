@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: BlockSet 3
   m_EditorClassIdentifier: 
   _data: "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<OCBlockSet>\r\n  <OCAtlasList>\r\n
-    \   <OCAtlas>\r\n      <_material>BlockSet 3/Atlas</_material>\r\n      <_width>16</_width>\r\n
+    \   <OCAtlas>\r\n      <_material>BlockSet 3/AtlasMat</_material>\r\n      <_width>16</_width>\r\n
     \     <_height>16</_height>\r\n      <_isAlpha>False</_isAlpha>\r\n    </OCAtlas>\r\n
     \   <OCAtlas>\r\n      <_material>BlockSet 3/Atlas(Alpha)</_material>\r\n      <_width>16</_width>\r\n
     \     <_height>16</_height>\r\n      <_isAlpha>True</_isAlpha>\r\n    </OCAtlas>\r\n
