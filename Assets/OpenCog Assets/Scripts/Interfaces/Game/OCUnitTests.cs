@@ -371,6 +371,7 @@ namespace OpenCog.Interfaces.Game
 		public void Start()
 		{
 		
+			Debug.Log ("StartingCoroutine(RunTests())");
 
 			//RunTests must trickle up a chain of yield StartCoroutine(Function(x))'s up to something
 			//with yieldInstructions like yield return new UnityEngine.WaitForSeconds(3f); or a simple 
