@@ -141,7 +141,8 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	public void Start()
 	{
 		//FIXME: I believe this is supposed to get the arrow keys. There has to be a better way.
-		Input.eatKeyPressOnTextFieldFocus = false;
+		//Input.eatKeyPressOnTextFieldFocus = false;
+
 		
 		
 		_panelHeight = Screen.height * 0.30f;
@@ -198,81 +199,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	public void Update()
 	{
-		_panelHeight = Screen.height * 0.30f;
 
-		if(Input.GetKeyDown(KeyCode.BackQuote))
-		{
-			// If the window is already visible and isn't disappearing...
-			if(_isShown && _movementState != Movement.DISAPPEARING)
-			{
-				CloseChatWindow();
-				_player.GetComponent<OCInputController>().enabled = true;
-				_player.GetComponent<OCCharacterMotor>().enabled = true;
-				_player.GetComponent<MouseLook>().enabled = true;	
-			}
-			else
-			{
-				_isShown = true;
-				_player.GetComponent<OCInputController>().enabled = false;
-				_player.GetComponent<OCCharacterMotor>().enabled = false;
-				_player.GetComponent<MouseLook>().enabled = false;
-                
-				_movementState = Movement.APPEARING;
-			}
-            
-		}
-		
-		// Below this line is only relevent when console is active
-		if(!this.IsActive())
-		{
-			return;
-		}
-			
-		if(Input.GetKeyDown(KeyCode.Return) && 
-                _currentInput.Length > 0)
-		{ // &&
-			// GUI.GetNameOfFocusedControl() == "CommandArea")
-			this.ProcessConsoleLine(_currentInput);
-			_currentInput = ""; // blank input field
-			_inputHistoryCurrent = null; // reset current position in input history
-		}
-		// Implement input history using up/down arrow
-		if(Input.GetKeyDown(KeyCode.UpArrow))
-		{
-			if(_inputHistoryCurrent == null)
-			{
-				// TODO save current output so that we can push down to restore
-				// previously written text
-				_inputHistoryCurrent = _inputHistory.First;
-			}
-			else
-			if(_inputHistoryCurrent.Next != null)
-			{
-				_inputHistoryCurrent = _inputHistoryCurrent.Next;
-			}
-			if(_inputHistoryCurrent != null)
-			{
-				_currentInput = _inputHistoryCurrent.Value;
-			}
-		}
-		else
-		if(Input.GetKeyDown(KeyCode.DownArrow))
-		{
-			if(_inputHistoryCurrent != null && _inputHistoryCurrent.Previous != null)
-			{
-				_inputHistoryCurrent = _inputHistoryCurrent.Previous;
-			}
-			if(_inputHistoryCurrent != null)
-			{
-				_currentInput = _inputHistoryCurrent.Value;
-			}
-		}
-		if(_isShown)
-		{
-			//_inputController.SetCharacterControl(false);
-		}
-			
-		OCLogger.Fine(gameObject.name + " is updated.");	
 	}
 		
 	/// <summary>
@@ -329,6 +256,104 @@ public class Console : OCSingletonMonoBehaviour<Console>
 
 	public void OnGUI()
 	{
+			HandleAppearance();
+			HandleInput();
+	}
+
+	public void HandleInput()
+	{
+		if(!Event.current.isKey) return;
+		if(Event.current.type != EventType.keyUp) return;
+		
+		//First we need to make sure we can display and hide the interface
+		if(Event.current.keyCode == KeyCode.BackQuote)
+		{
+			// If the window is already visible and isn't disappearing...
+			if(_isShown && _movementState != Movement.DISAPPEARING)
+			{
+				CloseChatWindow();
+				_player.GetComponent<OCInputController>().enabled = true;
+				_player.GetComponent<OCCharacterMotor>().enabled = true;
+				_player.GetComponent<MouseLook>().enabled = true;	
+				_isShown = false;
+			}
+			else
+			{
+				_isShown = true;
+				_player.GetComponent<OCInputController>().enabled = false;
+				_player.GetComponent<OCCharacterMotor>().enabled = false;
+				_player.GetComponent<MouseLook>().enabled = false;
+				
+				_movementState = Movement.APPEARING;
+			}
+			Event.current.Use();
+			return;
+		}
+		
+		//then we don't want to grab input unless the console is open
+		if(!IsActive()) return;
+
+		switch(Event.current.keyCode)
+		{
+			
+			//consume the console command!
+			case KeyCode.Return: case KeyCode.KeypadEnter:
+
+				//use up the event
+				Event.current.Use ();
+
+				//check to make sure we have any input to send
+				if(_currentInput.Length <= 0) break;
+
+				//do le stuff with le input
+				this.ProcessConsoleLine(_currentInput);
+				_currentInput = ""; // blank input field
+				_inputHistoryCurrent = null; // reset current position in input history
+
+				break;
+			// Implement input history using up/down arrow
+			case KeyCode.UpArrow:
+				if(_inputHistoryCurrent == null)
+				{
+					// TODO save current output so that we can push down to restore
+					// previously written text
+					_inputHistoryCurrent = _inputHistory.First;
+				}
+				else if(_inputHistoryCurrent.Next != null)
+				{
+					_inputHistoryCurrent = _inputHistoryCurrent.Next;
+				}
+				if(_inputHistoryCurrent != null)
+				{
+					_currentInput = _inputHistoryCurrent.Value;
+				}
+				Event.current.Use ();
+				break;
+			case KeyCode.DownArrow:
+				if(_inputHistoryCurrent != null && _inputHistoryCurrent.Previous != null)
+				{
+					_inputHistoryCurrent = _inputHistoryCurrent.Previous;
+				}
+				if(_inputHistoryCurrent != null)
+				{
+					_currentInput = _inputHistoryCurrent.Value;
+				}
+				Event.current.Use ();
+				break;
+		};
+			
+
+			//TODO: Fix this
+			if(_isShown)
+			{
+				//_inputController.SetCharacterControl(false);
+			}
+	}
+
+	public void HandleAppearance()
+	{
+		_panelHeight = Screen.height * 0.30f;
+
 		if(_GUISkin)
 		{
 			_commandStyle = _GUISkin.label;
@@ -373,6 +398,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 
 			//Debug.Log("_isShown = true");
 		}
+					
 	}
 		
 	public void AddSpeechConsoleEntry(string content, string sender, string listener)

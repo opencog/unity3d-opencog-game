@@ -99,8 +99,9 @@ namespace OpenCog.Network
 					
 					if(line != null)
 					{
-						string answer = this.parse(line);
-						
+						//string answer = this.parse(line);
+						this.parse(line);
+
 						//UnityEngine.Debug.Log ("Just parsed '" + line + "'");
 					}
 					else

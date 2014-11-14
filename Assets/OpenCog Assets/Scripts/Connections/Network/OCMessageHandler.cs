@@ -241,7 +241,8 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 				{
 					UnityEngine.Debug.Log ("Parsing line: " + line);
 						
-					string answer = Parse(line);
+					//string answer = Parse(line);
+					Parse(line);
 				}
 				else
 				{

@@ -84,8 +84,9 @@ namespace OpenCog.Worlds
 
 			/// <summary>
 			/// This function is responsible for adding a voxel to the map. Because our voxel engine is about to change, this function will take two approaches
-			/// to reducing later refactoring. 1) this function relies on the idea that there is a selected block type (so it does not need to be *passed* the
-			/// block type) and 2) this public function will wrap a private function that handles any pixelland-dependent code
+			/// to reducing later refactoring, we try to pass only OCBlock (We would have had to written a lot of code to get around that) and
+			/// we wrap a protected AddSelectedVoxelPixelland to mentally remind ourselves that we want to replace this in the future,
+			/// and we should not be doing a lot of 'work' here.
 			/// </summary>
 			public void AddSelectedVoxel(Vector3 location, Vector3 direction, OCBlock type)
 			{
