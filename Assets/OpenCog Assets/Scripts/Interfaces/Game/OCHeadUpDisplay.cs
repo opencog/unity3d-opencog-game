@@ -580,7 +580,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 //		}
         
 //		lock(avatar.AM.currentActions)
-		{
+		//{
 			// TODO: Reenable action keys when we know how / why / what.
 //			foreach(ActionKey akey in avatar.AM.currentActions.Keys)
 //			{
@@ -596,7 +596,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 //				GUILayout.Label(a.actionObject.name + ":" + a.actionName, commandStyle);
 //                
 //			}
-		}
+		//}
 		// End the scrollview we began above.
 		GUILayout.EndScrollView();
 	}
