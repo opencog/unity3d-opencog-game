@@ -231,36 +231,48 @@ public class OCGoalController : OCMonoBehaviour
 		
 		//bool doesGoalExist = false;
 		
+		//TODO: Nov 14 I put this check in to get rid of Nullreference errors if the avatar
+		//cannot connect. Because I cannot currently test connection (no wifi), I am 
+		//putting this note in, in case the check breaks something and needs to be
+		//debugged.
+		if(GoalBlockType == null)
+		{
+			return;
+		}
+		
 		GameObject goalBlockChild = GameObject.Find(GoalBlockType.GetName());
 			
-		if(goalBlockChild != null)
+		if(goalBlockChild == null)
 		{
-			GameObject goalBlocks = goalBlockChild.transform.parent.gameObject;
-				
-			if(goalBlocks != null)
+			return;
+		}
+		GameObject goalBlocks = goalBlockChild.transform.parent.gameObject;
+			
+		if(goalBlocks == null)
+		{
+			return;
+		}
+		foreach(Transform candidateTransform in goalBlocks.transform)
+		{
+			GameObject candidateBlock = candidateTransform.gameObject;
+			Vector3 candidatePos = candidateBlock.transform.position;
+			Vector3 candidateVec = candidatePos - sourcePos;
+			//OCBlockData blockData = _map.GetBlock(new Vector3i(candidatePos.x, candidatePos.y, candidatePos.z));
+			//if(!blockData.IsEmpty() && blockData.block.GetName() == _goalBlockType.GetName())
 			{
-				foreach(Transform candidateTransform in goalBlocks.transform)
+				//doesGoalExist = true;
+				if(candidateVec.sqrMagnitude < distanceVec.sqrMagnitude)
 				{
-					GameObject candidateBlock = candidateTransform.gameObject;
-					Vector3 candidatePos = candidateBlock.transform.position;
-					Vector3 candidateVec = candidatePos - sourcePos;
-					//OCBlockData blockData = _map.GetBlock(new Vector3i(candidatePos.x, candidatePos.y, candidatePos.z));
-					//if(!blockData.IsEmpty() && blockData.block.GetName() == _goalBlockType.GetName())
-					{
-						//doesGoalExist = true;
-						if(candidateVec.sqrMagnitude < distanceVec.sqrMagnitude)
-						{
-							GoalBlockPos = new Vector3i((int)candidatePos.x, (int)candidatePos.y, (int)candidatePos.z);
-							distanceVec = candidateVec;
-							
-							MoveTargetsIfNecessary ();
-		
-							Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
-						}
-					}
+					GoalBlockPos = new Vector3i((int)candidatePos.x, (int)candidatePos.y, (int)candidatePos.z);
+					distanceVec = candidateVec;
+					
+					MoveTargetsIfNecessary ();
+
+					Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
 				}
 			}
 		}
+
 
 //			//distanceVec = new Vector3(1000,1000,1000);
 //			for(int cx=chunks.GetMinX(); cx<chunks.GetMaxX(); ++cx)
