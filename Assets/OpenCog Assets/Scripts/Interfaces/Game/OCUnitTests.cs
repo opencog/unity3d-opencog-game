@@ -153,7 +153,7 @@ namespace OpenCog.Interfaces.Game
 	protected void FakeConfiguration()
 	{
 		//get the configuration as this handy-dandy variable
-		OCConfig config = OCConfig.Instance;
+		//OCConfig config = OCConfig.Instance;
 			
 		//iterate through all the configurations and read them in!
 		for(uint i = 0; i < numTests; i++)
