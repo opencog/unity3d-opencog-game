@@ -549,8 +549,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			{
 				Debug.LogError("Connection attempt timed out.");
 				yield break;
-			}
-			else
+			} else
 			{
 				Debug.Log("Connection established.");
 			}
@@ -559,28 +558,30 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			timeout = 60;
 			do
 			{
-				if(IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID"))) break;
+				if(IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID")))
+				{
+					break;
+				}
 
 				OCLogger.Info("Waiting for spawner...");
 				yield return new UnityEngine.WaitForSeconds(1f);
 				timeout--;
 
-			}while(timeout > 0);
+			} while(timeout > 0);
 	
 			if(timeout <= 0)
 			{
 				Debug.LogError("Spawner is not available, OAC can not be launched.");
 				yield break;
-			}
-			else
+			} else
 			{
-				Debug.Log ("Spawner obtained, OAC can be launched.");
+				Debug.Log("Spawner obtained, OAC can be launched.");
 			}
 	
 			// Finally, load the OAC by sending "load agent" command to spawner.
 			LoadOAC();
 
-			timeout = 10;
+			timeout = 100;
 
 			//TODO: This looks breakable.
 			// Wait some time for OAC to be ready.
@@ -922,8 +923,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		if(isAppear)
 		{
 			UnityEngine.Debug.Log("Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
-		} 
-		else
+		} else
 		{
 			UnityEngine.Debug.Log("Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		}
