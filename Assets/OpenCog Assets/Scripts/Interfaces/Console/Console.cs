@@ -140,10 +140,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	public void Start()
 	{
-		//FIXME: I believe this is supposed to get the arrow keys. There has to be a better way.
-		//Input.eatKeyPressOnTextFieldFocus = false;
-
-		
+	
 		
 		_panelHeight = Screen.height * 0.30f;
 
