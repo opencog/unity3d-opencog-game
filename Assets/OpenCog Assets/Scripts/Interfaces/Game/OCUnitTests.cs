@@ -123,8 +123,8 @@ namespace OpenCog.Interfaces.Game
 	protected void testFunctionsInit()
 	{
 		tests = new List<Func<IEnumerator>>();
-		tests.Add(Instance.TestEmbodiment);
 		tests.Add(Instance.TestBattery);
+		tests.Add(Instance.TestEmbodiment);
 		tests.Add(Instance.TestPlan);
 		tests.Add(Instance.TestSecondPlan);
 				
@@ -280,7 +280,7 @@ namespace OpenCog.Interfaces.Game
 		//a legit OCConfig file should be loaded.
 		yield return new UnityEngine.WaitForFixedUpdate();
 
-		yield return new UnityEngine.WaitForSeconds(20.0f);
+		//yield return new UnityEngine.WaitForSeconds(20.0f);
 
 		Debug.Log("Yielding on FixedUpdate()");
 
