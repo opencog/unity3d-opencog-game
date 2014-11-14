@@ -12770,9 +12770,9 @@ MonoBehaviour:
   editorSaysToRun: 1
   embodimentSpawn: {x: -136, y: 150, z: -4}
   embodimentPrefab: {fileID: 100282, guid: 54168ecf08d37134a96ef1633ac49fd8, type: 2}
-  batteryPosition: {x: -136, y: 160, z: -10}
+  batteryPosition: {x: -132, y: 147, z: -3}
   batteryDirection: {x: 1, y: 0, z: 0}
-  batteryBlockOnHUD: {x: 5, y: 2}
+  batteryBlockOnHUD: {x: 5, y: 3}
 --- !u!1 &1933667568
 GameObject:
   m_ObjectHideFlags: 0
