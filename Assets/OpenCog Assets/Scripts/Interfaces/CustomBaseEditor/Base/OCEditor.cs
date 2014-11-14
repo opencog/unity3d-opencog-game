@@ -224,17 +224,12 @@ where OCType : MonoBehaviour
 		GUIContent label = new GUIContent();
 		GUILayoutOption[] emptyOptions = new GUILayoutOption[0];
 
-		//EditorGUILayout.BeginVertical(emptyOptions);
+		
 
 		//Loops through all visible fields
 		foreach(OCPropertyField propertyField in allPropertiesAndFields)
 		{
-			//Debug.Log(propertyField.PublicName + ", " + propertyField.UnityType);
 
-			//if(propertyField.GetValue() == null)
-			//	continue;
-
-			//EditorGUILayout.BeginHorizontal(emptyOptions);
 
 			//Finds the bool Condition, enum Condition and tooltip if they exist (They are null otherwise).
 			OCBoolPropertyToggleAttribute boolCondition = propertyField.GetAttribute<OCBoolPropertyToggleAttribute>();
@@ -305,11 +300,11 @@ where OCType : MonoBehaviour
 				//Debug.Log("In OCEditor.DrawSerializedProperties, nothing to draw! " + allowedVisibleForBoolCondition + ", " + allowedVisibleForEnumCondition + ", " + drawMethod);
 			}
 
-			//EditorGUILayout.EndHorizontal();
+		
 
 		}
 
-		//EditorGUILayout.EndVertical();
+	
 	}
 
 	public void DrawFieldInInspector(OCPropertyField propertyField, GUIContent label, GUILayoutOption[] emptyOptions, OCFloatSliderAttribute floatSlider, OCIntSliderAttribute intSlider)
@@ -482,13 +477,7 @@ where OCType : MonoBehaviour
 							if(_foldedState[propertyField.PublicName])
 							{
 
-								//EditorGUILayout.BeginVertical();
-								//GUILayout.Space(15);
-								//EditorGUILayout.BeginHorizontal();
-								//GUILayout.Space(-25);
-//								Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
-//
-//								Debug.Log("In OCEditor.DrawFieldInInspector, nested Properties and Fields: " + nestedPropertiesAndFields.Select(p => p.Instance != null ? p.Instance.ToString() : "Null").Aggregate((a, b) => a + ", " + b));
+							
 
 								EditorGUI.indentLevel++;
 
@@ -496,8 +485,7 @@ where OCType : MonoBehaviour
 
 								EditorGUI.indentLevel--;
 
-								//EditorGUILayout.EndHorizontal();
-								//EditorGUILayout.EndVertical();
+	
 
 							}
 						}

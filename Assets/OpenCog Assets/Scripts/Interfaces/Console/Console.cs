@@ -443,56 +443,62 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		
 	private void GlobalConsolePanel(int id)
 	{
+	
+
 		// Begin a scroll view. All rects are calculated automatically - 
 		// it will use up any available screen space and make sure contents flow correctly.
 		// This is kept small with the last two parameters to force scrollbars to appear.
 		_scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
-	
-		lock(_consoleEntries)
+		
+		if(_consoleEntries != null)
 		{
-			foreach(ConsoleEntry entry in _consoleEntries)
+			lock(_consoleEntries)
 			{
-				GUILayout.BeginHorizontal();
-				// Here, we format things slightly differently for each
-				// ConsoleEntry type.
-				_commandStyle.wordWrap = true;
-				if(entry.type == ConsoleEntry.Type.ERROR)
+				foreach(ConsoleEntry entry in _consoleEntries)
 				{
-					// Display errors in red.
-					_commandStyle.normal.textColor = Color.red;
-					GUILayout.Label(entry.msg, _commandStyle);
-					GUILayout.FlexibleSpace();
+					GUILayout.BeginHorizontal();
+					// Here, we format things slightly differently for each
+					// ConsoleEntry type.
+					_commandStyle.wordWrap = true;
+					if(entry.type == ConsoleEntry.Type.ERROR)
+					{
+						// Display errors in red.
+						_commandStyle.normal.textColor = Color.red;
+						GUILayout.Label(entry.msg, _commandStyle);
+						GUILayout.FlexibleSpace();
+					}
+					else if(entry.type == ConsoleEntry.Type.SAY)
+					{
+						// Display talk in green
+						_commandStyle.normal.textColor = Color.black;
+						GUILayout.Label("> ");
+						_commandStyle.normal.textColor = Color.green;
+						GUILayout.Label(entry.msg, _commandStyle);
+						GUILayout.FlexibleSpace();
+					}
+					else if(entry.type == ConsoleEntry.Type.COMMAND)
+					{
+						// Display commands in blue
+						_commandStyle.normal.textColor = Color.black;
+						GUILayout.Label("> ");
+						_commandStyle.normal.textColor = Color.blue;
+						GUILayout.Label(entry.msg, _commandStyle);
+						GUILayout.FlexibleSpace();
+					}
+					else if(entry.type == ConsoleEntry.Type.RESULT)
+					{
+						// Display results in black
+						_commandStyle.normal.textColor = Color.black;
+						GUILayout.Label(entry.msg, _commandStyle);
+						GUILayout.FlexibleSpace();
+					}
+	                
+					GUILayout.EndHorizontal();
+	                
 				}
-				else if(entry.type == ConsoleEntry.Type.SAY)
-				{
-					// Display talk in green
-					_commandStyle.normal.textColor = Color.black;
-					GUILayout.Label("> ");
-					_commandStyle.normal.textColor = Color.green;
-					GUILayout.Label(entry.msg, _commandStyle);
-					GUILayout.FlexibleSpace();
-				}
-				else if(entry.type == ConsoleEntry.Type.COMMAND)
-				{
-					// Display commands in blue
-					_commandStyle.normal.textColor = Color.black;
-					GUILayout.Label("> ");
-					_commandStyle.normal.textColor = Color.blue;
-					GUILayout.Label(entry.msg, _commandStyle);
-					GUILayout.FlexibleSpace();
-				}
-				else if(entry.type == ConsoleEntry.Type.RESULT)
-				{
-					// Display results in black
-					_commandStyle.normal.textColor = Color.black;
-					GUILayout.Label(entry.msg, _commandStyle);
-					GUILayout.FlexibleSpace();
-				}
-                
-				GUILayout.EndHorizontal();
-                
 			}
 		}
+	
 		// End the scrollview we began above.
 		GUILayout.EndScrollView();
 		
@@ -507,6 +513,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		this._currentInput = GUILayout.TextField(this._currentInput);
 		
 		GUI.DragWindow();
+
 	}
 		
 	private void FocusControl()

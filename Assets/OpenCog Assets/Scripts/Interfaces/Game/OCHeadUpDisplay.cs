@@ -399,7 +399,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 			
 		if (feelingValueMap != null)
 		{
-			//panelScrollPosition = GUILayout.BeginScrollView(scrollPosition);
+
 			_feelingBoxWidth = _panel.width * 0.58f;
 	
 			// Display feeling levels

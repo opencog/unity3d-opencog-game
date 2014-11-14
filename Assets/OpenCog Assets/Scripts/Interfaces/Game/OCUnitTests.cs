@@ -273,16 +273,15 @@ namespace OpenCog.Interfaces.Game
 		#region 					RunTests()
 	public IEnumerator RunTests()
 	{
-		Debug.Log("Running Tests from Start");
 
 		//wait until the game is running such that we can be pretty sure everything's 'start' already run (Since this coroutine is 
 		//initialized in a Start()) By this point, things like OcWorldGenerator, etc, should already all be initialized, and so
 		//a legit OCConfig file should be loaded.
 		yield return new UnityEngine.WaitForFixedUpdate();
-
+		
+		//a good place to help us debug connection/initialization errors
 		//yield return new UnityEngine.WaitForSeconds(20.0f);
 
-		Debug.Log("Yielding on FixedUpdate()");
 
 		//INITIALIZE!
 		//-----------------------------------
@@ -383,7 +382,7 @@ namespace OpenCog.Interfaces.Game
 	public void Start()
 	{
 		
-		Debug.Log("StartingCoroutine(RunTests())");
+		Debug.Log ("Running Unit Tests");
 
 		//RunTests must trickle up a chain of yield StartCoroutine(Function(x))'s up to something
 		//with yieldInstructions like yield return new UnityEngine.WaitForSeconds(3f); or a simple 

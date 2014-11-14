@@ -180,12 +180,13 @@ public class iTweenEventDataEditor : Editor {
 		foreach(var pair in properties) {
 			var key = pair.Key;
 			
-			GUILayout.BeginHorizontal();
+			GUILayout.BeginHorizontal(); //HORT 1
 			
-			if(EditorGUILayout.BeginToggleGroup(key, propertiesEnabled[key])) {
+			if(EditorGUILayout.BeginToggleGroup(key, propertiesEnabled[key])) 
+			{
 				propertiesEnabled[key] = true;
 				
-				GUILayout.BeginVertical();
+				GUILayout.BeginVertical(); //VERT1
 			
 				if(typeof(string) == pair.Value) {
 					values[key] = EditorGUILayout.TextField(values.ContainsKey(key) ? (string)values[key] : "");
@@ -197,11 +198,11 @@ public class iTweenEventDataEditor : Editor {
 					values[key] = EditorGUILayout.IntField(values.ContainsKey(key) ? (int)values[key] : 0);
 				}
 				else if(typeof(bool) == pair.Value) {
-					GUILayout.BeginHorizontal();
+					GUILayout.BeginHorizontal(); //HORT 2
 					var currentValueString = (values.ContainsKey(key) ? (bool)values[key] : false).ToString();
 					currentValueString = currentValueString.Substring(0, 1).ToUpper() + currentValueString.Substring(1);					
 					var index = EditorGUILayout.Popup(trueFalseOptions.IndexOf(currentValueString), trueFalseOptions.ToArray());
-					GUILayout.EndHorizontal();
+					GUILayout.EndHorizontal();  //HORT2
 					values[key] = bool.Parse(trueFalseOptions[index]);
 				}
 				else if(typeof(GameObject) == pair.Value) {
