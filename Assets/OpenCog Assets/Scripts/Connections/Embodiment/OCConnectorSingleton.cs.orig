@@ -551,7 +551,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			if(timeout == 0)
 			{
-				OCLogger.Error("Breaking");
+				Debug.LogError("Breaking");
 				yield break;
 			}
 	
@@ -568,7 +568,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			if(!isSpawnerAlive)
 			{
-				OCLogger.Error("Spawner is not available, OAC can not be launched.");
+				Debug.LogError("Spawner is not available, OAC can not be launched.");
 				yield break;
 			}
 	
@@ -600,7 +600,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		if(message.Type == OCMessage.MessageType.FEEDBACK)
 		{
 			// e.g. we can append the information in the console.
-			OCLogger.Error("Feedback " + message.ToString());
+			Debug.LogError("Feedback " + message.ToString());
 		} else
 		if(message.ToString().StartsWith(SUCCESS_LOAD))
 		{
@@ -1319,7 +1319,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //				else if (targetType == "OCObject") // it's an object
 //					actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 //				else
-//					OCLogger.Error("Error target type: " + targetType + " in action: " + action.actionName);
+//					Debug.LogError("Error target type: " + targetType + " in action: " + action.actionName);
 //			}
 							
 			actionElement.SetAttribute("available", available ? "true" : "false");
@@ -1603,7 +1603,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			document.Load(new System.IO.StringReader(xmlText));
 		} catch(System.Exception e)
 		{
-			OCLogger.Error(e.ToString());
+			Debug.LogError(e.ToString());
 		}
 		ParseDOMDocument(document);
 	}
@@ -2111,7 +2111,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			System.Threading.Thread.Sleep(500);
 		} catch(System.Threading.ThreadInterruptedException e)
 		{
-			OCLogger.Error("Error putting NetworkElement main thread to sleep. " +
+			Debug.LogError("Error putting NetworkElement main thread to sleep. " +
 				e.Message);
 		}
 	}

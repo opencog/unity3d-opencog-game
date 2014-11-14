@@ -105,7 +105,7 @@ namespace OpenCog.Entities
 				//Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
 				//
 				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
-				UnityEngine.Debug.Log ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
+				//UnityEngine.Debug.Log ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
 				//Debug.Log ("connector is" + (connector == null ? " null " : " not null"));
 				
 				
@@ -134,7 +134,8 @@ namespace OpenCog.Entities
 				{
 					
 					// OAC is not loaded normally, destroy the avatar instance.
-					Debug.LogError ("LoadMethods.AtRunTime is reporting !connector.Initialize. Cannot connect to the OAC, avatar loading failed.");
+					Debug.LogError ("Could not connect to Embodiment");
+					OCLogger.Fine ("LoadMethods.AtRunTime is reporting !connector.Initialize. Cannot connect to the OAC, avatar loading failed.");
 					connector.SaveAndExit ();
 					Destroy (agentClone);
 

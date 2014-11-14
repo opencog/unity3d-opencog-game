@@ -27,7 +27,7 @@ public class OCWorldGenerator : MonoBehaviour {
 	public string MapName;
 	
 	void Awake() {
-		UnityEngine.Debug.Log ("OCWorldGenerator::Awake!");
+		OCLogger.Fine ("OCWorldGenerator::Awake!");
 		map = GetComponent<OpenCog.Map.OCMap>();
 		//map = OCMap.Instance;
 

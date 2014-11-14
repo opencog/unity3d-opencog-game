@@ -16,7 +16,7 @@
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #region Usings, Namespaces, and Pragmas
-
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -156,7 +156,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		catch(SocketException se)
 		{
 			UnityEngine.Debug.Log ("Whoops, something went wrong making a TCPListener: " + se.Message);
-			//OCLogger.Error(se.Message);
+			//Debug.LogError(se.Message);
 			yield break;
 		}
 		
@@ -224,7 +224,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 //				}
 //				catch( SocketException se )
 //				{
-//					//OCLogger.Error(se.Message);
+//					//Debug.LogError(se.Message);
 //						UnityEngine.Debug.Log (se.Message);
 //				}
 			}
@@ -269,7 +269,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 			}
 			catch(SocketException se)
 			{
-				OCLogger.Error(se.Message);
+				Debug.LogError(se.Message);
 			}		
 		}
 	}

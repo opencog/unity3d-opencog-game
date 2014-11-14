@@ -16,7 +16,7 @@
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #region Usings, Namespaces, and Pragmas
-
+using UnityEngine;
 using System.Collections;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
@@ -88,7 +88,7 @@ public class OCPortManager
 		
 		if (port >= 65535) // No ports are available
 		{
-			OCLogger.Error("No more ports available between " + MIN_PORT_NUMBER + " and " + port + ".");
+			Debug.LogError("No more ports available between " + MIN_PORT_NUMBER + " and " + port + ".");
 			return -1;
 		}
 		

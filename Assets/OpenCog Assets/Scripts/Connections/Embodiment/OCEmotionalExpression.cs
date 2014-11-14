@@ -15,8 +15,9 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#region Usings, Namespaces, and Pragmas
 
+#region Usings, Namespaces, and Pragmas
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using OpenCog.Attributes;
@@ -95,7 +96,7 @@ public class OCEmotionalExpression : OCMonoBehaviour
 		_face = transform.Find("robotG/mainG/head_GEO");
 		if(!_face)
 		{
-			OCLogger.Error("Face of the robot is not found");
+			Debug.LogError("Face of the robot is not found");
 		}
 	}
 

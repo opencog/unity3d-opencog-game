@@ -425,7 +425,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public bool Init(string agentName, string agentTraits, string agentType, string masterId, string masterName)
 	{
-		UnityEngine.Debug.Log("OCConnectorSingletong::Init(tons of parameters)");
+		OCLogger.Fine("OCConnectorSingleton::Init() has been called");
 		// Initialize basic attributes.
 		_baseID = agentName;//gameObject.GetInstanceID().ToString();
 		_ID = "AVATAR_" + _baseID;
@@ -463,8 +463,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		_feelingValueMap = new Dictionary<string, float>();
 		_demandValueMap = new Dictionary<string, float>();
-		UnityEngine.Debug.Log("_demandValueMap instantiated...");
-		OCLogger.Debugging("_demandValueMap instantiated...");
 		_perceptedAgents = new Dictionary<int, string>();
 
 		if(Map != null)
@@ -514,7 +512,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_globalFloorHeight = 0;
 		}
 		
-		UnityEngine.Debug.Log("OpenCog will receive a world with globalStartPosition [" + _globalStartPositionX + ", " + _globalStartPositionY + ", " + _globalStartPositionZ + "] and blockCounts [" + _blockCountX + ", " + _blockCountY + ", " + _blockCountZ + "].");
+		UnityEngine.Debug.Log("OCConnectorSingleton reports: OpenCog will receive a world with globalStartPosition [" + _globalStartPositionX + ", " + _globalStartPositionY + ", " + _globalStartPositionZ + "] and blockCounts [" + _blockCountX + ", " + _blockCountY + ", " + _blockCountZ + "].");
     
 		// Get action scheduler component.
 		// TODO: old classes here. Lake needs to fix this.
@@ -534,7 +532,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	public IEnumerator ConnectOAC()
 	{
-		Debug.Log("In OCCOnnectorSingleton::ConnectOAC...");
+		Debug.Log("Attempting to connect OAC...");
 		if(_firstRun)
 		{
 			_firstRun = false;
@@ -549,8 +547,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			if(timeout <= 0)
 			{
-				OCLogger.Error("Connection attempt timed out.");
+				Debug.LogError("Connection attempt timed out.");
 				yield break;
+			}
+			else
+			{
+				Debug.Log("Connection established.");
 			}
 	
 			// Second step, check if spawner is available to spawn an OAC instance.
@@ -567,8 +569,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			if(timeout <= 0)
 			{
-				OCLogger.Error("Spawner is not available, OAC can not be launched.");
+				Debug.LogError("Spawner is not available, OAC can not be launched.");
 				yield break;
+			}
+			else
+			{
+				Debug.Log ("Spawner obtained, OAC can be launched.");
 			}
 	
 			// Finally, load the OAC by sending "load agent" command to spawner.
@@ -604,7 +610,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		if(message.Type == OCMessage.MessageType.FEEDBACK)
 		{
 			// e.g. we can append the information in the console.
-			OCLogger.Error("Feedback " + message.ToString());
+			Debug.LogError("Feedback " + message.ToString());
 		} else
 		if(message.ToString().StartsWith(SUCCESS_LOAD))
 		{
@@ -1313,7 +1319,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //				else if (targetType == "OCObject") // it's an object
 //					actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 //				else
-//					OCLogger.Error("Error target type: " + targetType + " in action: " + action.actionName);
+//					Debug.LogError("Error target type: " + targetType + " in action: " + action.actionName);
 //			}
 							
 			actionElement.SetAttribute("available", available ? "true" : "false");
@@ -1597,7 +1603,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			document.Load(new System.IO.StringReader(xmlText));
 		} catch(System.Exception e)
 		{
-			OCLogger.Error(e.ToString());
+			Debug.LogError(e.ToString());
 		}
 		ParseDOMDocument(document);
 	}
@@ -2105,7 +2111,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			System.Threading.Thread.Sleep(500);
 		} catch(System.Threading.ThreadInterruptedException e)
 		{
-			OCLogger.Error("Error putting NetworkElement main thread to sleep. " +
+			Debug.LogError("Error putting NetworkElement main thread to sleep. " +
 				e.Message);
 		}
 	}

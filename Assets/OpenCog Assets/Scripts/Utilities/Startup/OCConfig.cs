@@ -231,7 +231,7 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 	public void LoadFromCommandLine()
 	{
 		string[] args = System.Environment.GetCommandLineArgs();
-		Debug.Log("GetCommandLineArgs: {0}" +  String.Join(", ", args));
+		OCLogger.Fine("GetCommandLineArgs: {0}" +  String.Join(", ", args));
 		
 		foreach(string arg in args)
 		{

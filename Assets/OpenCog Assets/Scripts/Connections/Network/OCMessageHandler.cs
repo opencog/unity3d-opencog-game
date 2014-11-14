@@ -15,8 +15,9 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#region Usings, Namespaces, and Pragmas
 
+#region Usings, Namespaces, and Pragmas
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -121,7 +122,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 ////		yield return null;
 //	}
 		
-	public IEnumerator UpdateMessages(System.Net.Sockets.Socket workSocket)
+	/*public IEnumerator UpdateMessages(System.Net.Sockets.Socket workSocket)
 	{
 		UnityEngine.Debug.Log ("OCMessageHandler::UpdateMessages");
 		
@@ -137,7 +138,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		catch( IOException ioe )
 		{
 			workSocket.Close();
-			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			Debug.LogError("An I/O error occured.  [" + ioe.Message + "].");
 		}
 			
 		bool endInput = false;
@@ -153,7 +154,8 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 					
 					if(line != null)
 					{
-						string answer = Parse(line);
+						//string answer = Parse(line);
+						Parse (line);
 							
 						//UnityEngine.Debug.Log ("Just parsed '" + line + "'");
 					}
@@ -163,9 +165,9 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 							
 						endInput = true;
 							
-	//					UnityEngine.Debug.Log ("Setting OCNetworkElement.IsHandling to false...");
-	//						
-	//					OCNetworkElement.Instance.IsHandlingMessages = false;
+		//					UnityEngine.Debug.Log ("Setting OCNetworkElement.IsHandling to false...");
+		//						
+		//					OCNetworkElement.Instance.IsHandlingMessages = false;
 					}
 				}
 				catch( IOException ioe )
@@ -199,12 +201,13 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		catch( IOException ioe )
 		{
 			UnityEngine.Debug.Log ("Something went wrong: " + ioe.Message);
-			//OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			//Debug.LogError("An I/O error occured.  [" + ioe.Message + "].");
 			endInput = true;
 		}
-			
+	
 		yield return null;
 	}
+	*/
 		
 	public void UpdateMessagesSync(System.Net.Sockets.Socket workSocket)
 	{
@@ -222,7 +225,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		catch( IOException ioe )
 		{
 			workSocket.Close();
-			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			Debug.LogError("An I/O error occured.  [" + ioe.Message + "].");
 		}
 			
 		bool endInput = false;
@@ -261,7 +264,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		catch( IOException ioe )
 		{
 			UnityEngine.Debug.Log ("Something went wrong: " + ioe.Message);
-			//OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			//Debug.LogError("An I/O error occured.  [" + ioe.Message + "].");
 			endInput = true;
 		}
 	}
@@ -385,7 +388,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			                                  _message.ToString());
 			if( message == null )
 			{
-				OCLogger.Error("Could not factory message from the following string: " +
+				Debug.LogError("Could not factory message from the following string: " +
 				               _message.ToString());
 			}
 			if(_useMessageBuffer)
@@ -417,7 +420,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			}
 			else
 			{
-				OCLogger.Error("onLine: Unexepcted command [" +
+				Debug.LogError("onLine: Unexepcted command [" +
 				               command + "]. Discarding line [" +
 				               inputLine + "]");	
 			}
@@ -542,7 +545,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		}
 		else
 		{
-			OCLogger.Error("onLine: Unexpected command [" + command + "]. Discarding line [" + inputLine + "]");
+			Debug.LogError("onLine: Unexpected command [" + command + "]. Discarding line [" + inputLine + "]");
 			answer = OCNetworkElement.FAILED_MESSAGE;
 		} // end processing command.
 			
@@ -568,7 +571,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		}
 		else
 		{
-			OCLogger.Error("onLine: Unexpected dataline. Discarding line [" +
+			Debug.LogError("onLine: Unexpected dataline. Discarding line [" +
 			               inputLine + "]");
 			answer = OCNetworkElement.FAILED_MESSAGE;
 		}
@@ -620,7 +623,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		} 
 		else
 		{
-			OCLogger.Error("onLine: Invalid selector [" + selector
+			Debug.LogError("onLine: Invalid selector [" + selector
 			               + "]. Discarding line [" + inputLine + "].");
 			answer = OCNetworkElement.FAILED_MESSAGE;
 		} 

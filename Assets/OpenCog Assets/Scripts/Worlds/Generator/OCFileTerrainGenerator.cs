@@ -45,7 +45,7 @@ public OCFileTerrainGenerator(OpenCog.Map.OCMap map, string mapName)
 		
         UnityEngine.Object[] objects = Resources.LoadAll(mapName + "/level");
 		
-        Debug.Log("Objects Loaded: ");
+        //Debug.Log("Objects Loaded: ");
         foreach(UnityEngine.Object obj in objects)
         {
                 Debug.Log(obj.ToString());
@@ -62,7 +62,7 @@ public OCFileTerrainGenerator(OpenCog.Map.OCMap map, string mapName)
                 dataPath = Application.streamingAssetsPath;
         }
 		
-        Debug.Log(dataPath);
+        OCLogger.Fine("Data Path:" + dataPath);
 		
         _fullMapPath = System.IO.Path.Combine(dataPath, mapName);
 }
@@ -71,7 +71,7 @@ public void LoadLevel()
 {
         int verticalOffset = 85;
 		
-        Debug.Log("About to load level folder: " + _fullMapPath + ".");
+        //Debug.Log("Loading level at: " + _fullMapPath);
 		
         Substrate.AnvilWorld mcWorld = Substrate.AnvilWorld.Create(_fullMapPath);
 			

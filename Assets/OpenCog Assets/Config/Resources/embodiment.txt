@@ -12,7 +12,7 @@ GENERATE_TICK_MESSAGE = true
 #
 MY_ID = PROXY
 #MY_IP = 127.0.0.1
-My_IP = 10.0.25.62
+MY_IP = 10.0.25.62
 #MY_IP = 158.132.58.184
 MY_PORT = 16315
 
@@ -35,7 +35,7 @@ SPAWNER_ID = SPAWNER
 # NOTE: Using milliseconds as unit for UNREAD_MESSAGES_CHECK_INTERVAL parameter   
 UNREAD_MESSAGES_CHECK_INTERVAL  = 100
 UNREAD_MESSAGES_RETRIEVAL_LIMIT = -1
-MAX_MESSAGES_IN_BUFFER = 100
+#MAX_MESSAGES_IN_BUFFER = 100 ##Not currently known parameter
 
 #
 # Flag to control usage of ACK messages (OK, FAILED)
@@ -93,5 +93,5 @@ GOLD_STANDARD_FILENAME = GoldStandards.txt
 
 # This is the VisibilityMap tile side
 # half of the LocalSpaceMap2D grid side (xDim | yDim) is a good value
-VISIBILITY_MAP_TILES_PER_SIDE = 64
+#VISIBILITY_MAP_TILES_PER_SIDE = 64
 

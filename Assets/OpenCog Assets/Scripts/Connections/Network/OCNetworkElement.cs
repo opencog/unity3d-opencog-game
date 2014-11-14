@@ -391,7 +391,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 	protected void InitializeNetworkElement(string id)
 	{
-		UnityEngine.Debug.Log ("In InitializeNetworkElement, my GUID is " + VerificationGuid);
+		//UnityEngine.Debug.Log ("In InitializeNetworkElement, my GUID is " + VerificationGuid);
 		_ID = id;
 		_port = OCPortManager.AllocatePort();
 
@@ -472,9 +472,9 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		{
 			_connectionState = ConnectionState.Connecting;
 				
-			UnityEngine.Debug.Log ("_connectionState == Disconnected, connecting...");	
+			//UnityEngine.Debug.Log ("_connectionState == Disconnected, connecting...");	
 			
-			UnityEngine.Debug.Log ("NetworkElement.Connect called at " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
+			UnityEngine.Debug.Log ("Trying to Connect, current time is " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
 			
 			Socket asyncSocket = new 
 				Socket
@@ -529,12 +529,12 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		}
 		else if (_connectionState == ConnectionState.Connecting)
 		{
-			UnityEngine.Debug.Log ("_connectionState == Connecting, not doing anything...");	
+			OCLogger.Fine ("_connectionState == Connecting, not doing anything...");	
 			
 		}
 		else if (_connectionState == ConnectionState.Connected)
 		{
-			UnityEngine.Debug.Log ("_connectionState == Connected, are you a mental?");
+			OCLogger.Fine ("_connectionState == Connected, are you a mental?");
 		}
 	}
 
