@@ -235,7 +235,7 @@ public void LoadLevel()
                                                                                                 GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
                                                                                                 if(hearthPrefab == null)
                                                                                                 {
-                                                                                                        UnityEngine.Debug.Log("OCBuilder::Update, hearthPrefab == null");
+																									UnityEngine.Debug.LogWarning(OCLogSymbol.WARN +"OCBuilder::Update, hearthPrefab == null");
                                                                                                 } else
                                                                                                 {
                                                                                                         GameObject hearth = (GameObject)GameObject.Instantiate(hearthPrefab);
