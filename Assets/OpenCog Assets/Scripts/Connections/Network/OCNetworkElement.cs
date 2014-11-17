@@ -15,6 +15,7 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
@@ -31,6 +32,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
+using OpenCog.Utilities.Logging;
 
 
 //The private field is assigned but its value is never used
@@ -201,7 +203,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	new public void Awake()
 	{
 		Initialize();
-		OCLogger.Fine(this.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.FINE + this.name + " is awake.");
 	}
 
 	/// <summary>
@@ -209,7 +211,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Start()
 	{
-		OCLogger.Fine(this.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is started.");
 	}
 
 	/// <summary>
@@ -233,7 +235,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		}
 		
 			
-		OCLogger.Fine(this.name + " is updated.");
+		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is updated.");
 	}
 		
 	/// <summary>
@@ -243,7 +245,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		Uninitialize();
 		Initialize();
-		OCLogger.Fine(this.name + " is reset.");
+		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is reset.");
 	}
 
 	/// <summary>
@@ -251,7 +253,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void OnEnable()
 	{
-		//OCLogger.Fine(this.name + " is enabled.");
+		//System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -259,7 +261,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine(this.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -268,7 +270,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine(this.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is about to be destroyed.");
 	}
 		
 	/// <summary>
@@ -277,11 +279,11 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="newMessagesNum">number of new arriving messages</param>
 	public void NotifyNewMessages(int newMessagesNum)
 	{
-		OCLogger.Debugging("Notified about new messages in Router.");
+		System.Console.WriteLine(OCLogSymbol.FINE +"Notified about new messages in Router.");
 		lock(_unreadMessagesLock)
 		{
 			_unreadMessagesCount += newMessagesNum;
-			OCLogger.Debugging("Unread messages [" + _unreadMessagesCount + "]");
+			System.Console.WriteLine(OCLogSymbol.FINE +"Unread messages [" + _unreadMessagesCount + "]");
 		}
 	}
 	
@@ -529,12 +531,12 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		}
 		else if (_connectionState == ConnectionState.Connecting)
 		{
-			OCLogger.Fine ("_connectionState == Connecting, not doing anything...");	
+			System.Console.WriteLine(OCLogSymbol.FINE +"_connectionState == Connecting, not doing anything...");	
 			
 		}
 		else if (_connectionState == ConnectionState.Connected)
 		{
-			OCLogger.Fine ("_connectionState == Connected, are you a mental?");
+			System.Console.WriteLine(OCLogSymbol.FINE +"_connectionState == Connected, are you a mental?");
 		}
 	}
 

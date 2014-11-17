@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 
 #region Usings, Namespaces, and Pragmas
@@ -313,7 +314,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			_networkElement.NotifyNewMessages(numberOfMessages);
 			answer = OCNetworkElement.OK_MESSAGE;
 
-              OCLogger.Debugging("onLine: Notified about [" +
+              System.Console.WriteLine(OCLogSymbol.FINE +"onLine: Notified about [" +
 			          numberOfMessages + "] messages in Router.");
 		}
 		else
@@ -335,7 +336,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			// Get unavalable element id.
 			string id = token.Current.ToString();
 
-            OCLogger.Debugging("onLine: Unavailable element message received for [" + id + "].");
+            System.Console.WriteLine(OCLogSymbol.FINE +"onLine: Unavailable element message received for [" + id + "].");
 			_networkElement.MarkAsUnavailable(id);
 			answer = OCNetworkElement.OK_MESSAGE;
 		}
@@ -357,7 +358,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		{	
 			string id = token.Current.ToString();
 
-              OCLogger.Debugging("onLine: Available element message received for [" + 
+              System.Console.WriteLine(OCLogSymbol.FINE +"onLine: Available element message received for [" + 
 			          id + "].");
 			_networkElement.MarkAsAvailable(id);
 			answer = OCNetworkElement.OK_MESSAGE;
@@ -379,7 +380,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		if(_state == READING_MESSAGES)
 		{
 			// A previous message was already read.
-			OCLogger.Debugging("onLine: From [" + _messageFrom +
+			System.Console.WriteLine(OCLogSymbol.FINE +"onLine: From [" + _messageFrom +
 			          "] to [" + _messageTo +
 			          "] Type [" + _messageType + "]");
 		

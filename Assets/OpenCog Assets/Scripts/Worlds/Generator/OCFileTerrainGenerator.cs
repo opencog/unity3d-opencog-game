@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using OpenCog.Map;
 using OpenCog;
 using OpenCog.BlockSet.BaseBlockSet;
+using OpenCog.Utilities.Logging;
 
 public class OCFileTerrainGenerator
 {
@@ -62,7 +63,7 @@ public OCFileTerrainGenerator(OpenCog.Map.OCMap map, string mapName)
                 dataPath = Application.streamingAssetsPath;
         }
 		
-        OCLogger.Fine("Data Path:" + dataPath);
+        System.Console.WriteLine(OCLogSymbol.FINE +"Data Path:" + dataPath);
 		
         _fullMapPath = System.IO.Path.Combine(dataPath, mapName);
 }

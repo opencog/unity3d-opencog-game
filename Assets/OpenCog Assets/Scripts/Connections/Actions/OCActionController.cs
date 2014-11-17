@@ -34,6 +34,7 @@ using System.Xml;
 using OpenCog.Utility;
 
 //using OpenCog.Aspects;
+using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -746,7 +747,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		{
 			_step = _ActionPlanQueue.First();
 			_ActionPlanQueue.RemoveFirst();
-			OCLogger.Fine("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+			System.Console.WriteLine(OCLogSymbol.FINE + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 		} else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
 			_PlanSucceeded = true;

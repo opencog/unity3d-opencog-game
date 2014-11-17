@@ -32,6 +32,9 @@ using OpenCog;
 /// <summary>
 /// The OpenCog OCConfig.
 /// </summary>
+using OpenCog.Utilities.Logging;
+
+
 #region Class Attributes
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
@@ -231,7 +234,7 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 	public void LoadFromCommandLine()
 	{
 		string[] args = System.Environment.GetCommandLineArgs();
-		OCLogger.Fine("GetCommandLineArgs: {0}" +  String.Join(", ", args));
+		System.Console.WriteLine(OCLogSymbol.FINE +"GetCommandLineArgs: {0}" +  String.Join(", ", args));
 		
 		foreach(string arg in args)
 		{

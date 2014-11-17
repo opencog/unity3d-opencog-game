@@ -60,7 +60,7 @@ public class OCTerrainGenerator {
 		for(int cy=0; true; cy++) {
 			Vector3i worldPos = OpenCog.Map.OCChunk.ToWorldPosition( new Vector3i(cx, cy, cz), Vector3i.zero );
 
-			//OCLogger.Debugging("worldPos = [" + worldPos.x + ", " + worldPos.y + ", " + worldPos.z + "]");
+			//System.Console.WriteLine(OCLogSymbol.FINE +"worldPos = [" + worldPos.x + ", " + worldPos.y + ", " + worldPos.z + "]");
 
 			terrainNoise3D.GenerateNoise(worldPos);
 			islandNoise3D.GenerateNoise(worldPos);

@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -101,7 +102,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 	public void Awake()
 	{
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
 	}
 
 	/// <summary>
@@ -112,7 +113,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 		_connector = GetComponent<OCConnectorSingleton>() as OCConnectorSingleton;
 		_feelingTextureMap = new Dictionary<string, UnityEngine.Texture2D>();
 
-		OCLogger.Fine(gameObject.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is started.");
 	}
 
 	/// <summary>
@@ -120,7 +121,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 	/// </summary>
 	public void Update()
 	{
-		OCLogger.Fine(gameObject.name + " is updated.");	
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is updated.");	
 	}
 		
 	/// <summary>
@@ -130,7 +131,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 	{
 		Uninitialize();
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
 	}
 
 	/// <summary>
@@ -138,7 +139,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 	/// </summary>
 	public void OnEnable()
 	{
-		OCLogger.Fine(gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -146,7 +147,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine(gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -155,7 +156,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
 	}
 
 	public void ShowPanel()

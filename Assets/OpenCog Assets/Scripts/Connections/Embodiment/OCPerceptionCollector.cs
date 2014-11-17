@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
@@ -123,7 +124,7 @@ namespace OpenCog.Embodiment
 	new public void Awake()
 	{
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
 	}
 	
 	/// <summary>
@@ -190,7 +191,7 @@ namespace OpenCog.Embodiment
 			_timer = 0.0f;
 		}
 				
-		OCLogger.Fine(gameObject.name + " is updated.");	
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is updated.");	
 	}
 			
 	/// <summary>
@@ -200,7 +201,7 @@ namespace OpenCog.Embodiment
 	{
 		Uninitialize();
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
 	}
 	
 	/// <summary>
@@ -208,7 +209,7 @@ namespace OpenCog.Embodiment
 	/// </summary>
 	public void OnEnable()
 	{
-		OCLogger.Fine(gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
 	}
 	
 	/// <summary>
@@ -216,7 +217,7 @@ namespace OpenCog.Embodiment
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine(gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
 	}
 	
 	/// <summary>
@@ -225,7 +226,7 @@ namespace OpenCog.Embodiment
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
 	}
 			
 	public OCObjectMapInfo GetOCObjectMapInfo(int objId)

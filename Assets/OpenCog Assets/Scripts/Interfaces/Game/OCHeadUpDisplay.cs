@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -149,7 +150,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	public void Awake()
 	{
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
 	}
 
 	/// <summary>
@@ -170,7 +171,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		
 		ConstructForceTexture();
 
-		OCLogger.Fine(gameObject.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is started.");
 	}
 
 	/// <summary>
@@ -180,7 +181,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	{
 		_reticuleTexture.pixelInset = new Rect(Screen.width / 2, Screen.height / 2, 16, 16);
 
-		OCLogger.Fine(gameObject.name + " is updated.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is updated.");
 	}
 		
 	/// <summary>
@@ -190,7 +191,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	{
 		Uninitialize();
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
 	}
 
 	/// <summary>
@@ -198,7 +199,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	/// </summary>
 	public void OnEnable()
 	{
-		OCLogger.Fine(gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -206,7 +207,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine(gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -215,7 +216,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
 	}
 
 //	public IEnumerator gettingForceFromHud(OpenCog.Embodiment.OCSocialInteraction currentSocialInteraction)

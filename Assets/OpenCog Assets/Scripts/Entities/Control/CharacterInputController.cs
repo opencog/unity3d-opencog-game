@@ -55,7 +55,7 @@ using OpenCog;
 //		Vector3 bottom = transform.position;
 //		Vector3 top = bottom + Vector3.up*character.height;
 //		Vector3 pos = Vector3.Lerp(bottom, top, 0.2f);
-//		//OCLogger.Debugging("Testing IsInWater for coordinate [" + pos.x + ", " + pos.y + ", " + pos.z + "]");
+//		//System.Console.WriteLine(OCLogSymbol.FINE +"Testing IsInWater for coordinate [" + pos.x + ", " + pos.y + ", " + pos.z + "]");
 //
 //		if (map != null)
 //			return map.GetBlock( Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z) ).IsFluid();

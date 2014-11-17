@@ -1045,7 +1045,7 @@ public class OCAction : OCMonoBehaviour
 	private ActionStatus StartAction()
 	{
 		//float timeStart =	OCTime.TimeSinceLevelLoad;
-		//OCLogger.Debugging("Starting the " + FullName + " Action.");
+		//System.Console.WriteLine(OCLogSymbol.FINE +"Starting the " + FullName + " Action.");
 		if(_blockOnFail && _blockOnRunning)
 			_ActionController.RunningActions.Add(FullName);
 
@@ -1099,7 +1099,7 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus ContinueAction()
 	{
-		//OCLogger.Fine("Continuing the " + FullName + " Action.");
+		//System.Console.WriteLine(OCLogSymbol.FINE +"Continuing the " + FullName + " Action.");
 				
 //		if(!Descriptors.Contains("Idle"))
 //			Debug.LogWarning("Continuing Action: " + FullName);		
@@ -1113,7 +1113,7 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus EndAction()
 	{
-		//OCLogger.Debugging("Ending the " + FullName + " Action.");
+		//System.Console.WriteLine(OCLogSymbol.FINE +"Ending the " + FullName + " Action.");
 				
 		OCActionArgs args = null;
 				

@@ -14,7 +14,6 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
 using System.Collections.Generic;
@@ -22,6 +21,8 @@ using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using Serializable = System.SerializableAttribute;
+using UnityEngine;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -407,7 +408,7 @@ public class OCObjectMapInfo
 				_height = gameObject.collider.bounds.size.y;
 				_length = gameObject.collider.bounds.size.x;
 			} else {
-				OCLogger.Warn ("No collider for gameobject " + gameObject.name + ", assuming a point.");
+				Debug.LogWarning(OCLogSymbol.WARN +"No collider for gameobject " + gameObject.name + ", assuming a point.");
 
 				// Set default value of the size.
 				_width = 0.1f;

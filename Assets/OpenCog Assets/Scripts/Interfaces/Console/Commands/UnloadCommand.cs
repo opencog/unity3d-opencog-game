@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
@@ -77,7 +78,7 @@ public class UnloadCommand : Console.ConsoleCommand
 		public void Awake ()
 		{
 			Initialize ();
-			OCLogger.Fine (gameObject.name + " is awake.");
+			System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
 		}
 
 		/// <summary>
@@ -86,7 +87,7 @@ public class UnloadCommand : Console.ConsoleCommand
 		public new void Start ()
 		{
 			base.Start();
-			OCLogger.Fine (gameObject.name + " is started.");
+			System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is started.");
 		}
 
 		/// <summary>
@@ -94,7 +95,7 @@ public class UnloadCommand : Console.ConsoleCommand
 		/// </summary>
 		public void Update ()
 		{
-			OCLogger.Fine (gameObject.name + " is updated.");	
+			System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is updated.");	
 		}
 		
 		/// <summary>
@@ -104,7 +105,7 @@ public class UnloadCommand : Console.ConsoleCommand
 		{
 			Uninitialize ();
 			Initialize ();
-			OCLogger.Fine (gameObject.name + " is reset.");	
+			System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
 		}
 
 		/// <summary>
@@ -112,7 +113,7 @@ public class UnloadCommand : Console.ConsoleCommand
 		/// </summary>
 		public void OnEnable ()
 		{
-			OCLogger.Fine (gameObject.name + " is enabled.");
+			System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
 		}
 
 		/// <summary>
@@ -120,7 +121,7 @@ public class UnloadCommand : Console.ConsoleCommand
 		/// </summary>
 		public void OnDisable ()
 		{
-			OCLogger.Fine (gameObject.name + " is disabled.");
+			System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
 		}
 
 		/// <summary>
@@ -129,7 +130,7 @@ public class UnloadCommand : Console.ConsoleCommand
 		public void OnDestroy ()
 		{
 			Uninitialize ();
-			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
+			System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
 		}
 		
 		 public override string Run(ArrayList arguments) {

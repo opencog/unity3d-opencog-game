@@ -8,6 +8,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 
 
@@ -135,7 +136,7 @@ namespace OpenCog.Entities
 					
 					// OAC is not loaded normally, destroy the avatar instance.
 					Debug.LogError ("Could not connect to Embodiment");
-					OCLogger.Fine ("LoadMethods.AtRunTime is reporting !connector.Initialize. Cannot connect to the OAC, avatar loading failed.");
+					System.Console.WriteLine(OCLogSymbol.FINE + "LoadMethods.AtRunTime is reporting !connector.Initialize. Cannot connect to the OAC, avatar loading failed.");
 					connector.SaveAndExit ();
 					Destroy (agentClone);
 

@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -132,7 +133,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	new public void Awake()
 	{
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
 	}
 
 	/// <summary>
@@ -188,7 +189,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		_inputHistory.AddFirst("/list Avatar");
 		_inputHistory.AddFirst("/load AGI_Robot");
 			
-		OCLogger.Fine(gameObject.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is started.");
 	}
 
 	/// <summary>
@@ -206,7 +207,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	{
 		Uninitialize();
 		Initialize();
-		OCLogger.Fine(gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
 	}
 
 	/// <summary>
@@ -214,7 +215,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	public void OnEnable()
 	{
-		OCLogger.Fine(gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -222,7 +223,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	public void OnDisable()
 	{
-		OCLogger.Fine(gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -231,7 +232,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	public void OnDestroy()
 	{
 		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
 	}
 		
 	public bool IsActive()

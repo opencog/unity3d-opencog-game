@@ -7,6 +7,7 @@ using System.Threading;
 using UnityEngine;
 using OpenCog.BlockSet.BaseBlockSet;
 using OpenCog.Map;
+using OpenCog.Utilities.Logging;
 
 #pragma warning disable 0414
 
@@ -27,7 +28,7 @@ public class OCWorldGenerator : MonoBehaviour {
 	public string MapName;
 	
 	void Awake() {
-		OCLogger.Fine ("OCWorldGenerator::Awake!");
+		System.Console.WriteLine(OCLogSymbol.FINE +"OCWorldGenerator::Awake!");
 		map = GetComponent<OpenCog.Map.OCMap>();
 		//map = OCMap.Instance;
 
@@ -119,7 +120,7 @@ public class OCWorldGenerator : MonoBehaviour {
 	private IEnumerator GenerateColumn(int cx, int cz) {
 		if (MapName == string.Empty)
 		{
-			//OCLogger.Debugging("Let's make a column in [" + cx + ", " + cz + "]!");
+			//System.Console.WriteLine(OCLogSymbol.FINE +"Let's make a column in [" + cx + ", " + cz + "]!");
 			yield return StartCoroutine( terrainGenerator.Generate(cx, cz) );
 			yield return null;
 			

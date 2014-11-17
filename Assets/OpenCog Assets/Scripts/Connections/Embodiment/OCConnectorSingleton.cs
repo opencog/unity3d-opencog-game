@@ -15,6 +15,7 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 #region Usings, Namespaces, and Pragmas
 
 using System.Collections;
@@ -35,6 +36,7 @@ using Serializable = System.SerializableAttribute;
 using ScriptableObject = UnityEngine.ScriptableObject;
 using OCID = System.Guid;
 using UnityEngine;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -402,7 +404,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		OCLogger.Debugging("sending block structure signal: \n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.FINE +"sending block structure signal: \n" + BeautifyXmlText(doc));
         
 		lock(_messageSendingLock)
 		{
@@ -425,7 +427,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public bool Init(string agentName, string agentTraits, string agentType, string masterId, string masterName)
 	{
-		OCLogger.Fine("OCConnectorSingleton::Init() has been called");
+		System.Console.WriteLine(OCLogSymbol.FINE +"OCConnectorSingleton::Init() has been called");
 		// Initialize basic attributes.
 		_baseID = agentName;//gameObject.GetInstanceID().ToString();
 		_ID = "AVATAR_" + _baseID;
@@ -908,7 +910,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = new OCMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
-		OCLogger.Warn("sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
+		Debug.LogWarning(OCLogSymbol.WARN +"sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
 
 		lock(_messageSendingLock)
 		{
@@ -975,7 +977,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 	   	
-		OCLogger.Debugging("sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.FINE +"sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
 	   	
 		lock(_messagesToSend)
 		{
@@ -1039,7 +1041,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		OCLogger.Debugging("sending move action result: \n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.FINE +"sending move action result: \n" + BeautifyXmlText(doc));
         
 		lock(_messageSendingLock)
 		{
@@ -1110,13 +1112,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		else
 		{
 			// we can only process the type define in ActionParamType
-			OCLogger.Warn("Unexcepted type: " + valueType + " in OCConnector::handleObjectStateChange!");
+			Debug.LogWarning(OCLogSymbol.WARN +"Unexcepted type: " + valueType + " in OCConnector::handleObjectStateChange!");
 			return;
 		}
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
-		OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.FINE +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
 		lock(_messageSendingLock)
 		{
@@ -1250,12 +1252,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		else
 		{
 			// we can only process the type define in ActionParamType
-			OCLogger.Warn("Unexcepted type: " + valueType + " in OCConnector::handleObjectStateChange!");
+			Debug.LogWarning(OCLogSymbol.WARN +"Unexcepted type: " + valueType + " in OCConnector::handleObjectStateChange!");
 		}
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
-		OCLogger.Debugging("sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.FINE +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
 		lock(_messageSendingLock)
 		{
@@ -1373,7 +1375,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			// First <map-info> message should contain information about the OCAvatar itself
 			// If it is not there, skip this.
-			OCLogger.Warn("Skipping first map-info message because it " +
+			Debug.LogWarning(OCLogSymbol.WARN +"Skipping first map-info message because it " +
 				"does not contain info about the avatar itself!");
 			return;
 		}
@@ -1496,7 +1498,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		OCLogger.Debugging("sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.FINE +"sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
         
 		lock(_messagesToSend)
 		{
@@ -1528,11 +1530,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		// a server
 		if(!_isInitialized)
 		{
-			OCLogger.Warn("Avatar[" + _ID + "]: Received '" + text +
+			Debug.LogWarning(OCLogSymbol.WARN +"Avatar[" + _ID + "]: Received '" + text +
 				"' from player but I am not connected to an OAC.");
 			return;
 		}
-		OCLogger.Debugging("Avatar[" + _ID + "]: Received '" + text + "' from player.");
+		System.Console.WriteLine(OCLogSymbol.FINE +"Avatar[" + _ID + "]: Received '" + text + "' from player.");
 
 		// Avoid creating messages if the destination (avatar brain) isn't available 
 		if(!IsElementAvailable(_brainID))
@@ -1623,7 +1625,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// group all demands to be updated only once
 			_demandValueMap[demand] = value;
 
-			OCLogger.Debugging("Avatar[" + _ID + "] -> parsePsiDemandElement: Demand '" + demand + "' value '" + value + "'.");
+			System.Console.WriteLine(OCLogSymbol.FINE +"Avatar[" + _ID + "] -> parsePsiDemandElement: Demand '" + demand + "' value '" + value + "'.");
 		}
 	}
 
@@ -1643,7 +1645,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// group all feelings to be updates only once
 			_feelingValueMap[feeling] = value;
 
-			//OCLogger.Debugging("Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
+			//System.Console.WriteLine(OCLogSymbol.FINE +"Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
 		}
 
 		// Update feelings of this avatar.
@@ -1793,14 +1795,14 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		if(avatarId != _brainID)
 		{
 			// Usually this would not happen.
-			OCLogger.Warn("Avatar[" + _ID + "]: This action plan is not for me.");
+			Debug.LogWarning(OCLogSymbol.WARN +"Avatar[" + _ID + "]: This action plan is not for me.");
 			return;
 		}
 		
 		// Cancel current action and clear old action plan in the list.
 		if(_actionsList.Count > 0)
 		{
-			OCLogger.Warn("Stop all current actions");
+			Debug.LogWarning(OCLogSymbol.WARN +"Stop all current actions");
 			CancelAvatarActions();
 		}
 		
@@ -2102,7 +2104,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
                                       msgCmd.ToString());
 		if(!SendMessage(msg))
 		{
-			OCLogger.Warn("Could not send unload message to spawner.");
+			Debug.LogWarning(OCLogSymbol.WARN +"Could not send unload message to spawner.");
 		}
 
 		// Wait some time for the message to be sent.
@@ -2158,7 +2160,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        
 	        
 			string xmlText = BeautifyXmlText(doc);
-			//OCLogger.Debugging("OCConnector - sendAvatarSignalsAndTick: " + xmlText);
+			//System.Console.WriteLine(OCLogSymbol.FINE +"OCConnector - sendAvatarSignalsAndTick: " + xmlText);
 	            
 			// Construct a string message.
 			OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);
