@@ -14,6 +14,7 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using OpenCog.Map;
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -320,7 +321,11 @@ namespace OpenCog.Interfaces.Game
 
 		if(!result)
 		{
-			Debug.Log("One or more of the Unit Tests Failed");
+			Debug.Log(OCLogSymbol.FAIL + "One or more of the Unit Tests Failed.");
+		}
+		else
+		{
+			Debug.Log(OCLogSymbol.PASS + "The " + numTests + " selected Unit Tests all Passed.");
 		}
 
 		this.hasConcluded = true;
@@ -347,12 +352,12 @@ namespace OpenCog.Interfaces.Game
 
 		if(didConnect == false)
 		{
-			Debug.Log("Testing the Embodiment, Failed");
+			Debug.Log(OCLogSymbol.FAIL + "OCLogSymbol.PASS + Testing the Embodiment, Failed");
 			results[(int)TestTypes.EMBODIMENT] = false;
 			result = false;
 		} else
 		{
-			Debug.Log("Testing the Embodiment, Succeeded");
+			Debug.Log(OCLogSymbol.PASS + "Testing the Embodiment, Succeeded");
 		}
 		yield break;
 		
@@ -382,7 +387,7 @@ namespace OpenCog.Interfaces.Game
 	public void Start()
 	{
 		
-		Debug.Log ("Running Unit Tests");
+		Debug.Log (OCLogSymbol.RUNNING + "Starting Unit Tests", this);
 
 		//RunTests must trickle up a chain of yield StartCoroutine(Function(x))'s up to something
 		//with yieldInstructions like yield return new UnityEngine.WaitForSeconds(3f); or a simple 

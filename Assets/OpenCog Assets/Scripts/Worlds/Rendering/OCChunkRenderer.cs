@@ -104,7 +104,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	public void Awake()
 	{
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is awake.");
 	}
 
 	/// <summary>
@@ -112,7 +112,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	/// </summary>
 	public void Start()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is started.");
 	}
 
 	/// <summary>
@@ -129,7 +129,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 			_lightDirty = false;
 		}
 
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is updated.");	
+		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is updated.");	
 	}
 		
 	/// <summary>
@@ -139,7 +139,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	{
 		Uninitialize();
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is reset.");	
 	}
 
 	/// <summary>
@@ -147,7 +147,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	/// </summary>
 	public void OnEnable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -155,7 +155,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	/// </summary>
 	public void OnDisable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -164,7 +164,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	public void OnDestroy()
 	{
 		Uninitialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is about to be destroyed.");
 	}
 
 	public static OCChunkRenderer CreateChunkRenderer(Vector3i pos, OpenCog.Map.OCMap map, OCChunk chunk) {

@@ -40,6 +40,8 @@ private Dictionary<int, int> mcToOCBlockDictionary = new Dictionary<int, int>()
 	
 public OCFileTerrainGenerator(OpenCog.Map.OCMap map, string mapName)
 {
+		System.Console.WriteLine(OCLogSymbol.CREATE + this.GetType().ToString ());
+
         map.MapName = mapName;
 
         _map = map;
@@ -49,7 +51,7 @@ public OCFileTerrainGenerator(OpenCog.Map.OCMap map, string mapName)
         //Debug.Log("Objects Loaded: ");
         foreach(UnityEngine.Object obj in objects)
         {
-                Debug.Log(obj.ToString());
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + obj.ToString() + "was Loaded.");
         }
 		
         string dataPath;
@@ -63,7 +65,7 @@ public OCFileTerrainGenerator(OpenCog.Map.OCMap map, string mapName)
                 dataPath = Application.streamingAssetsPath;
         }
 		
-        System.Console.WriteLine(OCLogSymbol.FINE +"Data Path:" + dataPath);
+        System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Data Path:" + dataPath);
 		
         _fullMapPath = System.IO.Path.Combine(dataPath, mapName);
 }
@@ -217,7 +219,7 @@ public void LoadLevel()
                                                                                                 GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
                                                                                                 if(batteryPrefab == null)
                                                                                                 {
-                                                                                                        UnityEngine.Debug.Log("OCBuilder::Update, batteryPrefab == null");
+                                                                                                        UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "OCBuilder::Update, batteryPrefab == null");
                                                                                                 } else
                                                                                                 {
                                                                                                         GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
@@ -279,10 +281,10 @@ public void LoadLevel()
 		
         foreach(System.Collections.Generic.KeyValuePair<int, int> unmappedBlockData in unmappedBlockTypes)
         {
-                UnityEngine.Debug.Log("Unmapped BlockID '" + unmappedBlockData.Key + "' found " + unmappedBlockData.Value + " times.");	
+                UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "Unmapped BlockID '" + unmappedBlockData.Key + "' found " + unmappedBlockData.Value + " times.");	
         }
 		
-        Debug.Log("Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
+        Debug.Log(OCLogSymbol.CLEARED + "Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
 		
         _map.AddColliders();
 		

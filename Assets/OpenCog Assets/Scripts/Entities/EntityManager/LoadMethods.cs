@@ -54,7 +54,7 @@ namespace OpenCog.Entities
 				//THERE CAN ONLY BE ONE (and it must be created by the EntityManager)
 				if(_instance)
 				{
-					throw new OCException( "Two EntityManager.LoadMethods exist and this is forbidden.");
+					throw new OCException(OCLogSymbol.ERROR +  "Two EntityManager.LoadMethods exist and this is forbidden.");
 
 				}
 				
@@ -135,8 +135,8 @@ namespace OpenCog.Entities
 				{
 					
 					// OAC is not loaded normally, destroy the avatar instance.
-					Debug.LogError ("Could not connect to Embodiment");
-					System.Console.WriteLine(OCLogSymbol.FINE + "LoadMethods.AtRunTime is reporting !connector.Initialize. Cannot connect to the OAC, avatar loading failed.");
+					Debug.LogError (OCLogSymbol.ERROR + "Could not connect to Embodiment");
+					System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "LoadMethods.AtRunTime is reporting !connector.Initialize. Cannot connect to the OAC, avatar loading failed.");
 					connector.SaveAndExit ();
 					Destroy (agentClone);
 
@@ -145,7 +145,7 @@ namespace OpenCog.Entities
 				} 
 				else
 				{
-					Debug.Log ("LoadMethods.AtRunTime is reporting connector.Initialized");
+					Debug.Log (OCLogSymbol.CLEARED + "LoadMethods.AtRunTime is reporting connector.Initialized");
 					if(report != null)
 						report("true");
 				}

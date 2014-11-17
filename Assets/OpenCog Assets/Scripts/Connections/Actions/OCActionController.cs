@@ -747,7 +747,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		{
 			_step = _ActionPlanQueue.First();
 			_ActionPlanQueue.RemoveFirst();
-			System.Console.WriteLine(OCLogSymbol.FINE + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 		} else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
 			_PlanSucceeded = true;

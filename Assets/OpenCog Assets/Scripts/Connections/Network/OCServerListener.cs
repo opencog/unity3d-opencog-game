@@ -107,9 +107,9 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 	{
 //		//Initialize();
 //		if (_networkElement != null)
-//			System.Console.WriteLine(OCLogSymbol.FINE +"Server Listener for " + _networkElement.gameObject.name + " is enabled.");
+//			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Server Listener for " + _networkElement.gameObject.name + " is enabled.");
 //		else
-//			System.Console.WriteLine(OCLogSymbol.FINE +"Cannot emit OnEnable message with _networkElement.gameObject.name because _networkElement == null");
+//			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Cannot emit OnEnable message with _networkElement.gameObject.name because _networkElement == null");
 	}
 		
 	/// <summary>
@@ -118,10 +118,10 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 	public void OnDisable()
 	{
 //		if (_networkElement != null)
-//			System.Console.WriteLine(OCLogSymbol.FINE +"Server Listener for " + _networkElement.gameObject.name + 
+//			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Server Listener for " + _networkElement.gameObject.name + 
 //				" is disabled.");
 //		else
-//			System.Console.WriteLine(OCLogSymbol.FINE +"Cannot emit OnDisable message with _networkElement.gameObject.name because _networkElement == null");	
+//			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Cannot emit OnDisable message with _networkElement.gameObject.name because _networkElement == null");	
 	}
 
 	/// <summary>
@@ -130,7 +130,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 	public void OnDestroy()
 	{
 //		Uninitialize();
-//		System.Console.WriteLine(OCLogSymbol.FINE +"Server Listener for " + _networkElement.gameObject.name + 
+//		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Server Listener for " + _networkElement.gameObject.name + 
 //			" is about to be destroyed.");
 	}
 		

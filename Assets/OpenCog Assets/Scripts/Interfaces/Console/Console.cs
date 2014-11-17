@@ -133,7 +133,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	new public void Awake()
 	{
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is awake.");
 	}
 
 	/// <summary>
@@ -189,7 +189,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		_inputHistory.AddFirst("/list Avatar");
 		_inputHistory.AddFirst("/load AGI_Robot");
 			
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is started.");
 	}
 
 	/// <summary>
@@ -207,7 +207,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	{
 		Uninitialize();
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is reset.");	
 	}
 
 	/// <summary>
@@ -215,7 +215,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	public void OnEnable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -223,7 +223,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	public void OnDisable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -232,7 +232,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	public void OnDestroy()
 	{
 		Uninitialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is about to be destroyed.");
 	}
 		
 	public bool IsActive()

@@ -124,7 +124,7 @@ namespace OpenCog.Embodiment
 	new public void Awake()
 	{
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is awake.");
 	}
 	
 	/// <summary>
@@ -136,7 +136,7 @@ namespace OpenCog.Embodiment
 
 		_floorHeight = _connector.getFloorHeight();
 			
-		UnityEngine.Debug.Log(gameObject.name + " is started.");
+		UnityEngine.Debug.Log(OCLogSymbol.CREATE + gameObject.name + " is started.");
 	}
 	
 	/// <summary>
@@ -191,7 +191,7 @@ namespace OpenCog.Embodiment
 			_timer = 0.0f;
 		}
 				
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is updated.");	
+		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is updated.");	
 	}
 			
 	/// <summary>
@@ -201,7 +201,7 @@ namespace OpenCog.Embodiment
 	{
 		Uninitialize();
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is reset.");	
 	}
 	
 	/// <summary>
@@ -209,7 +209,7 @@ namespace OpenCog.Embodiment
 	/// </summary>
 	public void OnEnable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is enabled.");
 	}
 	
 	/// <summary>
@@ -217,7 +217,7 @@ namespace OpenCog.Embodiment
 	/// </summary>
 	public void OnDisable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is disabled.");
 	}
 	
 	/// <summary>
@@ -226,7 +226,7 @@ namespace OpenCog.Embodiment
 	public void OnDestroy()
 	{
 		Uninitialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is about to be destroyed.");
 	}
 			
 	public OCObjectMapInfo GetOCObjectMapInfo(int objId)

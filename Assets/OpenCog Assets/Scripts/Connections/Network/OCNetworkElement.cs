@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using UnityEngine;
 
 
 #region Usings, Namespaces, and Pragmas
@@ -203,7 +204,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	new public void Awake()
 	{
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE + this.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + this.name + " is awake.");
 	}
 
 	/// <summary>
@@ -211,7 +212,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void Start()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +this.name + " is started.");
 	}
 
 	/// <summary>
@@ -235,7 +236,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		}
 		
 			
-		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is updated.");
+		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +this.name + " is updated.");
 	}
 		
 	/// <summary>
@@ -245,7 +246,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		Uninitialize();
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is reset.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +this.name + " is reset.");
 	}
 
 	/// <summary>
@@ -253,7 +254,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void OnEnable()
 	{
-		//System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is enabled.");
+		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +this.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -261,7 +262,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// </summary>
 	public void OnDisable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +this.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -270,7 +271,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	public void OnDestroy()
 	{
 		Uninitialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +this.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +this.name + " is about to be destroyed.");
 	}
 		
 	/// <summary>
@@ -279,11 +280,11 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="newMessagesNum">number of new arriving messages</param>
 	public void NotifyNewMessages(int newMessagesNum)
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +"Notified about new messages in Router.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Notified about new messages in Router.");
 		lock(_unreadMessagesLock)
 		{
 			_unreadMessagesCount += newMessagesNum;
-			System.Console.WriteLine(OCLogSymbol.FINE +"Unread messages [" + _unreadMessagesCount + "]");
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Unread messages [" + _unreadMessagesCount + "]");
 		}
 	}
 	
@@ -421,7 +422,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 //			}
 //		}
 
-		UnityEngine.Debug.Log ("IP:Port Address detected: " + _IP + ":" + _port);
+		UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "IP:Port Address detected: " + _IP + ":" + _port);
 
 		// routerIpString appears to only be set in the obsoleted OldNetworkElement class in the old project...
 		//_routerIP = IPAddress.Parse(this.routerIpString);
@@ -446,7 +447,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		//UnityEngine.Debug.Log ("StartCoroutine(_listener.Listen())");
 			
 		if (bool.Parse(OCConfig.Instance.get("GENERATE_TICK_MESSAGE")))
-			UnityEngine.Debug.Log ("Generation of tick messages is enabled.");
+				UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Generation of tick messages is enabled.");
 				
 		//StartCoroutine(_listener.Listen());
 		//StartCoroutine(RequestMessage(1));
@@ -476,7 +477,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				
 			//UnityEngine.Debug.Log ("_connectionState == Disconnected, connecting...");	
 			
-			UnityEngine.Debug.Log ("Trying to Connect, current time is " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
+				UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Trying to Connect, current time is " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
 			
 			Socket asyncSocket = new 
 				Socket
@@ -487,14 +488,14 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				
 			IPEndPoint ipe = new IPEndPoint(_routerIP, _routerPort);
 				
-			UnityEngine.Debug.Log("Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...");
+				UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "Start Connecting to router on IP " + _routerIP + ":" + _routerPort + "...");
 				
 			// I'd kinda like to display this in the console...so people can see how it's connecting.
 				
 			OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
 				
 			if (console == null)
-				UnityEngine.Debug.Log ("Nope, grabbing the console didn't work...");		
+				UnityEngine.Debug.LogWarning (OCLogSymbol.WARN + "Nope, grabbing the console didn't work...");		
 			else
 			{
 				//UnityEngine.Debug.Log ("Awesome grabbing the console worked...");		
@@ -522,7 +523,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				retryTimes--;
 				if(retryTimes == 0)
 				{
-					UnityEngine.Debug.LogWarning("Connection timed out.");
+					UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Connection timed out.");
 					yield break;
 				}
 					
@@ -531,20 +532,23 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		}
 		else if (_connectionState == ConnectionState.Connecting)
 		{
-			System.Console.WriteLine(OCLogSymbol.FINE +"_connectionState == Connecting, not doing anything...");	
+			System.Console.WriteLine(OCLogSymbol.CONNECTION +"_connectionState == Connecting, not doing anything...");	
 			
 		}
 		else if (_connectionState == ConnectionState.Connected)
 		{
-			System.Console.WriteLine(OCLogSymbol.FINE +"_connectionState == Connected, are you a mental?");
+			System.Console.WriteLine(OCLogSymbol.CONNECTION +"_connectionState == Connected, are you a mental?");
 		}
 	}
 
 	/// <summary>
-	/// Disconnect the network element from the router.
+	/// Disconnect the network element from the router. TODO: I want to describe a race condition whereby,
+	/// by having Disconnect print it is disconnecting, I slow down execution enough that Send() does not fire off
+	/// the error message that we disconnected midSend.
 	/// </summary>
 	private void Disconnect()
 	{
+		Debug.Log(OCLogSymbol.CONNECTION + "Disconnecting OCNetworkElement");
 		LogoutRouter();
 		if(_clientSocket != null)
 		{
@@ -567,18 +571,18 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			// Retrieve the socket from the state object.
 			_clientSocket = (Socket)ar.AsyncState;
 				
-			UnityEngine.Debug.Log ("Retrieved socket from the state object...");
+			System.Console.WriteLine(OCLogSymbol.CONNECTION + "Retrieved socket from the state object...");
 			// Complete the connection.
 				
 			_clientSocket.EndConnect(ar);
 				
-			UnityEngine.Debug.Log ("Connection complete...");
+			System.Console.WriteLine(OCLogSymbol.CONNECTION + "Connection complete...");
 
 			_isEstablished = true;
 				
 			_connectionState = ConnectionState.Connected;
 
-			UnityEngine.Debug.Log("Socket connected to router.");
+			UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "Socket connected to router.");
 				
 			// Can't write to the console here, it causes one of these:
 //			CompareBaseObjectsInternal  can only be called from the main thread.
@@ -606,7 +610,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		string command = "LOGIN " + _ID + WHITESPACE +
 						_IP.ToString() + WHITESPACE + _port +
                         NEWLINE;
-		UnityEngine.Debug.Log ("Starting router login process...sending command: " + command);
+		UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Starting router login process...sending command: " + command);
 			
 		Send(command);
 		
@@ -631,7 +635,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		
 		if(payload.Length == 0)
 		{
-			UnityEngine.Debug.LogError("Invalid empty command given.");
+			UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Invalid empty command given.");
 			return false;
 		}
 
@@ -657,7 +661,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		}
 		else
 		{
-			UnityEngine.Debug.LogError("Failed to send messsage.");
+			UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Failed to send messsage.");
 			return false;
 		}
 		
@@ -681,10 +685,29 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 		lock(_clientSocket)
 		{
+			//TODO:
+			//I am trying out ways to make sure 'LogError' doesn't run IF the game is shutting down.
+			//enabled didn't work. _isEstablished may be too much- but
+			//it DOES seem to work.
+
+			//TODO: I want to describe a race condition whereby, SOMETIMES
+			// by having Disconnect print it is disconnecting, I slowed down execution enough that Send() does not fire off
+			// the error message that we disconnected midSend.
+			//obviously this is not ideal at all, but I have documented it here. 
+			
+			if(!this.enabled || !this._isEstablished)
+			{
+				UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "OCNetworkElement is shutting down; not sending message.");
+				_isEstablished = false;
+				_clientSocket = null;
+				return false;
+			}
+
 			//UnityEngine.Debug.Log ("Are we even connected, we need to be connected to send something right...");
 			if(!_clientSocket.Connected)
 			{
-				UnityEngine.Debug.Log ("We're not connected OMG!");
+			
+				UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "We lost connection while sending!");
 				_isEstablished = false;
 				_clientSocket = null;
 				return false;
@@ -713,7 +736,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			}
 			catch(System.Exception e)
 			{
-				UnityEngine.Debug.Log ("Something went wrong in OCNetworkElement::Send: " + e.Message);
+				UnityEngine.Debug.LogError (OCLogSymbol.ERROR +"Something went wrong in OCNetworkElement::Send: " + e.Message);
 				return false;
 			}
 		}
@@ -776,7 +799,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				{
 					if(msg == null)
 					{
-						UnityEngine.Debug.Log("Null message to process.");
+						UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Null message to process.");
 					}
 
 	//				UnityEngine.Debug.Log("Handle message from [" + msg.SourceID + "]. Content: " + msg.ToString());
@@ -785,7 +808,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 					
 					if(mustExit)
 					{
-						UnityEngine.Debug.Log ("Must....EXIT.....");
+						UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "ProcessNextMessage forced Exit from OCNetworkElement.Pulse()");
 						break;
 					}
 				}
@@ -822,11 +845,11 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="id">Network element id</param>
 	public void MarkAsAvailable(string id)
 	{
-		UnityEngine.Debug.Log ("Marking element '" + id + "' as available.");
+		UnityEngine.Debug.Log (OCLogSymbol.CONNECTION +"Marking element '" + id + "' as available.");
 			
 		if(!IsElementAvailable(id))
 		{
-			UnityEngine.Debug.Log ("Removing element '" + id + "' from unavailable elements.");
+			UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Removing element '" + id + "' from unavailable elements.");
 			_unavailableElements.Remove(id);
 		}
 	}

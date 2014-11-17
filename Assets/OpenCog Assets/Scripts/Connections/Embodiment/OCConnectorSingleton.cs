@@ -404,7 +404,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		System.Console.WriteLine(OCLogSymbol.FINE +"sending block structure signal: \n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending block structure signal: \n" + BeautifyXmlText(doc));
         
 		lock(_messageSendingLock)
 		{
@@ -427,7 +427,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public bool Init(string agentName, string agentTraits, string agentType, string masterId, string masterName)
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +"OCConnectorSingleton::Init() has been called");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"OCConnectorSingleton::Init() has been called");
 		// Initialize basic attributes.
 		_baseID = agentName;//gameObject.GetInstanceID().ToString();
 		_ID = "AVATAR_" + _baseID;
@@ -514,7 +514,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_globalFloorHeight = 0;
 		}
 		
-		UnityEngine.Debug.Log("OCConnectorSingleton reports: OpenCog will receive a world with globalStartPosition [" + _globalStartPositionX + ", " + _globalStartPositionY + ", " + _globalStartPositionZ + "] and blockCounts [" + _blockCountX + ", " + _blockCountY + ", " + _blockCountZ + "].");
+		UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "OCConnectorSingleton reports: OpenCog will receive a world with globalStartPosition [" + _globalStartPositionX + ", " + _globalStartPositionY + ", " + _globalStartPositionZ + "] and blockCounts [" + _blockCountX + ", " + _blockCountY + ", " + _blockCountZ + "].");
     
 		// Get action scheduler component.
 		// TODO: old classes here. Lake needs to fix this.
@@ -534,7 +534,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	public IEnumerator ConnectOAC()
 	{
-		Debug.Log("Attempting to connect OAC...");
+		Debug.Log(OCLogSymbol.CONNECTION + "Attempting to connect OAC...");
 		if(_firstRun)
 		{
 			_firstRun = false;
@@ -549,11 +549,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			if(timeout <= 0)
 			{
-				Debug.LogError("Connection attempt timed out.");
+				Debug.LogError(OCLogSymbol.ERROR + "Connection attempt timed out.");
 				yield break;
 			} else
 			{
-				Debug.Log("Connection established.");
+				Debug.Log(OCLogSymbol.CLEARED + "Connection established.");
 			}
 	
 			// Second step, check if spawner is available to spawn an OAC instance.
@@ -565,7 +565,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					break;
 				}
 
-				OCLogger.Info("Waiting for spawner...");
+				Debug.Log(OCLogSymbol.CONNECTION + "Waiting for spawner...");
 				yield return new UnityEngine.WaitForSeconds(1f);
 				timeout--;
 
@@ -573,11 +573,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			if(timeout <= 0)
 			{
-				Debug.LogError("Spawner is not available, OAC can not be launched.");
+				Debug.LogError(OCLogSymbol.ERROR + "Spawner is not available, OAC can not be launched.");
 				yield break;
 			} else
 			{
-				Debug.Log("Spawner obtained, OAC can be launched.");
+				Debug.Log(OCLogSymbol.CLEARED + "Spawner obtained, OAC can be launched.");
 			}
 	
 			// Finally, load the OAC by sending "load agent" command to spawner.
@@ -977,7 +977,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 	   	
-		System.Console.WriteLine(OCLogSymbol.FINE +"sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
 	   	
 		lock(_messagesToSend)
 		{
@@ -1041,7 +1041,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		System.Console.WriteLine(OCLogSymbol.FINE +"sending move action result: \n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending move action result: \n" + BeautifyXmlText(doc));
         
 		lock(_messageSendingLock)
 		{
@@ -1118,7 +1118,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
-		System.Console.WriteLine(OCLogSymbol.FINE +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
 		lock(_messageSendingLock)
 		{
@@ -1257,7 +1257,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
-		System.Console.WriteLine(OCLogSymbol.FINE +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
 		lock(_messageSendingLock)
 		{
@@ -1498,7 +1498,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		System.Console.WriteLine(OCLogSymbol.FINE +"sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
         
 		lock(_messagesToSend)
 		{
@@ -1534,7 +1534,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 				"' from player but I am not connected to an OAC.");
 			return;
 		}
-		System.Console.WriteLine(OCLogSymbol.FINE +"Avatar[" + _ID + "]: Received '" + text + "' from player.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "]: Received '" + text + "' from player.");
 
 		// Avoid creating messages if the destination (avatar brain) isn't available 
 		if(!IsElementAvailable(_brainID))
@@ -1625,7 +1625,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// group all demands to be updated only once
 			_demandValueMap[demand] = value;
 
-			System.Console.WriteLine(OCLogSymbol.FINE +"Avatar[" + _ID + "] -> parsePsiDemandElement: Demand '" + demand + "' value '" + value + "'.");
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "] -> parsePsiDemandElement: Demand '" + demand + "' value '" + value + "'.");
 		}
 	}
 
@@ -1645,7 +1645,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			// group all feelings to be updates only once
 			_feelingValueMap[feeling] = value;
 
-			//System.Console.WriteLine(OCLogSymbol.FINE +"Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
+			//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
 		}
 
 		// Update feelings of this avatar.
@@ -2160,7 +2160,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        
 	        
 			string xmlText = BeautifyXmlText(doc);
-			//System.Console.WriteLine(OCLogSymbol.FINE +"OCConnector - sendAvatarSignalsAndTick: " + xmlText);
+			//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"OCConnector - sendAvatarSignalsAndTick: " + xmlText);
 	            
 			// Construct a string message.
 			OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);

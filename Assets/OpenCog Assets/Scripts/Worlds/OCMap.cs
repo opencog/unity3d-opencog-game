@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -336,7 +337,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			
 		} else
 		{
-			UnityEngine.Debug.Log("OCMap::SetBlockAndRecompute: block.IsEmpty = false -> inferring creation.");
+			UnityEngine.Debug.Log(OCLogSymbol.RUNNING +"OCMap.SetBlockAndRecomput(): Inferring creation because block.IsEmpty == false.");
 				
 			// Moved notify down...to AFTER the point where it is actually created...
 		}
@@ -346,7 +347,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
 			if(batteryPrefab == null)
 			{
-				UnityEngine.Debug.Log("OCBuilder::Update, batteryPrefab == null");
+				UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "OCBuilder.Update(), batteryPrefab == null");
 			} else
 			{
 				GameObject newBattery = (GameObject)GameObject.Instantiate(batteryPrefab);
@@ -367,7 +368,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
 			if(hearthPrefab == null)
 			{
-				UnityEngine.Debug.Log("OCBuilder::Update, hearthPrefab == null");
+				UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "OCBuilder::Update, hearthPrefab == null");
 			} else
 			{
 				GameObject newHearth = (GameObject)GameObject.Instantiate(hearthPrefab);
@@ -541,7 +542,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			}
 			break;
 		default:
-			Debug.Log("Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
+			Debug.LogError(OCLogSymbol.ERROR + "Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
 			break;
 		}
 		
@@ -573,7 +574,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		{
 			if(objects[i].gameObject.renderer)
 			{
-				Debug.Log("We found us a " + objects[i].gameObject.GetType().ToString());
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "We found us a " + objects[i].gameObject.GetType().ToString());
 				
 				MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
 				MeshCollider myCollider = objects[i].gameObject.AddComponent<MeshCollider>();
@@ -584,9 +585,9 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				
 				myCollider.enabled = true;
 				
-				Debug.Log("i: " + objects[i].name);
-				Debug.Log("Center: " + myCollider.bounds.center.ToString());
-				Debug.Log("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
+				System.Console.WriteLine("\ti: " + objects[i].name);
+				System.Console.WriteLine("\tCenter: " + myCollider.bounds.center.ToString());
+				System.Console.WriteLine("\tSize: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
 			}
 		}
 	}

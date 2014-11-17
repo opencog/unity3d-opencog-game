@@ -99,7 +99,7 @@ public class OCBuilder : OCMonoBehaviour
 	public void Awake()
 	{
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is awake.");
 	}
 
 	/// <summary>
@@ -107,7 +107,7 @@ public class OCBuilder : OCMonoBehaviour
 	/// </summary>
 	public void Start()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is started.");
 	}
 
 	/// <summary>
@@ -199,7 +199,7 @@ public class OCBuilder : OCMonoBehaviour
 		{
 			_cursor.transform.position = cursor.Value;
 		}
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is updated.");	
+		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is updated.");	
 	}
 		
 	/// <summary>
@@ -209,7 +209,7 @@ public class OCBuilder : OCMonoBehaviour
 	{
 		Uninitialize();
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is reset.");	
 	}
 
 	/// <summary>
@@ -217,7 +217,7 @@ public class OCBuilder : OCMonoBehaviour
 	/// </summary>
 	public void OnEnable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -225,7 +225,7 @@ public class OCBuilder : OCMonoBehaviour
 	/// </summary>
 	public void OnDisable()
 	{
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -234,7 +234,7 @@ public class OCBuilder : OCMonoBehaviour
 	public void OnDestroy()
 	{
 		Uninitialize();
-		System.Console.WriteLine(OCLogSymbol.FINE +gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is about to be destroyed.");
 	}
 
 

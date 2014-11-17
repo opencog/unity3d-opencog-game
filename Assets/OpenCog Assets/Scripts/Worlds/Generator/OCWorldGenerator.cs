@@ -28,7 +28,7 @@ public class OCWorldGenerator : MonoBehaviour {
 	public string MapName;
 	
 	void Awake() {
-		System.Console.WriteLine(OCLogSymbol.FINE +"OCWorldGenerator::Awake!");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"OCWorldGenerator::Awake!");
 		map = GetComponent<OpenCog.Map.OCMap>();
 		//map = OCMap.Instance;
 
@@ -120,7 +120,7 @@ public class OCWorldGenerator : MonoBehaviour {
 	private IEnumerator GenerateColumn(int cx, int cz) {
 		if (MapName == string.Empty)
 		{
-			//System.Console.WriteLine(OCLogSymbol.FINE +"Let's make a column in [" + cx + ", " + cz + "]!");
+			//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Let's make a column in [" + cx + ", " + cz + "]!");
 			yield return StartCoroutine( terrainGenerator.Generate(cx, cz) );
 			yield return null;
 			
