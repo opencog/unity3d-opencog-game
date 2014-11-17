@@ -131,26 +131,6 @@ namespace OpenCog.Extensions
 		//---------------------------------------------------------------------------
 
 		#endregion
-		#region  					Unity Called
-
-		/// <summary>
-		/// Raises the destroy event when LoadCommand is about to be destroyed.
-		/// </summary>
-		public void OnDestroy ()
-		{
-			Uninitialize ();
-			//OCLogger.Fine ("A(n) " + gameObject.name + " has been destroyed.");
-			//^ This line will cause items to be created OnDestroy. It should not be called here. 
-			// There is probably a static special workaround or somesuch for it. 
-		}
-
-		#endregion
-		#region    						Virtual Functions
-		protected virtual void Uninitialize()
-		{
-		}
-
-		#endregion
 
 		//---------------------------------------------------------------------------
 

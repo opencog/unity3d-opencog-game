@@ -29,7 +29,6 @@ using OpenCog.Map;
 using System.Reflection;
 using OpenCog.Utility;
 using OpenCog.Embodiment;
-using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -150,7 +149,7 @@ public class OCAction : OCMonoBehaviour
 				if(shouldStart == false)
 				{
 							if((this.FullName == "WalkForwardLeftMove" || this.FullName == "HoldBothHandsTransfer") && precondition.Method.Name != "IsNoEndTargetOrNotAnimating" && precondition.Method.Name != "IsSourceNotRunningAction") 
-						OCLogger.Warn("In OCAction.ShouldStart, Precondition Failed: " + precondition.Method.Name);
+						Debug.LogWarning("In OCAction.ShouldStart, Precondition Failed: " + precondition.Method.Name);
 					break;
 				}
 			}
@@ -980,7 +979,7 @@ public class OCAction : OCMonoBehaviour
 		{
 			if(IsSourceRunningAction(this, null))
 			{
-				OCLogger.Normal(" -- Action Failed, but will not block: " + FullName);
+				Debug.Log(" -- Action Failed, but will not block: " + FullName);
 				
 //						if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
 //							OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, false);		
@@ -992,7 +991,7 @@ public class OCAction : OCMonoBehaviour
 		{
 			if(IsSourceRunningAction(this, null))
 			{
-				OCLogger.Warn(" -- Action Failed: " + FullName);
+				Debug.LogWarning(" -- Action Failed: " + FullName);
 
 						if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
 						{
@@ -1085,7 +1084,7 @@ public class OCAction : OCMonoBehaviour
 			{
 				if(VectorUtil.AreVectorsEqual(_EndTarget.transform.position, _Source.transform.position))
 				{
-					OCLogger.Error("Don't Build a Block on top of yourself");
+					Debug.LogError("Don't Build a Block on top of yourself");
 					return ActionStatus.EXCEPTION;
 				}
 				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_EndTarget.transform.position));
@@ -1093,7 +1092,7 @@ public class OCAction : OCMonoBehaviour
 		}
 				
 		if(!Descriptors.Contains("Idle"))
-			OCLogger.Warn("Starting Action: " + FullName);		
+			Debug.LogWarning("Starting Action: " + FullName);		
 			
 		return ActionStatus.RUNNING;
 	}
@@ -1103,7 +1102,7 @@ public class OCAction : OCMonoBehaviour
 		//OCLogger.Fine("Continuing the " + FullName + " Action.");
 				
 //		if(!Descriptors.Contains("Idle"))
-//			OCLogger.Warn("Continuing Action: " + FullName);		
+//			Debug.LogWarning("Continuing Action: " + FullName);		
 
 		// Animation effects continue automatically
 		if(_blockOnRunning)
@@ -1201,7 +1200,7 @@ public class OCAction : OCMonoBehaviour
 		}
 			
 		if(!Descriptors.Contains("Idle"))
-			OCLogger.Warn("Ending Action: " + FullName);
+			Debug.LogWarning("Ending Action: " + FullName);
 			
 				if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
 				{

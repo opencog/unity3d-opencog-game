@@ -26,69 +26,86 @@ using OCID = System.Guid;
 namespace OpenCog
 {
 
-	/// <summary>
-	/// The OpenCog OCScriptableObject.
-	/// </summary>
-	#region Class Attributes
+/// <summary>
+/// The OpenCog OCScriptableObject.
+/// </summary>
+#region Class Attributes
 
-	[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-	[OCExposePropertyFields]
-	[Serializable]
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[OCExposePropertyFields]
+[Serializable]
+#endregion
+public class OCScriptableObject : ScriptableObject
+{
+
+	//---------------------------------------------------------------------------
+
+	#region Private Member Data
+
+	//---------------------------------------------------------------------------
+
+	private OCID _ID;
+
+	//---------------------------------------------------------------------------
+
 	#endregion
-	public class OCScriptableObject : ScriptableObject
+
+	//---------------------------------------------------------------------------
+
+	#region Accessors and Mutators
+
+	//---------------------------------------------------------------------------
+			
+	public OCID ID 
 	{
+		get {return _ID;}
+	}				
+		
+		
+	//---------------------------------------------------------------------------
 
-		//---------------------------------------------------------------------------
-		#region Private Member Data
-		//---------------------------------------------------------------------------
+	#endregion
 
-		private OCID _ID;
+	//---------------------------------------------------------------------------
 
-		//---------------------------------------------------------------------------
-		#endregion
-		#region Accessors and Mutators
+	#region Public Member Functions
 
-				
-		public OCID ID 
-		{
-			get {return _ID;}
-		}				
+	//---------------------------------------------------------------------------
+
+	public OCScriptableObject()
+	{
+		_ID = Guid.NewGuid();
+	}
+
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+	#region Private Member Functions
+
+	//---------------------------------------------------------------------------
 			
+	
 			
-		//---------------------------------------------------------------------------
-		#endregion
-		#region Public Member Functions
-		//---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
-		public OCScriptableObject()
-		{
-			_ID = Guid.NewGuid();
-		}
+	#endregion
 
-		//---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
-		#endregion
+	#region Other Members
 
-		#region  					Unity Called
-		
-		/// <summary>
-		/// Raises the destroy event when LoadCommand is about to be destroyed.
-		/// </summary>
-		public void OnDestroy ()
-		{
-			Uninitialize ();
-			//OCLogger.Fine (gameObject.name + " is about to be destroyed.");
-		}
-		
-		#endregion
-		#region    						Virtual Functions
-		protected virtual void Uninitialize()
-		{
-		}
-		
-		#endregion
+	//---------------------------------------------------------------------------		
 
-	}// class OCScriptableObject
+	//---------------------------------------------------------------------------
+
+	#endregion
+
+	//---------------------------------------------------------------------------
+
+}// class OCScriptableObject
 
 }// namespace OpenCog
 

@@ -16,14 +16,14 @@ public class BehaveEditor : ScriptableObject, IEditorWindow
 		
 		if (m_Instance != null)
 		{
-			Debug.LogError ("[\u2727]\t[ERROR] Trying to create two instances of singleton. Self destruction in 3...");
+			Debug.LogError ("Trying to create two instances of singleton. Self destruction in 3...");
 			DestroyImmediate (this);
 			return;
 		}
 		
 		if (this.Editor == null)
 		{
-			Debug.LogError ("[\u2727]\t[ERROR] Failed to link with library implementation");
+			Debug.LogError ("Failed to link with library implementation");
 			DestroyImmediate (this);
 			return;
 		}
@@ -33,10 +33,8 @@ public class BehaveEditor : ScriptableObject, IEditorWindow
 	
 	public void OnDestroy ()
 	{
-		//Debug.Log ("[\u263a]\t"+ "Testing Destroy error 5 ");
 		Editor.OnDestroy();
 		m_Instance = null;
-		//Debug.Log ("[\u263a]\t"+ "Testing Destroy error 5 ");
 	}
 	
 	public static BehaveEditor Instance

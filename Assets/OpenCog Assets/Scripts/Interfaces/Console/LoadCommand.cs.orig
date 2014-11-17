@@ -142,7 +142,14 @@ public class LoadCommand : Console.ConsoleCommand
 			OCLogger.Fine (gameObject.name + " is disabled.");
 		}
 
-
+		/// <summary>
+		/// Raises the destroy event when LoadCommand is about to be destroyed.
+		/// </summary>
+		public void OnDestroy ()
+		{
+			Uninitialize ();
+			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
+		}
 		
 		public override string Run (ArrayList arguments)
 		{
@@ -195,7 +202,7 @@ public class LoadCommand : Console.ConsoleCommand
 		/// <summary>
 		/// Uninitializes this instance.  Cleanup refernces here.
 		/// </summary>
-		override protected void Uninitialize ()
+		private void Uninitialize ()
 		{
 		}
 		
@@ -215,21 +222,21 @@ public class LoadCommand : Console.ConsoleCommand
 			//if it does not exist, we cannot run this wrapper
 			if (playerObject == null) {
 <<<<<<< HEAD
-				OCLogger.Normal ("No object tagged with player.");
+				UnityEngine.Debug.Log ("No object tagged with player.");
 				yield return "No object tagged with player.";
 			}
 
 			// Record the player's position and make the OCAvatar spawn near it.
 			UnityEngine.Vector3 playerPos = playerObject.transform.position;
 			
-			//OCLogger.Normal ("PlayerPos = [" + playerPos.x + ", " + playerPos.y + ", " + playerPos.z + "]");
+			//UnityEngine.Debug.Log ("PlayerPos = [" + playerPos.x + ", " + playerPos.y + ", " + playerPos.z + "]");
 
 			// Calculate the player's forward direction
 			UnityEngine.Vector3 eulerAngle = playerObject.transform.rotation.eulerAngles;
 			
-			//OCLogger.Normal ("eulerAngle = [" + eulerAngle.x + ", " + eulerAngle.y + ", " + eulerAngle.z + "]");
+			//UnityEngine.Debug.Log ("eulerAngle = [" + eulerAngle.x + ", " + eulerAngle.y + ", " + eulerAngle.z + "]");
 =======
-				OCLogger.Error("No object tagged with player.");
+				Debug.LogError("No object tagged with player.");
 				yield break;
 			}
 
@@ -248,11 +255,11 @@ public class LoadCommand : Console.ConsoleCommand
 			spawnPosition.y = (float)((int)spawnPosition.y);
 			spawnPosition.z = (float)((int)spawnPosition.z);
 			
-			//OCLogger.Normal ("spawnPosition = [" + spawnPosition.x + ", " + spawnPosition.y + ", " + spawnPosition.z + "]");
+			//UnityEngine.Debug.Log ("spawnPosition = [" + spawnPosition.x + ", " + spawnPosition.y + ", " + spawnPosition.z + "]");
 
 			// Instantiate an OCAvatar in front of the player.
 			
-			//OCLogger.Normal ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
+			//UnityEngine.Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
 			
 			agentClone = (GameObject)UnityEngine.Object.Instantiate (_NPCAgent, spawnPosition, Quaternion.identity);
 			agentClone.transform.parent = GameObject.Find("Characters").transform;
@@ -260,18 +267,18 @@ public class LoadCommand : Console.ConsoleCommand
 			agiAC.DefaultEndTarget = GameObject.Find("EndPointStub");
 			agiAC.DefaultStartTarget = GameObject.Find("StartPointStub");
 			
-			//OCLogger.Normal ("agentClone is" + (agentClone == null ? " null " : " not null"));
+			//UnityEngine.Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
 
 			OCConnectorSingleton connector = OCConnectorSingleton.Instance;
 			
-			OCLogger.Normal ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
+			UnityEngine.Debug.Log ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
 			
-			//OCLogger.Normal ("connector is" + (connector == null ? " null " : " not null"));
+			//UnityEngine.Debug.Log ("connector is" + (connector == null ? " null " : " not null"));
 
 			if (agentName == "")
 				agentName = CreateRandomAgentName ();
 			
-			//OCLogger.Normal("We shall name him '" + agentName + "'");
+			//UnityEngine.Debug.Log("We shall name him '" + agentName + "'");
         
 			agentClone.name = agentName;
         
@@ -280,7 +287,7 @@ public class LoadCommand : Console.ConsoleCommand
 //					// An avatar with given name is already there.
 //					yield break;
 //				}
-//				OCLogger.Normal ("Add avatar[" + agentName + "] to avatar map.");
+//				UnityEngine.Debug.Log ("Add avatar[" + agentName + "] to avatar map.");
 //			}
 			
 			// Get the player id as the master id of the avatar.
@@ -306,7 +313,7 @@ public class LoadCommand : Console.ConsoleCommand
 		
 			if (!connector.IsInitialized) {
 				// OAC is not loaded normally, destroy the avatar instance.
-				OCLogger.Error ("Cannot connect to the OAC, avatar loading failed.");
+				UnityEngine.Debug.LogError ("Cannot connect to the OAC, avatar loading failed.");
 				connector.SaveAndExit ();
 				Destroy (agentClone);
 				yield break;

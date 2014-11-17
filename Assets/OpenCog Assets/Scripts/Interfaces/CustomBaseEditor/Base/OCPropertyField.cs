@@ -27,7 +27,6 @@ using Exception = System.Exception;
 using Object = UnityEngine.Object;
 using Type = System.Type;
 using TypeCode = System.TypeCode;
-using OpenCog.Utilities.Logging;
 
 
 namespace OpenCog
@@ -431,7 +430,7 @@ public class OCPropertyField
 			{
 				//@TODO: Make an OCException class
 				//throw new Exception
-				OCLogger.Normal
+				Debug.Log
 				("In OCPropertyField.SetValue," +
 					"member is neither Field nor Property");
 			}
@@ -445,7 +444,7 @@ public class OCPropertyField
 		{
 			//@TODO: Make an OCException class
 			//throw new Exception
-			OCLogger.Normal
+			Debug.Log
 			("In OCPropertyField.SetValue," +
 				"no member info or Unity property field.");
 		}
@@ -489,7 +488,7 @@ public class OCPropertyField
 		// If there is no enumCondition, it is allowed to be visible, there is nothing to hide it.
 		if(enumCondition == null)
 		{
-			//OCLogger.Normal("The '[EnumPropertyToggle]' is not attributed to this " + PublicName + " property field.");
+			//Debug.Log("The '[EnumPropertyToggle]' is not attributed to this " + PublicName + " property field.");
 			return true;
 		}
      
@@ -506,14 +505,14 @@ public class OCPropertyField
 		if(enumPropertyField == null)
 		{
 			//If the field in boolCondition.BooleanField doesn't exist.
-			OCLogger.Error("The '[EnumPropertyToggle(" + enumCondition.EnumField + ", " + enumCondition.EnumValue + ")]' failed. The field '" + enumCondition.EnumField + "' does not exisit in '" + Instance + "'.");
+			Debug.LogError("The '[EnumPropertyToggle(" + enumCondition.EnumField + ", " + enumCondition.EnumValue + ")]' failed. The field '" + enumCondition.EnumField + "' does not exisit in '" + Instance + "'.");
 			return true;
 		}
   
 		if(enumPropertyField.UnityType != SerializedPropertyType.Enum)
 		{
 			//If the wanted field is not a enum
-			OCLogger.Error("The '[EnumPropertyToggle(" + enumCondition.EnumField + ", " + enumCondition.EnumValue + ")]' failed. The field '" + enumCondition.EnumField + "' is not a enum in '" + Instance + "'.");
+			Debug.LogError("The '[EnumPropertyToggle(" + enumCondition.EnumField + ", " + enumCondition.EnumValue + ")]' failed. The field '" + enumCondition.EnumField + "' is not a enum in '" + Instance + "'.");
 			return true;
 		}
 
@@ -533,7 +532,7 @@ public class OCPropertyField
 		// If there is no boolCondition, it is allowed to be visible, there is nothing to hide it.
 		if(boolCondition == null)
 		{
-			//OCLogger.Normal("The '[BoolPropertyToggle]' is not attributed to this " + PublicName + " property field.");
+			//Debug.Log("The '[BoolPropertyToggle]' is not attributed to this " + PublicName + " property field.");
 			return true;
 		}
 
@@ -550,14 +549,14 @@ public class OCPropertyField
 		if(boolPropertyField == null)
 		{
 			//If the field in boolCondition.BooleanField doesn't exist.
-			OCLogger.Error("The '[BoolPropertyToggle(" + boolCondition.BooleanField + ", " + boolCondition.EqualsValue + ")]' failed. The field '" + boolCondition.BooleanField + "' does not exisit in '" + Instance + "'.");
+			Debug.LogError("The '[BoolPropertyToggle(" + boolCondition.BooleanField + ", " + boolCondition.EqualsValue + ")]' failed. The field '" + boolCondition.BooleanField + "' does not exisit in '" + Instance + "'.");
 			return true;
 		}
 
 		if(boolPropertyField.CSType != typeof(bool))
 		{
 			//If the wanted field is not a bool
-			OCLogger.Error("The '[BoolPropertyToggle(" + boolCondition.BooleanField + ", " + boolCondition.EqualsValue + ")]' failed. The field '" + boolCondition.BooleanField + "' is not a type of bool in '" + Instance + "'.");
+			Debug.LogError("The '[BoolPropertyToggle(" + boolCondition.BooleanField + ", " + boolCondition.EqualsValue + ")]' failed. The field '" + boolCondition.BooleanField + "' is not a type of bool in '" + Instance + "'.");
 			return true;
 		}
      
@@ -713,7 +712,7 @@ public class OCPropertyField
 
 		if(type != null)
 		{
-//			OCLogger.Normal("We found a type!");
+//			Debug.Log("We found a type!");
 			MemberInfo[] memberInfos = type.GetMembers(OCBindingFlags);
 
 			foreach(MemberInfo info in memberInfos)
@@ -730,7 +729,7 @@ public class OCPropertyField
 						)
 					)
 				{
-//					OCLogger.Normal("We found a good member info! :" + info.Name);
+//					Debug.Log("We found a good member info! :" + info.Name);
 
 					string publicName = ObjectNames.NicifyVariableName(info.Name);
 		
@@ -738,7 +737,7 @@ public class OCPropertyField
 					{
 						continue;
 					}
-//					OCLogger.Normal("We found a good candidate! :" + info.Name);
+//					Debug.Log("We found a good candidate! :" + info.Name);
 					candidates.Push(new OCPropertyField(obj, info));
 				}
 			}

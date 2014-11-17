@@ -12,7 +12,7 @@ public class BehaveDebugWindow : EditorWindow, IDebugWindow
 		
 		if (s_Instance != null)
 		{
-			Debug.LogError ("[\u2727]\t[ERROR] Trying to create two instances of singleton. Self destruction in 3...");
+			Debug.LogError ("Trying to create two instances of singleton. Self destruction in 3...");
 			Destroy (this);
 			return;
 		}
@@ -26,10 +26,8 @@ public class BehaveDebugWindow : EditorWindow, IDebugWindow
 	
 	public void OnDestroy ()
 	{
-		//Debug.Log ("[\u263a]\t"+ "Testing Destroy error 4 ");
 		s_Instance = null;
 		DebugWindow.Instance.OnDestroy();
-		//Debug.Log ("[\u263a]\t"+ "Testing Destroy error 4 ");
 	}
 	
 	public static BehaveDebugWindow Instance

@@ -28,7 +28,6 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
-using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -150,7 +149,14 @@ public class OCFeelingPanel : OCMonoBehaviour
 		OCLogger.Fine(gameObject.name + " is disabled.");
 	}
 
-
+	/// <summary>
+	/// Raises the destroy event when OCFeelingPanel is about to be destroyed.
+	/// </summary>
+	public void OnDestroy()
+	{
+		Uninitialize();
+		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+	}
 
 	public void ShowPanel()
 	{
@@ -196,7 +202,7 @@ public class OCFeelingPanel : OCMonoBehaviour
 	/// <summary>
 	/// Uninitializes this instance.  Cleanup refernces here.
 	/// </summary>
-	override protected void Uninitialize()
+	private void Uninitialize()
 	{
 	}
 

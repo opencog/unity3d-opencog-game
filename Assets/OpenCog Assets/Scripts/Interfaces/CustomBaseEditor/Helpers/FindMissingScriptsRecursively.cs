@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using OpenCog.Utilities.Logging;
 public class FindMissingScriptsRecursively : EditorWindow 
 {
 	static int go_count = 0, components_count = 0, missing_count = 0;
@@ -28,7 +27,7 @@ public class FindMissingScriptsRecursively : EditorWindow
 		{
 			FindInGO(g);
 		}
-		OCLogger.Normal(string.Format("Searched {0} GameObjects, {1} components, found {2} missing", go_count, components_count, missing_count));
+		Debug.Log(string.Format("Searched {0} GameObjects, {1} components, found {2} missing", go_count, components_count, missing_count));
 	}
 	
 	private static void FindInGO(GameObject g)
@@ -48,13 +47,13 @@ public class FindMissingScriptsRecursively : EditorWindow
 					s = t.parent.name +"/"+s;
 					t = t.parent;
 				}
-				OCLogger.Normal (s + " has an empty script attached in position: " + i);
+				Debug.Log (s + " has an empty script attached in position: " + i, g);
 			}
 		}
 		// Now recurse through each child GO (if there are any):
 		foreach (Transform childT in g.transform)
 		{
-			//OCLogger.Normal("Searching " + childT.name  + " " );
+			//Debug.Log("Searching " + childT.name  + " " );
 			FindInGO(childT.gameObject);
 		}
 	}

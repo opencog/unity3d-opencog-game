@@ -31,7 +31,6 @@ using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using OpenCog.BlockSet.BaseBlockSet;
 using System.Linq;
-using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -113,7 +112,7 @@ public class OCBlockSetImport : OCMonoBehaviour
 		
 		BlockSet.BaseBlockSet.OCBlock[] blocks = ReadBlockList(blockSetNode);
 
-		//OCLogger.Normal("Are we setting a bunch of null blocks?");
+		//Debug.Log("Are we setting a bunch of null blocks?");
 
 		bool allNull = true;
 
@@ -124,9 +123,9 @@ public class OCBlockSetImport : OCMonoBehaviour
 		}
 
 		if (allNull)
-			OCLogger.Normal("Yep, we're setting a bunch of null blocks!");
+			Debug.Log("Yep, we're setting a bunch of null blocks!");
 		else
-			//OCLogger.Normal("Nope, they're ok!");
+			//Debug.Log("Nope, they're ok!");
 
 		blockSet.Blocks = blocks;
 	}
@@ -169,23 +168,23 @@ public class OCBlockSetImport : OCMonoBehaviour
 
 //		if (type == null)
 //		{
-//			OCLogger.Normal("Failed to get a type for block '" + node.Name + "', attempting lookup with unqualified name...");
+//			Debug.Log("Failed to get a type for block '" + node.Name + "', attempting lookup with unqualified name...");
 //
 //			type = System.Type.GetType(node.Name);
 //
 //			if (type == null)
-//				OCLogger.Normal("Nope, that failed too...type is still null...");
+//				Debug.Log("Nope, that failed too...type is still null...");
 //			else
-//				OCLogger.Normal("Wahey, that actually worked!");
+//				Debug.Log("Wahey, that actually worked!");
 //		}
 //
 //
 //
 //
 //		if (type != null)
-//			OCLogger.Normal("Reading block, name = " + node.Name + ", type = " + type.ToString());
+//			Debug.Log("Reading block, name = " + node.Name + ", type = " + type.ToString());
 //		else
-//			OCLogger.Normal("Reading block, name = " + node.Name + ", type == null");
+//			Debug.Log("Reading block, name = " + node.Name + ", type == null");
 			
 		OCBlock block = (OCBlock) ScriptableObject.CreateInstance(type);
 		foreach(XmlNode childNode in node) {

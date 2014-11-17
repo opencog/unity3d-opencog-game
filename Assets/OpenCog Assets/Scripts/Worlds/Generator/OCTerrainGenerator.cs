@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-using OpenCog.Utilities.Logging;
-
 #pragma warning disable 0414 // The private field is assigned but its value is never used
 public class OCTerrainGenerator {
 	
@@ -29,9 +27,9 @@ public class OCTerrainGenerator {
 	
 	public OCTerrainGenerator(OpenCog.Map.OCMap map) {
 		this.map = map;
-		OCLogger.Normal("OCTerrainGenerator is getting the BlockSet from the Map.");
+		Debug.Log("OCTerrainGenerator is getting the BlockSet from the Map.");
 		OpenCog.BlockSet.OCBlockSet blockSet = map.GetBlockSet();
-		OCLogger.Normal("BlockSet retrieved...");
+		Debug.Log("BlockSet retrieved...");
 		
 		water = blockSet.GetBlock("Water");
 
@@ -39,11 +37,11 @@ public class OCTerrainGenerator {
 
 		if (grass == null)
 		{
-			OCLogger.Normal("We have no Grass! :(");
+			Debug.Log("We have no Grass! :(");
 
 			for (int i = 0; i < blockSet.Blocks.Length; i++)
 			{
-				OCLogger.Normal("But we have " + blockSet.Blocks[i].GetName());
+				Debug.Log("But we have " + blockSet.Blocks[i].GetName());
 
 			}
 		}
@@ -95,7 +93,7 @@ public class OCTerrainGenerator {
 						if(map.GetBlock(worldPos).IsEmpty()) map.SetBlock( water, worldPos );
 						if (!reportedWater)
 						{
-							OCLogger.Normal("I made a water block!");
+							Debug.Log("I made a water block!");
 							reportedWater = true;
 						}
 						generated = true;
@@ -106,7 +104,7 @@ public class OCTerrainGenerator {
 						GenerateBlockForBaseTerrain(worldPos);
 						if (!reportedTerrain)
 						{
-							OCLogger.Normal("I made a terrain block!");
+							Debug.Log("I made a terrain block!");
 							reportedTerrain = true;
 						}
 						generated = true;
@@ -118,7 +116,7 @@ public class OCTerrainGenerator {
 						GenerateBlockForIsland(worldPos, islandHeight-worldPos.y, islandHeight);
 						if (!reportedIsland)
 						{
-							OCLogger.Normal("I made an island block!");
+							Debug.Log("I made an island block!");
 							reportedIsland = true;
 						}
 						generated = true;

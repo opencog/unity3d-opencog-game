@@ -24,7 +24,6 @@ using System;
 
 
 using OpenCog.Map;
-using OpenCog.Utilities.Logging;
 
 #pragma warning disable 0414
 #endregion

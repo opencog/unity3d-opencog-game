@@ -184,7 +184,7 @@ public class OCBlockSet : OCScriptableObject
 
 		if (allNull)
 		{
-			//OCLogger.Normal("All blocks null, reloading!");
+			//UnityEngine.Debug.Log("All blocks null, reloading!");
 			OpenCog.BlockSet.OCBlockSetImport.Import(this, _data);
 		}
 	}

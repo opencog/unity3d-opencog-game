@@ -24,7 +24,6 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
-using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -157,7 +156,15 @@ public class OCChunkRenderer : OCMonoBehaviour
 	{
 		OCLogger.Fine(gameObject.name + " is disabled.");
 	}
-		
+
+	/// <summary>
+	/// Raises the destroy event when OCChunkRenderer is about to be destroyed.
+	/// </summary>
+	public void OnDestroy()
+	{
+		Uninitialize();
+		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+	}
 
 	public static OCChunkRenderer CreateChunkRenderer(Vector3i pos, OpenCog.Map.OCMap map, OCChunk chunk) {
 		UnityEngine.GameObject go = new UnityEngine.GameObject("("+pos.x+" "+pos.y+" "+pos.z+")", typeof(UnityEngine.MeshFilter), typeof(UnityEngine.MeshRenderer), typeof(OpenCog.Map.OCChunkRenderer));
@@ -180,7 +187,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 		if (!_dirty)
 		{
 			_dirty = true;
-			//OCLogger.Normal ("I just made the chunk at [" + _chunk.GetPosition().x + ", " + _chunk.GetPosition().y + ", " + _chunk.GetPosition().z + "] dirty.");	
+			//UnityEngine.Debug.Log ("I just made the chunk at [" + _chunk.GetPosition().x + ", " + _chunk.GetPosition().y + ", " + _chunk.GetPosition().z + "] dirty.");	
 		}
 	}
 	public void SetLightDirty() {
@@ -208,7 +215,7 @@ public class OCChunkRenderer : OCMonoBehaviour
 	/// <summary>
 	/// Uninitializes this instance.  Cleanup refernces here.
 	/// </summary>
-	override protected void Uninitialize()
+	private void Uninitialize()
 	{
 
 	}

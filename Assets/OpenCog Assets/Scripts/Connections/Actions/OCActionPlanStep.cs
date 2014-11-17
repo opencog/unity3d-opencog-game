@@ -32,7 +32,6 @@ using TreeType = BLOCBehaviours.TreeType;
 using System.Linq;
 using System.Xml;
 using OpenCog.Utility;
-using OpenCog.Utilities.Logging;
 
 //using OpenCog.Aspects;
 

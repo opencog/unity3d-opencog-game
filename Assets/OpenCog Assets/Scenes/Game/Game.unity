@@ -123,48 +123,6 @@ MonoBehaviour:
   _Rotation: {x: 0, y: 0, z: 0}
   _FadeLength: .0500000007
   _IsTranslationVsRotation: 1
---- !u!1 &41295799
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 41295801}
-  - 114: {fileID: 41295800}
-  m_Layer: 0
-  m_Name: OCLogger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &41295800
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 41295799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a641df359f28c5a43ba73123c941992b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dateEntries: 1
-  printFine: 0
-  printDebug: 1
---- !u!4 &41295801
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 41295799}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
 --- !u!1 &49772147
 GameObject:
   m_ObjectHideFlags: 0
@@ -3734,7 +3692,7 @@ Transform:
   - {fileID: 1744600414}
   - {fileID: 2072045079}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 5
 --- !u!114 &675657046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8405,48 +8363,6 @@ ParticleSystem:
     subEmitterCollision1: {fileID: 0}
     subEmitterDeath: {fileID: 0}
     subEmitterDeath1: {fileID: 0}
---- !u!1 &1060843724
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1060843726}
-  - 114: {fileID: 1060843725}
-  m_Layer: 0
-  m_Name: OCLogger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1060843725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1060843724}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a641df359f28c5a43ba73123c941992b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dateEntries: 1
-  printFine: 0
-  printDebug: 1
---- !u!4 &1060843726
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1060843724}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
 --- !u!1 &1070826536
 GameObject:
   m_ObjectHideFlags: 0
@@ -8481,7 +8397,7 @@ Transform:
   - {fileID: 2011043960}
   - {fileID: 1933667569}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 7
 --- !u!1 &1085171251
 GameObject:
   m_ObjectHideFlags: 0
@@ -11383,48 +11299,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 344577693}
   m_RootOrder: 0
---- !u!1 &1627232236
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1627232238}
-  - 114: {fileID: 1627232237}
-  m_Layer: 0
-  m_Name: OCLogger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1627232237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1627232236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a641df359f28c5a43ba73123c941992b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dateEntries: 1
-  printFine: 0
-  printDebug: 1
---- !u!4 &1627232238
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1627232236}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
 --- !u!1 &1647941474
 GameObject:
   m_ObjectHideFlags: 0
@@ -11727,7 +11601,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 6
 --- !u!1 &1686595061
 GameObject:
   m_ObjectHideFlags: 0
@@ -11805,7 +11679,7 @@ Transform:
   - {fileID: 1813306217}
   - {fileID: 199688681}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 3
 --- !u!1 &1687895943
 GameObject:
   m_ObjectHideFlags: 0
@@ -11897,7 +11771,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 8
 --- !u!114 &1689473162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12288,48 +12162,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!1 &1771149987
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1771149989}
-  - 114: {fileID: 1771149988}
-  m_Layer: 0
-  m_Name: OCLogger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1771149988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1771149987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a641df359f28c5a43ba73123c941992b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dateEntries: 1
-  printFine: 0
-  printDebug: 1
---- !u!4 &1771149989
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1771149987}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
 --- !u!1 &1781730548
 GameObject:
   m_ObjectHideFlags: 0
@@ -12385,48 +12217,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 190091201}
   m_RootOrder: 0
---- !u!1 &1785597118
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1785597120}
-  - 114: {fileID: 1785597119}
-  m_Layer: 0
-  m_Name: OCLogger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1785597119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1785597118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a641df359f28c5a43ba73123c941992b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dateEntries: 1
-  printFine: 0
-  printDebug: 1
---- !u!4 &1785597120
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1785597118}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
 --- !u!1 &1813306216
 GameObject:
   m_ObjectHideFlags: 0

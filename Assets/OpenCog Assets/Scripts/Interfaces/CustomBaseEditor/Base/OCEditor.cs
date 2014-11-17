@@ -27,7 +27,6 @@ using UnityEngine;
 using Enum = System.Enum;
 using Type = System.Type;
 using TypeCode = System.TypeCode;
-using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -266,13 +265,13 @@ where OCType : MonoBehaviour
 				MethodInfo drawMethodInfo = this.GetType().GetMethod(drawMethod.DrawMethod);
 				if(drawMethodInfo == null)
 				{
-					OCLogger.Error("The '[CustomDrawMethod(" + drawMethod.DrawMethod + "" + drawMethod.ParametersToString() + ")]' failed. Could not find the method '" + drawMethod.DrawMethod + "' in the " + this.ToString() + ". The attribute is attached to the field '" + propertyField.PublicName + "' in '" + propertyField.UnityPropertyField.serializedObject.targetObject + "'.");
+					Debug.LogError("The '[CustomDrawMethod(" + drawMethod.DrawMethod + "" + drawMethod.ParametersToString() + ")]' failed. Could not find the method '" + drawMethod.DrawMethod + "' in the " + this.ToString() + ". The attribute is attached to the field '" + propertyField.PublicName + "' in '" + propertyField.UnityPropertyField.serializedObject.targetObject + "'.");
 					continue;
 				}
 				ParameterInfo[] parametersInfo = drawMethodInfo.GetParameters();
 				if(parametersInfo.Length != (drawMethod.Parameters as object[]).Length)
 				{
-					OCLogger.Error("The '[CustomDrawMethod(" + drawMethod.DrawMethod + "" + drawMethod.ParametersToString() + ")]' failed. The number of parameters in the attribute, did not match the number of parameters in the actual method. The attribute is attached to the field '" + propertyField.PublicName + "' in '" + propertyField.UnityPropertyField.serializedObject.targetObject + "'.");
+					Debug.LogError("The '[CustomDrawMethod(" + drawMethod.DrawMethod + "" + drawMethod.ParametersToString() + ")]' failed. The number of parameters in the attribute, did not match the number of parameters in the actual method. The attribute is attached to the field '" + propertyField.PublicName + "' in '" + propertyField.UnityPropertyField.serializedObject.targetObject + "'.");
 					continue;
 				}
 
@@ -283,7 +282,7 @@ where OCType : MonoBehaviour
 					if(!Type.Equals(parametersInfo[i].ParameterType, drawMethod.Parameters[i].GetType()))
 					{
 						_error = true;
-						OCLogger.Error("The '[CustomDrawMethod(" + drawMethod.DrawMethod + "" + drawMethod.ParametersToString() + ")]' failed. The parameter type ('" + drawMethod.Parameters[i].GetType() + "') in the attribute, did not match the the parameter type ('" + parametersInfo[i].ParameterType + "') of the actual method, parameter index: '" + i + "'. The attribute is attached to the field '" + propertyField.PublicName + "' in '" + propertyField.UnityPropertyField.serializedObject.targetObject + "'.");
+						Debug.LogError("The '[CustomDrawMethod(" + drawMethod.DrawMethod + "" + drawMethod.ParametersToString() + ")]' failed. The parameter type ('" + drawMethod.Parameters[i].GetType() + "') in the attribute, did not match the the parameter type ('" + parametersInfo[i].ParameterType + "') of the actual method, parameter index: '" + i + "'. The attribute is attached to the field '" + propertyField.PublicName + "' in '" + propertyField.UnityPropertyField.serializedObject.targetObject + "'.");
 						continue;
 					}
 				}
@@ -298,7 +297,7 @@ where OCType : MonoBehaviour
 			}
 			else
 			{
-				//OCLogger.Normal("In OCEditor.DrawSerializedProperties, nothing to draw! " + allowedVisibleForBoolCondition + ", " + allowedVisibleForEnumCondition + ", " + drawMethod);
+				//Debug.Log("In OCEditor.DrawSerializedProperties, nothing to draw! " + allowedVisibleForBoolCondition + ", " + allowedVisibleForEnumCondition + ", " + drawMethod);
 			}
 
 		
@@ -321,7 +320,7 @@ where OCType : MonoBehaviour
 //			|| ((memberInfo[0] as FieldInfo).FieldType != typeof(float) && (memberInfo[0] as PropertyInfo).PropertyType != typeof(float))
 //			)
 //			{
-//				OCLogger.Error("The '[FloatSliderInInspector(" + floatSlider.MinValue + " ," + floatSlider.MaxValue + ")]' failed. FloatSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with float. The attribute is attached to the field '" + propertyField.Name + "' in '" + _instance + "'.");
+//				Debug.LogError("The '[FloatSliderInInspector(" + floatSlider.MinValue + " ," + floatSlider.MaxValue + ")]' failed. FloatSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with float. The attribute is attached to the field '" + propertyField.Name + "' in '" + _instance + "'.");
 //				return;
 //			}
 			propertyField.SetValue(EditorGUILayout.Slider(label, (float)propertyField.GetValue(), floatSlider.MinValue, floatSlider.MaxValue));
@@ -339,7 +338,7 @@ where OCType : MonoBehaviour
 //			|| ((memberInfo[0] as FieldInfo).FieldType != typeof(int) && (memberInfo[0] as PropertyInfo).PropertyType != typeof(int))
 //			)
 //			{
-//				OCLogger.Error("The '[IntSliderInInspector(" + intSlider.MinValue + " ," + intSlider.MaxValue + ")]' failed. IntSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with int. The attribute is attached to the field '" + propertyField.Name + "' in '" + _instance + "'.");
+//				Debug.LogError("The '[IntSliderInInspector(" + intSlider.MinValue + " ," + intSlider.MaxValue + ")]' failed. IntSliderInInspector does not work with the type '" + memberInfo[0].MemberType + "', it only works with int. The attribute is attached to the field '" + propertyField.Name + "' in '" + _instance + "'.");
 //				return;
 //			}
 			propertyField.SetValue(EditorGUILayout.IntSlider(label, (int)propertyField.GetValue(), intSlider.MinValue, intSlider.MaxValue));
@@ -389,7 +388,7 @@ where OCType : MonoBehaviour
 				case SerializedPropertyType.ObjectReference:
 
 					if(propertyField.PublicName == "Animation")
-						OCLogger.Normal("Drawing Animation: " + propertyField.CSType);
+						Debug.Log("Drawing Animation: " + propertyField.CSType);
 
 					if(propertyField.CSType.IsSerializable)
 					{
@@ -401,9 +400,9 @@ where OCType : MonoBehaviour
 						, OCExposePropertyFieldsAttribute.OCExposure.PropertiesAndFields
 						);
 
-						OCLogger.Normal("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
+						Debug.Log("In OCEditor.DrawFieldInInspector, propertyField type is Serializable.");
 
-						OCLogger.Normal("In OCEditor.DrawFieldInInspector, nested Properties and Fields: " + nestedPropertiesAndFields.Select(p => p.PublicName).Aggregate((a, b) => a + ", " + b));
+						Debug.Log("In OCEditor.DrawFieldInInspector, nested Properties and Fields: " + nestedPropertiesAndFields.Select(p => p.PublicName).Aggregate((a, b) => a + ", " + b));
 
 						DrawSerializedProperties(nestedPropertiesAndFields);
 
@@ -418,7 +417,7 @@ where OCType : MonoBehaviour
 			}
 			else if(propertyField.MemberInfo != null)
 			{
-				//OCLogger.Normal(propertyField.PublicName + ", " + propertyField.Instance);
+				//Debug.Log(propertyField.PublicName + ", " + propertyField.Instance);
 				switch(Type.GetTypeCode(propertyField.CSType))
 				{
 					case TypeCode.Boolean:
@@ -445,7 +444,7 @@ where OCType : MonoBehaviour
 						break;
 
 					case TypeCode.Object:
-						//OCLogger.Normal("Drawing: " + propertyField.CSType + ", " + propertyField.CSType.IsSerializable);
+						//Debug.Log("Drawing: " + propertyField.CSType + ", " + propertyField.CSType.IsSerializable);
 
 						if(propertyField.CSType.IsSerializable && (propertyField.Instance != null || (propertyField.UnityPropertyField != null && propertyField.UnityPropertyField.objectReferenceValue != null)))
 						{
@@ -543,14 +542,14 @@ where OCType : MonoBehaviour
 		
 				foreach(OCPropertyField propertyField in allPropertyFields)
 				{
-					//OCLogger.Normal("In OCEditor.FindMissingScripts(), property name: " + property.name);
+					//Debug.Log("In OCEditor.FindMissingScripts(), property name: " + property.name);
 					if(propertyField.PublicName == "Script" && propertyField.MemberInfo == null)
 					{
-						//OCLogger.Normal("In OCEditor.FindMissingScripts(), found script");
+						//Debug.Log("In OCEditor.FindMissingScripts(), found script");
 						Component targetComponent = target as Component;
 						if(targetComponent != null && TryThisObject == targetComponent.gameObject)
 						{
-							//OCLogger.Normal("In OCEditor.FindMissingScripts(), we have tried this script already");
+							//Debug.Log("In OCEditor.FindMissingScripts(), we have tried this script already");
 							HaveTried = true;
 						}
 		
@@ -558,20 +557,20 @@ where OCType : MonoBehaviour
 		
 						foreach(OCPropertyField subPropertyField in allPropertyFields)
 						{
-							//OCLogger.Normal("SubPropertyField Name: " + subPropertyField.PublicName);
+							//Debug.Log("SubPropertyField Name: " + subPropertyField.PublicName);
 		
 							if(candidates.Count == 0)
 							{
-								//OCLogger.Normal("candidates = 0");
+								//Debug.Log("candidates = 0");
 								break;
 							}
 		
 							if(subPropertyField.PublicName != "Script"
 							&& subPropertyField.PrivateName != propertyField.PrivateName)
 							{
-								//OCLogger.Normal("Before selection: " + candidates.Count);
+								//Debug.Log("Before selection: " + candidates.Count);
 								candidates = candidates.Where(c => c.Properties.ContainsKey(subPropertyField.PublicName)).ToList();
-								//OCLogger.Normal("After  selection: " + candidates.Count); 
+								//Debug.Log("After  selection: " + candidates.Count); 
 							}
 						}
 		
@@ -606,7 +605,7 @@ where OCType : MonoBehaviour
 		
 									//if(candidate.Script != null)
 									{
-										//OCLogger.Normal("Creating a new editor.");
+										//Debug.Log("Creating a new editor.");
 										//UnityEditor.EditorWindow.
 		
 										//EditorUtility.SetDirty(target);
@@ -622,7 +621,7 @@ where OCType : MonoBehaviour
 //							  if( type != null )
 //							  {   // I want all the declared methods from the specific class.
 //							      //System.Reflection.MethodInfo []methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-//										OCLogger.Normal("Found Type: " + type);
+//										Debug.Log("Found Type: " + type);
 //										break;
 //							  }
 //							}
@@ -644,25 +643,25 @@ where OCType : MonoBehaviour
 //							EditorWindow inspector = (Resources.FindObjectsOfTypeAll(type) as EditorWindow[]).FirstOrDefault();//(Editor.FindObjectsOfTypeIncludingAssets(typeof(EditorWindow)) as EditorWindow[]).Where(x => x.GetType().ToString() == "UnityEditor.InspectorWindow").FirstOrDefault();
 //
 //							if(inspector != default(EditorWindow))
-//								OCLogger.Normal("Inspector: " + inspector.ToString());
+//								Debug.Log("Inspector: " + inspector.ToString());
 //
 //							System.Reflection.MethodInfo []methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 //
 //							foreach(System.Reflection.MethodInfo method in methods)
 //							{
-//								OCLogger.Normal("---" + method.Name);
+//								Debug.Log("---" + method.Name);
 //								if(method.Name == "GetInspectedObject")
 //								{
 ////									ParameterInfo[] infos = method.GetParameters();
 ////									foreach(ParameterInfo info in infos)
 ////									{
-////										OCLogger.Normal("-----" + info.ParameterType + ", " + info.Name);
+////										Debug.Log("-----" + info.ParameterType + ", " + info.Name);
 ////									}
 ////									Editor[] editors = {this};
 ////									object[] parameters = {editors, 0};
 ////									method.Invoke(inspector, parameters);
 ////									GameObject o = (GameObject)method.Invoke(inspector, null);
-////									OCLogger.Normal("What am I? : " + o.GetType());
+////									Debug.Log("What am I? : " + o.GetType());
 ////									Editor editor = (Editor)o;
 ////									editor.
 //								}
@@ -696,7 +695,7 @@ where OCType : MonoBehaviour
 				;
 
 				if(_allPropertyFields == null)
-					OCLogger.Normal("In OCEditor.OnInspectorGUI, no property fields!");
+					Debug.Log("In OCEditor.OnInspectorGUI, no property fields!");
 				targetScript.Properties = _allPropertyFields.ToDictionary(p => p.PrivateName);
 			}
 		}

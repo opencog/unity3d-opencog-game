@@ -132,7 +132,7 @@ public class BehaveMenu : ScriptableObject
 	{
 		if (BehaveDebugWindow.Instance == null)
 		{
-			Debug.LogError ("[\u2727]\t[ERROR] Failed to set up Behave debugger window");
+			Debug.LogError ("Failed to set up Behave debugger window");
 			return;
 		}
 		
@@ -146,7 +146,7 @@ public class BehaveMenu : ScriptableObject
 	{
 		if (BehaveBrowser.Instance == null)
 		{
-			Debug.LogError ("[\u2727]\t[ERROR] Failed to set up Behave browser");
+			Debug.LogError ("Failed to set up Behave browser");
 			return;
 		}
 		
@@ -160,7 +160,7 @@ public class BehaveMenu : ScriptableObject
 	{
 		if (BehaveTreeEditor.Instance == null)
 		{
-			Debug.LogError ("[\u2727]\t[ERROR] Failed to set up Behave tree editor");
+			Debug.LogError ("Failed to set up Behave tree editor");
 			return;
 		}
 		

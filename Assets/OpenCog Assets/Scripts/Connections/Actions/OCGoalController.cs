@@ -29,7 +29,6 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using System.Collections.Generic;
-using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -177,7 +176,7 @@ public class OCGoalController : OCMonoBehaviour
 			
 				nearHomeEffect.FitnessChange = integrityChange;
 					
-				//OCLogger.Normal ("Increasing Integrity by '" + integrityChange.ToString() + "'");
+				//UnityEngine.Debug.Log ("Increasing Integrity by '" + integrityChange.ToString() + "'");
 			
 				agiPhysModel.ProcessPhysiologicalEffect(nearHomeEffect);
 			}
@@ -185,7 +184,7 @@ public class OCGoalController : OCMonoBehaviour
 			
 		if(GoalBlockPos != Vector3i.zero && _map.GetBlock(GoalBlockPos).IsEmpty())
 		{
-			OCLogger.Normal("No more " + _goalBlockType.GetName() + "... :(");
+			Debug.Log("No more " + _goalBlockType.GetName() + "... :(");
 			
 			GoalBlockPos = Vector3i.zero;
 
@@ -217,7 +216,7 @@ public class OCGoalController : OCMonoBehaviour
 //		//		if(distanceVec.y < -1.0f + 0.5f && distanceVec.y > -1.0f - 0.5f)
 //		if(distanceVec.sqrMagnitude < 2.25f)
 //		{
-//			OCLogger.Normal("We've arrived at our goal TNT block...");
+//			Debug.Log("We've arrived at our goal TNT block...");
 //			map.SetBlockAndRecompute(new OCBlockData(), TargetBlockPos);
 //			TargetBlockPos = Vector3i.zero;
 //
@@ -269,7 +268,7 @@ public class OCGoalController : OCMonoBehaviour
 					
 					MoveTargetsIfNecessary ();
 
-					OCLogger.Normal("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
+					Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
 				}
 			}
 		}
@@ -306,7 +305,7 @@ public class OCGoalController : OCMonoBehaviour
 //												
 //												MoveTargetsIfNecessary ();
 //
-//												OCLogger.Normal("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
+//												Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
 //											}
 //										}
 //									}

@@ -13,7 +13,7 @@ public class BehaveAbout : EditorWindow
 		
 		if (s_Instance != null)
 		{
-			Debug.LogWarning("[\u2727]\t[ERROR] " + "Trying to create two instances of singleton. Self destruction in 3...");
+			Debug.LogError ("Trying to create two instances of singleton. Self destruction in 3...");
 			Destroy (this);
 			return;
 		}
@@ -28,16 +28,8 @@ public class BehaveAbout : EditorWindow
 	
 	public void OnDestroy ()
 	{
-		Uninitialize ();
-	}
-
-	protected void Uninitialize()
-	{
-		//Debug.Log ("[\u263a]\t" +"Testing Destroy error 2 ");
 		s_Instance = null;
-		//Debug.Log ("[\u263a]\t"+ "Testing Destroy error 2 ");
 	}
-	
 	
 	public static BehaveAbout Instance
 	{

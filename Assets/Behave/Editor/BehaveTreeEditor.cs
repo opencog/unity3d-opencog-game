@@ -14,7 +14,7 @@ public class BehaveTreeEditor : EditorWindow, ITreeEditorWindow
 		
 		if (s_Instance != null)
 		{
-			Debug.LogError ("[\u2727]\t[ERROR] Trying to create two instances of singleton. Self destruction in 3...");
+			Debug.LogError ("Trying to create two instances of singleton. Self destruction in 3...");
 			Destroy (this);
 			return;
 		}
@@ -28,11 +28,8 @@ public class BehaveTreeEditor : EditorWindow, ITreeEditorWindow
 	
 	public void OnDestroy ()
 	{
-		//Debug.Log ("[\u263a]\t"+ "Testing Destroy error 6 ");
 		s_Instance = null;
 		Behave.Editor.TreeEditor.Instance.OnDestroy ();
-
-		//Debug.Log ("[\u263a]\t"+ "Testing Destroy error 6 ");
 	}
 	
 	public void OnFocus ()

@@ -20,7 +20,6 @@ using System.Collections;
 using OpenCog.Attributes;
 using ProtoBuf;
 using UnityEngine;
-using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -95,8 +94,8 @@ public static class OCGameObject
 		
 		if(component == null)
 		{
-			OCLogger.Error("Expected to find component of type "
-		         + typeof(T) + " but found none.");
+			Debug.LogError("Expected to find component of type "
+		         + typeof(T) + " but found none", obj);
 		}
 		
 		return component;

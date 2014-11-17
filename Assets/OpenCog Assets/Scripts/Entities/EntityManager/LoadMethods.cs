@@ -16,7 +16,6 @@ using System.Collections;
 using OpenCog.Actions;
 using UnityEngine;
 using System;
-using OpenCog.Utilities.Logging;
 
 #pragma warning disable 0414
 #endregion
@@ -89,7 +88,7 @@ namespace OpenCog.Entities
 				
 				
 				
-				//OCLogger.Normal ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
+				//Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
 				//instantiate the game object, specified by NPCAgent at  point spawn position and rotated as per the identity Quaternion (that is, not at all)
 				UnityEngine.GameObject agentClone = (GameObject)UnityEngine.Object.Instantiate (agentPrefab, spawnPosition, Quaternion.identity);
 				
@@ -103,11 +102,11 @@ namespace OpenCog.Entities
 				agiAC.DefaultEndTarget = GameObject.Find("EndPointStub");
 				agiAC.DefaultStartTarget = GameObject.Find("StartPointStub");
 				
-				//OCLogger.Normal ("agentClone is" + (agentClone == null ? " null " : " not null"));
+				//Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
 				//
 				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
-				//OCLogger.Normal ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
-				//OCLogger.Normal ("connector is" + (connector == null ? " null " : " not null"));
+				//UnityEngine.Debug.Log ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
+				//Debug.Log ("connector is" + (connector == null ? " null " : " not null"));
 				
 				
 				//Ensure our agent is properly named
@@ -121,7 +120,7 @@ namespace OpenCog.Entities
 				//					// An avatar with given name is already there.
 				//					yield break;
 				//				}
-				//				OCLogger.Normal ("Add avatar[" + agentName + "] to avatar map.");
+				//				Debug.Log ("Add avatar[" + agentName + "] to avatar map.");
 				//			}
 				
 				//initialize the connector
@@ -135,7 +134,7 @@ namespace OpenCog.Entities
 				{
 					
 					// OAC is not loaded normally, destroy the avatar instance.
-					OCLogger.Error ("Could not connect to Embodiment");
+					Debug.LogError ("Could not connect to Embodiment");
 					OCLogger.Fine ("LoadMethods.AtRunTime is reporting !connector.Initialize. Cannot connect to the OAC, avatar loading failed.");
 					connector.SaveAndExit ();
 					Destroy (agentClone);
@@ -145,7 +144,7 @@ namespace OpenCog.Entities
 				} 
 				else
 				{
-					OCLogger.Normal ("LoadMethods.AtRunTime is reporting connector.Initialized");
+					Debug.Log ("LoadMethods.AtRunTime is reporting connector.Initialized");
 					if(report != null)
 						report("true");
 				}

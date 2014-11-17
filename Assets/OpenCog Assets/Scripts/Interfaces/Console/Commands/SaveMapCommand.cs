@@ -25,7 +25,6 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Map;
-using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -125,7 +124,14 @@ public class SaveMapCommand : Console.ConsoleCommand
 			OCLogger.Fine (gameObject.name + " is disabled.");
 		}
 
-
+		/// <summary>
+		/// Raises the destroy event when SaveMapCommand is about to be destroyed.
+		/// </summary>
+		public void OnDestroy ()
+		{
+			Uninitialize ();
+			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
+		}
 		
 		public override string Run (ArrayList arguments)
 		{
@@ -175,7 +181,7 @@ public class SaveMapCommand : Console.ConsoleCommand
 		/// <summary>
 		/// Uninitializes this instance.  Cleanup refernces here.
 		/// </summary>
-		override protected void Uninitialize ()
+		private void Uninitialize ()
 		{
 		}
 		

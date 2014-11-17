@@ -7,7 +7,6 @@ using System.Threading;
 using UnityEngine;
 using OpenCog.BlockSet.BaseBlockSet;
 using OpenCog.Map;
-using OpenCog.Utilities.Logging;
 
 #pragma warning disable 0414
 
@@ -34,7 +33,7 @@ public class OCWorldGenerator : MonoBehaviour {
 
 		if (MapName != string.Empty)
 		{
-			//OCLogger.Normal ("In WorldGenerator, MapName defined");
+			//Debug.Log ("In WorldGenerator, MapName defined");
 			OCFileTerrainGenerator fileTerrainGenerator = new OCFileTerrainGenerator(map, MapName);
 			
 			fileTerrainGenerator.LoadLevel();

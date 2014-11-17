@@ -22,7 +22,6 @@ using System;
 using OpenCog.Map;
 using OpenCog.BlockSet.BaseBlockSet; //OcBlock
 using OpenCog.Utility; //vectorUtils
-using OpenCog.Utilities.Logging;
 
 #pragma warning disable 0414
 #endregion

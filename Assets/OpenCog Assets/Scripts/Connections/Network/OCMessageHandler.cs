@@ -31,7 +31,6 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
-using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -117,15 +116,15 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 
 //	public IEnumerator StartProcessing(System.Net.Sockets.Socket workSocket)
 //	{
-//		OCLogger.Normal ("OCMessageHandler::StartProcessing");
+//		UnityEngine.Debug.Log ("OCMessageHandler::StartProcessing");
 //		yield return StartCoroutine(UpdateMessages(workSocket));
-////		OCLogger.Normal ("BALLS!");
+////		UnityEngine.Debug.Log ("BALLS!");
 ////		yield return null;
 //	}
 		
 	/*public IEnumerator UpdateMessages(System.Net.Sockets.Socket workSocket)
 	{
-		OCLogger.Normal ("OCMessageHandler::UpdateMessages");
+		UnityEngine.Debug.Log ("OCMessageHandler::UpdateMessages");
 		
 		StreamReader reader = null;
 		StreamWriter writer = null;
@@ -139,7 +138,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		catch( IOException ioe )
 		{
 			workSocket.Close();
-			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			Debug.LogError("An I/O error occured.  [" + ioe.Message + "].");
 		}
 			
 		bool endInput = false;
@@ -158,27 +157,27 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 						//string answer = Parse(line);
 						Parse (line);
 							
-						//OCLogger.Normal ("Just parsed '" + line + "'");
+						//UnityEngine.Debug.Log ("Just parsed '" + line + "'");
 					}
 					else
 					{
-						OCLogger.Normal ("No more input, line == null");
+						UnityEngine.Debug.Log ("No more input, line == null");
 							
 						endInput = true;
 							
-		//					OCLogger.Normal ("Setting OCNetworkElement.IsHandling to false...");
+		//					UnityEngine.Debug.Log ("Setting OCNetworkElement.IsHandling to false...");
 		//						
 		//					OCNetworkElement.Instance.IsHandlingMessages = false;
 					}
 				}
 				catch( IOException ioe )
 				{
-					OCLogger.Normal ("An I/O error occured.  [" + ioe.Message + "].");
+					UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.Message + "].");
 					endInput = true;
 				}
 				catch (System.Exception ex)
 				{
-					OCLogger.Normal ("A general error occured.  [" + ex.Message + "].");
+					UnityEngine.Debug.Log ("A general error occured.  [" + ex.Message + "].");
 					endInput = true;
 				}
 				
@@ -201,8 +200,8 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		}
 		catch( IOException ioe )
 		{
-			OCLogger.Normal ("Something went wrong: " + ioe.Message);
-			//OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			UnityEngine.Debug.Log ("Something went wrong: " + ioe.Message);
+			//Debug.LogError("An I/O error occured.  [" + ioe.Message + "].");
 			endInput = true;
 		}
 	
@@ -212,7 +211,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	public void UpdateMessagesSync(System.Net.Sockets.Socket workSocket)
 	{
-		OCLogger.Normal ("OCMessageHandler::UpdateMessagesSync");
+		UnityEngine.Debug.Log ("OCMessageHandler::UpdateMessagesSync");
 		
 		StreamReader reader = null;
 		StreamWriter writer = null;
@@ -226,7 +225,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		catch( IOException ioe )
 		{
 			workSocket.Close();
-			OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			Debug.LogError("An I/O error occured.  [" + ioe.Message + "].");
 		}
 			
 		bool endInput = false;
@@ -240,7 +239,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 					
 				if(line != null)
 				{
-					OCLogger.Normal ("Parsing line: " + line);
+					UnityEngine.Debug.Log ("Parsing line: " + line);
 						
 					//string answer = Parse(line);
 					Parse(line);
@@ -252,7 +251,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			}
 			catch( IOException ioe )
 			{
-				OCLogger.Normal ("An I/O error occured.  [" + ioe.Message + "].");
+				UnityEngine.Debug.Log ("An I/O error occured.  [" + ioe.Message + "].");
 				endInput = true;
 			}
 		}
@@ -265,8 +264,8 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		}
 		catch( IOException ioe )
 		{
-			OCLogger.Normal ("Something went wrong: " + ioe.Message);
-			//OCLogger.Error("An I/O error occured.  [" + ioe.Message + "].");
+			UnityEngine.Debug.Log ("Something went wrong: " + ioe.Message);
+			//Debug.LogError("An I/O error occured.  [" + ioe.Message + "].");
 			endInput = true;
 		}
 	}
@@ -283,7 +282,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 	
 	new private void Initialize()
 	{
-		OCLogger.Normal ("OCMessageHandler::Initialize");
+		UnityEngine.Debug.Log ("OCMessageHandler::Initialize");
 			
 		try {
 			_lineCount = 0;
@@ -294,7 +293,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			_message = new StringBuilder();
 			_messageBuffer = new List<OCMessage>();	
 		} catch (System.Exception ex) {
-			OCLogger.Normal ("OCMessageHandler::Initialize, something went wrong: " + ex.ToString());
+			UnityEngine.Debug.Log ("OCMessageHandler::Initialize, something went wrong: " + ex.ToString());
 		}
 			
 		
@@ -302,7 +301,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private string ParseNotifyNewMessage(IEnumerator token)
 	{
-		OCLogger.Normal ("OCMessageHandler::ParseNotifyNewMessage");
+		UnityEngine.Debug.Log ("OCMessageHandler::ParseNotifyNewMessage");
 			
 		string answer = null;
 		
@@ -327,7 +326,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private string ParseUnavailableElement(IEnumerator token)
 	{
-		OCLogger.Normal ("OCMessageHandler::ParseUnavailableElement");
+		UnityEngine.Debug.Log ("OCMessageHandler::ParseUnavailableElement");
 			
 		string answer = null;
 			
@@ -350,7 +349,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private string ParseAvailableElement(IEnumerator token)
 	{
-		OCLogger.Normal ("OCMessageHandler::ParseAvailableElement");
+		UnityEngine.Debug.Log ("OCMessageHandler::ParseAvailableElement");
 			
 		string answer = null;
 			
@@ -373,7 +372,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private string ParseStartMessage(string inputLine, string command, IEnumerator token)
 	{
-		OCLogger.Normal ("OCMessageHandler::ParseStartMessage");
+		UnityEngine.Debug.Log ("OCMessageHandler::ParseStartMessage");
 			
 		string answer = null;
 			
@@ -390,7 +389,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			                                  _message.ToString());
 			if( message == null )
 			{
-				OCLogger.Error("Could not factory message from the following string: " +
+				Debug.LogError("Could not factory message from the following string: " +
 				               _message.ToString());
 			}
 			if(_useMessageBuffer)
@@ -422,7 +421,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			}
 			else
 			{
-				OCLogger.Error("onLine: Unexepcted command [" +
+				Debug.LogError("onLine: Unexepcted command [" +
 				               command + "]. Discarding line [" +
 				               inputLine + "]");	
 			}
@@ -460,13 +459,13 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private string ParseNoMoreMessages(string inputLine, string command, IEnumerator token)
 	{
-		OCLogger.Normal ("OCMessageHandler::ParseNoMoreMessages");
+		UnityEngine.Debug.Log ("OCMessageHandler::ParseNoMoreMessages");
 			
 		string answer = null;
 			
 		if(_state == READING_MESSAGES)
 		{
-			OCLogger.Normal("onLine: From [" + _messageFrom +
+			UnityEngine.Debug.Log("onLine: From [" + _messageFrom +
 			          "] to [" + _messageTo +
 			          "] Type [" + _messageType + "]: " + _message.ToString());
 			
@@ -477,19 +476,19 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			
 			if(message == null)
 			{
-				OCLogger.Normal("Could not factory message from the following string: [" +
+				UnityEngine.Debug.Log("Could not factory message from the following string: [" +
 				               _message.ToString() + "]");
 			}
 			if(_useMessageBuffer)
 			{
-				OCLogger.Normal ("Using message buffer...");
+				UnityEngine.Debug.Log ("Using message buffer...");
 				_messageBuffer.Add(message);
 				_networkElement.PullMessage(_messageBuffer);
 				_messageBuffer.Clear();
 			}
 			else
 			{	
-				OCLogger.Normal ("Not using message buffer...pulling instead...");
+				UnityEngine.Debug.Log ("Not using message buffer...pulling instead...");
 				_networkElement.PullMessage(message);
 			}
 			
@@ -504,7 +503,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		}
 		else
 		{
-			OCLogger.Normal("onLine: Unexpected command [" +
+			UnityEngine.Debug.Log("onLine: Unexpected command [" +
 			               command + "]. Discarding line [" +
 			               inputLine + "]");
 			answer = OCNetworkElement.FAILED_MESSAGE;
@@ -515,7 +514,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 	
 	private string ParseCMessage(string inputLine)
 	{
-		OCLogger.Normal ("OCMessageHandler::ParseCMessage");
+		UnityEngine.Debug.Log ("OCMessageHandler::ParseCMessage");
 			
 		string contents = inputLine.Substring(1);
 		string answer = null;
@@ -547,7 +546,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		}
 		else
 		{
-			OCLogger.Error("onLine: Unexpected command [" + command + "]. Discarding line [" + inputLine + "]");
+			Debug.LogError("onLine: Unexpected command [" + command + "]. Discarding line [" + inputLine + "]");
 			answer = OCNetworkElement.FAILED_MESSAGE;
 		} // end processing command.
 			
@@ -556,7 +555,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private string ParseDMessage(string inputLine)
 	{
-		OCLogger.Normal ("OCMessageHandler::ParseDMessage");
+		UnityEngine.Debug.Log ("OCMessageHandler::ParseDMessage");
 			
 		string answer = null;
 			
@@ -573,7 +572,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		}
 		else
 		{
-			OCLogger.Error("onLine: Unexpected dataline. Discarding line [" +
+			Debug.LogError("onLine: Unexpected dataline. Discarding line [" +
 			               inputLine + "]");
 			answer = OCNetworkElement.FAILED_MESSAGE;
 		}
@@ -596,20 +595,20 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 	/// </returns> 
 	private string Parse(string inputLine)
 	{
-		OCLogger.Normal ("OCMessageHandler::Parse (" + inputLine + ")");
+		UnityEngine.Debug.Log ("OCMessageHandler::Parse (" + inputLine + ")");
 		
 		string answer = null;
 					
 		if (_networkElement == null)
 			_networkElement = OCNetworkElement.Instance;
 			
-		OCLogger.Normal ("_networkElement == null? I wonder..." + ((_networkElement == null) ? "yes...it is..." : "no...it isn't" ));		
+		UnityEngine.Debug.Log ("_networkElement == null? I wonder..." + ((_networkElement == null) ? "yes...it is..." : "no...it isn't" ));		
 			
 //		if (_networkElement != null) {
-//			//OCLogger.Normal ("OCMessageHandler is using a NetworkElement with ID " + _networkElement.VerificationGuid + "...");
+//			//UnityEngine.Debug.Log ("OCMessageHandler is using a NetworkElement with ID " + _networkElement.VerificationGuid + "...");
 //		}
 //		else {
-//			//OCLogger.Normal("_networkElement == null");
+//			//UnityEngine.Debug.Log("_networkElement == null");
 //		}
 			
 		char selector = inputLine[0];
@@ -625,7 +624,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		} 
 		else
 		{
-			OCLogger.Error("onLine: Invalid selector [" + selector
+			Debug.LogError("onLine: Invalid selector [" + selector
 			               + "]. Discarding line [" + inputLine + "].");
 			answer = OCNetworkElement.FAILED_MESSAGE;
 		} 
@@ -645,7 +644,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 
 	public OCMessageHandler()
 	{
-		OCLogger.Normal ("OCMessageHandler::OCMessageHandler");
+		UnityEngine.Debug.Log ("OCMessageHandler::OCMessageHandler");
 		Initialize();
 	}
 

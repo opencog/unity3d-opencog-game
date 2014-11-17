@@ -140,7 +140,14 @@ public class OCSocialInteraction : OCMonoBehaviour
 //		OCLogger.Fine(gameObject.name + " is disabled.");
 //	}
 //
-
+//	/// <summary>
+//	/// Raises the destroy event when SocialInteraction is about to be destroyed.
+//	/// </summary>
+//	public void OnDestroy()
+//	{
+//		Uninitialize();
+//		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
+//	}
 //
 //	public void AddAction(Avatar avatar)
 //	{
@@ -169,7 +176,7 @@ public class OCSocialInteraction : OCMonoBehaviour
 //	{
 //		
 //		// todo: we need a kiss animation
-//		OCLogger.Normal(a.gameObject.name + "kiss " + gameObject.name);
+//		Debug.Log(a.gameObject.name + "kiss " + gameObject.name);
 //		
 //	}
 //	
@@ -177,7 +184,7 @@ public class OCSocialInteraction : OCMonoBehaviour
 //	{
 //
 //		// todo: we need a hug animation
-//		OCLogger.Normal(a.gameObject.name + "hug " + gameObject.name);
+//		Debug.Log(a.gameObject.name + "hug " + gameObject.name);
 //		
 //	}
 //
@@ -201,7 +208,7 @@ public class OCSocialInteraction : OCMonoBehaviour
 //	/// <summary>
 //	/// Uninitializes this instance.  Cleanup refernces here.
 //	/// </summary>
-//	override protected void Uninitialize()
+//	private void Uninitialize()
 //	{
 //	}
 //
@@ -214,7 +221,7 @@ public class OCSocialInteraction : OCMonoBehaviour
 //			OCHeadUpDisplay theHud = player.GetTheHUD();
 //			if(theHud == null)
 //			{
-//				OCLogger.Error("The player's HUD is null! --in touch action");
+//				Debug.LogError("The player's HUD is null! --in touch action");
 //				yield break;
 //			}
 //			yield return StartCoroutine(theHud.gettingForceFromHud(this));
@@ -245,7 +252,7 @@ public class OCSocialInteraction : OCMonoBehaviour
 //			
 //		}
 //		
-//		OCLogger.Normal(a.gameObject.name + "touch " + gameObject.name + " with force = " + force + " direction=" + direction);
+//		Debug.Log(a.gameObject.name + "touch " + gameObject.name + " with force = " + force + " direction=" + direction);
 //		
 //		if(completionCallback != null)
 //		{

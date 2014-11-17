@@ -27,7 +27,6 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Utility;
-using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -125,11 +124,19 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 //			OCLogger.Debugging("Cannot emit OnDisable message with _networkElement.gameObject.name because _networkElement == null");	
 	}
 
-
+	/// <summary>
+	/// Raises the destroy event when OCServerListener is about to be destroyed.
+	/// </summary>
+	public void OnDestroy()
+	{
+//		Uninitialize();
+//		OCLogger.Fine("Server Listener for " + _networkElement.gameObject.name + 
+//			" is about to be destroyed.");
+	}
 		
 	public IEnumerator Listen()
 	{
-		OCLogger.Normal ("OCServerListener::Listen has a networkelement with GUID " + _networkElement.VerificationGuid);
+		UnityEngine.Debug.Log ("OCServerListener::Listen has a networkelement with GUID " + _networkElement.VerificationGuid);
 			
 		try
 		{
@@ -139,7 +146,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 				
 				_listener.Start();	
 					
-				OCLogger.Normal ("Now listening on " + _networkElement.IP + ":" + _networkElement.Port + "...");
+				UnityEngine.Debug.Log ("Now listening on " + _networkElement.IP + ":" + _networkElement.Port + "...");
 					
 				OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
 				console.AddConsoleEntry("Listening for connection callback...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
@@ -148,8 +155,8 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		}
 		catch(SocketException se)
 		{
-			OCLogger.Normal ("Whoops, something went wrong making a TCPListener: " + se.Message);
-			//OCLogger.Error(se.Message);
+			UnityEngine.Debug.Log ("Whoops, something went wrong making a TCPListener: " + se.Message);
+			//Debug.LogError(se.Message);
 			yield break;
 		}
 		
@@ -157,23 +164,23 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		{
 			if(!_listener.Pending())
 			{
-				//OCLogger.Normal (System.DateTime.Now.ToString ("HH:mm:ss.fff") + ": Nope, not pending...");
+				//UnityEngine.Debug.Log (System.DateTime.Now.ToString ("HH:mm:ss.fff") + ": Nope, not pending...");
 				if (_shouldStop)
-					OCLogger.Normal("Which is funny, because IT SHOULDN'T BE HERE BECAUSE _shouldStop IS TRUE!!");	
+					UnityEngine.Debug.Log("Which is funny, because IT SHOULDN'T BE HERE BECAUSE _shouldStop IS TRUE!!");	
 				// If listener is not pending, sleep for a while to relax the CPU.
 				yield return new UnityEngine.WaitForSeconds(0.5f);
 			}
 			else
 			{
-				OCLogger.Normal ("Yep, pending!");
+				UnityEngine.Debug.Log ("Yep, pending!");
 					
 //				try
 //				{
-					OCLogger.Warn ("Accepting socket from listener...");
+					UnityEngine.Debug.LogWarning ("Accepting socket from listener...");
 
                     _sockets.Add(_listener.AcceptSocket());
 
-					OCLogger.Warn ("Socket accepted...");
+					UnityEngine.Debug.LogWarning ("Socket accepted...");
 
                     OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
 
@@ -195,30 +202,30 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
                         _isReady = true;
                         _shouldStop = true;
 					
-                        OCLogger.Normal ("_shouldStop is now TRUE!");
+                        UnityEngine.Debug.Log ("_shouldStop is now TRUE!");
 
                         console.AddConsoleEntry("MessageHandler online, ready to receive messages!", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
 
                         yield return new UnityEngine.WaitForSeconds(0.1f);
                     }
 
-//					OCLogger.Normal ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
+//					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
 //						
 //					if (_messageHandler == null)
 //						_messageHandler = OCMessageHandler.Instance;
 //					
 //					if (_messageHandler == null)
-//						OCLogger.Normal ("No handler?? I just made it!!");
+//						UnityEngine.Debug.Log ("No handler?? I just made it!!");
 //					
 //					_messageHandler.UpdateMessagesSync(workSocket);
 					//_messageHandler.UpdateMessages(workSocket);
 						
-//					OCLogger.Normal ("Well...did anything happen?");
+//					UnityEngine.Debug.Log ("Well...did anything happen?");
 //				}
 //				catch( SocketException se )
 //				{
-//					//OCLogger.Error(se.Message);
-//						OCLogger.Normal (se.Message);
+//					//Debug.LogError(se.Message);
+//						UnityEngine.Debug.Log (se.Message);
 //				}
 			}
 		}
@@ -241,7 +248,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 	/// <summary>
 	/// Uninitializes this instance.  Cleanup refernces here.
 	/// </summary>
-	override protected void Uninitialize()
+	public void Uninitialize()
 	{
 	}			
 		
@@ -251,7 +258,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 			
 		if (_listener == null)
 		{
-			OCLogger.Normal ("_listener == null, nothing to call Stop on...");
+			UnityEngine.Debug.Log ("_listener == null, nothing to call Stop on...");
 		}
 		else
 		{
@@ -262,7 +269,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 			}
 			catch(SocketException se)
 			{
-				OCLogger.Error(se.Message);
+				Debug.LogError(se.Message);
 			}		
 		}
 	}

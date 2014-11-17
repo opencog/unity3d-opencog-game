@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using OpenCog.Utility;
-using OpenCog.Utilities.Logging;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
@@ -188,12 +187,12 @@ namespace OpenCog.Embodiment
 
 		void Update()
 		{
-			//OCLogger.Normal ("OCPhysiologicalModel::Update!");
+			//UnityEngine.Debug.Log ("OCPhysiologicalModel::Update!");
 		}
 
 		void FixedUpdate()
 		{
-			//OCLogger.Normal ("OCPhysiologicalModel::FixedUpdate! UpdateTimer = " + _updateTimer.ToString () + ", UpdateInterval = " + _updateInterval.ToString());
+			//UnityEngine.Debug.Log ("OCPhysiologicalModel::FixedUpdate! UpdateTimer = " + _updateTimer.ToString () + ", UpdateInterval = " + _updateInterval.ToString());
 			_updateTimer += UnityEngine.Time.fixedDeltaTime;
 			if(_updateTimer >= _updateInterval)
 			{
@@ -223,7 +222,7 @@ namespace OpenCog.Embodiment
 
 		public void TimeTick()
 		{
-			//OCLogger.Normal ("OCPhysiologicalModel::TimeTick!");
+			//UnityEngine.Debug.Log ("OCPhysiologicalModel::TimeTick!");
 			UpdateBasicFactors();
 			UpdateFitness();
 			UpdateEnergy();
@@ -244,7 +243,7 @@ namespace OpenCog.Embodiment
 			
 			if(_connector != null)
 			{
-				//OCLogger.Normal ("OCPhysiologicalModel::TimeTick: _connector != null, yaay!!");
+				//UnityEngine.Debug.Log ("OCPhysiologicalModel::TimeTick: _connector != null, yaay!!");
 				// Send updated values to OAC
 				//			_connector.SendMessage("sendAvatarSignalsAndTick", _factorSummaryMap);
 				_connector.SendAvatarSignalsAndTick(_factorSummaryMap);

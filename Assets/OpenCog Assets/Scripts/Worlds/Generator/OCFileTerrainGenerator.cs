@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using OpenCog.Map;
 using OpenCog;
 using OpenCog.BlockSet.BaseBlockSet;
-using OpenCog.Utilities.Logging;
 
 public class OCFileTerrainGenerator
 {
@@ -46,10 +45,10 @@ public OCFileTerrainGenerator(OpenCog.Map.OCMap map, string mapName)
 		
         UnityEngine.Object[] objects = Resources.LoadAll(mapName + "/level");
 		
-        //OCLogger.Normal("Objects Loaded: ");
+        //Debug.Log("Objects Loaded: ");
         foreach(UnityEngine.Object obj in objects)
         {
-                OCLogger.Normal(obj.ToString());
+                Debug.Log(obj.ToString());
         }
 		
         string dataPath;
@@ -72,7 +71,7 @@ public void LoadLevel()
 {
         int verticalOffset = 85;
 		
-        //OCLogger.Normal("Loading level at: " + _fullMapPath);
+        //Debug.Log("Loading level at: " + _fullMapPath);
 		
         Substrate.AnvilWorld mcWorld = Substrate.AnvilWorld.Create(_fullMapPath);
 			
@@ -86,7 +85,7 @@ public void LoadLevel()
 		
         System.Collections.Generic.Dictionary<int, int> unmappedBlockTypes = new System.Collections.Generic.Dictionary<int, int>();
 
-        //OCLogger.Normal("In LoadLevel, there are " + blockSet.BlockCount + " blocks available.");
+        //Debug.Log("In LoadLevel, there are " + blockSet.BlockCount + " blocks available.");
 		
         foreach(Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager)
         {
@@ -159,7 +158,7 @@ public void LoadLevel()
 //												break;
 //											case 9: // Water to water
 //												ourBlockID = 8;
-//												//OCLogger.Normal ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
+//												//Debug.Log ("Creating some water at [" + blockPos.x + ", " + blockPos.y + ", " + blockPos.z + "]");
 //												break;
 ////											case 2:
 ////												iBlockID = 16;
@@ -172,7 +171,7 @@ public void LoadLevel()
 ////												break;
 //											default: 
 //											{
-//												//OCLogger.Normal ("Unmapped BlockID: " + iBlockID);
+//												//Debug.Log ("Unmapped BlockID: " + iBlockID);
 //												
 //												if (!unmappedBlockTypes.ContainsKey (iBlockID))
 //												{
@@ -217,7 +216,7 @@ public void LoadLevel()
                                                                                                 GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
                                                                                                 if(batteryPrefab == null)
                                                                                                 {
-                                                                                                        OCLogger.Normal("OCBuilder::Update, batteryPrefab == null");
+                                                                                                        UnityEngine.Debug.Log("OCBuilder::Update, batteryPrefab == null");
                                                                                                 } else
                                                                                                 {
                                                                                                         GameObject battery = (GameObject)GameObject.Instantiate(batteryPrefab);
@@ -233,7 +232,7 @@ public void LoadLevel()
                                                                                                 GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
                                                                                                 if(hearthPrefab == null)
                                                                                                 {
-                                                                                                        OCLogger.Normal("OCBuilder::Update, hearthPrefab == null");
+                                                                                                        UnityEngine.Debug.Log("OCBuilder::Update, hearthPrefab == null");
                                                                                                 } else
                                                                                                 {
                                                                                                         GameObject hearth = (GameObject)GameObject.Instantiate(hearthPrefab);
@@ -279,10 +278,10 @@ public void LoadLevel()
 		
         foreach(System.Collections.Generic.KeyValuePair<int, int> unmappedBlockData in unmappedBlockTypes)
         {
-                OCLogger.Normal("Unmapped BlockID '" + unmappedBlockData.Key + "' found " + unmappedBlockData.Value + " times.");	
+                UnityEngine.Debug.Log("Unmapped BlockID '" + unmappedBlockData.Key + "' found " + unmappedBlockData.Value + " times.");	
         }
 		
-        OCLogger.Normal("Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
+        Debug.Log("Loaded level: " + _fullMapPath + ", created " + createCount + " blocks.");
 		
         _map.AddColliders();
 		
