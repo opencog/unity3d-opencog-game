@@ -22,7 +22,7 @@ using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
 
-namespace OpenCog
+namespace OpenCog.Utilities.Logging
 {
 
 /// <summary>

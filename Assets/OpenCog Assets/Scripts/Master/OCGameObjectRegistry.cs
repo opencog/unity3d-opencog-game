@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenCog.Utilities.Logging;
 
 namespace OpenCog.Extensions
 {
@@ -31,7 +32,7 @@ namespace OpenCog.Extensions
 			} 
 			else 
 			{
-				UnityEngine.Debug.Log ("OCGameObjectRegistry::RegisterGameObject: objectToRegister == null");	
+				OCLogger.Normal ("OCGameObjectRegistry::RegisterGameObject: objectToRegister == null");	
 			}
 		}
 		
@@ -43,7 +44,7 @@ namespace OpenCog.Extensions
 			}
 			else
 			{
-				UnityEngine.Debug.Log ("OCGameObjectRegistry:RemoveGameObject: No gameObject found with instanceID == " + instanceID + "");
+				OCLogger.Normal ("OCGameObjectRegistry:RemoveGameObject: No gameObject found with instanceID == " + instanceID + "");
 			}
 		}
 		
@@ -55,7 +56,7 @@ namespace OpenCog.Extensions
 			}
 			else
 			{
-				UnityEngine.Debug.Log ("OCGameObjectRegistry:RetrieveGameObject: No gameObject found with instanceID == " + instanceID + "");
+				OCLogger.Normal ("OCGameObjectRegistry:RetrieveGameObject: No gameObject found with instanceID == " + instanceID + "");
 				
 				return null;
 			}

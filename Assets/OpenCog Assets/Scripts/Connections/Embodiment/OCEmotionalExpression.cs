@@ -25,6 +25,7 @@ using OpenCog.Extensions;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -96,7 +97,7 @@ public class OCEmotionalExpression : OCMonoBehaviour
 		_face = transform.Find("robotG/mainG/head_GEO");
 		if(!_face)
 		{
-			Debug.LogError("Face of the robot is not found");
+			OCLogger.Error("Face of the robot is not found");
 		}
 	}
 
@@ -136,7 +137,7 @@ public class OCEmotionalExpression : OCMonoBehaviour
             if (tex)
             {
                 this.emotionTextureMap[dominant_feeling] = tex;
-                Debug.Log("Texture for " + dominant_feeling + " loaded.");
+                OCLogger.Normal("Texture for " + dominant_feeling + " loaded.");
             }
         } 
     
@@ -144,7 +145,7 @@ public class OCEmotionalExpression : OCMonoBehaviour
         if (tex)
             face.gameObject.renderer.material.mainTexture = tex;
         else
-            Debug.LogError("Failed to get texture named: " + textureName);          
+            OCLogger.Error("Failed to get texture named: " + textureName);          
 		  */
 	}
 

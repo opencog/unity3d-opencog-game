@@ -26,6 +26,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using Type = System.Type;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -127,14 +128,7 @@ public class TalkCommand : Console.ConsoleCommand
 			OCLogger.Fine (gameObject.name + " is disabled.");
 		}
 
-		/// <summary>
-		/// Raises the destroy event when TalkCommand is about to be destroyed.
-		/// </summary>
-		public void OnDestroy ()
-		{
-			Uninitialize ();
-			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
-		}
+
 		
 		public override string Run(ArrayList arguments) {
        // string text = string.Join(" ", arguments.ToArray(typeof(string)) as string[]);
@@ -187,7 +181,7 @@ public class TalkCommand : Console.ConsoleCommand
 		/// <summary>
 		/// Uninitializes this instance.  Cleanup refernces here.
 		/// </summary>
-		private void Uninitialize ()
+		override protected void Uninitialize ()
 		{
 		}
 			

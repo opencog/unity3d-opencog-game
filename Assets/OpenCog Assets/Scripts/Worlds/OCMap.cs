@@ -27,6 +27,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using OpenCog.Utility;
+using OpenCog.Utilities.Logging;
 using System.Linq;
 
 //using PostSharp.Aspects;
@@ -245,7 +246,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 //			asp = attributes[0] as OCLogAspect;
 //
 //		if(asp == null)
-//			Debug.Log("No OCLog Aspect...");
+//			OCLogger.Normal("No OCLog Aspect...");
 //
 //		asp.OnEntry(null);
 			
@@ -308,7 +309,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 		if(block.IsEmpty() && !oldBlock.IsEmpty())
 		{
-			UnityEngine.Debug.Log("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
+			OCLogger.Normal("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
 				
 			if(perceptionCollector != null && oldBlock.block.GetName() != "Battery")
 			{
@@ -336,7 +337,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			
 		} else
 		{
-			UnityEngine.Debug.Log("OCMap::SetBlockAndRecompute: block.IsEmpty = false -> inferring creation.");
+			OCLogger.Normal("OCMap::SetBlockAndRecompute: block.IsEmpty = false -> inferring creation.");
 				
 			// Moved notify down...to AFTER the point where it is actually created...
 		}
@@ -346,7 +347,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			GameObject batteryPrefab = OCMap.Instance.BatteryPrefab;
 			if(batteryPrefab == null)
 			{
-				UnityEngine.Debug.Log("OCBuilder::Update, batteryPrefab == null");
+				OCLogger.Normal("OCBuilder::Update, batteryPrefab == null");
 			} else
 			{
 				GameObject newBattery = (GameObject)GameObject.Instantiate(batteryPrefab);
@@ -367,7 +368,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			GameObject hearthPrefab = OCMap.Instance.HearthPrefab;
 			if(hearthPrefab == null)
 			{
-				UnityEngine.Debug.Log("OCBuilder::Update, hearthPrefab == null");
+				OCLogger.Normal("OCBuilder::Update, hearthPrefab == null");
 			} else
 			{
 				GameObject newHearth = (GameObject)GameObject.Instantiate(hearthPrefab);
@@ -393,8 +394,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		Vector3i vCharRight = VectorUtil.Vector3ToVector3i(characterTransform.right);
 
 		
-		//Debug.Log ("vFeetPosition = [" + vFeetPosition.x + ", " + vFeetPosition.y + ", " + vFeetPosition.z + "]");
-		//Debug.Log ("vFeetForwardPosition = [" + vFeetForwardPosition.x + ", " + vFeetForwardPosition.y + ", " + vFeetForwardPosition.z + "]");
+		//OCLogger.Normal ("vFeetPosition = [" + vFeetPosition.x + ", " + vFeetPosition.y + ", " + vFeetPosition.z + "]");
+		//OCLogger.Normal ("vFeetForwardPosition = [" + vFeetForwardPosition.x + ", " + vFeetForwardPosition.y + ", " + vFeetForwardPosition.z + "]");
 		
 		UnityEngine.Vector3 vFeet = new UnityEngine.Vector3(characterTransform.position.x, characterTransform.position.y, characterTransform.position.z);
 				
@@ -403,18 +404,18 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		UnityEngine.Vector3 vFeetForward = characterTransform.forward + vFeet;
 		
 		Vector3i viStandingOn = VectorUtil.Vector3ToVector3i(vFeet);
-		//Debug.Log ("Standing on world block: [" + viStandingOn.x + ", " + viStandingOn.y + ", " + viStandingOn.z + "]");
+		//OCLogger.Normal ("Standing on world block: [" + viStandingOn.x + ", " + viStandingOn.y + ", " + viStandingOn.z + "]");
 		
 		Vector3i viStandingOnForward = VectorUtil.Vector3ToVector3i(vFeetForward);
-		//Debug.Log ("Forward of standing on world block: [" + viStandingOnForward.x + ", " + viStandingOnForward.y + ", " + viStandingOnForward.z + "]");
+		//OCLogger.Normal ("Forward of standing on world block: [" + viStandingOnForward.x + ", " + viStandingOnForward.y + ", " + viStandingOnForward.z + "]");
 				
 		Vector3i viLowerBody = new Vector3i(viStandingOn.x, viStandingOn.y, viStandingOn.z);
 		viLowerBody += new Vector3i(0, 1, 0);
-		//Debug.Log ("Lower body inhabits world block: [" + viLowerBody.x + ", " + viLowerBody.y + ", " + viLowerBody.z + "]");
+		//OCLogger.Normal ("Lower body inhabits world block: [" + viLowerBody.x + ", " + viLowerBody.y + ", " + viLowerBody.z + "]");
 		
 		Vector3i viUpperBody = new Vector3i(viLowerBody.x, viLowerBody.y, viLowerBody.z);
 		viUpperBody += new Vector3i(0, 1, 0);
-		//Debug.Log ("Upper body inhabits world block: [" + viUpperBody.x + ", " + viUpperBody.y + ", " + viUpperBody.z + "]");
+		//OCLogger.Normal ("Upper body inhabits world block: [" + viUpperBody.x + ", " + viUpperBody.y + ", " + viUpperBody.z + "]");
 		
 		// Prepare some block vectors to use later.
 		Vector3i viOneAboveHead = viUpperBody + Vector3i.up; // The block direct above the upper body
@@ -439,13 +440,13 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		Vector3i viTwoForwardOneUnder = viStandingOnForward + vCharForward; // The block two steps ahead, one down
 		Vector3i viThreeForwardOneUnder = viTwoForwardOneUnder + vCharForward; // The block three steps ahead, one down
 		
-		//Debug.Log ("Forward knee high: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
-		//Debug.Log ("Forward chest high: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
-		//Debug.Log ("Forward one under: [" + viForwardOneUnder.x + ", " + viForwardOneUnder.y + ", " + viForwardOneUnder.z + "]");
+		//OCLogger.Normal ("Forward knee high: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
+		//OCLogger.Normal ("Forward chest high: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
+		//OCLogger.Normal ("Forward one under: [" + viForwardOneUnder.x + ", " + viForwardOneUnder.y + ", " + viForwardOneUnder.z + "]");
 		
 		
-		//Debug.Log ("Forward lower block is: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
-		//Debug.Log ("Forward upper block is: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
+		//OCLogger.Normal ("Forward lower block is: [" + viForwardKneeHigh.x + ", " + viForwardKneeHigh.y + ", " + viForwardKneeHigh.z + "]");
+		//OCLogger.Normal ("Forward upper block is: [" + viForwardChestHigh.x + ", " + viForwardChestHigh.y + ", " + viForwardChestHigh.z + "]");
 		
 		switch(intendedDirection)
 		{
@@ -541,11 +542,11 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			}
 			break;
 		default:
-			Debug.Log("Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
+			OCLogger.Normal("Undefined PathDirection in IsPathOpen(basePosition, intendedDirection)");
 			break;
 		}
 		
-		//Debug.Log ("Test for PathDirection=" + intendedDirection.ToString () + " yields " + bPathIsOpen);
+		//OCLogger.Normal ("Test for PathDirection=" + intendedDirection.ToString () + " yields " + bPathIsOpen);
 		
 		return bPathIsOpen;
 	}
@@ -573,7 +574,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		{
 			if(objects[i].gameObject.renderer)
 			{
-				Debug.Log("We found us a " + objects[i].gameObject.GetType().ToString());
+				OCLogger.Normal("We found us a " + objects[i].gameObject.GetType().ToString());
 				
 				MeshFilter myFilter = objects[i].gameObject.GetComponent<MeshFilter>();
 				MeshCollider myCollider = objects[i].gameObject.AddComponent<MeshCollider>();
@@ -584,9 +585,9 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				
 				myCollider.enabled = true;
 				
-				Debug.Log("i: " + objects[i].name);
-				Debug.Log("Center: " + myCollider.bounds.center.ToString());
-				Debug.Log("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
+				OCLogger.Normal("i: " + objects[i].name);
+				OCLogger.Normal("Center: " + myCollider.bounds.center.ToString());
+				OCLogger.Normal("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
 			}
 		}
 	}
@@ -778,11 +779,11 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 				
 				myCollider.sharedMesh = myFilter.mesh;
 					
-				//Debug.Log ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());	
+				//OCLogger.Normal ("Reapplied mesh for " + objects[i].gameObject.GetType ().ToString ());	
 				
-//				Debug.Log ("i: " + objects [i].name);
-//				Debug.Log ("Center: " + myCollider.bounds.center.ToString());
-//				Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
+//				OCLogger.Normal ("i: " + objects [i].name);
+//				OCLogger.Normal ("Center: " + myCollider.bounds.center.ToString());
+//				OCLogger.Normal ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");
 			}
 		}
 	}
@@ -797,7 +798,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		{
 			if(objects[i] != null && objects[i].gameObject.renderer)
 			{
-				//Debug.Log("We found us a " + objects[i].gameObject.GetType ().ToString ());
+				//OCLogger.Normal("We found us a " + objects[i].gameObject.GetType ().ToString ());
 								
 				if(objects[i].gameObject.GetComponent<MeshCollider>() == null)
 				{
@@ -808,9 +809,9 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 					myCollider.sharedMesh = myFilter.mesh;
 					
-					//Debug.Log ("i: " + objects [i].name);
-					//Debug.Log ("Center: " + myCollider.bounds.center.ToString());
-					//Debug.Log ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");	
+					//OCLogger.Normal ("i: " + objects [i].name);
+					//OCLogger.Normal ("Center: " + myCollider.bounds.center.ToString());
+					//OCLogger.Normal ("Size: [" + myCollider.bounds.size.x + ", " + myCollider.bounds.size.y + ", " + myCollider.bounds.size.z + "]");	
 				}
 			}
 		}

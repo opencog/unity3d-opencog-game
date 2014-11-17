@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using OpenCog.Utilities.Logging;
+
 
 namespace OpenCog.Network
 {
@@ -65,7 +67,7 @@ namespace OpenCog.Network
 		
 		public void run()
 		{
-            UnityEngine.Debug.Log("OldMessageHandler: Start handling socket connection.");
+            OCLogger.Normal("OldMessageHandler: Start handling socket connection.");
 			StreamReader reader = null;
 			StreamWriter writer = null;
 			
@@ -84,7 +86,7 @@ namespace OpenCog.Network
 			catch( IOException ioe )
 			{
 				this.socket.Close();
-                UnityEngine.Debug.Log("MessageHandler: An I/O error occured. [" + 
+                OCLogger.Normal("MessageHandler: An I/O error occured. [" + 
 					               ioe.Message + "].");	
 			}
 			
@@ -102,26 +104,26 @@ namespace OpenCog.Network
 						//string answer = this.parse(line);
 						this.parse(line);
 
-						//UnityEngine.Debug.Log ("Just parsed '" + line + "'");
+						//OCLogger.Normal ("Just parsed '" + line + "'");
 					}
 					else
 					{
-						UnityEngine.Debug.Log ("Guess we got an empty line :(");
+						OCLogger.Normal ("Guess we got an empty line :(");
 						
 						endInput = true;
 					}	
 				}
 				catch( IOException ioe )
 				{
-                    UnityEngine.Debug.Log("MessageHandler: An I/O error occured. [" + 
+                    OCLogger.Normal("MessageHandler: An I/O error occured. [" + 
 						               ioe.Message + "].");	
 					endInput = true;
 				}
 				
-				//UnityEngine.Debug.Log ("Still not ending input! I'm still here!");
+				//OCLogger.Normal ("Still not ending input! I'm still here!");
 			} // while
 			
-			UnityEngine.Debug.Log ("Hey! Who set endInput to tru!?!?");
+			OCLogger.Normal ("Hey! Who set endInput to tru!?!?");
 			
 			try
 			{
@@ -131,7 +133,7 @@ namespace OpenCog.Network
 			}
 			catch( IOException ioe ) 
 			{
-                UnityEngine.Debug.Log("MessageHandler: An I/O error occured. [" + 
+                OCLogger.Normal("MessageHandler: An I/O error occured. [" + 
 					               ioe.Message + "].");	
 			}	
 		}
@@ -149,7 +151,7 @@ namespace OpenCog.Network
 		/// </returns>
 		public string parse(string inputLine)
 		{
-//			UnityEngine.Debug.Log("OldMessageHandler.parse(" + inputLine + ")");
+//			OCLogger.Normal("OldMessageHandler.parse(" + inputLine + ")");
 
 			string answer = null;
 			
@@ -165,7 +167,7 @@ namespace OpenCog.Network
 				
 				if(command.Equals("NOTIFY_NEW_MESSAGE"))
 				{
-					UnityEngine.Debug.Log ("NEVAH! NOTIFY_NEW_MESSAGE!");
+					OCLogger.Normal ("NEVAH! NOTIFY_NEW_MESSAGE!");
 					if(token.MoveNext()) // Has more elements
 					{	
 						// Get new message number.
@@ -174,7 +176,7 @@ namespace OpenCog.Network
 						this.ne.NotifyNewMessages(numberOfMessages);
 						answer = OCNetworkElement.OK_MESSAGE;
 
-                        UnityEngine.Debug.Log("onLine: Notified about [" + 
+                        OCLogger.Normal("onLine: Notified about [" + 
 						          numberOfMessages + "] messages in Router.");
 					}
 					else
@@ -189,7 +191,7 @@ namespace OpenCog.Network
 						// Get unavalable element id.
 						string id = token.Current.ToString();
 
-                        UnityEngine.Debug.Log("onLine: Unavailable element message received for [" + 
+                        OCLogger.Normal("onLine: Unavailable element message received for [" + 
 						          id + "].");
 						this.ne.MarkAsUnavailable(id);
 						answer = OCNetworkElement.OK_MESSAGE;
@@ -205,7 +207,7 @@ namespace OpenCog.Network
 					{	
 						string id = token.Current.ToString();
 
-                        UnityEngine.Debug.Log("onLine: Available element message received for [" + 
+                        OCLogger.Normal("onLine: Available element message received for [" + 
 						          id + "].");
 						this.ne.MarkAsAvailable(id);
 						answer = OCNetworkElement.OK_MESSAGE;
@@ -220,14 +222,14 @@ namespace OpenCog.Network
 					if(this.state == READING_MESSAGES)
 					{
 						// A previous message was already read.
-						UnityEngine.Debug.Log("onLine (START_MESSAGE): From [" + this.currentMessageFrom +
+						OCLogger.Normal("onLine (START_MESSAGE): From [" + this.currentMessageFrom +
 						          "] to [" + this.currentMessageTo +
 						          "] Type [" + this.currentMessageType + "]");
 					
 						OCMessage message = OCMessage.CreateMessage(this.currentMessageFrom, this.currentMessageTo, this.currentMessageType, this.currentMessage.ToString());
 						if( message == null )
 						{
-							UnityEngine.Debug.Log("Could not factory message from the following string: " +
+							OCLogger.Normal("Could not factory message from the following string: " +
 							               this.currentMessage.ToString());	
 						}
 						if(this.useMessageBuffer)
@@ -259,7 +261,7 @@ namespace OpenCog.Network
 						}
 						else
 						{
-							UnityEngine.Debug.Log("onLine: Unexepcted command [" +
+							OCLogger.Normal("onLine: Unexepcted command [" +
 							               command + "]. Discarding line [" +
 							               inputLine + "]");	
 						}
@@ -296,7 +298,7 @@ namespace OpenCog.Network
 				{
 					if(this.state == READING_MESSAGES)
 					{
-//						UnityEngine.Debug.Log("onLine (NO_MORE_LINES_IN_CURRENT_MESSAGE): From [" + this.currentMessageFrom +
+//						OCLogger.Normal("onLine (NO_MORE_LINES_IN_CURRENT_MESSAGE): From [" + this.currentMessageFrom +
 //						          "] to [" + this.currentMessageTo +
 //						          "] Type [" + this.currentMessageType + "]: " + this.currentMessage.ToString());	
 						
@@ -307,7 +309,7 @@ namespace OpenCog.Network
 						
 						if(message == null)
 						{
-							UnityEngine.Debug.Log("Could not factory message from the following string: [" +
+							OCLogger.Normal("Could not factory message from the following string: [" +
 							               this.currentMessage.ToString() + "]");
 						}
 						if(this.useMessageBuffer)
@@ -332,7 +334,7 @@ namespace OpenCog.Network
 					}
 					else
 					{
-						UnityEngine.Debug.Log("onLine: Unexpected command [" +
+						OCLogger.Normal("onLine: Unexpected command [" +
 						               command + "]. Discarding line [" +
 						               inputLine + "]");
 						answer = OCNetworkElement.FAILED_MESSAGE;
@@ -340,7 +342,7 @@ namespace OpenCog.Network
 				}
 				else
 				{
-					UnityEngine.Debug.Log("onLine: Unexpected command [" +
+					OCLogger.Normal("onLine: Unexpected command [" +
 					               command + "]. Discarding line [" +
 					               inputLine + "]");
 					answer = OCNetworkElement.FAILED_MESSAGE;
@@ -360,14 +362,14 @@ namespace OpenCog.Network
 				}
 				else
 				{
-					UnityEngine.Debug.Log("onLine: Unexpected dataline. Discarding line [" +
+					OCLogger.Normal("onLine: Unexpected dataline. Discarding line [" +
 					               inputLine + "]");
 					answer = OCNetworkElement.FAILED_MESSAGE;
 				}
 			} // end processing selector 'd'
 			else
 			{
-				UnityEngine.Debug.Log("onLine: Invalid selector [" + selector
+				OCLogger.Normal("onLine: Invalid selector [" + selector
 				               + "]. Discarding line [" + inputLine + "].");
 				answer = OCNetworkElement.FAILED_MESSAGE;
 			} // end processing selector

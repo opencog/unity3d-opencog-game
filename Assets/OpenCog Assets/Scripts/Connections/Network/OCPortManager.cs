@@ -25,6 +25,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using System.Collections.Generic;
 using OpenCog.Utility;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -88,7 +89,7 @@ public class OCPortManager
 		
 		if (port >= 65535) // No ports are available
 		{
-			Debug.LogError("No more ports available between " + MIN_PORT_NUMBER + " and " + port + ".");
+			OCLogger.Error("No more ports available between " + MIN_PORT_NUMBER + " and " + port + ".");
 			return -1;
 		}
 		

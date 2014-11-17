@@ -31,6 +31,7 @@ using Vector3 = UnityEngine.Vector3;
 using Quaternion = UnityEngine.Quaternion;
 using Debug = UnityEngine.Debug;
 using OpenCog.Actions;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -142,14 +143,7 @@ public class LoadCommand : Console.ConsoleCommand
 			OCLogger.Fine (gameObject.name + " is disabled.");
 		}
 
-		/// <summary>
-		/// Raises the destroy event when LoadCommand is about to be destroyed.
-		/// </summary>
-		public void OnDestroy ()
-		{
-			Uninitialize ();
-			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
-		}
+	
 		
 		public override string Run (ArrayList arguments)
 		{
@@ -202,7 +196,7 @@ public class LoadCommand : Console.ConsoleCommand
 		/// <summary>
 		/// Uninitializes this instance.  Cleanup refernces here.
 		/// </summary>
-		private void Uninitialize ()
+		override protected void Uninitialize ()
 		{
 		}
 		
@@ -221,7 +215,7 @@ public class LoadCommand : Console.ConsoleCommand
 
 			//if it does not exist, we cannot run this wrapper
 			if (playerObject == null) {
-				Debug.LogError("No object tagged with player.");
+				OCLogger.Error("No object tagged with player.");
 				yield break;
 			}
 

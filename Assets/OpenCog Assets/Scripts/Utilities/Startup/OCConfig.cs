@@ -22,9 +22,11 @@ using System.Net;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
 using OpenCog.Utility;
+using OpenCog.Utilities.Logging;
 using ProtoBuf;
 using UnityEngine;
 using OpenCog;
+
 
 //namespace OpenCog
 //{
@@ -175,16 +177,16 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
           if (tokens.Length < 2)
           {
               if (Debug.isDebugBuild)
-                    Debug.LogError("Invalid format at line " + linenumber +": '" + line + "'");
+                    OCLogger.Error("Invalid format at line " + linenumber +": '" + line + "'");
           }
           if (_settings.ContainsKey(tokens[0])) 
           {
-              if (Debug.isDebugBuild) Debug.Log(tokens[0] + "=" + tokens[1]);
+              if (Debug.isDebugBuild) OCLogger.Normal(tokens[0] + "=" + tokens[1]);
               _settings[tokens[0]] = tokens[1];
           }
           else
           {
-                Debug.LogWarning("Ignoring unknown parameter name '" + tokens[0] + "' at line "
+                OCLogger.Warn("Ignoring unknown parameter name '" + tokens[0] + "' at line "
                         + linenumber + ".");
       	}           
       }
@@ -209,16 +211,16 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 	        if (tokens.Length < 2)
 	        {
 	            if (Debug.isDebugBuild)
-	                  Debug.LogError("Invalid format at line " + linenumber +": '" + line + "'");
+	                  OCLogger.Error("Invalid format at line " + linenumber +": '" + line + "'");
 	        }
 	        if (_settings.ContainsKey(tokens[0])) 
 	        {
-	            //if (Debug.isDebugBuild) Debug.Log(tokens[0] + "=" + tokens[1]);
+	            //if (Debug.isDebugBuild) OCLogger.Normal(tokens[0] + "=" + tokens[1]);
 	            _settings[tokens[0]] = tokens[1];
 	        }
 	        else
 	        {
-	              Debug.LogWarning("Ignoring unknown parameter name '" + tokens[0] + "' at line "
+	              OCLogger.Warn("Ignoring unknown parameter name '" + tokens[0] + "' at line "
 	                      + linenumber + ".");
 	    	}           
 	    }
@@ -243,7 +245,7 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 			{
 				if(keyValuePair[0] != "quit")
 				{
-              		//if (Debug.isDebugBuild) Debug.Log(tokens[0] + "=" + tokens[1]);
+              		//if (Debug.isDebugBuild) OCLogger.Normal(tokens[0] + "=" + tokens[1]);
               		_settings[keyValuePair[0]] = keyValuePair[1];
 				}
 				else
@@ -252,7 +254,7 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 			}
 			else
 			{
-				Debug.LogWarning("Ignoring unknown command-line argument '" + arg + "'.");
+				OCLogger.Warn("Ignoring unknown command-line argument '" + arg + "'.");
 			}
 		}
 	}

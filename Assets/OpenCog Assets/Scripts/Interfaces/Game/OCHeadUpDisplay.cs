@@ -26,6 +26,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Network;
 using UnityEngine;
+using OpenCog.Utilities.Logging;
 using OpenCog.Embodiment;
 
 //The private field is assigned but its value is never used
@@ -160,7 +161,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		Transform reticule = gameObject.transform.Find("Reticule");
 		if(reticule == null)
 		{
-			Debug.LogError("No \"Reticule\" game object found");
+			OCLogger.Error("No \"Reticule\" game object found");
 		}
 		_reticuleTexture = reticule.gameObject.GetComponent<GUITexture>();
 		_reticuleTexture.pixelInset = new Rect(Screen.width / 2, Screen.height / 2, 16, 16);
@@ -209,20 +210,12 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		OCLogger.Fine(gameObject.name + " is disabled.");
 	}
 
-	/// <summary>
-	/// Raises the destroy event when HUD is about to be destroyed.
-	/// </summary>
-	public void OnDestroy()
-	{
-		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
-	}
 
 //	public IEnumerator gettingForceFromHud(OpenCog.Embodiment.OCSocialInteraction currentSocialInteraction)
 //	{
 //		if(currentSocialInteraction == null)
 //		{
-//			Debug.LogError("To show the force panel but the SocialInteractioner is null!");
+//			OCLogger.Error("To show the force panel but the SocialInteractioner is null!");
 //			yield break;
 //		}
 //		_socialInteraction = currentSocialInteraction;
@@ -369,19 +362,19 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 	/// <summary>
 	/// Uninitializes this instance.  Cleanup refernces here.
 	/// </summary>
-	private void Uninitialize()
+	override protected void Uninitialize()
 	{
 	}
 
 	private void ShowPsiPanel()
 	{
-		//UnityEngine.Debug.Log ("OCHeadUpDisplay::ShowPsiPanel");
+		//OCLogger.Normal ("OCHeadUpDisplay::ShowPsiPanel");
 		_showPsiPanel = true;
 	}
 
 	private void HidePsiPanel()
 	{
-		UnityEngine.Debug.Log ("OCHeadUpDisplay::HidePsiPanel");
+		OCLogger.Normal ("OCHeadUpDisplay::HidePsiPanel");
 		_showPsiPanel = false;
 	}
 

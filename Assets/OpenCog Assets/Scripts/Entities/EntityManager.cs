@@ -21,6 +21,7 @@ using System.Collections;
 using OpenCog.Actions;
 using UnityEngine;
 using System;
+using OpenCog.Utilities.Logging;
 
 #pragma warning disable 0414
 #endregion

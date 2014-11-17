@@ -28,6 +28,7 @@ using OpenCog.BlockSet.BaseBlockSet;
 using GameObject = UnityEngine.GameObject;
 using System.Linq;
 using OpenCog.Utility;
+using OpenCog.Utilities.Logging;
 using UnityEngine;
 using OpenCog.Actions;
 

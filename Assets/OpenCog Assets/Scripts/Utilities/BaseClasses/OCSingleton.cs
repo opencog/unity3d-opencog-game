@@ -101,7 +101,7 @@
 //		
 //				if(_instance == null)
 //				{
-//					Debug.LogError("An instance of " + typeof(T) +
+//					OCLogger.Error("An instance of " + typeof(T) +
 //		              " is needed in the scene, but there is none.");
 //				}
 //			}

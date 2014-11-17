@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using OpenCog.Attributes;
 using OpenCog.Extensions;
+using OpenCog.Utilities.Logging;
 using ProtoBuf;
 using Serializable = System.SerializableAttribute;
 
@@ -214,59 +215,7 @@ public class OCObjectMapInfo
 
 		//---------------------------------------------------------------------------
 
-		/// <summary>
-		/// Called when the script instance is being loaded.
-		/// </summary>
-		public void Awake ()
-		{
-			Initialize ();
-		}
 
-		/// <summary>
-		/// Use this for initialization
-		/// </summary>
-		public void Start ()
-		{
-		}
-
-		/// <summary>
-		/// Update is called once per frame.
-		/// </summary>
-		public void Update ()
-		{
-		}
-		
-		/// <summary>
-		/// Reset this instance to its default values.
-		/// </summary>
-		public void Reset ()
-		{
-			Uninitialize ();
-			Initialize ();
-		}
-
-		/// <summary>
-		/// Raises the enable event when OCObjectMapInfo is loaded.
-		/// </summary>
-		public void OnEnable ()
-		{
-		}
-
-		/// <summary>
-		/// Raises the disable event when OCObjectMapInfo goes out of scope.
-		/// </summary>
-		public void OnDisable ()
-		{
-		}
-
-		/// <summary>
-		/// Raises the destroy event when OCObjectMapInfo is about to be destroyed.
-		/// </summary>
-		public void OnDestroy ()
-		{
-			Uninitialize ();
-		}
-		
 		public OCTag CheckPropertyExist(string keyStr)
         {
             foreach (OCTag oct in _properties)
@@ -300,7 +249,7 @@ public class OCObjectMapInfo
 		
 //		public bool CheckTagExists (string keyStr)
 //		{
-//			UnityEngine.Debug.Log ("Checking for tag '" + keyStr + "'.");
+//			OCLogger.Normal ("Checking for tag '" + keyStr + "'.");
 //			
 //			return _tags.ContainsKey(keyStr);
 //			
@@ -316,7 +265,7 @@ public class OCObjectMapInfo
 ////				_tags.Remove (keyStr);
 ////			}
 //			
-//			//UnityEngine.Debug.Log ("Adding tag '" + keyStr + "'");
+//			//OCLogger.Normal ("Adding tag '" + keyStr + "'");
 //			if (!_tags.ContainsKey(keyStr))
 //				_tags.Add(keyStr, new OCTag(keyStr, valueStr, type));
 //			
@@ -344,21 +293,7 @@ public class OCObjectMapInfo
 	#region Private Member Functions
 
 		//---------------------------------------------------------------------------
-	
-		/// <summary>
-		/// Initializes this instance.  Set default values here.
-		/// </summary>
-		private void Initialize ()
-		{
 
-		}
-	
-		/// <summary>
-		/// Uninitializes this instance.  Cleanup refernces here.
-		/// </summary>
-		private void Uninitialize ()
-		{
-		}
 			
 		//---------------------------------------------------------------------------
 
@@ -381,7 +316,7 @@ public class OCObjectMapInfo
 		
 		public OCObjectMapInfo (UnityEngine.GameObject gameObject)
 		{
-			UnityEngine.Debug.Log ("OCObjectMapInfo::OCObjectMapInfo, passed object is of type: " + gameObject.GetType().ToString () + ", and name " + gameObject.name);
+			OCLogger.Normal ("OCObjectMapInfo::OCObjectMapInfo, passed object is of type: " + gameObject.GetType().ToString () + ", and name " + gameObject.name);
 			
 			_id = gameObject.GetInstanceID().ToString();
 			
@@ -425,7 +360,7 @@ public class OCObjectMapInfo
 					_type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
 				}
 				
-				UnityEngine.Debug.Log ("Just made an OCObjectMapInfo stating the AGI is at [" + this.position.x + ", " + this.position.y + ", " + this.position.z + "]");
+				OCLogger.Normal ("Just made an OCObjectMapInfo stating the AGI is at [" + this.position.x + ", " + this.position.y + ", " + this.position.z + "]");
 
 			} else if (gameObject.tag == "OCNPC") {
 				// This is a human player avatar.
@@ -458,7 +393,7 @@ public class OCObjectMapInfo
 			
 			if (gameObject.GetComponent<OpenCog.Extensions.OCConsumableData>() != null)
 			{
-				UnityEngine.Debug.Log ("Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
+				OCLogger.Normal ("Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
 				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
 				this.AddProperty ("pickupable", "TRUE", System.Type.GetType ("System.Boolean"));
 				this.AddProperty ("holder", "none", System.Type.GetType ("System.String"));
@@ -518,7 +453,7 @@ public class OCObjectMapInfo
 			
 			if (blockGlobalX == 9 && blockGlobalY == 140 && blockGlobalZ == 10)
 			{
-				UnityEngine.Debug.Log ("Break here plz...");	
+				OCLogger.Normal ("Break here plz...");	
 			}
 			
 			try {
@@ -530,9 +465,9 @@ public class OCObjectMapInfo
 					//string lol = balls + "lol";	
 				}
 				
-				//UnityEngine.Debug.Log ("BlockData.GetType = " + blockType);	
+				//OCLogger.Normal ("BlockData.GetType = " + blockType);	
 			} catch (System.Exception ex) {
-				UnityEngine.Debug.Log ("ERROR:" + ex.Message);
+				OCLogger.Normal ("ERROR:" + ex.Message);
 			}
 			
 			if (blockData.block == null)

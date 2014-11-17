@@ -32,6 +32,7 @@ using TreeType = BLOCBehaviours.TreeType;
 using System.Linq;
 using System.Xml;
 using OpenCog.Utility;
+using OpenCog.Utilities.Logging;
 
 //using OpenCog.Aspects;
 
@@ -279,7 +280,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	
 //			private void TestProprioception()
 //			{
-//				Debug.Log ("RobotAgent's Transform is at position [" + this.transform.position.x + ", " + this.transform.position.y + ", " + this.transform.position.z + "]");
+//				OCLogger.Normal ("RobotAgent's Transform is at position [" + this.transform.position.x + ", " + this.transform.position.y + ", " + this.transform.position.z + "]");
 //		
 //				Map map = (Map)GameObject.FindObjectOfType (typeof(Map));
 //				
@@ -307,7 +308,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //        	bestWeight = s.weight;
 //    		}
 //			}
-//			Debug.Log("Animation State: " + playing);
+//			OCLogger.Normal("Animation State: " + playing);
 //		}
 		
 //				this.TestProprioception ();
@@ -315,7 +316,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	public BehaveResult	 Tick(Tree sender, bool init)
 	{
-//			Debug.Log
+//			OCLogger.Normal
 //			(
 //				"Got ticked by unhandled " + (BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID ) ? "action" : "decorator")
 //			+ ( BLOpenCogCharacterBehaviours.IsAction( sender.ActiveID )
@@ -329,7 +330,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 //	public BehaveResult TickIdleAction(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data)
 //	{
-//			Debug.Log("In Robot Idle...");
+//			OCLogger.Normal("In Robot Idle...");
 //
 //			return BehaveResult.Success;
 //	}
@@ -364,11 +365,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 ////					&& charController.isGrounded
 //			) {
 //				action.Execute ();
-//				//Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Success");
+//				//OCLogger.Normal("In OCRobotAgent.FallAction, " + action.GetType() + " Success");
 //				return BehaveResult.Success;
 //			}
 //
-//			//Debug.Log("In OCRobotAgent.FallAction, " + action.GetType() + " Failure");
+//			//OCLogger.Normal("In OCRobotAgent.FallAction, " + action.GetType() + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
@@ -390,11 +391,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //
 //			if (TargetBlockPos == Vector3i.zero && charController.isGrounded) {
 //				action.Execute ();
-//				//Debug.Log("In OCRobotAgent.IdleAction, " + action.GetType() + " Success");
+//				//OCLogger.Normal("In OCRobotAgent.IdleAction, " + action.GetType() + " Success");
 //				return BehaveResult.Success;
 //			}
 //
-//			//Debug.Log("In OCRobotAgent.IdleAction, " + action.GetType() + " Failure");
+//			//OCLogger.Normal("In OCRobotAgent.IdleAction, " + action.GetType() + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
@@ -429,11 +430,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //			&& map.IsPathOpen(transform, charController.height, OpenCog.Map.OCMap.PathDirection.ForwardClimb)
 //			&& charController.isGrounded) {
 //				action.Execute ();
-//				//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
+//				//OCLogger.Normal("In OCRobotAgent.ClimbAction, " + action.GetType() + " Success");
 //				return BehaveResult.Success;
 //			}
 //
-//			//Debug.Log("In OCRobotAgent.ClimbAction, " + action.GetType() + " Failure");
+//			//OCLogger.Normal("In OCRobotAgent.ClimbAction, " + action.GetType() + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
@@ -472,11 +473,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //			&& charController.isGrounded
 //			) {
 //				action.Execute ();
-//				//Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Success");
+//				//OCLogger.Normal ("In OCRobotAgent.RunAction, " + action.GetType () + " Success");
 //				return BehaveResult.Success;
 //			}
 //
-//			//Debug.Log ("In OCRobotAgent.RunAction, " + action.GetType () + " Failure");
+//			//OCLogger.Normal ("In OCRobotAgent.RunAction, " + action.GetType () + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
@@ -511,11 +512,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //			&& robotForwardDistance >= 0.0f
 //			&& charController.isGrounded) {
 //				action.Execute ();
-//				//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Success");
+//				//OCLogger.Normal("In OCRobotAgent.JumpAction, " + action.GetType() + " Success");
 //				return BehaveResult.Success;
 //			}
 //
-//			//Debug.Log("In OCRobotAgent.JumpAction, " + action.GetType() + " Failure");
+//			//OCLogger.Normal("In OCRobotAgent.JumpAction, " + action.GetType() + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
@@ -547,11 +548,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //				&& ( robotLeftDistance >= 0.5f || robotForwardDistance < 0.0f)
 //				&& charController.isGrounded) {
 //				action.Execute ();
-//				//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Success");
+//				//OCLogger.Normal("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Success");
 //				return BehaveResult.Success;
 //			}
 //
-//			//Debug.Log("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Failure");
+//			//OCLogger.Normal("In OCRobotAgent.TurnLeftAction, " + action.GetType() + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
@@ -583,11 +584,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //				&& robotRightDistance >= 0.5f
 //				&& charController.isGrounded) {
 //				action.Execute ();
-//				//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Success");
+//				//OCLogger.Normal("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Success");
 //				return BehaveResult.Success;
 //			}
 //
-//			//Debug.Log("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Failure");
+//			//OCLogger.Normal("In OCRobotAgent.TurnRightAction, " + action.GetType() + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
@@ -628,11 +629,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //			&& charController.isGrounded
 //			) {
 //				action.Execute ();
-//				//Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Success");
+//				//OCLogger.Normal("In OCRobotAgent.WalkAction, " + action.GetType() + " Success");
 //				return BehaveResult.Success;
 //			}
 //
-//			//Debug.Log("In OCRobotAgent.WalkAction, " + action.GetType() + " Failure");
+//			//OCLogger.Normal("In OCRobotAgent.WalkAction, " + action.GetType() + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
@@ -645,7 +646,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	// Then queue each element in the plan in the behaviour queue.
 	public void ReceiveActionPlan(List<XmlElement> actionPlan)
 	{
-//		Debug.Log("In ReceiveActionPlan...");
+//		OCLogger.Normal("In ReceiveActionPlan...");
 //				
 //		string actionName = GetAttribute(element, OCEmbodimentXMLTags.NAME_ATTRIBUTE);
 //
@@ -722,14 +723,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	public void LoadActionPlanStep(string actionName, OCAction.OCActionArgs arguments)
 	{
-		Debug.Log("OCActionController::LoadActionPlanStep: " + actionName);
+		OCLogger.Normal("OCActionController::LoadActionPlanStep: " + actionName);
 		TreeType treeType = _ActionNameDictionary[actionName];
 		Tree tree = _TreeTypeDictionary[treeType];
 		OCActionPlanStep actionPlanStep = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
 		_ActionPlanQueue.AddLast(actionPlanStep);
-		Debug.Log("Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
+		OCLogger.Normal("Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
 	}
 			
 	public void CancelActionPlan()
@@ -831,7 +832,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 						if(_step.Behaviour.Name != "Character.IdleShow" && !_step.Behaviour.Name.Contains("Behaviour"))
 						{
-							Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
+							OCLogger.Warn("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
 						}		
 					}
 //							else if(_step.Arguments.ActionPlanID == null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries) && OCConnectorSingleton.Instance.IsEstablished )
@@ -841,7 +842,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				}
 						
 //				if(!_PlanSucceeded)
-//					Debug.LogWarning(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
+//					OCLogger.Warn(" -- Step Failed: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : _step.Arguments.ActionName));						
 					
 
 				
@@ -894,17 +895,17 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				{
 					_step = _ActionPlanQueue.First();
 					_ActionPlanQueue.RemoveFirst();
-					Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+					OCLogger.Warn("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 					if(_LastPlanID != _step.Arguments.ActionPlanID)
 					{
-						Debug.LogError("We've changed plans without reporting back to OpenCog!");
+						OCLogger.Error("We've changed plans without reporting back to OpenCog!");
 					}
 				} else
 				{	
 					_LastPlanID = _step.Arguments.ActionPlanID;
 					_step = _ActionPlanQueue.First();
 					_ActionPlanQueue.RemoveFirst();
-					Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+					OCLogger.Warn("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 				}
 			}
 					
@@ -942,17 +943,17 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //
 //		if (action.ShouldTerminate ()) {
 //			//action.Terminate();
-//			//Debug.Log ("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType () + " Failure");
+//			//OCLogger.Normal ("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType () + " Failure");
 //			return BehaveResult.Failure;
 //		}
 //
 //		if (action.IsExecuting ()) {
-//			//Debug.Log("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType() + " Running");
+//			//OCLogger.Normal("In OCRobotAgent.DefaultActionTickHandler, " + action.GetType() + " Running");
 //			return BehaveResult.Running;
 //		}
 //
 //		if (TargetBlockPos != Vector3i.zero) {
-//			//Debug.Log("In OCRobotAgent.DefaultActionTickHandler, Distance to TNT block is: " + distanceVec.magnitude + ", Vector is: " + distanceVec);
+//			//OCLogger.Normal("In OCRobotAgent.DefaultActionTickHandler, Distance to TNT block is: " + distanceVec.magnitude + ", Vector is: " + distanceVec);
 //		}
 //
 //		return BehaveResult.Success;
@@ -1023,7 +1024,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	// TODO: Implement dynamic behaviour tree loading to execute actions
 	public void StartAction(OCAction action, OCID sourceID, OCID targetStartID, OCID targetEndID)
 	{
-		Debug.LogError("OCActionController.StartAction is unimplemented...");
+		OCLogger.Error("OCActionController.StartAction is unimplemented...");
 	}
 			
 	public Dictionary<string, OCAction> GetCurrentActions()

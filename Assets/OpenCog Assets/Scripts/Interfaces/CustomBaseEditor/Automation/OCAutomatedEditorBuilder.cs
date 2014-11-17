@@ -17,6 +17,7 @@
 using UnityEngine;
 using System.Collections;
 using ProtoBuf;
+using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -96,7 +97,7 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
   /// </summary>
   void OnEnable()
   {
-    Debug.Log
+    OCLogger.Normal
     (
       string.Format
       (
@@ -111,7 +112,7 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
   /// </summary>
   void OnDisable()
   {
-    Debug.Log
+    OCLogger.Normal
     (
       string.Format
       (
@@ -126,7 +127,8 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
   /// </summary>
   void OnDestroy()
   {
-    Debug.Log
+				Debug.Log ("[\u263a]\t"+ "Testing Destroy error 7 ");
+    OCLogger.Normal
     (
       string.Format
       (
@@ -134,6 +136,7 @@ public class OCAutomatedEditorBuilder : MonoBehaviour
       , gameObject.name + "\\" + GetType().Name
       )
     );
+				Debug.Log ("[\u263a]\t"+ "Testing Destroy error 7 ");
   }
 
   /////////////////////////////////////////////////////////////////////////////

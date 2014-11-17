@@ -27,6 +27,7 @@ using OpenCog.Embodiment;
 using OpenCog.Extensions;
 using OpenCog.Network;
 using OpenCog.Utility;
+using OpenCog.Utilities.Logging;
 using ImplicitFields = ProtoBuf.ImplicitFields;
 using OCEmbodimentXMLTags = OpenCog.OCEmbodimentXMLTags;
 using OCEmotionalExpression = OpenCog.OCEmotionalExpression;
@@ -278,7 +279,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         
 		if(_messageSendingTimer >= _messageSendingInterval)// && _isInitialized)
 		{
-			//UnityEngine.Debug.Log ("OCConnectorSingleton::FixedUpdate sending messages at " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
+			//OCLogger.Normal ("OCConnectorSingleton::FixedUpdate sending messages at " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
 			SendMessages();
 			_messageSendingTimer = 0.0f;
 		}
@@ -297,16 +298,16 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	{
 		if(!_isInitialized)
 		{
-			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: not initialized!!");
+			//OCLogger.Normal ("OCConnectorSingleton::SendMessages: not initialized!!");
 			return;
 		} else
 		{
-			//UnityEngine.Debug.Log ("OCConnectorSingletong::SendMessages: initialized!");
+			//OCLogger.Normal ("OCConnectorSingletong::SendMessages: initialized!");
 		}
 		
 		if(_messagesToSend.Count > 0)
 		{
-			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: " + _messagesToSend.Count + " to send.");
+			//OCLogger.Normal ("OCConnectorSingleton::SendMessages: " + _messagesToSend.Count + " to send.");
 			List<OCMessage> localMessagesToSend;
 			// copy messages to a local queue and clear the global sending queue.
 			lock(_messagesToSend)
@@ -319,7 +320,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			
 			foreach(OCMessage message in localMessagesToSend)
 			{
-				//UnityEngine.Debug.Log ("Processing message " + iMessageIndex + " of " + localMessagesToSend.Count + "...");
+				//OCLogger.Normal ("Processing message " + iMessageIndex + " of " + localMessagesToSend.Count + "...");
 				
 				if(message != null)
 				{
@@ -328,13 +329,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					string routerId = OCConfig.Instance.get("ROUTER_ID", "ROUTER");
 					if(!IsElementAvailable(routerId))
 					{
-						UnityEngine.Debug.Log("Router not available. Discarding message to '" +
+						OCLogger.Normal("Router not available. Discarding message to '" +
 							message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						continue;
 					}
 					if(!IsElementAvailable(message.TargetID))
 					{
-						UnityEngine.Debug.Log("Destination not available. Discarding message to '" +
+						OCLogger.Normal("Destination not available. Discarding message to '" +
 							message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						continue;
 					}
@@ -345,16 +346,16 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					{
 						if(sendResult)
 						{
-							UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+							OCLogger.Normal("Message from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						} else
 						{
-							UnityEngine.Debug.Log("Error sending message from '" + message.SourceID + "' to '" +
+							OCLogger.Normal("Error sending message from '" + message.SourceID + "' to '" +
 								message.TargetID + "' type '" + message.Type + "': " + message.ToString());
 						}
 					}
 				} else
 				{
-					UnityEngine.Debug.Log("A null message...great...");
+					OCLogger.Normal("A null message...great...");
 				}
 				
 				iMessageIndex += 1;
@@ -362,7 +363,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			} // foreach
 		}
 //		else
-//			UnityEngine.Debug.Log ("OCConnectorSingleton::SendMessages: Nothing to send.");
+//			OCLogger.Normal ("OCConnectorSingleton::SendMessages: Nothing to send.");
         
 	}
 
@@ -425,7 +426,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public bool Init(string agentName, string agentTraits, string agentType, string masterId, string masterName)
 	{
-		UnityEngine.Debug.Log("OCConnectorSingletong::Init(tons of parameters)");
+		OCLogger.Normal("OCConnectorSingletong::Init(tons of parameters)");
 		// Initialize basic attributes.
 		_baseID = agentName;//gameObject.GetInstanceID().ToString();
 		_ID = "AVATAR_" + _baseID;
@@ -463,7 +464,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		_feelingValueMap = new Dictionary<string, float>();
 		_demandValueMap = new Dictionary<string, float>();
-		UnityEngine.Debug.Log("_demandValueMap instantiated...");
+		OCLogger.Normal("_demandValueMap instantiated...");
 		OCLogger.Debugging("_demandValueMap instantiated...");
 		_perceptedAgents = new Dictionary<int, string>();
 
@@ -514,7 +515,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_globalFloorHeight = 0;
 		}
 		
-		UnityEngine.Debug.Log("OpenCog will receive a world with globalStartPosition [" + _globalStartPositionX + ", " + _globalStartPositionY + ", " + _globalStartPositionZ + "] and blockCounts [" + _blockCountX + ", " + _blockCountY + ", " + _blockCountZ + "].");
+		OCLogger.Normal("OpenCog will receive a world with globalStartPosition [" + _globalStartPositionX + ", " + _globalStartPositionY + ", " + _globalStartPositionZ + "] and blockCounts [" + _blockCountX + ", " + _blockCountY + ", " + _blockCountZ + "].");
     
 		// Get action scheduler component.
 		// TODO: old classes here. Lake needs to fix this.
@@ -534,7 +535,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	public IEnumerator ConnectOAC()
 	{
-		Debug.Log("In OCCOnnectorSingleton::ConnectOAC...");
+		OCLogger.Normal("In OCCOnnectorSingleton::ConnectOAC...");
 		if(_firstRun)
 		{
 			_firstRun = false;
@@ -551,7 +552,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			if(timeout == 0)
 			{
-				Debug.LogError("Breaking");
+				OCLogger.Error("Breaking");
 				yield break;
 			}
 	
@@ -560,7 +561,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			timeout = 60;
 			while(!isSpawnerAlive && timeout > 0)
 			{
-				OCLogger.Info("Waiting for spawner...");
+				OCLogger.Fine("Waiting for spawner...");
 				yield return new UnityEngine.WaitForSeconds(1f);
 				isSpawnerAlive = IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID"));
 				timeout--;
@@ -568,7 +569,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	
 			if(!isSpawnerAlive)
 			{
-				Debug.LogError("Spawner is not available, OAC can not be launched.");
+				OCLogger.Error("Spawner is not available, OAC can not be launched.");
 				yield break;
 			}
 	
@@ -595,12 +596,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    */
 	public override bool ProcessNextMessage(OCMessage message)
 	{
-//		UnityEngine.Debug.Log("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
+//		OCLogger.Normal("OCConnectorSingleton::ProcessNextMessage: " + message.ToString());
     
 		if(message.Type == OCMessage.MessageType.FEEDBACK)
 		{
 			// e.g. we can append the information in the console.
-			Debug.LogError("Feedback " + message.ToString());
+			OCLogger.Error("Feedback " + message.ToString());
 		} else
 		if(message.ToString().StartsWith(SUCCESS_LOAD))
 		{
@@ -609,7 +610,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			string[] tokens = message.ToString().Split(separator, System.StringSplitOptions.RemoveEmptyEntries);
             
 			string neId = tokens[2];
-			OCLogger.Info("Successfully loaded '" + neId + "'.");
+			OCLogger.Fine("Successfully loaded '" + neId + "'.");
 			_isInitialized = true;//_isLoaded = true;
 		} else
 		if(message.ToString().StartsWith(SUCCESS_UNLOAD))
@@ -619,11 +620,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 			// Format: SUCCESS UNLOAD NetworkElement_id avatar_id
 			string neId = tokens[2];
-			UnityEngine.Debug.Log("!!! Successfully unloaded '" + neId + "'.");
+			OCLogger.Normal("!!! Successfully unloaded '" + neId + "'.");
 			_isInitialized = false;//_isLoaded = false;
 		} else
 		{
-//			UnityEngine.Debug.Log ("Processing an interesting message type!");
+//			OCLogger.Normal ("Processing an interesting message type!");
 			// Get the plain text of this message(in XML format) and parse it.
 			if(_isInitialized)//if(_isLoaded)
 			{
@@ -641,7 +642,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //
 //      // Send action status to my brain.
 //      SendActionStatus(_currentPlanId, action, result);
-//      //Debug.LogWarning("Action plan " + this.currentPlanId + " sequence " + action.Sequence + " status sent.");
+//      //OCLogger.Warn("Action plan " + this.currentPlanId + " sequence " + action.Sequence + " status sent.");
 //      lock (_actionsList)
 //      {
 //      	_actionsList.Remove(action);
@@ -658,7 +659,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		// Loop through Actions...or clones of them...or data structures for them...
 	
-		UnityEngine.Debug.Log("Queuing message to update action statuses.");
+		OCLogger.Normal("Queuing message to update action statuses.");
 		string timestamp = GetCurrentTimestamp();
 		// Create a xml document
 		XmlDocument doc = new XmlDocument();
@@ -696,7 +697,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //				else if (targetType == "OCObject") // it's an object
 //					actionElement.SetAttribute("target-type", EmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 //				else
-//					Debug.LogError("Error target type: " + targetType + " in action: " + action.actionName);
+//					OCLogger.Error("Error target type: " + targetType + " in action: " + action.actionName);
 //			}
 //							
 //	        actionElement.SetAttribute("available", available ? "true" : "false");
@@ -718,7 +719,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		// to do non-existant actions).
 		///TODO: Find a different way to check for this...
 //    if (ar.avatar == gameObject.GetComponent<Avatar>() || ar.action == null) {
-//        //Debug.LogWarning("skipping action result from " + ar.avatar);
+//        //OCLogger.Warn("skipping action result from " + ar.avatar);
 //        return;
 //    }
 
@@ -760,7 +761,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 		} else
 		{
-			Debug.LogWarning("Error target type: " + targetType + " in action: " + step.Arguments.ActionName);
+			OCLogger.Warn("Error target type: " + targetType + " in action: " + step.Arguments.ActionName);
 		}
 				 
 		XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
@@ -921,11 +922,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	{
 		if(isAppear)
 		{
-			UnityEngine.Debug.Log("Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
+			OCLogger.Normal("Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		} 
 		else
 		{
-			UnityEngine.Debug.Log("Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
+			OCLogger.Normal("Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		}
 		// TODO: Figure out what this is...why would we report an object that is our ID...or maybe that's the agent ID...
 		if(objectID == ID.ToString())
@@ -1319,7 +1320,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //				else if (targetType == "OCObject") // it's an object
 //					actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 //				else
-//					Debug.LogError("Error target type: " + targetType + " in action: " + action.actionName);
+//					OCLogger.Error("Error target type: " + targetType + " in action: " + action.actionName);
 //			}
 							
 			actionElement.SetAttribute("available", available ? "true" : "false");
@@ -1353,19 +1354,19 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			if(objMapInfo.ID == null)
 			{
-				UnityEngine.Debug.Log("Damn, objectMapInfo with ID == null....");
+				OCLogger.Normal("Damn, objectMapInfo with ID == null....");
 			} else
 			{
 				if(objMapInfo.ID.Equals(_brainID))
 				{
-					//UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), moving its objectmapinfo to first position...");
+					//OCLogger.Normal ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID), moving its objectmapinfo to first position...");
 					localMapInfo.Remove(objMapInfo);
 					localMapInfo.AddFirst(objMapInfo);
 					foundAvatarId = true;
 					break;
 				}		
 //			else
-//				UnityEngine.Debug.Log ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID) == false");
+//				OCLogger.Normal ("OCConnectorSingleton::SendMapInfoMessage: objMapInfo.ID.Equals(_brainID) == false");
 			}
 		} // foreach
       
@@ -1603,7 +1604,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			document.Load(new System.IO.StringReader(xmlText));
 		} catch(System.Exception e)
 		{
-			Debug.LogError(e.ToString());
+			OCLogger.Error(e.ToString());
 		}
 		ParseDOMDocument(document);
 	}
@@ -1629,7 +1630,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	private void ParseEmotionalFeelingElement(XmlElement element)
 	{
-//		UnityEngine.Debug.Log ("OCConnectorSingleton::ParseEmotionalFeelingElement");
+//		OCLogger.Normal ("OCConnectorSingleton::ParseEmotionalFeelingElement");
 		//string avatarId = element.GetAttribute(OCEmbodimentXMLTags.ENTITY_ID_ATTRIBUTE);
 
 		// Parse all feelings and add them to a map.
@@ -1664,7 +1665,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	private void ParseDOMDocument(XmlDocument document)
 	{
-		//UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument");
+		//OCLogger.Normal ("OCConnectorSingleton::ParseDOMDocument");
 		// Handles action-plans
 
 		bool wrotePlan = false;
@@ -1678,7 +1679,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			
 			if(stringWriter.ToString().IndexOf("oc:emotional-feeling") == -1)
 			{
-				UnityEngine.Debug.Log("A plan! " + stringWriter.ToString());	
+				OCLogger.Normal("A plan! " + stringWriter.ToString());	
 				wrotePlan = true;	
 			}
 		}
@@ -1686,7 +1687,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
 		for(int i = 0; i < list.Count; i++)
 		{
-			UnityEngine.Debug.Log("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
+			OCLogger.Normal("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
 			ParseActionPlanElement((XmlElement)list.Item(i));
 		}
 
@@ -1694,7 +1695,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		XmlNodeList feelingsList = document.GetElementsByTagName(OCEmbodimentXMLTags.EMOTIONAL_FEELING_ELEMENT);
 		for(int i = 0; i < feelingsList.Count; i++)
 		{
-			//UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument: ParseEmotionalFeelingElement");
+			//OCLogger.Normal ("OCConnectorSingleton::ParseDOMDocument: ParseEmotionalFeelingElement");
 			ParseEmotionalFeelingElement((XmlElement)feelingsList.Item(i));
 		}
         
@@ -1702,7 +1703,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		XmlNodeList demandsList = document.GetElementsByTagName(OCEmbodimentXMLTags.PSI_DEMAND_ELEMENT);
 		for(int i = 0; i< demandsList.Count; i++)
 		{
-			UnityEngine.Debug.Log("OCConnectorSingleton::ParseDOMDocument: ParsePsiDemandElement");
+			OCLogger.Normal("OCConnectorSingleton::ParseDOMDocument: ParsePsiDemandElement");
 			ParsePsiDemandElement((XmlElement)demandsList.Item(i));
 		}
 		
@@ -1710,7 +1711,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		XmlNodeList singleActionList = document.GetElementsByTagName(OCEmbodimentXMLTags.SINGLE_ACTION_COMMAND_ELEMENT);
 		for(int i = 0; i< singleActionList.Count; i++)
 		{
-			UnityEngine.Debug.Log("OCConnectorSingleton::ParseDOMDocument: ParseSingleActionElement");
+			OCLogger.Normal("OCConnectorSingleton::ParseDOMDocument: ParseSingleActionElement");
 			ParseSingleActionElement((XmlElement)singleActionList.Item(i));
 		}
 	}
@@ -1887,13 +1888,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					
 						// ORIGINAL:
 						// vectorGameObject.transform.position = new Vector3(x, y, z);
-						// UnityEngine.Debug.Log ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
+						// OCLogger.Normal ("A '" + actionName + "' command told me to go to [" + x + ", " + y + ", " + z + "]");
 					
 						// SWAPPED:
 					vectorGameObject.transform.position = new Vector3(x, z, y);
 					TextMesh textMesh = vectorGameObject.GetComponentInChildren<TextMesh>();
 					textMesh.text = sequence.ToString();
-						//UnityEngine.Debug.Log ("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
+						//OCLogger.Normal ("A '" + actionName + "' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
 
 					if(actionName == "walk" || actionName == "jump_toward")
 					{
@@ -1951,12 +1952,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							// Then we can grab it, eat it, whatever...since it's a battery
 							if(actionName == "grab")
 							{
-								//UnityEngine.Debug.Log ("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
+								//OCLogger.Normal ("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
 								
 								console.AddConsoleEntry("A 'grab' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 							} else if(actionName == "eat")
 							{
-								//UnityEngine.Debug.Log ("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
+								//OCLogger.Normal ("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
 								
 								console.AddConsoleEntry("An 'eat' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 								
@@ -1968,7 +1969,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						} else
 						{
 							// That's silly..we can only eat / grab batteries!
-							UnityEngine.Debug.Log("Received a grab or eat command, but couldn't find the battery in Unity!");
+							OCLogger.Normal("Received a grab or eat command, but couldn't find the battery in Unity!");
 						}
 						
 							
@@ -2004,7 +2005,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						
 						if(toSay != string.Empty)
 						{
-							UnityEngine.Debug.Log("Robot say: " + toSay + "(actionPlan = " + _currentPlanId + ", sequence = " + sequence);
+							OCLogger.Normal("Robot say: " + toSay + "(actionPlan = " + _currentPlanId + ", sequence = " + sequence);
 												
 							console.AddConsoleEntry(toSay, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						}
@@ -2111,7 +2112,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			System.Threading.Thread.Sleep(500);
 		} catch(System.Threading.ThreadInterruptedException e)
 		{
-			Debug.LogError("Error putting NetworkElement main thread to sleep. " +
+			OCLogger.Error("Error putting NetworkElement main thread to sleep. " +
 				e.Message);
 		}
 	}
@@ -2126,7 +2127,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	{
 		if(_isEstablished)
 		{
-			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: _isEstablished -> Sending tick message and phys info.");
+			//OCLogger.Normal ("OCConnectorSingleton::SendAvatarSignalsAndTick: _isEstablished -> Sending tick message and phys info.");
 			string timestamp = GetCurrentTimestamp();
 			XmlDocument doc = new XmlDocument();
 			XmlElement root = MakeXMLElementRoot(doc);
@@ -2175,14 +2176,14 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					OCMessage tickMessage = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.TICK, "TICK_MESSAGE");
 					
 //					if (tickMessage == null)
-//						UnityEngine.Debug.Log ("Its the tick!");
+//						OCLogger.Normal ("Its the tick!");
 					
 					_messagesToSend.Add(tickMessage);
 				}
 			}
 		} else
 		{
-			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: !isEstablished -> Not sending a tick message / phys info.");	
+			//OCLogger.Normal ("OCConnectorSingleton::SendAvatarSignalsAndTick: !isEstablished -> Not sending a tick message / phys info.");	
 		}
 	}
 
@@ -2247,7 +2248,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //		
 //		doc.WriteTo(xmlTextWriter);
 //		
-//		UnityEngine.Debug.Log ("Send ActionStatus message: " + stringWriter.ToString());	
+//		OCLogger.Normal ("Send ActionStatus message: " + stringWriter.ToString());	
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 		
@@ -2256,7 +2257,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		}
 		
-		//UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString () + ")"));
+		//OCLogger.Normal ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString () + ")"));
 	}
   
 	/**
@@ -2291,7 +2292,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 //	
 //		doc.WriteTo(xmlTextWriter);
 //		
-//		UnityEngine.Debug.Log ("Send ActionPlanStatus message: " + stringWriter.ToString());	
+//		OCLogger.Normal ("Send ActionPlanStatus message: " + stringWriter.ToString());	
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 		
@@ -2300,7 +2301,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		}
 		
-		UnityEngine.Debug.Log("Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
+		OCLogger.Normal("Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
 	}
 
 	//---------------------------------------------------------------------------

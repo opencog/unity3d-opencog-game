@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using OpenCog.Extensions;
+using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -30,9 +31,14 @@ namespace OpenCog
 	public class OCSingletonMonoBehaviour<T> : OCMonoBehaviour
 	where T : OCMonoBehaviour 
 	{
+		#region 			Private Member Data
+
 
 		/// <summary>The singleton instance.</summary>
 		protected static T _instance = null;
+
+		#endregion
+		#region 					Unity Calls
 
 		//With Unity, there is more than one way to get that very first instance of the singleton. This accounts for the drag and drop onto a game object method.
 		//In practice, it is possible that a Singleton could be dragged onto a game object and have a DoNotDestroyOnLoad on it.
@@ -62,11 +68,16 @@ namespace OpenCog
 				this.Initialize ();
 			}
 		}
+		#endregion
+		#region 					Virtual Functions
 
 		/// <summary>Exists to be overwritten. Kept virtual to work as a fallback when a derived class has no necessary initialization.</summary>
 		protected virtual void Initialize()
 		{
 		}
+
+		#endregion
+		#region 					Singleton Stuff
 
 		/// <summary>An accessor function which can be used by derived classes only, that will attempt to instantiate the Singleton if it does not already exist, through Instantiate()</summary>
 		protected static U GetInstance<U>() where U : T
@@ -76,7 +87,7 @@ namespace OpenCog
 			// Logical OR (||) is also lazy. 
 			if(_instance == null && !Instantiate<U>())
 			{
-				Debug.LogError( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " + typeof(U) + " does not exist and could not be instantiated. Confusion abounds.");
+				OCLogger.Error( "In OCSingletonMonoBehaviour.Instance, an instance of singleton " + typeof(U) + " does not exist and could not be instantiated. Confusion abounds.");
 			}
 
 			//cast the instance to type U and send it on its way. 
@@ -99,8 +110,10 @@ namespace OpenCog
 			//Otherwise create a new object for our monobehaviour singleton.
 			if(_instance == null)
 			{
+				Debug.Log ("[\u263a]\t"+ "Testing Destroy error " + typeof(U).ToString());
 				//by the way, name it after our class so that we can identify it in the inspector
 				GameObject gameObject = new GameObject(typeof(U).ToString(), typeof(U));
+				Debug.Log ("[\u263a]\t"+ "Testing Destroy error " + typeof(U).ToString());
 
 				//and nab out the instance
 				_instance = gameObject.GetComponent<U>();		
@@ -109,6 +122,9 @@ namespace OpenCog
 			//assuming no catastrophic failure, this should always be true.
 			return _instance != null;
 		}
+
+
+		#endregion
 						
 
 	}// class OCSingletonMonoBehaviour

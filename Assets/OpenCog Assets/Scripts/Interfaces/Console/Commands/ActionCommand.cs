@@ -30,6 +30,7 @@ using OCID = System.Guid;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using OpenCog.Actions;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -136,14 +137,7 @@ public class ActionCommand : Console.ConsoleCommand
 			OCLogger.Fine (gameObject.name + " is disabled.");
 		}
 
-		/// <summary>
-		/// Raises the destroy event when ActionCommand is about to be destroyed.
-		/// </summary>
-		public void OnDestroy ()
-		{
-			Uninitialize ();
-			OCLogger.Fine (gameObject.name + " is about to be destroyed.");
-		}
+
 		
 		public override string Run (ArrayList arguments)
 		{
@@ -323,7 +317,7 @@ public class ActionCommand : Console.ConsoleCommand
 		/// <summary>
 		/// Uninitializes this instance.  Cleanup refernces here.
 		/// </summary>
-		private void Uninitialize ()
+		override protected void Uninitialize ()
 		{
 		}
 			

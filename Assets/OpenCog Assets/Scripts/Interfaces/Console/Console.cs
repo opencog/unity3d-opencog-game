@@ -26,6 +26,7 @@ using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
 using OpenCog.Entities;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -225,14 +226,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		OCLogger.Fine(gameObject.name + " is disabled.");
 	}
 
-	/// <summary>
-	/// Raises the destroy event when Console is about to be destroyed.
-	/// </summary>
-	public void OnDestroy()
-	{
-		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
-	}
+
 		
 	public bool IsActive()
 	{
@@ -357,7 +351,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 			_commandStyle.normal.textColor = Color.blue;
 			GUI.skin = _GUISkin;
 
-			Debug.Log("_GUISkin = true");
+			OCLogger.Normal("_GUISkin = true");
 		}
 		
 		if(_isShown)
@@ -393,7 +387,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 				FocusControl();
 			}
 
-			//Debug.Log("_isShown = true");
+			//OCLogger.Normal("_isShown = true");
 		}
 					
 	}
@@ -437,7 +431,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// <summary>
 	/// Uninitializes this instance.  Cleanup refernces here.
 	/// </summary>
-	private void Uninitialize()
+	override protected void Uninitialize()
 	{
 	}
 		
@@ -649,12 +643,12 @@ public class Console : OCSingletonMonoBehaviour<Console>
 						
 						for (int iString = 0; iString < commandLineArgs.Length; iString++)
 						{
-							UnityEngine.Debug.Log ("Command line arg[" + iString + "] = " + commandLineArgs[iString]);
+							OCLogger.Normal ("Command line arg[" + iString + "] = " + commandLineArgs[iString]);
 								
 //							AddConsoleEntry("Command line arg[" + iString + "] = " + commandLineArgs[iString], "CommandLineArgumentor", ConsoleEntry.Type.SAY);
 						}
 					} catch (System.Exception ex) {
-						UnityEngine.Debug.Log ("OCWorldGenerator::Awake: An error occurred while parsing commandline args: " + ex.ToString());
+						OCLogger.Normal ("OCWorldGenerator::Awake: An error occurred while parsing commandline args: " + ex.ToString());
 					}
 				}
 			}

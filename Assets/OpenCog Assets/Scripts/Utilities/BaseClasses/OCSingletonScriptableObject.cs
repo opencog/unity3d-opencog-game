@@ -20,6 +20,7 @@ using OpenCog.Attributes;
 using OpenCog.Extensions;
 using ProtoBuf;
 using UnityEngine;
+using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -49,10 +50,7 @@ namespace OpenCog
 		//---------------------------------------------------------------------------
 
 	#endregion
-
-		//---------------------------------------------------------------------------
-
-	#region Accessors and Mutators
+	#region 				Singleton Stuff
 
 		//---------------------------------------------------------------------------
 		
@@ -62,28 +60,28 @@ namespace OpenCog
 		/// <value>
 		/// The instance of this singleton.
 		/// </value>
-//	public static T Instance
-//	{
-//		get
-//		{
-//			if(_instance == null && !Instantiate())
-//			{
-//				Debug.LogError
-//				( "In OCSingletonScriptableObject.Instance, an instance of singleton " 
-//				+ typeof(T) 
-//				+ " does not exist and could not be instantiated."
-//				);
-//			}
-//				
-//			return _instance;
-//		}
-//	}
+		//	public static T Instance
+		//	{
+		//		get
+		//		{
+		//			if(_instance == null && !Instantiate())
+		//			{
+		//				OCLogger.Error
+		//				( "In OCSingletonScriptableObject.Instance, an instance of singleton " 
+		//				+ typeof(T) 
+		//				+ " does not exist and could not be instantiated."
+		//				);
+		//			}
+		//				
+		//			return _instance;
+		//		}
+		//	}
 		
 		protected static U GetInstance<U> () where U : T
 		{
 			try {
 				if (_instance == null && !Instantiate<U> ()) {
-					Debug.LogError
+					OCLogger.Error
 				("In OCSingletonMonoBehaviour.Instance, an instance of singleton " 
 				+ typeof(U) 
 				+ " does not exist and could not be instantiated."
@@ -91,31 +89,12 @@ namespace OpenCog
 				}
 			
 			} catch (Exception ex) {
-				UnityEngine.Debug.Log ("Compare exception on object type " + typeof(U) + " Message: " + ex.Message);
+				OCLogger.Normal ("Compare exception on object type " + typeof(U) + " Message: " + ex.Message);
 			}
 		
 			return (U)_instance;
 		}
 			
-		//---------------------------------------------------------------------------
-
-	#endregion
-
-		//---------------------------------------------------------------------------
-
-	#region Public Member Functions
-
-		//---------------------------------------------------------------------------
-
-		//---------------------------------------------------------------------------
-
-	#endregion
-
-		//---------------------------------------------------------------------------
-
-	#region Private Member Functions
-
-		//---------------------------------------------------------------------------
 			
 		/// <summary>
 		/// Instantiate this singleton instance.
@@ -137,22 +116,9 @@ namespace OpenCog
 					
 			return _instance != null;
 		}
-		
-					
-		//---------------------------------------------------------------------------
 
-	#endregion
 
-		//---------------------------------------------------------------------------
-
-	#region Member Classes
-
-		//---------------------------------------------------------------------------		
-
-		//---------------------------------------------------------------------------
-
-	#endregion
-
+		#endregion
 		//---------------------------------------------------------------------------
 
 	}// class OCSingletonScriptableObject

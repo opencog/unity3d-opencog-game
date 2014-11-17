@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using OpenCog.Utilities.Logging;
 
 public class OCPerlinNoise2D {
 	
@@ -128,20 +129,20 @@ public class NoiseArray2D {
     }
 	
 	public float GetNoise(int x, int y) {
-		//UnityEngine.Debug.Log ("OCPerlinNoise2D::GetNoise(" + x + ", " + y + ")");
+		//OCLogger.Normal ("OCPerlinNoise2D::GetNoise(" + x + ", " + y + ")");
 		x -= offset.x;
 		y -= offset.y;
-		//UnityEngine.Debug.Log ("Returning noise from map at index [" + (x + 1) + ", " + (y + 1) + "]");
+		//OCLogger.Normal ("Returning noise from map at index [" + (x + 1) + ", " + (y + 1) + "]");
 		 
 		//int xDim = map.GetLength(0);
 		//int yDim = map.GetLength(1);
 		
-		//UnityEngine.Debug.Log ("The dimensions of map are [" + xDim + ", " + yDim + "]");
+		//OCLogger.Normal ("The dimensions of map are [" + xDim + ", " + yDim + "]");
 		
 		try {
 			return map[x+1, y+1];	
 		} catch (System.Exception ex) {
-			UnityEngine.Debug.Log ("Array miss at [" + x + "," + y + "]: " + ex.Message);
+			OCLogger.Normal ("Array miss at [" + x + "," + y + "]: " + ex.Message);
 			return 0.5f;
 		}
 		

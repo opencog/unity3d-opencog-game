@@ -27,6 +27,7 @@ using UnityEngine;
 using System.Linq;
 using OpenCog.Map;
 using OpenCog.Actions;
+using OpenCog.Utilities.Logging;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -126,7 +127,7 @@ public class OCBuilder : OCMonoBehaviour
 			{
 				byte sun = _map.GetSunLightmap().GetLight(point.Value);
 				byte light = _map.GetLightmap().GetLight(point.Value);
-				OCLogger.Info("Sun " + " " + sun + "  Light " + light);
+				OCLogger.Fine("Sun " + " " + sun + "  Light " + light);
 			}
 		}
 		
@@ -137,7 +138,7 @@ public class OCBuilder : OCMonoBehaviour
 			{
 				byte sun = _map.GetSunLightmap().GetLight(point.Value);
 				byte light = _map.GetLightmap().GetLight(point.Value);
-				OCLogger.Info("Sun " + sun + "  Light " + light);
+				OCLogger.Fine("Sun " + sun + "  Light " + light);
 			}
 		}
 		
@@ -227,14 +228,6 @@ public class OCBuilder : OCMonoBehaviour
 		OCLogger.Fine(gameObject.name + " is disabled.");
 	}
 
-	/// <summary>
-	/// Raises the destroy event when OCBuilder is about to be destroyed.
-	/// </summary>
-	public void OnDestroy()
-	{
-		Uninitialize();
-		OCLogger.Fine(gameObject.name + " is about to be destroyed.");
-	}
 
 
 
@@ -262,7 +255,7 @@ public class OCBuilder : OCMonoBehaviour
 	/// <summary>
 	/// Uninitializes this instance.  Cleanup refernces here.
 	/// </summary>
-	private void Uninitialize()
+	override protected void Uninitialize()
 	{
 	}
 

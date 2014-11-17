@@ -136,10 +136,10 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 //			{
 //				//if(script.Script.name == "Test")
 //				{
-//					Debug.Log("Script: " + script.Script.name);
+//					OCLogger.Normal("Script: " + script.Script.name);
 //					foreach(var keyAndValue in script.Properties)
 //					{
-//						Debug.Log("-----PropertyField: " + keyAndValue.Key + ", " + keyAndValue.Value.PublicName);
+//						OCLogger.Normal("-----PropertyField: " + keyAndValue.Key + ", " + keyAndValue.Value.PublicName);
 //					}
 //				}
 //			}
@@ -163,18 +163,18 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 		System.Type currentType = script.GetClass();
 //		UnityEngine.Object monoBehaviour = AssetDatabase.GetAllAssetPaths().Select(p => AssetDatabase.LoadAssetAtPath(p, currentType) ).FirstOrDefault();
 
-//		Debug.Log("Step 1");
+//		OCLogger.Normal("Step 1");
 
 		if(currentType.IsSubclassOf(typeof(MonoBehaviour)))
 		{
 					Object[] objects = Resources.FindObjectsOfTypeAll(currentType);
 
-//			Debug.Log("Step 2");
+//			OCLogger.Normal("Step 2");
 
 			if(objects.Length != 0)
 			{
 
-//				Debug.Log("Step 3");
+//				OCLogger.Normal("Step 3");
 					allPropertiesAndFields =
 						OCPropertyField.GetAllPropertiesAndFields
 						( objects[0]

@@ -16,7 +16,7 @@ using System.Collections;
 //			//v3Top.y -= yCorrection;
 //			
 ////			if (System.DateTime.Now.Millisecond.ToString ().EndsWith ("99"))
-////				Debug.Log ("v3Top [" + v3Top.x + ", " + v3Top.y + ", " + v3Top.z + "]");
+////				OCLogger.Normal ("v3Top [" + v3Top.x + ", " + v3Top.y + ", " + v3Top.z + "]");
 //			
 //			return v3Top;
 //		}
@@ -29,7 +29,7 @@ using System.Collections;
 //			//v3Bottom.y -= yCorrection;
 //			
 ////			if (System.DateTime.Now.Millisecond.ToString ().EndsWith ("99"))
-////				Debug.Log ("v3Bottom [" + v3Bottom.x + ", " + v3Bottom.y + ", " + v3Bottom.z + "]");
+////				OCLogger.Normal ("v3Bottom [" + v3Bottom.x + ", " + v3Bottom.y + ", " + v3Bottom.z + "]");
 //			
 //			return v3Bottom;
 //		}

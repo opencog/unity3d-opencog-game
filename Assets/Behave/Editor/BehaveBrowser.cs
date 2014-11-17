@@ -12,7 +12,7 @@ public class BehaveBrowser : EditorWindow, IBrowserWindow
 		
 		if (s_Instance != null)
 		{
-			Debug.LogError ("Trying to create two instances of singleton. Self destruction in 3...");
+			Debug.LogError ("[\u2727]\t[ERROR] Trying to create two instances of singleton. Self destruction in 3...");
 			Destroy (this);
 			return;
 		}
@@ -26,8 +26,10 @@ public class BehaveBrowser : EditorWindow, IBrowserWindow
 	
 	public void OnDestroy ()
 	{
-		s_Instance = null;
+		Debug.Log ("[\u263a]\t"+ "Testing Destroy error 3 ");
+		//s_Instance = null;
 		Behave.Editor.Browser.Instance.OnDestroy ();
+		//Debug.Log ("[\u263a]\t"+ "Testing Destroy error 3 ");
 	}
 	
 	public static BehaveBrowser Instance

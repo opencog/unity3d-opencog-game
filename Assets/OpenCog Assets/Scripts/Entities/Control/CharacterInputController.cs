@@ -60,7 +60,7 @@ using OpenCog;
 //		if (map != null)
 //			return map.GetBlock( Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z) ).IsFluid();
 //		else
-//			Debug.Log("No map in CharacterInputController.IsInWater()");
+//			OCLogger.Normal("No map in CharacterInputController.IsInWater()");
 //			return false;
 //	}
 //
