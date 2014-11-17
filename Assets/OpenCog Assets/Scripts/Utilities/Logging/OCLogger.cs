@@ -43,7 +43,7 @@ namespace OpenCog.Utilities.Logging
 
 
 	#endregion
-	public class OCLogger : OCSingletonMonoBehaviour< OCLogger >
+	public class OCLogger :OCSingletonScriptableObject< OCLogger >
 	{
 
 		//---------------------------------------------------------------------------
