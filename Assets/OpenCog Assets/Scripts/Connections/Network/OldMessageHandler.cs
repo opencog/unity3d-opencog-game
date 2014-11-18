@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using OpenCog.Utilities.Logging;
 
 namespace OpenCog.Network
 {
@@ -65,7 +66,7 @@ namespace OpenCog.Network
 		
 		public void run()
 		{
-            UnityEngine.Debug.Log("OldMessageHandler: Start handling socket connection.");
+			UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "OldMessageHandler.run() Start handling socket connection.");
 			StreamReader reader = null;
 			StreamWriter writer = null;
 			
@@ -106,14 +107,14 @@ namespace OpenCog.Network
 					}
 					else
 					{
-						UnityEngine.Debug.Log ("Guess we got an empty line :(");
+						UnityEngine.Debug.Log (OCLogSymbol.CONNECTION +  "OldMessageHandler.run() read an empty line. The connection will shut down.");
 						
 						endInput = true;
 					}	
 				}
 				catch( IOException ioe )
 				{
-                    UnityEngine.Debug.Log("MessageHandler: An I/O error occured. [" + 
+					UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "OldMessageHandler: An I/O error occured. [" + 
 						               ioe.Message + "].");	
 					endInput = true;
 				}
@@ -121,7 +122,7 @@ namespace OpenCog.Network
 				//UnityEngine.Debug.Log ("Still not ending input! I'm still here!");
 			} // while
 			
-			UnityEngine.Debug.Log ("Hey! Who set endInput to tru!?!?");
+			UnityEngine.Debug.Log ("OldMessageHandler.run() shutting down connection.");
 			
 			try
 			{
@@ -131,7 +132,7 @@ namespace OpenCog.Network
 			}
 			catch( IOException ioe ) 
 			{
-                UnityEngine.Debug.Log("MessageHandler: An I/O error occured. [" + 
+				UnityEngine.Debug.LogError(OCLogSymbol.ERROR +"OldMessageHandler: An I/O error occured. [" + 
 					               ioe.Message + "].");	
 			}	
 		}
@@ -205,7 +206,7 @@ namespace OpenCog.Network
 					{	
 						string id = token.Current.ToString();
 
-                        UnityEngine.Debug.Log("onLine: Available element message received for [" + 
+						UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "onLine: Available element message received for [" + 
 						          id + "].");
 						this.ne.MarkAsAvailable(id);
 						answer = OCNetworkElement.OK_MESSAGE;

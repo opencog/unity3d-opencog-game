@@ -376,7 +376,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		if (_isLoggedIn)
 		{
-			UnityEngine.Debug.Log ("StartCoroutine(_listener.Listen())");
+			UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Router Logged In. OcServerListener.Listen() coroutine started by OcNetworkElement.StartListening()");
 	
 			_isListening = true;
 				
@@ -687,7 +687,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			// the error message that we disconnected midSend.
 			//obviously this is not ideal at all, but I have documented it here. 
 			
-			if(!this.enabled || !this._isEstablished)
+			if(!this._isEstablished)
 			{
 				UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "OCNetworkElement is shutting down; not sending message.");
 				_isEstablished = false;

@@ -373,7 +373,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private string ParseStartMessage(string inputLine, string command, IEnumerator token)
 	{
-		UnityEngine.Debug.Log ("OCMessageHandler::ParseStartMessage");
+		UnityEngine.Debug.Log (OCLogSymbol.RUNNING + "OCMessageHandler::ParseStartMessage");
 			
 		string answer = null;
 			

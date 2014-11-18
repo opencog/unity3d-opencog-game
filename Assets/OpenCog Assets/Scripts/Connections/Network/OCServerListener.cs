@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 using UnityEngine;
@@ -136,7 +137,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		
 	public IEnumerator Listen()
 	{
-		UnityEngine.Debug.Log ("OCServerListener::Listen has a networkelement with GUID " + _networkElement.VerificationGuid);
+			UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "OCServerListener.Listen() has a networkelement with GUID " + _networkElement.VerificationGuid);
 			
 		try
 		{
@@ -146,7 +147,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 				
 				_listener.Start();	
 					
-				UnityEngine.Debug.Log ("Now listening on " + _networkElement.IP + ":" + _networkElement.Port + "...");
+					UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Now listening on " + _networkElement.IP + ":" + _networkElement.Port + "...");
 					
 				OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
 				console.AddConsoleEntry("Listening for connection callback...", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
@@ -155,7 +156,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 		}
 		catch(SocketException se)
 		{
-			UnityEngine.Debug.Log ("Whoops, something went wrong making a TCPListener: " + se.Message);
+			UnityEngine.Debug.LogError (OCLogSymbol.IMPOSSIBLE_ERROR + "Whoops, something went wrong making a TCPListener: " + se.Message);
 			//Debug.LogError(se.Message);
 			yield break;
 		}
@@ -166,67 +167,64 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 			{
 				//UnityEngine.Debug.Log (System.DateTime.Now.ToString ("HH:mm:ss.fff") + ": Nope, not pending...");
 				if (_shouldStop)
-					UnityEngine.Debug.Log("Which is funny, because IT SHOULDN'T BE HERE BECAUSE _shouldStop IS TRUE!!");	
+					UnityEngine.Debug.LogError(OCLogSymbol.IMPOSSIBLE_ERROR + "OCServerListener.Listener() has TCPListener.Pending() reporting false. Which is funny, because IT SHOULDN'T BE HERE BECAUSE _shouldStop IS TRUE!!");	
 				// If listener is not pending, sleep for a while to relax the CPU.
 				yield return new UnityEngine.WaitForSeconds(0.5f);
 			}
 			else
 			{
-				UnityEngine.Debug.Log ("Yep, pending!");
+				UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Listener is Pending");
+
+				//try{
+            	_sockets.Add(_listener.AcceptSocket());
+
+				UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "Socket accepted...");
+
+            	OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+
+	            // Two sockets must be accepted, for data and
+	            // control, we don't know which one is which
+	            // though
+	            if (_sockets.Count == 1)
+	            {
+	                console.AddConsoleEntry("First callback received, initializing MessageHandler...",
+	                                        "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
+	                new OldMessageHandler(OCNetworkElement.Instance, _sockets.Last()).start();
+	            }
+	            else if (_sockets.Count == 2)
+	            {
+	                console.AddConsoleEntry("Second and last callback received, initializing MessageHandler...",
+	                                        "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
+	                new OldMessageHandler(OCNetworkElement.Instance, _sockets.Last()).start();
+
+	                _isReady = true;
+	                _shouldStop = true;
 					
-//				try
-//				{
-					UnityEngine.Debug.LogWarning ("Accepting socket from listener...");
+					UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "The Count of scokets is at two, and the MessageHandler is online.");
 
-                    _sockets.Add(_listener.AcceptSocket());
+	                console.AddConsoleEntry("MessageHandler online, ready to receive messages!", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
 
-					UnityEngine.Debug.LogWarning ("Socket accepted...");
+	                yield return new UnityEngine.WaitForSeconds(0.1f);
+	            }
 
-                    OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+				//	UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
+				//						
+				//	if (_messageHandler == null)
+				//		_messageHandler = OCMessageHandler.Instance;
+				//					
+				//	if (_messageHandler == null)
+				//		UnityEngine.Debug.Log ("No handler?? I just made it!!");
+				//					
+				//	_messageHandler.UpdateMessagesSync(workSocket);
+				//	_messageHandler.UpdateMessages(workSocket);
 
-                    // Two sockets must be accepted, for data and
-                    // control, we don't know which one is which
-                    // though
-                    if (_sockets.Count == 1)
-                    {
-                        console.AddConsoleEntry("First callback received, initializing MessageHandler...",
-                                                "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
-                        new OldMessageHandler(OCNetworkElement.Instance, _sockets.Last()).start();
-                    }
-                    else if (_sockets.Count == 2)
-                    {
-                        console.AddConsoleEntry("Second and last callback received, initializing MessageHandler...",
-                                                "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
-                        new OldMessageHandler(OCNetworkElement.Instance, _sockets.Last()).start();
-
-                        _isReady = true;
-                        _shouldStop = true;
-					
-                        UnityEngine.Debug.Log ("_shouldStop is now TRUE!");
-
-                        console.AddConsoleEntry("MessageHandler online, ready to receive messages!", "Unity World", OpenCog.Utility.Console.Console.ConsoleEntry.Type.RESULT);
-
-                        yield return new UnityEngine.WaitForSeconds(0.1f);
-                    }
-
-//					UnityEngine.Debug.Log ("Ok, I'm going to make a new MessageHandler and call StartProcessing now...");
-//						
-//					if (_messageHandler == null)
-//						_messageHandler = OCMessageHandler.Instance;
-//					
-//					if (_messageHandler == null)
-//						UnityEngine.Debug.Log ("No handler?? I just made it!!");
-//					
-//					_messageHandler.UpdateMessagesSync(workSocket);
-					//_messageHandler.UpdateMessages(workSocket);
-						
-//					UnityEngine.Debug.Log ("Well...did anything happen?");
-//				}
-//				catch( SocketException se )
-//				{
-//					//Debug.LogError(se.Message);
-//						UnityEngine.Debug.Log (se.Message);
-//				}
+				//	UnityEngine.Debug.Log ("Well...did anything happen?");
+				//	}
+				//	catch( SocketException se )
+				//	{
+				//		//Debug.LogError(se.Message);
+				//			UnityEngine.Debug.Log (se.Message);
+				//	}
 			}
 		}
 	}
