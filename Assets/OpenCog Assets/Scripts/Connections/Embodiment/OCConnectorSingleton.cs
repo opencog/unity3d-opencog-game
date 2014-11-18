@@ -347,16 +347,16 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					{
 						if(sendResult)
 						{
-							UnityEngine.Debug.Log("Message from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+							System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Message recieved from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						} else
 						{
-							UnityEngine.Debug.Log("Error sending message from '" + message.SourceID + "' to '" +
+							UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Error sending message from '" + message.SourceID + "' to '" +
 								message.TargetID + "' type '" + message.Type + "': " + message.ToString());
 						}
 					}
 				} else
 				{
-					UnityEngine.Debug.Log("A null message...great...");
+					UnityEngine.Debug.LogError(OCLogSymbol.IMPOSSIBLE_ERROR + "A null message has been reported.");
 				}
 				
 				iMessageIndex += 1;
@@ -632,7 +632,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 			// Format: SUCCESS UNLOAD NetworkElement_id avatar_id
 			string neId = tokens[2];
-			UnityEngine.Debug.Log("!!! Successfully unloaded '" + neId + "'.");
+			UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "!!! Successfully unloaded '" + neId + "'.");
 			_isInitialized = false;//_isLoaded = false;
 		} else
 		{
@@ -671,7 +671,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		// Loop through Actions...or clones of them...or data structures for them...
 	
-		UnityEngine.Debug.Log("Queuing message to update action statuses.");
+		System.Console.WriteLine(OCLogSymbol.CONNECTION + "OCConnectorSingleton.UpdateActionStatuses()");
 		string timestamp = GetCurrentTimestamp();
 		// Create a xml document
 		XmlDocument doc = new XmlDocument();
@@ -924,10 +924,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	{
 		if(isAppear)
 		{
-			UnityEngine.Debug.Log("Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
+			UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		} else
 		{
-			UnityEngine.Debug.Log("Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
+			UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		}
 		// TODO: Figure out what this is...why would we report an object that is our ID...or maybe that's the agent ID...
 		if(objectID == ID.ToString())
@@ -1680,7 +1680,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			
 			if(stringWriter.ToString().IndexOf("oc:emotional-feeling") == -1)
 			{
-				UnityEngine.Debug.Log("A plan! " + stringWriter.ToString());	
+				UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "The robot has a plan! " + stringWriter.ToString());	
 				wrotePlan = true;	
 			}
 		}
@@ -1688,7 +1688,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
 		for(int i = 0; i < list.Count; i++)
 		{
-			UnityEngine.Debug.Log("OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
+			System.Console.WriteLine(OCLogSymbol.RUNNING + "OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
 			ParseActionPlanElement((XmlElement)list.Item(i));
 		}
 
@@ -1899,8 +1899,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 					if(actionName == "walk" || actionName == "jump_toward")
 					{
-
-						console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
+						//console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 					
 						actionArguments.EndTarget = vectorGameObject;
 						//actionArguments.EndTarget = GameObject.Find("EndPointStub");
@@ -1913,7 +1913,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					
 					} else if(actionName == "destroy" || actionName == "build_block")
 					{
-						console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy/create block at [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy/create block at [" + x + ", " + z + ", " + y + "]");
+						//console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy/create block at [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						
 						actionArguments.EndTarget = vectorGameObject;
 						//actionArguments.EndTarget = GameObject.Find("EndPointStub");
@@ -1953,14 +1954,14 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 							// Then we can grab it, eat it, whatever...since it's a battery
 							if(actionName == "grab")
 							{
-								//UnityEngine.Debug.Log ("A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
+								System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
 								
-								console.AddConsoleEntry("A 'grab' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+								//console.AddConsoleEntry("A 'grab' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 							} else if(actionName == "eat")
 							{
-								//UnityEngine.Debug.Log ("An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
+								System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
 								
-								console.AddConsoleEntry("An 'eat' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+								//console.AddConsoleEntry("An 'eat' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 								
 							}	
 
@@ -1970,7 +1971,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						} else
 						{
 							// That's silly..we can only eat / grab batteries!
-							UnityEngine.Debug.Log("Received a grab or eat command, but couldn't find the battery in Unity!");
+							UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "Received a grab or eat command, but couldn't find the battery in Unity!");
 						}
 						
 							
@@ -2302,7 +2303,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		}
 		
-		UnityEngine.Debug.Log("Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
+		UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
 	}
 
 	//---------------------------------------------------------------------------

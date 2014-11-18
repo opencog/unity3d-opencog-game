@@ -29,6 +29,7 @@ using OpenCog.Map;
 using System.Reflection;
 using OpenCog.Utility;
 using OpenCog.Embodiment;
+using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -149,7 +150,7 @@ public class OCAction : OCMonoBehaviour
 				if(shouldStart == false)
 				{
 							if((this.FullName == "WalkForwardLeftMove" || this.FullName == "HoldBothHandsTransfer") && precondition.Method.Name != "IsNoEndTargetOrNotAnimating" && precondition.Method.Name != "IsSourceNotRunningAction") 
-						Debug.LogWarning("In OCAction.ShouldStart, Precondition Failed: " + precondition.Method.Name);
+						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCAction.ShouldStart, Precondition Not Yet True: " + precondition.Method.Name);
 					break;
 				}
 			}
@@ -1084,7 +1085,7 @@ public class OCAction : OCMonoBehaviour
 			{
 				if(VectorUtil.AreVectorsEqual(_EndTarget.transform.position, _Source.transform.position))
 				{
-					Debug.LogError("Don't Build a Block on top of yourself");
+					Debug.LogError(OCLogSymbol.ERROR + "Don't Build a Block on top of yourself");
 					return ActionStatus.EXCEPTION;
 				}
 				cbfx.CreateBlock(VectorUtil.Vector3ToVector3i(_EndTarget.transform.position));
@@ -1092,7 +1093,7 @@ public class OCAction : OCMonoBehaviour
 		}
 				
 		if(!Descriptors.Contains("Idle"))
-			Debug.LogWarning("Starting Action: " + FullName);		
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Starting Action: " + FullName);		
 			
 		return ActionStatus.RUNNING;
 	}
@@ -1200,13 +1201,13 @@ public class OCAction : OCMonoBehaviour
 		}
 			
 		if(!Descriptors.Contains("Idle"))
-			Debug.LogWarning("Ending Action: " + FullName);
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Ending Action: " + FullName);
 			
-				if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
-				{
-					_ActionController.Step.Arguments.ActionName = FullName;
-					OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, true);	
-				}		
+			if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
+			{
+				_ActionController.Step.Arguments.ActionName = FullName;
+				OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, true);	
+			}		
 			
 		return ActionStatus.SUCCESS;
 	}

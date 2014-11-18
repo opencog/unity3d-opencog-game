@@ -354,7 +354,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 		
 	private void StartHandling()
 	{
-		UnityEngine.Debug.Log ("OCNetworkElement::StartHandling");
+		System.Console.WriteLine(OCLogSymbol.CONNECTION + "OCNetworkElement.StartHandling() has run");
 			
 		if (!_isHandlingMessages)
 		{

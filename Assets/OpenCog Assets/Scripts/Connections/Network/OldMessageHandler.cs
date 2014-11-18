@@ -122,7 +122,7 @@ namespace OpenCog.Network
 				//UnityEngine.Debug.Log ("Still not ending input! I'm still here!");
 			} // while
 			
-			UnityEngine.Debug.Log ("OldMessageHandler.run() shutting down connection.");
+			UnityEngine.Debug.Log (OCLogSymbol.DESTROY + "OldMessageHandler.run() shutting down connection.");
 			
 			try
 			{

@@ -325,7 +325,7 @@ namespace OpenCog.Embodiment
 				{
 					updatedObjects.Add(batteryObject.GetInstanceID());
 						
-					UnityEngine.Debug.Log("Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
+					System.Console.WriteLine(OCLogSymbol.RUNNING + "Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
 				} else
 				{
 					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
@@ -383,7 +383,7 @@ namespace OpenCog.Embodiment
 				//UnityEngine.Debug.Log ("Now we're checking _mapInfoCache for the ID " + oid);
 				if(!_mapInfoCacheStatus[oid])
 				{
-					UnityEngine.Debug.Log("We didn't find the ID " + oid);
+					UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "We didn't find the ID " + oid);
 					// So...if the game object's boolean is false...
 						
 					// The updated flag of the map info cache is false, meaning it has not been updated in last cycle.
@@ -940,8 +940,7 @@ namespace OpenCog.Embodiment
 			Vector3i viChunkStartingCorner = new Vector3i(startX, startY, startZ);
 			Vector3i viChunkEndingCorner = new Vector3i(endX, endY, endZ);
 			
-			Debug.Log("   Processing blocks from chunk [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
-			Debug.Log("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Processing blocks from chunk [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + " to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
 			
 			for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
 			{
@@ -974,13 +973,12 @@ namespace OpenCog.Embodiment
 				//the arbitrary 'max blocks per transmission' parameter we sent in.
 
 				//TODO: We may want to make sure empty terrainMapInfoLists are never sent here. 
-				Debug.Log("Sending terrain info...");
 				_connector.SendTerrainInfoMessage(terrainMapinfoList, true);
 				terrainMapinfoList.Clear();
 
 				//Print debug messages
 				System.DateTime dtProcessingTick = System.DateTime.Now;
-				Debug.Log("Processed " + blocksProcessed + " blocks in " + dtProcessingTick.Subtract(dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Sent Terrain Info. Processed " + blocksProcessed + " blocks in " + dtProcessingTick.Subtract(dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
 				emptyBlocksProcessed = 0;
 				blocksProcessed = 0;
 				dtStartProcessing = dtProcessingTick;
@@ -1000,7 +998,7 @@ namespace OpenCog.Embodiment
 		public IEnumerator PerceiveTerrain()
 		{
 			//We want to record that this has run because it is a form of initialization
-			System.Console.WriteLine(OCLogSymbol.RUNNING + "OCPerceptionCollector.PerceiveTerrain() running.");
+			Debug.Log(OCLogSymbol.RUNNING + "OCPerceptionCollector.PerceiveTerrain() running.");
 
 			//we need this so we can print to the console that we've sensed the world and are going to set to percieving it
 			OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
@@ -1045,16 +1043,16 @@ namespace OpenCog.Embodiment
 			}
 
 			// Check for remaining blocks to report to OpenCog
-			Debug.Log("Let's check if there are any blocks left to report in our terrainMapinfoList...");
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Let's check if there are any blocks left to report in our terrainMapinfoList...");
 			if(terrainMapinfoList.Count > 0)
 			{
-				Debug.Log("   Yep, looks like there are...");
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "   Yep, looks like there are...");
 				_connector.SendTerrainInfoMessage(terrainMapinfoList, ! _hasPerceivedTerrainForFirstTime);
-				Debug.Log("   Ok, all blocks have been sent now...");
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "   Ok, all blocks have been sent now...");
 				terrainMapinfoList.Clear();
 			} else
 			{
-				Debug.Log("   Nope, looks like we already sent everything!");	
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +  "   Nope, looks like we already sent everything!");	
 			}
 					
 			// Communicate completion of initial terrain perception
@@ -1062,17 +1060,18 @@ namespace OpenCog.Embodiment
 			{
 				//PerceiveWorld();
 						
-				Debug.Log("Time to send the 'finished perceiving terrain' message!");
+				System.Console.WriteLine(OCLogSymbol.RUNNING + "Time to send the 'finished perceiving terrain' message!");
 				_connector.SendFinishPerceptTerrain();
 				_hasPerceivedTerrainForFirstTime = true;
 			} else
 			{
-				Debug.Log("That's weird...it thinks _hasPerceivedTerrainForFirstTime is true already...");	
+				Debug.LogError(OCLogSymbol.IMPOSSIBLE_ERROR + "That's weird...it thinks _hasPerceivedTerrainForFirstTime is true already...");	
 			}
 				
-			Debug.Log("Finished perceiving terrain, total time taken: " + System.DateTime.Now.Subtract(dtStartPerceptTerrain).TotalSeconds);
+			Debug.Log(OCLogSymbol.CLEARED + "Finished perceiving terrain, total time taken: " + System.DateTime.Now.Subtract(dtStartPerceptTerrain).TotalSeconds);
+			Debug.Log(OCLogSymbol.CLEARED + "Waiting for Embodiment... (This may take a few seconds)");
 				
-			console.AddConsoleEntry("Thank you for waiting! What should I do next...", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+			console.AddConsoleEntry("Thank you for waiting! Let me figure out what to do next...", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 		}
 			
 		// This function is only relevant in terms of the state changes of:

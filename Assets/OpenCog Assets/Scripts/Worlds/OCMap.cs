@@ -309,7 +309,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 		if(block.IsEmpty() && !oldBlock.IsEmpty())
 		{
-			UnityEngine.Debug.Log("OCMap::SetBlockAndRecompute: block.IsEmpty -> inferring destruction.");
+				UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "OCMap.SetBlockAndRecompute(): block.IsEmpty -> inferring destruction.");
 				
 			if(perceptionCollector != null && oldBlock.block.GetName() != "Battery")
 			{

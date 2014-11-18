@@ -26,6 +26,8 @@ namespace OpenCog.Utilities.Logging
 		CONNECTION = "[\u260E]\t",
 		IMPOSSIBLE_ERROR = "[\u2620]\t[IMPOSSIBLE_ERROR] ",
 
+		 
+
 		UMBRELLA = "[\u2602]\t";
 
 	}

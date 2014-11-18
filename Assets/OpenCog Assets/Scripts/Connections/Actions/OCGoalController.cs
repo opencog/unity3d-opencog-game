@@ -15,6 +15,7 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using OpenCog.Embodiment;
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -184,7 +185,9 @@ public class OCGoalController : OCMonoBehaviour
 			
 		if(GoalBlockPos != Vector3i.zero && _map.GetBlock(GoalBlockPos).IsEmpty())
 		{
-			Debug.Log("No more " + _goalBlockType.GetName() + "... :(");
+			OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
+				console.AddConsoleEntry("I perceive no more " + _goalBlockType.GetName() + " blocks in my world.", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+			System.Console.WriteLine(OCLogSymbol.RUNNING + "No more " + _goalBlockType.GetName() + " are reported");
 			
 			GoalBlockPos = Vector3i.zero;
 
@@ -268,7 +271,7 @@ public class OCGoalController : OCMonoBehaviour
 					
 					MoveTargetsIfNecessary ();
 
-					Debug.Log("We found some " + _goalBlockType.GetName() + " nearby: " + GoalBlockPos + "!");
+					System.Console.WriteLine(OCLogSymbol.RUNNING + "We found a " + _goalBlockType.GetName() + " block nearby: " + GoalBlockPos + "!");
 				}
 			}
 		}

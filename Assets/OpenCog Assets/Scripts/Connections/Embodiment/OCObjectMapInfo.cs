@@ -382,7 +382,7 @@ public class OCObjectMapInfo
 		
 		public OCObjectMapInfo (UnityEngine.GameObject gameObject)
 		{
-			UnityEngine.Debug.Log ("OCObjectMapInfo::OCObjectMapInfo, passed object is of type: " + gameObject.GetType().ToString () + ", and name " + gameObject.name);
+			System.Console.WriteLine(OCLogSymbol.RUNNING + "OCObjectMapInfo::OCObjectMapInfo, passed object is of type: " + gameObject.GetType().ToString () + ", and name " + gameObject.name);
 			
 			_id = gameObject.GetInstanceID().ToString();
 			
@@ -426,7 +426,7 @@ public class OCObjectMapInfo
 					_type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
 				}
 				
-				UnityEngine.Debug.Log ("Just made an OCObjectMapInfo stating the AGI is at [" + this.position.x + ", " + this.position.y + ", " + this.position.z + "]");
+				System.Console.WriteLine(OCLogSymbol.RUNNING + "Just made an OCObjectMapInfo stating the AGI is at [" + this.position.x + ", " + this.position.y + ", " + this.position.z + "]");
 
 			} else if (gameObject.tag == "OCNPC") {
 				// This is a human player avatar.
@@ -459,7 +459,7 @@ public class OCObjectMapInfo
 			
 			if (gameObject.GetComponent<OpenCog.Extensions.OCConsumableData>() != null)
 			{
-				UnityEngine.Debug.Log ("Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
+				System.Console.WriteLine(OCLogSymbol.RUNNING + "Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
 				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
 				this.AddProperty ("pickupable", "TRUE", System.Type.GetType ("System.Boolean"));
 				this.AddProperty ("holder", "none", System.Type.GetType ("System.String"));

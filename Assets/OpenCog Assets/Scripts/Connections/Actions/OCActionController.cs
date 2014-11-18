@@ -723,14 +723,14 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	public void LoadActionPlanStep(string actionName, OCAction.OCActionArgs arguments)
 	{
-		Debug.Log("OCActionController::LoadActionPlanStep: " + actionName);
+		//Debug.Log("OCActionController::LoadActionPlanStep: " + actionName);
 		TreeType treeType = _ActionNameDictionary[actionName];
 		Tree tree = _TreeTypeDictionary[treeType];
 		OCActionPlanStep actionPlanStep = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
 		_ActionPlanQueue.AddLast(actionPlanStep);
-		Debug.Log("Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
 	}
 			
 	public void CancelActionPlan()
@@ -832,7 +832,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 						if(_step.Behaviour.Name != "Character.IdleShow" && !_step.Behaviour.Name.Contains("Behaviour"))
 						{
-							Debug.LogWarning("In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
+								System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
 						}		
 					}
 //							else if(_step.Arguments.ActionPlanID == null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries) && OCConnectorSingleton.Instance.IsEstablished )
@@ -895,7 +895,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				{
 					_step = _ActionPlanQueue.First();
 					_ActionPlanQueue.RemoveFirst();
-					Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 					if(_LastPlanID != _step.Arguments.ActionPlanID)
 					{
 						Debug.LogError("We've changed plans without reporting back to OpenCog!");
@@ -905,7 +905,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					_LastPlanID = _step.Arguments.ActionPlanID;
 					_step = _ActionPlanQueue.First();
 					_ActionPlanQueue.RemoveFirst();
-					Debug.LogWarning("In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI(), starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 				}
 			}
 					
