@@ -15,6 +15,7 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using OpenCog.Utilities.Logging;
+using OpenCog.Map;
 
 #region Usings, Namespaces, and Pragmas
 using System.Collections;
@@ -80,6 +81,10 @@ namespace OpenCog.Embodiment
 		private bool _hasStartedPerceivingTerrainForTheFirstTime = false;
 		private bool _isPerceivingStateChangesForTheFirstTime = true;
 		private bool _hasPerceivedWorldForTheFirstTime = false;
+
+
+		//work with iteration to compare how long it takes blocks to process.
+		System.DateTime dtStartProcessing;
 				
 		//---------------------------------------------------------------------------
 		
@@ -899,6 +904,101 @@ namespace OpenCog.Embodiment
 		//			_connector.SendTerrainInfoMessage (addedBlockList);
 		//		
 		//		}``
+
+
+		public IEnumerator PerceiveChunk(OCMap map, OCChunk chunk, List<OCObjectMapInfo> terrainMapinfoList)
+		{
+
+			
+			if(chunk == null || chunk.IsEmpty)
+			{
+				yield break;
+			}
+
+			//some iteration parameters
+			int blocksProcessed = 0;
+			int emptyBlocksProcessed = 0;
+
+				
+			// chunk position is the coordinates of the chunk.
+			Vector3i viChunkPosition = chunk.GetPosition();
+
+			//TODO: I have just realized that since I have never seen this debug statement, odds are THIS DOESNT HAPPEN and is never called
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
+			
+			// Maybe do some empty check here...there will be many empty chunks. But it might be
+			// equally expensive without setting new empty flags while creating chunks.
+			
+			int startX = viChunkPosition.x * Map.OCChunk.SIZE_X;
+			int startY = viChunkPosition.y * Map.OCChunk.SIZE_Y;
+			int startZ = viChunkPosition.z * Map.OCChunk.SIZE_Z;
+			
+			int endX = ((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X) - 1;
+			int endY = ((viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y) - 1;
+			int endZ = ((viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z) - 1;
+			
+			Vector3i viChunkStartingCorner = new Vector3i(startX, startY, startZ);
+			Vector3i viChunkEndingCorner = new Vector3i(endX, endY, endZ);
+			
+			Debug.Log("   Processing blocks from chunk [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
+			Debug.Log("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
+			
+			for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
+			{
+				for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
+				{
+					for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
+					{
+
+						// Ok...now we have some globalz....
+						OpenCog.Map.OCBlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
+
+						//skip empty blocks, batteries, and those beneathe the floorheight
+						if(globalBlock.IsEmpty () || globalBlock.block.GetName().ToLower () == "battery" || iGlobalY <= _floorHeight)
+						{
+							emptyBlocksProcessed += 1;	
+							continue;
+						}
+
+						//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+
+						// ORIGINAL VERSION PRE Y Z SWAP:
+						//OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
+						
+						// WARNING: Y AND Z SWAPPED HERE FOR OPENCOG'S SAKE:
+						OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.z, viChunkPosition.y, iGlobalX, iGlobalZ, iGlobalY, globalBlock);
+						
+						terrainMapinfoList.Add(globalMapInfo);
+
+						//if (globalMapInfo == null)
+						//	OCLogger.Normal ("globalMapInfo == null");
+
+						blocksProcessed += 1;
+
+						
+					} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
+
+				} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
+
+				//send the terrain in chunk slices, which should never be any bigger than 256*16 = 4096 blocks (identical to 
+				//the arbitrary 'max blocks per transmission' parameter we sent in.
+
+				//TODO: We may want to make sure empty terrainMapInfoLists are never sent here. 
+				Debug.Log("Sending terrain info...");
+				_connector.SendTerrainInfoMessage(terrainMapinfoList, true);
+				terrainMapinfoList.Clear();
+				
+				System.DateTime dtProcessingTick = System.DateTime.Now;
+				Debug.Log("Processed " + blocksProcessed + " blocks in " + dtProcessingTick.Subtract(dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
+				emptyBlocksProcessed = 0;
+				blocksProcessed = 0;
+				dtStartProcessing = dtProcessingTick;
+				yield return null;
+				
+			} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)	
+		} 
+	
+
 		
 		/// <summary>
 		/// A coroutine which performs a type of initialization; it ru
@@ -907,43 +1007,41 @@ namespace OpenCog.Embodiment
 		public IEnumerator PerceiveTerrain()
 		{
 			//We want to record that this has run because it is a form of initialization
-			OCLogger.Fine("OCPerceptionCollector::PerceiveTerrain running.");
+			System.Console.WriteLine(OCLogSymbol.RUNNING + "OCPerceptionCollector.PerceiveTerrain() running.");
 
-			//print to the console that we've sensed the world and are going to set to percieving it
+			//we need this so we can print to the console that we've sensed the world and are going to set to percieving it
 			OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
 		
 
 			//We want to check to make sure we haven't run this function twice
 			if(_hasPerceivedTerrainForFirstTime)
 			{
-				OCLogger.Debugging("[WARNING] PerceiveTerrain() was called with _hasPercievedTerrainForFirstTime set equal to true. Typically, this should not happen.");
+				Debug.LogWarning(OCLogSymbol.WARN + "PerceiveTerrain() was called with _hasPercievedTerrainForFirstTime set equal to true. Typically, this should not happen.");
 				console.AddConsoleEntry("I've seen this terrain before... Perhaps this is in error? Can you show me something new?", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 				yield return null;
 				yield break;
 			} 
 			else
 			{
-				OCLogger.Debugging("PerceiveTerrain() was called with _hasPercievedTerrainForFirstTime set equal to false. This is correct.");
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "PerceiveTerrain() was called with _hasPercievedTerrainForFirstTime set equal to false. This is correct.");
 				console.AddConsoleEntry("What a beautiful world! Please give me a few seconds to process it...", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 			}
 
+			//initialize the time at which we're starting the perception
 			System.DateTime dtStartPerceptTerrain = System.DateTime.Now;
 
-				
+			//get an instance of the map to work with
 			List<OCObjectMapInfo> terrainMapinfoList = new List<OCObjectMapInfo>();
 			OpenCog.Map.OCMap map = OpenCog.Map.OCMap.Instance;//UnityEngine.GameObject.Find ("Map").GetComponent<OpenCog.Map.OCMap> () as OpenCog.Map.OCMap;
 			
 			if(map == null)
 			{
-				Debug.Log("OCPerceptionCollector::PerceiveTerrain: map == null");
+				Debug.LogError(OCLogSymbol.IMPOSSIBLE_ERROR + "OCPerceptionCollector.PerceiveTerrain() was unable to get an instance of the map.");
+				yield break;
 			}
 				
-			int blocksProcessed = 0;
-			int emptyBlocksProcessed = 0;
-			int blocksPerTransmission = 4096;
-			int blocksPerDebugEntry = 4096;
 				
-			System.DateTime dtStartProcessing = System.DateTime.Now;
+			//dtStartProcessing = System.DateTime.Now; for debug messages not currently in use
 			
 			for(int x = map.Chunks.GetMinX(); x < map.Chunks.GetMaxX(); ++x)
 			{
@@ -951,104 +1049,9 @@ namespace OpenCog.Embodiment
 				{
 					for(int z = map.Chunks.GetMinZ(); z < map.Chunks.GetMaxZ(); ++z)
 					{
-						OpenCog.Map.OCChunk chunk = map.Chunks.Get(x, y, z);
-						
-						if(chunk != null)
-						{
-							if(!chunk.IsEmpty)
-							{
-								// chunk position is the coordinates of the chunk.
-								Vector3i viChunkPosition = chunk.GetPosition();
-					
-								Debug.Log("Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
-				
-								// Maybe do some empty check here...there will be many empty chunks. But it might be
-								// equally expensive without setting new empty flags while creating chunks.
-									
-								int startX = viChunkPosition.x * Map.OCChunk.SIZE_X;
-								int startY = viChunkPosition.y * Map.OCChunk.SIZE_Y;
-								int startZ = viChunkPosition.z * Map.OCChunk.SIZE_Z;
-									
-								int endX = ((viChunkPosition.x + 1) * Map.OCChunk.SIZE_X) - 1;
-								int endY = ((viChunkPosition.y + 1) * Map.OCChunk.SIZE_Y) - 1;
-								int endZ = ((viChunkPosition.z + 1) * Map.OCChunk.SIZE_Z) - 1;
-									
-								Vector3i viChunkStartingCorner = new Vector3i(startX, startY, startZ);
-								Vector3i viChunkEndingCorner = new Vector3i(endX, endY, endZ);
-					
-								Debug.Log("   Processing blocks from chunk [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + "].");
-								Debug.Log("   to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
-					
-								for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
-								{
-									for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
-									{
-										for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
-										{
-											// Ok...now we have some globalz....
-											OpenCog.Map.OCBlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
-					
-											if((!globalBlock.IsEmpty()) && (globalBlock.block.GetName().ToLower() != "battery") && (iGlobalY > _floorHeight))
-											{
-												//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
-													
-													
-												// ORIGINAL VERSION PRE Y Z SWAP:
-												//OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
-													
-												// WARNING: Y AND Z SWAPPED HERE FOR OPENCOG'S SAKE:
-												OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.z, viChunkPosition.y, iGlobalX, iGlobalZ, iGlobalY, globalBlock);
-					
-												terrainMapinfoList.Add(globalMapInfo);
-													
-												//												if (globalMapInfo == null)
-												//													OCLogger.Normal ("globalMapInfo == null");
-					
-												// in case there are too many blocks, we send every 5000 blocks per message
-												if(terrainMapinfoList.Count >= blocksPerTransmission)
-												{
-													Debug.Log("Sending terrain info...");
-													_connector.SendTerrainInfoMessage(terrainMapinfoList, true);
-													terrainMapinfoList.Clear();
-														
-													yield return null;
-												}
-											} // end if (!globalBlock.IsEmpty())
-												else
-											{
-												emptyBlocksProcessed += 1;	
-											}
-												
-											blocksProcessed += 1;
-												
-											if(blocksProcessed % blocksPerDebugEntry == 0)
-											{
-												System.DateTime dtProcessingTick = System.DateTime.Now;
-														
-												Debug.Log("Processed " + blocksPerDebugEntry + " blocks (" + (blocksProcessed - blocksPerDebugEntry) + " - " + blocksProcessed + ") in " + dtProcessingTick.Subtract(dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
-															
-												emptyBlocksProcessed = 0;
-													
-												dtStartProcessing = System.DateTime.Now;
-											}
-					
-										} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
-											
-										yield return null;
-					
-									} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
-					
-								} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)	
-							} // if chunk.isEmpty
-								else
-							{
-								//OCLogger.Normal ("Chunk at [" + x + ", " + y + ", " + z + "] is empty.");	
-							}	
-						} else
-						{
-							// if chunk != null
-							//OCLogger.Normal ("Chunk at [" + x + ", " + y + ", " + z + "] is null.");	
-						}
+
+						yield return StartCoroutine(PerceiveChunk(map, map.Chunks.Get(x, y, z), terrainMapinfoList));
+
 					}
 				}
 			}
