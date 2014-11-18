@@ -950,7 +950,7 @@ namespace OpenCog.Embodiment
 					for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
 					{
 
-						// Ok...now we have some globalz....
+						// Ok...now we have some globalCoordinates and we can get the block out
 						OpenCog.Map.OCBlockData globalBlock = map.GetBlock(iGlobalX, iGlobalY, iGlobalZ);
 
 						//skip empty blocks, batteries, and those beneathe the floorheight
@@ -960,22 +960,12 @@ namespace OpenCog.Embodiment
 							continue;
 						}
 
-						//OCObjectMapInfo globalMapInfo = OCObjectMapInfo.CreateObjectMapInfo (viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
-
-						// ORIGINAL VERSION PRE Y Z SWAP:
-						//OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.y, viChunkPosition.z, iGlobalX, iGlobalY, iGlobalZ, globalBlock);
-						
 						// WARNING: Y AND Z SWAPPED HERE FOR OPENCOG'S SAKE:
 						OCObjectMapInfo globalMapInfo = new OCObjectMapInfo(viChunkPosition.x, viChunkPosition.z, viChunkPosition.y, iGlobalX, iGlobalZ, iGlobalY, globalBlock);
 						
 						terrainMapinfoList.Add(globalMapInfo);
-
-						//if (globalMapInfo == null)
-						//	OCLogger.Normal ("globalMapInfo == null");
-
 						blocksProcessed += 1;
-
-						
+			
 					} // End for(int iGlobalZ = viChunkStartingCorner.z; iGlobalZ <= viChunkEndingCorner.z; iGlobalZ++)
 
 				} // End for(int iGlobalY = viChunkStartingCorner.y; iGlobalY <= viChunkEndingCorner.y; iGlobalY++)
@@ -987,12 +977,15 @@ namespace OpenCog.Embodiment
 				Debug.Log("Sending terrain info...");
 				_connector.SendTerrainInfoMessage(terrainMapinfoList, true);
 				terrainMapinfoList.Clear();
-				
+
+				//Print debug messages
 				System.DateTime dtProcessingTick = System.DateTime.Now;
 				Debug.Log("Processed " + blocksProcessed + " blocks in " + dtProcessingTick.Subtract(dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
 				emptyBlocksProcessed = 0;
 				blocksProcessed = 0;
 				dtStartProcessing = dtProcessingTick;
+
+				//yield till next frame!
 				yield return null;
 				
 			} // End for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)	
@@ -1001,7 +994,7 @@ namespace OpenCog.Embodiment
 
 		
 		/// <summary>
-		/// A coroutine which performs a type of initialization; it ru
+		/// A coroutine which performs a type of initialization by reading in the map to opencog
 		/// </summary>
 		/// <returns>The terrain.</returns>
 		public IEnumerator PerceiveTerrain()
@@ -1039,19 +1032,14 @@ namespace OpenCog.Embodiment
 				Debug.LogError(OCLogSymbol.IMPOSSIBLE_ERROR + "OCPerceptionCollector.PerceiveTerrain() was unable to get an instance of the map.");
 				yield break;
 			}
-				
-				
-			//dtStartProcessing = System.DateTime.Now; for debug messages not currently in use
-			
+							
 			for(int x = map.Chunks.GetMinX(); x < map.Chunks.GetMaxX(); ++x)
 			{
 				for(int y = map.Chunks.GetMinY(); y < map.Chunks.GetMaxY(); ++y)
 				{
 					for(int z = map.Chunks.GetMinZ(); z < map.Chunks.GetMaxZ(); ++z)
 					{
-
 						yield return StartCoroutine(PerceiveChunk(map, map.Chunks.Get(x, y, z), terrainMapinfoList));
-
 					}
 				}
 			}
@@ -1123,7 +1111,7 @@ namespace OpenCog.Embodiment
 				if(stateValInfo.FieldType.IsEnum)
 				{
 					type = "Enum";
-					UnityEngine.Debug.Log("0.00001 BitCoins says this never happens!! IT'S A STRING FFS WAARHEHFSHJKSJKSH!");
+					UnityEngine.Debug.LogError(OCLogSymbol.IMPOSSIBLE_ERROR + "0.00001 BitCoins says this never happens!! IT'S A STRING FFS WAARHEHFSHJKSJKSH!");
 				}
 					
 				// Now we query the local _stateInfoCache (a dictionary with stateInfo objects as the key...and a vague object as the value...
