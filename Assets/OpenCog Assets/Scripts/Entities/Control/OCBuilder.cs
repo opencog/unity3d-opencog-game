@@ -127,7 +127,7 @@ public class OCBuilder : OCMonoBehaviour
 			{
 				byte sun = _map.GetSunLightmap().GetLight(point.Value);
 				byte light = _map.GetLightmap().GetLight(point.Value);
-				OCLogger.Info("Sun " + " " + sun + "  Light " + light);
+				Debug.Log(OCLogSymbol.DETAILEDINFO + "Sun " + " " + sun + "  Light " + light);
 			}
 		}
 		
@@ -138,7 +138,7 @@ public class OCBuilder : OCMonoBehaviour
 			{
 				byte sun = _map.GetSunLightmap().GetLight(point.Value);
 				byte light = _map.GetLightmap().GetLight(point.Value);
-				OCLogger.Info("Sun " + sun + "  Light " + light);
+				Debug.Log(OCLogSymbol.DETAILEDINFO +"Sun " + sun + "  Light " + light);
 			}
 		}
 		

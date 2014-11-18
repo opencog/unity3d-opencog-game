@@ -560,7 +560,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			timeout = 60;
 			while(!isSpawnerAlive && timeout > 0)
 			{
-				OCLogger.Info("Waiting for spawner...");
+				Debug.Log(OCLogSymbol.CONNECTION + "Waiting for spawner...");
 				yield return new UnityEngine.WaitForSeconds(1f);
 				isSpawnerAlive = IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID"));
 				timeout--;
@@ -609,7 +609,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			string[] tokens = message.ToString().Split(separator, System.StringSplitOptions.RemoveEmptyEntries);
             
 			string neId = tokens[2];
-			OCLogger.Info("Successfully loaded '" + neId + "'.");
+			Debug.Log(OCLogSymbol.CLEARED + "Successfully loaded '" + neId + "'.");
 			_isInitialized = true;//_isLoaded = true;
 		} else
 		if(message.ToString().StartsWith(SUCCESS_UNLOAD))

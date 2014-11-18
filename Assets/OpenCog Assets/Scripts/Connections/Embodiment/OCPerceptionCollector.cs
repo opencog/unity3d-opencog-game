@@ -448,7 +448,7 @@ namespace OpenCog.Embodiment
 		/// <param name="chunkId"></param>
 		public void ChangeChunkStatus(string chunkId)
 		{
-			OCLogger.Info("In changeChunkStatus...");
+			Debug.Log(OCLogSymbol.RUNNING + "Perception.ChangeChunkStatus is running.");
 			if(_chunkStatusMap.ContainsKey(chunkId))
 			{
 				_chunkStatusMap[chunkId] = true;

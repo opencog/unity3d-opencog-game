@@ -622,7 +622,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			string[] tokens = message.ToString().Split(separator, System.StringSplitOptions.RemoveEmptyEntries);
             
 			string neId = tokens[2];
-			OCLogger.Info("Successfully loaded '" + neId + "'.");
+			Debug.Log(OCLogSymbol.CLEARED + "Successfully loaded '" + neId + "'.");
 			_isInitialized = true;//_isLoaded = true;
 		} else
 		if(message.ToString().StartsWith(SUCCESS_UNLOAD))
