@@ -230,20 +230,18 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 			}
 		}
 	}
-
-	new public void Awake()
-	{
-	}
 		
+
 	/// <summary>
 	/// Initializes this instance.  Set default values here.
 	/// </summary>
-	public void Initialize(OCNetworkElement networkElement)
+	public void InitFromNetwork(OCNetworkElement networkElement)
 	{
 		_networkElement = networkElement;
         _sockets = new List<System.Net.Sockets.Socket>();
 		_shouldStop = false;			
 	}
+
 	
 	/// <summary>
 	/// Uninitializes this instance.  Cleanup refernces here.

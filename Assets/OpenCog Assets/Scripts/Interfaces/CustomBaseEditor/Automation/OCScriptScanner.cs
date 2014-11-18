@@ -44,7 +44,7 @@ public class OCScriptScanner : MonoBehaviour
 		get {return _scripts;}
 	}
 
-	//Initialize the scanned scripts
+	//Initialize  the scanned scripts
 	public static void Start()
 	{
 		if( !_willRepaint )

@@ -198,14 +198,6 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 	//---------------------------------------------------------------------------
 
-	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-	new public void Awake()
-	{
-		Initialize();
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + this.name + " is awake.");
-	}
 
 	/// <summary>
 	/// Use this for initialization
@@ -355,7 +347,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <summary>
 	/// Initializes this instance.  Set default values here.
 	/// </summary>
-	new private void Initialize()
+	override protected void Initialize()
 	{
 			_isNEInitialized = true;
 	}
@@ -439,7 +431,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 //			UnityEngine.Debug.Log ("Using hardcoded IP: " + _routerIP.ToString() + ":" + _routerPort);
 //		}
 	
-		OCServerListener.Instance.Initialize(this);
+		OCServerListener.Instance.InitFromNetwork(this);
 		_listener = OCServerListener.Instance;
 
 		StartCoroutine(Connect());

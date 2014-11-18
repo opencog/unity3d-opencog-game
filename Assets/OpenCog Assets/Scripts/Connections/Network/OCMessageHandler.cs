@@ -283,7 +283,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 	
 	new private void Initialize()
 	{
-		UnityEngine.Debug.Log ("OCMessageHandler::Initialize");
+		UnityEngine.Debug.Log ("OCMessageHandler::OCLogSymbol.RUNNING");
 			
 		try {
 			_lineCount = 0;
@@ -294,7 +294,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			_message = new StringBuilder();
 			_messageBuffer = new List<OCMessage>();	
 		} catch (System.Exception ex) {
-			UnityEngine.Debug.Log ("OCMessageHandler::Initialize, something went wrong: " + ex.ToString());
+			UnityEngine.Debug.Log ("OCMessageHandler::OCLogSymbol.RUNNING, something went wrong: " + ex.ToString());
 		}
 			
 		

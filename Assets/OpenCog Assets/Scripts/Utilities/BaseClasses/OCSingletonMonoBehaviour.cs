@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using OpenCog.Extensions;
+using OpenCog.Utilities.Logging;
 
 namespace OpenCog
 {
@@ -61,6 +62,8 @@ namespace OpenCog
 			{
 				this.Initialize ();
 			}
+
+			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is awake.");
 		}
 
 		/// <summary>Exists to be overwritten. Kept virtual to work as a fallback when a derived class has no necessary initialization.</summary>

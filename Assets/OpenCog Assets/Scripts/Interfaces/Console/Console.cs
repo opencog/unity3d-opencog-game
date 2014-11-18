@@ -128,15 +128,6 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	//---------------------------------------------------------------------------
 
 	/// <summary>
-	/// Called when the script instance is being loaded.
-	/// </summary>
-	new public void Awake()
-	{
-		Initialize();
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is awake.");
-	}
-
-	/// <summary>
 	/// Use this for initialization
 	/// </summary>
 	public void Start()
@@ -428,7 +419,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// <summary>
 	/// Initializes this instance.  Set default values here.
 	/// </summary>
-	new private void Initialize()
+	override protected void Initialize()
 	{
 		// TODO:
 		//Input.eatKeyPressOnTextFieldFocus = false;
