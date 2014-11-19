@@ -516,6 +516,10 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				if(retryTimes == 0)
 				{
 					UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Connection timed out.");
+					
+					_isEstablished = false;
+					_clientSocket = null;
+					return false;
 					yield break;
 				}
 					

@@ -77,10 +77,12 @@ namespace OpenCog.Embodiment
 		private OpenCog.Map.OCMap _map;
 		private Dictionary<string, bool> _chunkStatusMap = new Dictionary<string, bool>(); // A map to mark if current chunk needs to be percepted. True means perception in need.
 		private int _floorHeight; // Currently, just percept the block above the horizon.
+
 		private bool _hasPerceivedTerrainForFirstTime = false;
 		private bool _hasStartedPerceivingTerrainForTheFirstTime = false;
 		private bool _isPerceivingStateChangesForTheFirstTime = true;
 		private bool _hasPerceivedWorldForTheFirstTime = false;
+		private bool _perceptionInProgress = false;
 
 
 		//work with iteration to compare how long it takes blocks to process.
@@ -150,43 +152,44 @@ namespace OpenCog.Embodiment
 			}
 				
 			_timer += UnityEngine.Time.deltaTime;
+
+			//we do not want to update if PerceiveTerrain is running (that will keep changes from being sensed) or if the timer has not elapsed
+			if(_perceptionInProgress) return;
+			if(_timer < _updatePerceptionInterval) return;
+
+			// I'm not sure what this does...
 				
-			// Percept the world once in each interval.
-			if(_timer >= _updatePerceptionInterval)
+			// I'm not sure about the right order...when I look at the old world on the OpenCog side, it receives edible objects first and then the terrain.
+			// So I moved the calls below to the same order.
+				
+			if(!_hasStartedPerceivingTerrainForTheFirstTime)
 			{
-				// I'm not sure what this does...
+				// We only want this coroutine to launch once, so:
+				_hasStartedPerceivingTerrainForTheFirstTime = true;
 					
-				// I'm not sure about the right order...when I look at the old world on the OpenCog side, it receives edible objects first and then the terrain.
-				// So I moved the calls below to the same order.
+				StartCoroutine(this.PerceiveTerrain());
 					
-				if(!_hasStartedPerceivingTerrainForTheFirstTime)
-				{
-					// We only want this coroutine to launch once, so:
-					_hasStartedPerceivingTerrainForTheFirstTime = true;
-						
-					StartCoroutine(this.PerceiveTerrain());
-						
-					// Once PerceiveTerrain (blocks) has finished, _hasPerceivedTerrainForFirstTime -> true;
-				}
-					
-					
-				if(_hasPerceivedTerrainForFirstTime && !_hasPerceivedWorldForTheFirstTime)
-				{
-					// Once _hasPerceivedTerrainForFirstTime is true, we start perceiving the world (characters, batteries, other non-block entities)
-						
-					this.PerceiveWorld();
-						
-					// This sets _hasPerceivedWorldForTheFirstTime to true, so after this it only transmits updates (disappeared / created batteries, etc)
-				}
-					
-				if(_hasPerceivedWorldForTheFirstTime)
-				{
-					PerceiveWorld();	
-					PerceiveStateChanges();
-				}
-					
-				_timer = 0.0f;
+				// Once PerceiveTerrain (blocks) has finished, _hasPerceivedTerrainForFirstTime -> true;
 			}
+				
+				
+			if(_hasPerceivedTerrainForFirstTime && !_hasPerceivedWorldForTheFirstTime)
+			{
+				// Once _hasPerceivedTerrainForFirstTime is true, we start perceiving the world (characters, batteries, other non-block entities)
+					
+				this.PerceiveWorld();
+					
+				// This sets _hasPerceivedWorldForTheFirstTime to true, so after this it only transmits updates (disappeared / created batteries, etc)
+			}
+				
+			if(_hasPerceivedWorldForTheFirstTime)
+			{
+				PerceiveWorld();	
+				PerceiveStateChanges();
+			}
+				
+			_timer = 0.0f;
+
 					
 			//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is updated.");	
 		}
@@ -908,7 +911,7 @@ namespace OpenCog.Embodiment
 
 		public IEnumerator PerceiveChunk(OCMap map, OCChunk chunk, List<OCObjectMapInfo> terrainMapinfoList)
 		{
-
+			_perceptionInProgress = true;
 			
 			if(chunk == null || chunk.IsEmpty)
 			{
@@ -1058,8 +1061,7 @@ namespace OpenCog.Embodiment
 			// Communicate completion of initial terrain perception
 			if(!_hasPerceivedTerrainForFirstTime)
 			{
-				//PerceiveWorld();
-						
+
 				System.Console.WriteLine(OCLogSymbol.RUNNING + "Time to send the 'finished perceiving terrain' message!");
 				_connector.SendFinishPerceptTerrain();
 				_hasPerceivedTerrainForFirstTime = true;
@@ -1072,6 +1074,8 @@ namespace OpenCog.Embodiment
 			Debug.Log(OCLogSymbol.CLEARED + "Waiting for Embodiment... (This may take a few seconds)");
 				
 			console.AddConsoleEntry("Thank you for waiting! Let me figure out what to do next...", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+
+			_perceptionInProgress = false;
 		}
 			
 		// This function is only relevant in terms of the state changes of:
