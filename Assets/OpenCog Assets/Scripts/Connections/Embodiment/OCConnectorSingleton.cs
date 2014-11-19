@@ -14,6 +14,7 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 
 
 #region Usings, Namespaces, and Pragmas
@@ -53,20 +54,24 @@ using OpenCog.Utilities.Logging;
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 [OCExposePropertyFields]
-[Serializable]
+[@Serializable]
 	
 #endregion
 public sealed class OCConnectorSingleton : OCNetworkElement
 {
 	//---------------------------------------------------------------------------
 
-	#region Private Member Data
+	#region 							Basic Initialization Variables
 
 	//---------------------------------------------------------------------------
 
 	private bool _isInitialized = false; // Flag to check if the OAC to this avatar is alive.
 	private bool _isLoaded = false;
+	private bool _firstRun = true;
+	private System.DateTime _lastUpdate = System.DateTime.Now;
 
+	#endregion
+	#region 							Variables recording Avatar
 
 	// Basic attributes of this avatar.
 	private string _baseID;    /** For example "NPC" */
@@ -80,13 +85,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private string _masterID; // Define master's(owner's) information.
 	private string _masterName;
 
-	private List<OCMessage> _messagesToSend = new List<OCMessage>(); // The queue used to store the messages to be sent to OAC.
-	private System.Object _messageSendingLock = new System.Object(); // The lock object used to sync the atomic sequence - get a timestamp, build and enqueue a message
-
-	// Timer to send message in a given interval. We can implement a timer by using unity API - FixedUpdate().
-	private float _messageSendingTimer = 0.0f;		/**< The timer used to control message sending. */
-	private float _messageSendingInterval = 0.1f;	/**< The interval to send messages in the queue. */
+	#endregion
+	#region 							Variables recording  Map
 	private string _mapName; 	// the name of the current map
+	private OpenCog.Map.OCMap _map;
 	private int _blockCountX; // The size of map.
 	private int _blockCountY; // The size of map.
 	private int _blockCountZ; // The size of map.
@@ -95,39 +97,64 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private int _globalStartPositionZ; // Map global Z beginning position.
 	private int _globalFloorHeight; // Floor height in the minecraft-like world.
 	private bool _isFirstSentMapInfo; // Flag to check if a valid map info(which should contain the info of the avatar itself) has been sent to OAC as a "handshake".
-	private LinkedList<OCAction> _actionsList; // The list of actions that I am going to perform. The action plans are received from OAC.
 
-	private int _msgCount = 0;
+	#endregion 
+	#region 							 Action Crontroller Variables
+	private LinkedList<OCAction> _actionsList; // The list of actions that I am going to perform. The action plans are received from OAC.
 
 	private string _currentPlanId; // The action plan id that is being performed currently.
 	private string _currentDemandName; // Currently selected demand name
 	private Dictionary<string, float> _feelingValueMap; // Store the feeling values of this avatar.
 	private Dictionary<string, float> _demandValueMap; // Store the demand values of this avatar.
 	private Dictionary<int, string> _perceptedAgents; // Other OC agents percepted. Record the pairs of their unity object id and brain id.
-	private int _stateChangeActionCount = 0;
-
-	private int _disappearActionCount = 0;
-
-	private int _appearActionCount = 0;
-
-	private int _moveActionCount = 0;
-
-	private HashSet<string> _unavailableElements = new HashSet<string>();
-
-	private OpenCog.Map.OCMap _map;
 	
+	private int _stateChangeActionCount = 0;
+	private int _disappearActionCount = 0;
+	private int _appearActionCount = 0;
+	private int _moveActionCount = 0;
+	private bool _actionStatusesUpdated = false;
+
 	[SerializeField]
 	private OCActionController
 		_actionController;
-	
-	private bool _firstRun = true;
-	
-	private System.DateTime _lastUpdate = System.DateTime.Now;
-	
-	private bool _actionStatusesUpdated = false;
+
+	#endregion
+	#region 								Connection Variables
+
+	private List<OCMessage> _messagesToSend = new List<OCMessage>(); // The queue used to store the messages to be sent to OAC.
+	private System.Object _messageSendingLock = new System.Object(); // The lock object used to sync the atomic sequence - get a timestamp, build and enqueue a message
+	// Timer to send message in a given interval. We can implement a timer by using unity API - FixedUpdate().
+	private float _messageSendingTimer = 0.0f;		/**< The timer used to control message sending. */
+	private float _messageSendingInterval = 0.1f;	/**< The interval to send messages in the queue. */
+	private int _msgCount = 0;
+
+	private HashSet<string> _unavailableElements = new HashSet<string>();
+
+	#endregion
+	#region                                  Dispatch Flags For Listeners
+
+	private const int dispatchNum = 10;
+	private long[] dispatchTimes = new long[dispatchNum];
+	public long[] DispatchTimes {get {return dispatchTimes;}}
+
+	public void DispatchTimesClear(int which){if(which >=0 && which < dispatchNum)dispatchTimes[which] = 0;}
 
 
-	//---------------------------------------------------------------------------
+	public bool[] dispatchFlags = new bool[dispatchNum];
+
+	public enum DispatchTypes:int //10
+	{
+		terrain,
+		mapInfo,
+		moveActionDone,
+		actionAvailability,
+		existingStates,
+		speechContent,
+		avatarSignalsAndTick,
+		actionStatus,
+		actionPlanStatus,
+		finishTerrain
+	};
 
 	#endregion
 
@@ -295,6 +322,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		SaveAndExit();
 	}
 
+	override protected void Initialize()
+	{
+
+	}
+
+
 	public void SendMessages()
 	{
 		if(!_isInitialized)
@@ -330,13 +363,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					string routerId = OCConfig.Instance.get("ROUTER_ID", "ROUTER");
 					if(!IsElementAvailable(routerId))
 					{
-						UnityEngine.Debug.Log("Router not available. Discarding message to '" +
+						UnityEngine.Debug.Log(OCLogSymbol.DESTROY + "Router not available. Discarding message to '" +
 							message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						continue;
 					}
 					if(!IsElementAvailable(message.TargetID))
 					{
-						UnityEngine.Debug.Log("Destination not available. Discarding message to '" +
+						UnityEngine.Debug.Log(OCLogSymbol.DESTROY + "Destination not available. Discarding message to '" +
 							message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						continue;
 					}
@@ -385,7 +418,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		}
 	}
 
-	public void sendBlockStructure(OpenCog.Map.OCBlockData startBlock, bool isToRecognize)
+	//TODO: This function has been commented out to show it is never called
+	/*public void SendBlockStructure(OpenCog.Map.OCBlockData startBlock, bool isToRecognize)
 	{
 		XmlDocument doc = new XmlDocument();
 		XmlElement root = MakeXMLElementRoot(doc);
@@ -411,6 +445,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		}
 	}
+	*/
 
 	/**
    * To be called when instantiating a new OCAvatar.
@@ -1047,6 +1082,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			_messagesToSend.Add(message);
 		}
+
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.moveActionDone])
+			dispatchTimes[(int)DispatchTypes.moveActionDone] = System.DateTime.Now.Ticks;
+		
+
 	}
 	
 	// Send all the existing states of object to opencog when the robot is loaded 
@@ -1123,7 +1164,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		lock(_messageSendingLock)
 		{
 			_messagesToSend.Add(message);
-		}		
+		}
+
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.existingStates])
+			dispatchTimes[(int)DispatchTypes.existingStates] = System.DateTime.Now.Ticks;
 	}	
 	
 	// we handle object state change as an "stateChange" action, and send it to the opencog via "agent-signal"
@@ -1333,6 +1378,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			_messagesToSend.Add(message);
 		}
+
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.actionAvailability])
+			dispatchTimes[(int)DispatchTypes.actionAvailability] = System.DateTime.Now.Ticks;
 	}
 
 	/**
@@ -1387,6 +1436,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		} // lock
 
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.mapInfo])
+			dispatchTimes[(int)DispatchTypes.mapInfo] = System.DateTime.Now.Ticks;
+
 		// First map info message has been sent.
 		_isFirstSentMapInfo = false;
 	}
@@ -1409,6 +1462,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 			SendMessages();
 		} // lock
+
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.terrain])
+			dispatchTimes[(int)DispatchTypes.terrain] = System.DateTime.Now.Ticks;
 	}
 
 	/**
@@ -1505,6 +1562,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		}
 
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.finishTerrain])
+			dispatchTimes[(int)DispatchTypes.finishTerrain] = System.DateTime.Now.Ticks;
+
 	}
 
 	/**
@@ -1562,6 +1623,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			_messagesToSend.Add(message);
 		}
+
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.speechContent])
+			dispatchTimes[(int)DispatchTypes.speechContent] = System.DateTime.Now.Ticks;
 	}
     
 	/**
@@ -2258,6 +2323,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			_messagesToSend.Add(message);
 		}
+
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.actionStatus])
+			dispatchTimes[(int)DispatchTypes.actionStatus] = System.DateTime.Now.Ticks;
 		
 		//UnityEngine.Debug.Log ("Queued message to report '" + ((success ? "done (success)" : "error") + "' on action '" + actionName + "' (planID = " + planId + ", sequence = " + sequence.ToString () + ")"));
 	}
@@ -2302,6 +2371,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			_messagesToSend.Add(message);
 		}
+
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.actionPlanStatus])
+			dispatchTimes[(int)DispatchTypes.actionPlanStatus] = System.DateTime.Now.Ticks;
 		
 		UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
 	}

@@ -519,7 +519,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 					
 					_isEstablished = false;
 					_clientSocket = null;
-					return false;
+					yield return false;
 					yield break;
 				}
 					

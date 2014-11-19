@@ -190,7 +190,7 @@ namespace OpenCog.Network
 						// Get unavalable element id.
 						string id = token.Current.ToString();
 
-                        UnityEngine.Debug.Log("onLine: Unavailable element message received for [" + 
+						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "onLine: Unavailable element message received for [" + 
 						          id + "].");
 						this.ne.MarkAsUnavailable(id);
 						answer = OCNetworkElement.OK_MESSAGE;

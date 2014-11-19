@@ -271,7 +271,7 @@ public class OCGoalController : OCMonoBehaviour
 					
 					MoveTargetsIfNecessary ();
 
-					System.Console.WriteLine(OCLogSymbol.RUNNING + "We found a " + _goalBlockType.GetName() + " block nearby: " + GoalBlockPos + "!");
+					System.Console.WriteLine(OCLogSymbol.RUNNING + "I found a " + _goalBlockType.GetName() + " block nearby: " + GoalBlockPos + "!");
 				}
 			}
 		}

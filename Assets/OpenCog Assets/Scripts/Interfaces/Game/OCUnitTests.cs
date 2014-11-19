@@ -124,8 +124,8 @@ namespace OpenCog.Interfaces.Game
 	protected void testFunctionsInit()
 	{
 		tests = new List<Func<IEnumerator>>();
-		tests.Add(Instance.TestBattery);
 		tests.Add(Instance.TestEmbodiment);
+		tests.Add(Instance.TestBattery);
 		tests.Add(Instance.TestPlan);
 		tests.Add(Instance.TestSecondPlan);
 				
@@ -307,6 +307,19 @@ namespace OpenCog.Interfaces.Game
 		OCGameStateManager.IsPlaying = true;
 
 
+		//INITIALIZE THE TESTS
+		// (This might look strange, but all we have to do is preface each test with a yield return 0;
+		//-----------------------------------
+		
+		//run the tests in order
+		for(int i = 0; i < numTests; i++)
+		{
+			if(configurations[i])
+			{
+				tests[i]();
+			}
+		}
+
 		//RUN THE TESTS!
 		//-----------------------------------
 
@@ -337,12 +350,16 @@ namespace OpenCog.Interfaces.Game
 
 	protected IEnumerator TestEmbodiment()
 	{
+		//INITIALIZATION
+
 		//we're going to break the action out because we don't care about memory management right here and we 
 		//want to clearly see what we're doing
 		bool didConnect = false;
-
+		
 		System.Action<string> report = x => didConnect = (String.Compare(x, "true") == 0);
 
+		yield return 0;
+		
 		//get the player object, if it exists
 		UnityEngine.GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
 		string masterId = playerObject.GetInstanceID().ToString();
@@ -350,24 +367,102 @@ namespace OpenCog.Interfaces.Game
 
 		yield return StartCoroutine(GameManager.entity.load.AtRunTime(embodimentSpawn, embodimentPrefab, "", masterName, masterId, report));
 
-		if(didConnect == false)
-		{
-			Debug.Log(OCLogSymbol.FAIL + "OCLogSymbol.PASS + Testing the Embodiment, Failed");
-			results[(int)TestTypes.EMBODIMENT] = false;
-			result = false;
-		} else
+		if(didConnect)
 		{
 			Debug.Log(OCLogSymbol.PASS + "Testing the Embodiment, Succeeded");
+		}
+		else
+		{
+			Debug.Log(OCLogSymbol.FAIL + "Testing the Embodiment, Failed");
+			results[(int)TestTypes.EMBODIMENT] = false;
+			result = false;
 		}
 		yield break;
 		
 	}
 	protected IEnumerator TestBattery()
 	{
-		//set the block
-		GameManager.world.voxels.AddSelectedVoxel(batteryPosition, batteryDirection, batteryBlock);
+		//INITIALIZATION	
+		OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.finishTerrain] = true;
+		OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.mapInfo] = true;
 
 		yield return 0;
+
+		//set the block
+		GameManager.world.voxels.AddSelectedVoxel(batteryPosition, batteryDirection, batteryBlock);
+		
+		//if the first test failed, so did this one.
+		if(results[(int)TestTypes.EMBODIMENT] == false)
+		{
+			Debug.Log(OCLogSymbol.DETAILEDINFO + "Battery Test Not Run.");
+			results[(int)TestTypes.BATTERY] = false;
+			yield break;
+		}
+
+
+		//determine when to time out
+		DateTime end = System.DateTime.Now.AddMinutes((double)0.25);
+		
+		bool terrainSent = false;
+		long checkTerrain = 0;
+		long checkMapInfo = 0;
+
+		//note on CompareTo (why don't they just have this in its summary?)
+		//  instance.CompareTo(value)
+		//	if return is < 0, instance is EARLIER than value
+		//  if return is > 0, instance is LATER than value
+		//  if return is = 0, they are the same (when does that ever happen, lol)
+
+		//we need to poll what OCConnectorSingleton knows about sent messages 
+		//since we can't really ask it about recieved ones
+		while(System.DateTime.Now.CompareTo(end) < 0)
+		{
+			//ask it if it's finished percieving terrain
+			checkTerrain = OCConnectorSingleton.Instance.DispatchTimes
+					[(int)OCConnectorSingleton.DispatchTypes.finishTerrain];
+			
+			//ask it if it's finished sending mapinfo
+			checkMapInfo = OCConnectorSingleton.Instance.DispatchTimes
+					[(int)OCConnectorSingleton.DispatchTypes.mapInfo];
+			
+			//give us some extra time if terrain comes in.
+			if((!terrainSent) && checkTerrain > 0)
+			{
+				terrainSent = true;
+				end = System.DateTime.Now.AddMinutes((double)0.25);
+			}
+			
+			//both finished?
+			if(checkTerrain > 0 && checkMapInfo > 0)
+			{
+				//if this is true, then percieve terrain finished BEFORE the map Info was sent,
+				//and odds are the battery was successfully reported. If it happened in the
+				//inverse, an error happend.
+				if(checkTerrain < checkMapInfo)
+				{
+					Debug.Log(OCLogSymbol.PASS + "Testing the Battery, Succeeded");
+				} 
+				else
+				{
+					Debug.Log(OCLogSymbol.FAIL + "Testing the Battery, Failed");
+					System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Battery loaded too late");
+					results[(int)TestTypes.BATTERY] = false;
+					result = false;	
+				}
+				yield break;
+			}
+			
+			//yield this coroutine every frame, and keep checking
+			yield return 0;
+		}
+		
+		//if we made it out of this loop, it's cause our wait period came to an end. Which
+		//means the test failed. 
+		Debug.Log(OCLogSymbol.FAIL + "Testing the Battery, Failed");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Timed out waiting for MapInfo to send.");
+		results[(int)TestTypes.BATTERY] = false;
+		result = false;	
+
 	}
 
 	protected IEnumerator TestPlan()

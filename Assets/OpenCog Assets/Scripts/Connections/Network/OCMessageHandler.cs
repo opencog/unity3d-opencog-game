@@ -327,7 +327,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 		
 	private string ParseUnavailableElement(IEnumerator token)
 	{
-		UnityEngine.Debug.Log ("OCMessageHandler::ParseUnavailableElement");
+		System.Console.WriteLine(OCLogSymbol.RUNNING + "OCMessageHandler::ParseUnavailableElement");
 			
 		string answer = null;
 			

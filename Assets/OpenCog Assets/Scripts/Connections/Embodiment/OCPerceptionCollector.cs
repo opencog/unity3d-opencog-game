@@ -581,7 +581,7 @@ namespace OpenCog.Embodiment
 							mapInfo = _mapInfoCache[batteryObject.GetInstanceID()];
 								
 							//console.AddConsoleEntry("I can see a new battery! Its ID is " + batteryObject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
-							UnityEngine.Debug.Log("I can see a new battery! Its ID is " + batteryObject.GetInstanceID());
+							UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "I can see a new battery! Its ID is " + batteryObject.GetInstanceID());
 						}
 					}
 				}
@@ -1071,7 +1071,7 @@ namespace OpenCog.Embodiment
 			}
 				
 			Debug.Log(OCLogSymbol.CLEARED + "Finished perceiving terrain, total time taken: " + System.DateTime.Now.Subtract(dtStartPerceptTerrain).TotalSeconds);
-			Debug.Log(OCLogSymbol.CLEARED + "Waiting for Embodiment... (This may take a few seconds)");
+			Debug.Log(OCLogSymbol.RUNNING + "Waiting for Embodiment... (This may take a few seconds)");
 				
 			console.AddConsoleEntry("Thank you for waiting! Let me figure out what to do next...", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 

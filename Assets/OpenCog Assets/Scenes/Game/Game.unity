@@ -11590,6 +11590,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _actionController: {fileID: 0}
+  dispatchFlags: 00000000000000000000
 --- !u!4 &1683074306
 Transform:
   m_ObjectHideFlags: 0
