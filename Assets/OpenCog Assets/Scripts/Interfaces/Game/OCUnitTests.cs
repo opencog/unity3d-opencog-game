@@ -242,14 +242,19 @@ namespace OpenCog.Interfaces.Game
 			}
 		}
 
-
-
-
 		return initResult;
 	}
+	
+	//TO MAKE SURE CERTAIN CLASSES ARE THROWING DATA WE'LL BE SNIFFING FOR
+	protected void SolicitTestData()
+	{
+		OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.finishTerrain] = true;
+		OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.mapInfo] = true;
+	}
+	
 
-		#endregion
-		#region  					Unit Test Results
+	#endregion
+	#region  					Unit Test Results
 	protected bool[] results = new bool[numTests];
 	protected bool result = true;
 	protected bool hasConcluded = false;
@@ -302,23 +307,14 @@ namespace OpenCog.Interfaces.Game
 		//make sure we have everything dragged into the ditor properly.
 		TestInitialization();
 
+		//set a bunch of variables elsewhere to tell the game to throw some flags/data up we'll be testing for
+		SolicitTestData();
+
 		//unpause game to get the tests up and running (the manager will do all it's own work of ensuring it exists, as it ought to have been dragged to stage; 
 		//I don't need to worry about it; and it must be initialized by this time so I don't have to test for it.)
 		OCGameStateManager.IsPlaying = true;
 
 
-		//INITIALIZE THE TESTS
-		// (This might look strange, but all we have to do is preface each test with a yield return 0;
-		//-----------------------------------
-		
-		//run the tests in order
-		/*for(int i = 0; i < numTests; i++)
-		{
-			if(configurations[i])
-			{
-				tests[i]();
-			}
-		}*/
 
 		//RUN THE TESTS!
 		//-----------------------------------
@@ -350,16 +346,13 @@ namespace OpenCog.Interfaces.Game
 
 	protected IEnumerator TestEmbodiment()
 	{
-		//INITIALIZATION
 
 		//we're going to break the action out because we don't care about memory management right here and we 
 		//want to clearly see what we're doing
 		bool didConnect = false;
 		
 		System.Action<string> report = x => didConnect = (String.Compare(x, "true") == 0);
-
-		yield return 0;
-		
+					
 		//get the player object, if it exists
 		UnityEngine.GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
 		string masterId = playerObject.GetInstanceID().ToString();
@@ -382,11 +375,7 @@ namespace OpenCog.Interfaces.Game
 	}
 	protected IEnumerator TestBattery()
 	{
-		//INITIALIZATION	
-		OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.finishTerrain] = true;
-		OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.mapInfo] = true;
 
-		yield return 0;
 
 		//set the block
 		GameManager.world.voxels.AddSelectedVoxel(batteryPosition, batteryDirection, batteryBlock);
