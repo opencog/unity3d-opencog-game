@@ -351,7 +351,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			} // lock
 			
 			int iMessageIndex = 1;
-			
+
 			foreach(OCMessage message in localMessagesToSend)
 			{
 				//UnityEngine.Debug.Log ("Processing message " + iMessageIndex + " of " + localMessagesToSend.Count + "...");
@@ -753,7 +753,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}
@@ -948,7 +948,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		Debug.LogWarning(OCLogSymbol.WARN +"sending action result from " + _ID + "\n" + BeautifyXmlText(doc));
 
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}
@@ -1079,7 +1079,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
         
 		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending move action result: \n" + BeautifyXmlText(doc));
         
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}
@@ -1162,7 +1162,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     
 		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}
@@ -1305,7 +1305,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
     
 		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}		
@@ -1375,7 +1375,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}
@@ -1432,7 +1432,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
          
 		OCMessage message = SerializeMapInfo(new List<OCObjectMapInfo>(localMapInfo), "map-info", "map-data", isFirstTimePerceptMapObjects);
 
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		} // lock
@@ -1624,7 +1624,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.RAW, speechMsg.ToString());
       
 		// Add the message to the sending queue.
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}
@@ -2325,7 +2325,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 		
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}
@@ -2373,7 +2373,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 		
-		lock(_messageSendingLock)
+		lock(_messagesToSend)
 		{
 			_messagesToSend.Add(message);
 		}
