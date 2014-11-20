@@ -64,6 +64,10 @@ namespace OpenCog.Entities
 
 			}
 
+
+			//DEPRECATED: This was useful once; 
+			//if (!OCARepository.AddOCA (agentClone)) {
+
 			// Note, lambda expressions (ie myLamb = (x) => successBool = (bool)(x == "true")) are *terrifying* to look at
 			// and can use up a lot of memory, but they're really good for returning values from IEnumerators/coroutines;
 			// especially ones we don't expect will be called frquently
@@ -86,10 +90,9 @@ namespace OpenCog.Entities
 				spawnPosition.x = (float)((int)spawnPosition.x); 
 				spawnPosition.y = (float)((int)spawnPosition.y);
 				spawnPosition.z = (float)((int)spawnPosition.z); 
-				
-				
-				
+
 				//Debug.Log ("_NPCAgent is" + (_NPCAgent == null ? " null " : " not null"));
+
 				//instantiate the game object, specified by NPCAgent at  point spawn position and rotated as per the identity Quaternion (that is, not at all)
 				UnityEngine.GameObject agentClone = (GameObject)UnityEngine.Object.Instantiate (agentPrefab, spawnPosition, Quaternion.identity);
 				
@@ -104,25 +107,16 @@ namespace OpenCog.Entities
 				agiAC.DefaultStartTarget = GameObject.Find("StartPointStub");
 				
 				//Debug.Log ("agentClone is" + (agentClone == null ? " null " : " not null"));
-				//
+
 				OCConnectorSingleton connector = OCConnectorSingleton.Instance;
-				//UnityEngine.Debug.Log ("The GUID of our OCC instance in LoadAgent is " + connector.VerificationGuid);
+
 				//Debug.Log ("connector is" + (connector == null ? " null " : " not null"));
-				
-				
+								
 				//Ensure our agent is properly named
 				if (agentName == "")
 					agentName = CreateRandomAgentName ();
 				agentClone.name = agentName;
-				
-				
-				//			if (agentClone != null) {
-				//				if (!OCARepository.AddOCA (agentClone)) {
-				//					// An avatar with given name is already there.
-				//					yield break;
-				//				}
-				//				Debug.Log ("Add avatar[" + agentName + "] to avatar map.");
-				//			}
+
 				
 				//initialize the connector
 				connector.InitAvatar (agentName, null, null, masterId, masterName);

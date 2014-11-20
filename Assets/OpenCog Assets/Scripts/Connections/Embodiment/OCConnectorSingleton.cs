@@ -590,6 +590,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			} else
 			{
 				Debug.Log(OCLogSymbol.CLEARED + "Connection established.");
+				yield return 0; //can be used by the caller of this coroutine to sense 'no errors'
 			}
 	
 			// Second step, check if spawner is available to spawn an OAC instance.
@@ -614,12 +615,13 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			} else
 			{
 				Debug.Log(OCLogSymbol.CLEARED + "Spawner obtained, OAC can be launched.");
+				yield return 0;  //can be used by the caller of this coroutine to sense 'no errors'
 			}
 	
 			// Finally, load the OAC by sending "load agent" command to spawner.
 			LoadOAC();
 
-			timeout = 100;
+			timeout = 60;
 
 			//FIXME [RACE]: This looks breakable.
 			// Wait some time for OAC to be ready.

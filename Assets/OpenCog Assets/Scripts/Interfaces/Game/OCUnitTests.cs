@@ -358,7 +358,23 @@ namespace OpenCog.Interfaces.Game
 			string masterId = playerObject.GetInstanceID().ToString();
 			string masterName = playerObject.name;
 
-			yield return StartCoroutine(GameManager.entity.load.AtRunTime(embodimentSpawn, embodimentPrefab, "", masterName, masterId, report));
+			//determine when to time out
+			DateTime end = System.DateTime.Now.AddMinutes((double)0.25);
+
+
+			//we're going to enumerate manually instead of using a yield return StartCoroutine(); That way, we can check if we timed out each tic.
+			IEnumerator i = GameManager.entity.load.AtRunTime(embodimentSpawn, embodimentPrefab, "", masterName, masterId, report);
+			while (i.MoveNext() && System.DateTime.Now.CompareTo(end) < 0)
+			{
+				//add more time if zero was yielded
+				if(i == 0)
+					end = end.AddMinutes((double)0.25);
+
+				yield return i;
+			}
+
+			//This was the original way I did it until I enumerated manually.
+			//yield return StartCoroutine(GameManager.entity.load.AtRunTime(embodimentSpawn, embodimentPrefab, "", masterName, masterId, report));
 
 			if(didConnect)
 			{

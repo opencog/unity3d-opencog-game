@@ -842,7 +842,8 @@ namespace OpenCog.Embodiment
 		
 			return isUpdated;
 		}
-				
+
+		//DEPRECATED
 		/// <summary>
 		/// Notify OAC that certain block has been removed.
 		/// </summary>
