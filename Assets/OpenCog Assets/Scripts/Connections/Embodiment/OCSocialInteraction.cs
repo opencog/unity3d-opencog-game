@@ -44,7 +44,7 @@ namespace OpenCog.Embodiment
 #endregion
 public class OCSocialInteraction : OCMonoBehaviour
 {
-//
+//	DEPRECATED: This has not worked since the ancient dayyyyssss
 //	//---------------------------------------------------------------------------
 //
 //	#region Private Member Data
