@@ -125,7 +125,7 @@ namespace OpenCog.Entities
 				//			}
 				
 				//initialize the connector
-				connector.Init (agentName, null, null, masterId, masterName);
+				connector.InitAvatar (agentName, null, null, masterId, masterName);
 				
 				//and try to connect
 				yield return StartCoroutine(connector.ConnectOAC());

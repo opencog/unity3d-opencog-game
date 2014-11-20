@@ -369,7 +369,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					}
 					if(!IsElementAvailable(message.TargetID))
 					{
-						UnityEngine.Debug.Log(OCLogSymbol.DESTROY + "Destination not available. Discarding message to '" +
+						System.Console.WriteLine(OCLogSymbol.DESTROY + "Destination not available. Discarding message to '" +
+						//UnityEngine.Debug.Log(OCLogSymbol.DESTROY + "Destination not available. Discarding message to '" +
 							message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						continue;
 					}
@@ -460,9 +461,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    * 
    * @return Result of the initialization action.
    */
-	public bool Init(string agentName, string agentTraits, string agentType, string masterId, string masterName)
+	public bool InitAvatar(string agentName, string agentTraits, string agentType, string masterId, string masterName)
 	{
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"OCConnectorSingleton::Init() has been called");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"OCConnectorSingleton::InitAvatar() has been called on behalf of " + agentName);
 		// Initialize basic attributes.
 		_baseID = agentName;//gameObject.GetInstanceID().ToString();
 		_ID = "AVATAR_" + _baseID;
@@ -1436,12 +1437,16 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		} // lock
 
-		//set a time so we can record it laterz!
-		if(dispatchFlags[(int)DispatchTypes.mapInfo])
-			dispatchTimes[(int)DispatchTypes.mapInfo] = System.DateTime.Now.Ticks;
-
 		// First map info message has been sent.
 		_isFirstSentMapInfo = false;
+
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.mapInfo])
+		{
+			dispatchTimes[(int)DispatchTypes.mapInfo] = System.DateTime.Now.Ticks;
+		}
+
+
 	}
 
 	/**
@@ -2248,7 +2253,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 					_messagesToSend.Add(tickMessage);
 				}
 			}
-		} else
+		} 
+		else
 		{
 			//UnityEngine.Debug.Log ("OCConnectorSingleton::SendAvatarSignalsAndTick: !isEstablished -> Not sending a tick message / phys info.");	
 		}

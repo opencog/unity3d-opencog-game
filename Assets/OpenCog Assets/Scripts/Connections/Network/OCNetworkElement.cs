@@ -818,6 +818,8 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	{
 		if(IsElementAvailable(id))
 		{
+			UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Adding element '" + id + "' to unavailable elements.", this);
+			UnityEngine.Debug.Log(UnityEngine.StackTraceUtility.ExtractStackTrace ());
 			_unavailableElements.Add(id);
 		}
 
@@ -841,11 +843,12 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 	/// <param name="id">Network element id</param>
 	public void MarkAsAvailable(string id)
 	{
-		UnityEngine.Debug.Log (OCLogSymbol.CONNECTION +"Marking element '" + id + "' as available.");
+		//UnityEngine.Debug.Log (OCLogSymbol.CONNECTION +"Marking element '" + id + "' as available.");
 			
 		if(!IsElementAvailable(id))
 		{
-			UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Removing element '" + id + "' from unavailable elements.");
+			UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Removing element '" + id + "' from unavailable elements.", this);
+			UnityEngine.Debug.Log(UnityEngine.StackTraceUtility.ExtractStackTrace ());
 			_unavailableElements.Remove(id);
 		}
 	}
