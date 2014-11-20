@@ -30,7 +30,6 @@ using OpenCog.Worlds;
 
 namespace OpenCog.Master
 {
-	// TODO
 	// This class is INCOMPLETE in its functionality and refactoring; it is concieved of as a top-level manager for the entire game. It is concieved
 	// of as owning many subordinate managers.
 

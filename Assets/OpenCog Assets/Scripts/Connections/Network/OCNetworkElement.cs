@@ -681,15 +681,15 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 
 		lock(_clientSocket)
 		{
-			//TODO:
-			//I am trying out ways to make sure 'LogError' doesn't run IF the game is shutting down.
-			//enabled didn't work. _isEstablished may be too much- but
-			//it DOES seem to work.
 
-			//TODO: I want to describe a race condition whereby, SOMETIMES
+			//FIXME [RACE]: I want to describe a race condition whereby, SOMETIMES
 			// by having Disconnect print it is disconnecting, I slowed down execution enough that Send() does not fire off
-			// the error message that we disconnected midSend.
+			// the erroneously proced error message that we disconnected midSend (while the whole game is shutting down).
 			//obviously this is not ideal at all, but I have documented it here. 
+
+			//SO! I am trying out ways to make sure 'LogError' doesn't run IF the game is shutting down.
+			//enabled didn't work. _isEstablished may be too much- but it DOES seem to work. I will keep the FixMe around
+			//a little longer...
 			
 			if(!this._isEstablished)
 			{

@@ -102,7 +102,7 @@ public class OCEmotionalExpression : OCMonoBehaviour
 
 	public void showEmotionExpression(Dictionary<string, float> feelingValueMap)
 	{ 
-		/* TODO: uncomment this function after new robot expressions are done
+		/* TODO [BLOCKED]: uncomment this function after new robot expressions are done
         string dominant_feeling = ""; 
         float dominant_feeling_value = 0; 
 

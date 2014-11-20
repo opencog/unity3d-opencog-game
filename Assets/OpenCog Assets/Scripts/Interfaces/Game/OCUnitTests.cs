@@ -376,7 +376,7 @@ namespace OpenCog.Interfaces.Game
 		protected IEnumerator TestBattery()
 		{
 
-			//FIXME: This exists because a race condition seems to happen in which the OAC has an internal error SOMETIMES if we create the block too soon. 
+			//FIXME [RACE]: This exists because a race condition seems to happen in which the OAC has an internal error SOMETIMES if we create the block too soon. 
 				// One seconds seems enough to fix things; 0.1 second was not. 
 			yield return new UnityEngine.WaitForSeconds(1.0f);
 

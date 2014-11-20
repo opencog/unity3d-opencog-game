@@ -1315,7 +1315,7 @@ public class OCAction : OCMonoBehaviour
 	/// </summary>
 	public event OCActionCondition PostCondition;
 
-	// TODO: Code below is a set of stubs that may not be needed in the final implementation.
+	// TODO [LEGACY]: Code below is a set of stubs that may not be needed in the final implementation.
 
 	public enum ActionStatus 
 	{ NONE
@@ -1325,13 +1325,13 @@ public class OCAction : OCMonoBehaviour
 	, EXCEPTION 
 	};
 
-	// TODO: Once OCAction is data driven, this function should determine action type from the actionData and create an OCAction with that data.
+	// TODO [LEGACY]: Once OCAction is data driven, this function should determine action type from the actionData and create an OCAction with that data.
 	public static OCAction CreateAction(System.Xml.XmlNode actionData, bool adjustCoordinates)
 	{
 				return new OpenCog.Actions.OCAction();
 	}
 
-	// TODO: End of stub code
+	// TODO [LEGACY]: End of stub code
 
 	//---------------------------------------------------------------------------
 

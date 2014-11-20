@@ -39,7 +39,7 @@ namespace OpenCog.Map
 			set {_globalZ = value;}
 		}
 	
-		// TODO: May need to be re-enabled...hope not, since all blockdata that gets instantiated should get its coordinates too.
+		// DEPRECATED: May need to be re-enabled...hope not, since all blockdata that gets instantiated should get its coordinates too.
 	//	public BlockData(Block block) {
 	//		this.block = block;
 	//		direction = BlockDirection.Z_PLUS;

@@ -251,7 +251,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 		//int width = 200;
 		//Rect window = new Rect(inset, Screen.height - Screen.height / 3 - inset, width, Screen.height / 3);
 
-		// TODO: Verify that action list is gone.
+		// DEPRECATED: Verify that action list is gone.
 //		if(_selectedAvatar == null)
 //		{
 //			GUILayout.Window(2, window, ActionWindow, "Your Action List");
@@ -262,7 +262,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 
 			// Psi (feeling, demand etc.) panel controlling section
-			// TODO: Figure out when / if to display the emotion panel.
+			// DEPRECATED: Figure out when / if to display the emotion panel.
 //		if(_selectedAvatar.tag == "OCA")
 //		{
 //			if (_connector == null)
@@ -312,7 +312,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
             
 //  	}// if
 
-		// TODO: Reenable this once it is clear what it does.
+		// DEPRECATED: Reenable this once it is clear what it does.
 //		WorldGameObject world = GameObject.Find("World").GetComponent<WorldGameObject>();
 //		GUIStyle theStyle = new GUIStyle();
 //		theStyle.normal.background = world.storedBlockTexture;
@@ -569,7 +569,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
 
 
 		// Use the selected avatar, or use the player object if no avatar selected
-		// TODO: We need to clear up player / selected avatar
+		// DEPRECATED: We need to clear up player / selected avatar
 //		Avatar avatar = selectedAvatar;
 //		if(selectedAvatar == null)
 //		{
@@ -582,7 +582,7 @@ public class OCHeadUpDisplay : OCMonoBehaviour
         
 //		lock(avatar.AM.currentActions)
 		//{
-			// TODO: Reenable action keys when we know how / why / what.
+			// DEPRECATED: Reenable action keys when we know how / why / what.
 //			foreach(ActionKey akey in avatar.AM.currentActions.Keys)
 //			{
 //				ActionSummary a = avatar.AM.currentActions[akey] as ActionSummary;

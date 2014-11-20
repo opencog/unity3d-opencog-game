@@ -62,7 +62,7 @@ public class LoadCommand : Console.ConsoleCommand
 		private string _CommandName = "load";
     	private GameObject _NPCAgent;
 
-		// TODO: Replace code below once the (real) property exposition stuff works.
+		// TODO [MULTI-AVATAR]: Replace code below once the (real) property exposition stuff works.
 		public GameObject NPCAvatarMember;
 
 		//---------------------------------------------------------------------------
@@ -193,7 +193,7 @@ public class LoadCommand : Console.ConsoleCommand
 		/// </summary>
 		private void Initialize ()
 		{
-			// TODO: Remove stuff below once (real) property exposition components are working.
+			// TODO [MULTI-AVATAR]: Remove stuff below once (real) property exposition components are working.
 			if (_NPCAgent == null)
 			{
 				_NPCAgent = NPCAvatarMember;
@@ -210,7 +210,6 @@ public class LoadCommand : Console.ConsoleCommand
 
 
 		/// <summary>
-		/// FIXME: I am testing this wrapper/nested coroutine to determine whether or not it can perform the functions required of it.
 		/// It's purpose is to wrap LoadAgent(agentName, pos)
 		/// </summary>
 		/// <returns>Failure, success, or the continuation of a coroutine which attempts to establish a connection with the OpenCog embodiment.</returns>
@@ -237,9 +236,9 @@ public class LoadCommand : Console.ConsoleCommand
 			//add the position data together. 
 			UnityEngine.Vector3 newPos = new Vector3(position.x + xFront, position.y + 2, position.z + zFront);
 
-			// TODO Currently we use the tag "player". However, when there are multiple 
+			// TODO [MULTI-AVATAR] Currently we use the tag "player". However, when there are multiple 
 			// players in the world, we need to figure out a way to identify.
-			// TODO Set agentType and agentTraits in the future.
+			// Set agentType and agentTraits in the future.
 			// leave agentType and agentTraits to null just for test.
 			//get data about the player
 			string masterId = playerObject.GetInstanceID ().ToString ();

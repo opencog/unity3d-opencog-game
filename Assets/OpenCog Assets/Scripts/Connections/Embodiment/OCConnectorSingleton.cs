@@ -419,7 +419,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		}
 	}
 
-	//TODO: This function has been commented out to show it is never called
+	//DEPRECATED: This function has been commented out to show it is never called
 	/*public void SendBlockStructure(OpenCog.Map.OCBlockData startBlock, bool isToRecognize)
 	{
 		XmlDocument doc = new XmlDocument();
@@ -538,7 +538,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_globalFloorHeight = Map.FloorHeight;
 		} else
 		{
-			/// TODO: I have no idea if the below code makes sense...if Map==null....
+			/// TODO [UNTESTED]: I have no idea if the below code makes sense...if Map==null....
 			_mapName = "unknown_map";
 			_blockCountX = 128;
 			_blockCountY = 128;
@@ -553,9 +553,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "OCConnectorSingleton reports: OpenCog will receive a world with globalStartPosition [" + _globalStartPositionX + ", " + _globalStartPositionY + ", " + _globalStartPositionZ + "] and blockCounts [" + _blockCountX + ", " + _blockCountY + ", " + _blockCountZ + "].");
     
 		// Get action scheduler component.
-		// TODO: old classes here. Lake needs to fix this.
+		// TODO [LAKE]: old classes here. Lake needs to fix this.
 		//_actionController = gameObject.GetComponent<OCActionController>() as OCActionController;
-		// TODO: Removed due to new call structure for updating action statuses. Nothing to do really..just needs remembering.
+		// TODO [LAKE]: Removed due to new call structure for updating action statuses. Nothing to do really..just needs remembering.
 		//OCActionController.globalActionCompleteEvent += HandleOtherAgentActionResult;
 
 		//_isInitialized = true;
@@ -621,7 +621,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 			timeout = 100;
 
-			//TODO: This looks breakable.
+			//FIXME [RACE]: This looks breakable.
 			// Wait some time for OAC to be ready.
 
 
@@ -762,10 +762,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
   
 	public void HandleOtherAgentActionResult(OCActionPlanStep step, bool status)
 	{
-		// don't report actions that game from us.
+		// don't report actions that came from us.
 		// don't report actions without an action summary (these are from trying
 		// to do non-existant actions).
-		///TODO: Find a different way to check for this...
+		///FIXME [ERROR CHECKING]: Find a different way to check for this...
 //    if (ar.avatar == gameObject.GetComponent<Avatar>() || ar.action == null) {
 //        //Debug.LogWarning("skipping action result from " + ar.avatar);
 //        return;
@@ -958,17 +958,18 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	// When isAppear is true, it's an appear action, if false, it's a disappear action 
 	public void HandleObjectAppearOrDisappear(string objectID, string objectType, bool isAppear)
 	{
+		// TODO [TASK][MINOR]: Add other things we shouldn't report.
+		if(objectID == ID.ToString())
+		{
+			return;
+		}
+
 		if(isAppear)
 		{
 			UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		} else
 		{
 			UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
-		}
-		// TODO: Figure out what this is...why would we report an object that is our ID...or maybe that's the agent ID...
-		if(objectID == ID.ToString())
-		{
-			return;
 		}
 		
 		string timestamp = GetCurrentTimestamp();
@@ -1350,7 +1351,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	        
 			actionElement.SetAttribute("name", ocActionName);
 
-			// TODO: Our new actions won't have targets, so we can skip this whole section.
+			// DEPRECATED: Our new actions won't have targets, so we can skip this whole section.
 
 			// Actions like "walk", "jump" are built-in naturally, they don't need an external target to act on.
 //	    if (action.Target != gameObject.GetInstanceID())
@@ -1642,11 +1643,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	{
 		if(_isInitialized)
 		{
-			// TODO save local data of this avatar.
+			// TODO [LEGACY]: save local data of this avatar.
 			UnloadOAC();
 		}
-		// TODO
-		// Finalize is nog Uninitialize, which I believe is called on raising the OnDestroy event...?
+		// TODO [LEGACY]: Finalize is not Uninitialize, which I believe is called on raising the OnDestroy event...?
 		//finalize();
 	}
 
@@ -1728,7 +1728,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
      */
 	private void UpdateEmotionFeelings()
 	{
-		// TODO: Update this, I don't know if we still want to use these components?
+		// DEPRECATED: Update this, I don't know if we still want to use these components?
 		
 //        OCEmotionalExpression emotionalExpression = gameObject.GetComponent<OCEmotionalExpression>() as OCEmotionalExpression;
 //        emotionalExpression.showEmotionExpression(this.FeelingValueMap);
@@ -1855,7 +1855,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	 */
 	public void ParseActionPlanElement(XmlElement actionPlan)
 	{
-		// TODO: Determine if we need this:
+		// DEPRECATED: Determine if we need this:
 		//bool adjustCoordinate = false;
 		
 		OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
@@ -2239,7 +2239,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			lock(_messagesToSend)
 			{
 				// Add physiological information to message sending queue.
-				// TODO: Re-enable this, was just getting sick of the tons of output on the Opencog side.
 				_messagesToSend.Add(message);
 	
 				// Send a tick message to make OAC start next cycle.
@@ -2311,7 +2310,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		XmlElement actionElement = (XmlElement)avatarSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
 		actionElement.SetAttribute(OCEmbodimentXMLTags.ACTION_PLAN_ID_ATTRIBUTE, planId);
 		
-		// TODO: Fix the Sequence attribute on Action which is currently missing.
+		// TODO [LEGACY]: Fix the Sequence attribute on Action which is currently missing.
 		actionElement.SetAttribute(OCEmbodimentXMLTags.SEQUENCE_ATTRIBUTE, sequence.ToString());
 		actionElement.SetAttribute("name", actionName);
 		actionElement.SetAttribute("status", success ? "done" : "error");

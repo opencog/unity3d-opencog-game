@@ -44,7 +44,8 @@ namespace OpenCog
 		//it should be quite possible to override this Awake function in subclasses and load in 'new' attributes
 		//to the old instance of the singleton before destroying the new/unnecessary one. 
 
-		//FIXME: This code has never been thoroughly tested. Remove this note when it has been.
+		//This code was added later after many singletons already handled their own instancing/initialization (because it ought to have been here)
+		//The game then ran fine with it. It's cleared to stay. 
 		public void Awake()
 		{
 			//if the instance doesn't exist, good work, we're on target

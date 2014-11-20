@@ -91,7 +91,7 @@ public class OCStartGameMenu : OCAbstractMenu
 	protected override void OnMenuGUI() {
 		foreach(OpenCog.BlockSet.OCBlockSet blockset in _blockSetList) {
 			if(GUILayout.Button(blockset.name)) {
-				// TODO: Fix this static issue LAKE HELP!!
+				// TODO [LAKE]: Fix this static issue LAKE HELP!!
 				//OCGameSetup.BlockSet = blockset;
 				Application.LoadLevel("Game");
 				return;

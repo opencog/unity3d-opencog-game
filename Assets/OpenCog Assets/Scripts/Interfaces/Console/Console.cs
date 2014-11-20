@@ -81,7 +81,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	private bool _showChat = true;
 	private string _lastLine = "";
 
-	// TODO: (Scratch that) Search this file for the object below and re-enable all calls to it.
+	// DEPRECATED: Search this file for the object below and re-enable all calls to it.
 	//OpenCog.Entities.OCInputController _inputController; // InputController to capture and return the consumer of input.
 	GameObject _player = null;
 
@@ -137,10 +137,10 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		_panelHeight = Screen.height * 0.30f;
 
 
-		// TODO: Re-enable line below
+		// DEPRECATED: Re-enable line below
 		//_inputController = (GameObject.FindWithTag("OCInputController") as GameObject).GetComponent<OCInputController>();
 
-		// TODO: Disable line below
+			// DEPRECATED: Disable line below
 		//_inputController = (GameObject.FindWithTag("CharacterInputController") as GameObject).GetComponent<CharacterInputController>();
 
 		_player = GameObject.FindGameObjectWithTag("Player");
@@ -157,7 +157,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 			this._movementState = Movement.APPEARING;
 		}
 
-		// TODO: Removed this, may need checking.
+		// DEPRECATED: Removed this, may need checking.
 		//OCActionController.globalActionCompleteEvent += new ActionCompleteHandler (notifyActionComplete);
 
 		// Initialise support
@@ -304,7 +304,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 			case KeyCode.UpArrow:
 				if(_inputHistoryCurrent == null)
 				{
-					// TODO save current output so that we can push down to restore
+					// TODO [LEGACY]: save current output so that we can push down to restore
 					// previously written text
 					_inputHistoryCurrent = _inputHistory.First;
 				}
@@ -332,7 +332,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		};
 			
 
-			//TODO: Fix this
+			//DEPRECATED: Fix this
 			if(_isShown)
 			{
 				//_inputController.SetCharacterControl(false);
@@ -421,8 +421,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 	/// </summary>
 	override protected void Initialize()
 	{
-		// TODO:
-		//Input.eatKeyPressOnTextFieldFocus = false;
+
 		_console = this;
 	}
 	
@@ -568,7 +567,7 @@ public class Console : OCSingletonMonoBehaviour<Console>
 		}
 
 		// Ensure we are at the bottom...
-		// TODO Do this in a non-brittle way... i.e. find actual maximum value
+		// TODO [TASK]: Do this in a non-brittle way... i.e. find actual maximum value
 		_scrollPosition.y = 1000000;
 			
 		_lastLine = str;

@@ -27,7 +27,6 @@ using System;
 
 namespace OpenCog.Entities
 {
-	// TODO
 	// This class is INCOMPLETE in its functionality and refactoring; it is concieved of as a top-level manager for Entities
 	//
 	// A note on what is going on with the EntityManager folder:

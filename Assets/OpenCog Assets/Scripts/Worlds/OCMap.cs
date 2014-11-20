@@ -61,7 +61,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 	//---------------------------------------------------------------------------
 
-	// TODO: SerializeField necessary here?
+	// TODO [UNTESTED]: SerializeField necessary here?
 	[SerializeField]
 	private OpenCog.BlockSet.OCBlockSet
 		_blockSet;
@@ -238,7 +238,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 	{
 		//MethodInfo info = this.GetType().GetMember("SetBlockAndRecompute")[0] as MethodInfo;
 
-// TODO: uncomment when aspect stuff is in place?
+// TODO [BLOCKED]: uncomment when aspect stuff is in place?
 //		object[] attributes = info.GetCustomAttributes(typeof(OCLogAspect), true);
 //		OCLogAspect asp = null;
 //
@@ -296,7 +296,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition(this, pos);
 		
 		UpdateMeshColliderAfterBlockChange();
-// TODO: uncomment when aspect stuff is in place?
+// TODO [BLOCKED]: uncomment when aspect stuff is in place?
 //		asp.OnExit(null);
 			
 		OpenCog.Embodiment.OCPerceptionCollector perceptionCollector = OpenCog.Embodiment.OCPerceptionCollector.Instance;

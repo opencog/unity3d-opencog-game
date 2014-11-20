@@ -971,12 +971,12 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	
 			
-	// TODO: This cose is just a set of stubs to get rid of an error.
+	// TODO [Dynamic Behavior Tree]: This code is just a set of stubs to get rid of an error.
 	//public static event ActionCompleteHandler globalActionCompleteEvent;
 	//public delegate void ActionCompleteHandler(OCAction action);
 	// Removed...due to the fact that OCConnector will be polling this class for action status updates.
 
-	// TODO: Implement / remove build block function which can be called by OCConnector.ParseSingleActionElement. Will probably have to be amended with material / blockdata.
+	// TODO [Dynamic Behavior Tree]: Implement / remove build block function which can be called by OCConnector.ParseSingleActionElement. Will probably have to be amended with material / blockdata.
 	public void BuildBlockAtPosition(Vector3i desiredBlockLocation)
 	{
 		OCAction.OCActionArgs args = new OCAction.OCActionArgs();
@@ -990,7 +990,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		LoadActionPlanStep("BuildBlockAtPosition", args);
 	}
 
-	// TODO: Implement / remove move to location function which can be called by OCConnector.ParseSingleActionElement.
+	// TODO [Dynamic Behavior Tree]: Implement / remove move to location function which can be called by OCConnector.ParseSingleActionElement.
 	public void MoveToCoordinate(Vector3 desiredLocation)
 	{
 		OCAction.OCActionArgs args = new OCAction.OCActionArgs();
@@ -1004,7 +1004,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		LoadActionPlanStep("MoveToCoordinate", args);
 	}
 
-	// TODO: Implement function below properly.
+	// TODO [Dynamic Behavior Tree]: Implement function below properly.
 	public static string GetOCActionNameFromMap(string methodName)
 	{
 		if(builtinActionMap.ContainsValue(methodName))
@@ -1021,7 +1021,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		return null;
 	}
 			
-	// TODO: Implement dynamic behaviour tree loading to execute actions
+	// TODO [Dynamic Behavior Tree]: Implement dynamic behaviour tree loading to execute actions
 	public void StartAction(OCAction action, OCID sourceID, OCID targetStartID, OCID targetEndID)
 	{
 		Debug.LogError("OCActionController.StartAction is unimplemented...");

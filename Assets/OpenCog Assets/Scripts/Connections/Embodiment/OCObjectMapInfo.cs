@@ -390,7 +390,8 @@ public class OCObjectMapInfo
 //			_id = gameObject.GetInstanceID ().ToString ();
 			// Get name
 			_name = gameObject.name;
-			// TODO: By default, we are using object type.
+
+			// TODO [UNTESTED]: By default, we are using object type.
 			_type = OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE;
 
 			// Convert from unity coordinate to OAC coordinate.
@@ -466,7 +467,7 @@ public class OCObjectMapInfo
 			}
 
 			// Get a property manager instance
-			// TODO: may need to re-enable this for other object types.
+			// TODO [BLOCKED]: may need to re-enable this for other object types.
 //			OCPropertyManager manager = gameObject.GetComponent<OCPropertyManager> () as OCPropertyManager;
 //			if (manager != null) {
 //				// Copy all OC properties from the manager, if any.

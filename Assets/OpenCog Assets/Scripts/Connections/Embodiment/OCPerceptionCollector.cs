@@ -926,7 +926,7 @@ namespace OpenCog.Embodiment
 			// chunk position is the coordinates of the chunk.
 			Vector3i viChunkPosition = chunk.GetPosition();
 
-			//TODO: I have just realized that since I have never seen this debug statement, odds are THIS DOESNT HAPPEN and is never called
+			//let the user know about our hard labor!
 			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
 			
 			// Maybe do some empty check here...there will be many empty chunks. But it might be
@@ -975,7 +975,7 @@ namespace OpenCog.Embodiment
 				//send the terrain in chunk slices, which should never be any bigger than 256*16 = 4096 blocks (identical to 
 				//the arbitrary 'max blocks per transmission' parameter we sent in.
 
-				//TODO: We may want to make sure empty terrainMapInfoLists are never sent here. 
+				//FIXME [ERROR CHECKING]: We may want to make sure empty terrainMapInfoLists are never sent here. 
 				_connector.SendTerrainInfoMessage(terrainMapinfoList, true);
 				terrainMapinfoList.Clear();
 

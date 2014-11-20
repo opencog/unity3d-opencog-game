@@ -234,10 +234,8 @@ public class OCGoalController : OCMonoBehaviour
 		
 		//bool doesGoalExist = false;
 		
-		//TODO: Nov 14 I put this check in to get rid of Nullreference errors if the avatar
-		//cannot connect. Because I cannot currently test connection (no wifi), I am 
-		//putting this note in, in case the check breaks something and needs to be
-		//debugged.
+		//Get rid of some Nullreference errors if the avatar
+		//cannot connect properly. 
 		if(GoalBlockType == null)
 		{
 			return;

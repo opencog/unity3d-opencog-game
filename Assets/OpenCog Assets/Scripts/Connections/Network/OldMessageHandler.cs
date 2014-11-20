@@ -95,7 +95,7 @@ namespace OpenCog.Network
 			{
 				try
 				{
-					// TODO Make some tests to judge the read time.
+					// TODO [LAKE] Make some tests to judge the read time.
 					string line = reader.ReadLine();
 					
 					if(line != null)

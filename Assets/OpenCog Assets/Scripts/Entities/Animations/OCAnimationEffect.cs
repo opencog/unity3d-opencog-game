@@ -391,7 +391,7 @@ public class OCAnimationEffect : OCMonoBehaviour
 		_iTweenParams["OnEndTarget"] = gameObject;
 
 
-		//TODO: Remove _Translation and _Rotation and find a way to serialize Hashtables directly.
+		//TODO [TASK]: Remove _Translation and _Rotation and find a way to serialize Hashtables directly.
 		if(_IsTranslationVsRotation)
 		{
 			MoveByX = _Translation.x;
