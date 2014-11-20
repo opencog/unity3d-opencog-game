@@ -312,13 +312,13 @@ namespace OpenCog.Interfaces.Game
 		//-----------------------------------
 		
 		//run the tests in order
-		for(int i = 0; i < numTests; i++)
+		/*for(int i = 0; i < numTests; i++)
 		{
 			if(configurations[i])
 			{
 				tests[i]();
 			}
-		}
+		}*/
 
 		//RUN THE TESTS!
 		//-----------------------------------
@@ -437,7 +437,7 @@ namespace OpenCog.Interfaces.Game
 			{
 				//if this is true, then percieve terrain finished BEFORE the map Info was sent,
 				//and odds are the battery was successfully reported. If it happened in the
-				//inverse, an error happend.
+				//inverse, an error happend (mapInfo should never be sent before terrain info!)
 				if(checkTerrain < checkMapInfo)
 				{
 					Debug.Log(OCLogSymbol.PASS + "Testing the Battery, Succeeded");
