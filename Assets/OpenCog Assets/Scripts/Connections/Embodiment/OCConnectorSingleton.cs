@@ -2148,15 +2148,15 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	/// </summary>
 	private void LoadOAC()
 	{
-		System.Text.StringBuilder msgCmd = new System.Text.StringBuilder("LOAD_AGENT ");
-		msgCmd.Append(_brainID + WHITESPACE + _masterID + WHITESPACE);
-		msgCmd.Append(_type + WHITESPACE + _traits + "\n");
+			System.Text.StringBuilder msgCmd = new System.Text.StringBuilder("LOAD_AGENT ");
+			msgCmd.Append(_brainID + WHITESPACE + _masterID + WHITESPACE);
+			msgCmd.Append(_type + WHITESPACE + _traits + "\n");
 
-		OCMessage msg = OCMessage.CreateMessage(_ID,
-                                      OCConfig.Instance.get("SPAWNER_ID"),
-                                      OCMessage.MessageType.STRING,
-                                      msgCmd.ToString());
-		SendMessage(msg);
+			OCMessage msg = OCMessage.CreateMessage(_ID,
+	                                      OCConfig.Instance.get("SPAWNER_ID"),
+	                                      OCMessage.MessageType.STRING,
+	                                      msgCmd.ToString());
+			SendMessage(msg);
 	}
 
 

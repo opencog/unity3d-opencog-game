@@ -438,7 +438,7 @@ namespace OpenCog.Interfaces.Game
 					else
 					{
 						Debug.Log(OCLogSymbol.FAIL + "Testing the Battery, Failed");
-						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Battery loaded too late");
+						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "MapInfo (such as the battery) was sent too early.");
 						results[(int)TestTypes.BATTERY] = false;
 						result = false;	
 					}

@@ -93,7 +93,7 @@ public void LoadLevel()
         foreach(Substrate.AnvilRegion mcAnvilRegion in mcAnvilRegionManager)
         {
                 // Loop through x-axis of chunks in this region
-                for(int iMCChunkX  = 0; iMCChunkX < mcAnvilRegio`n.XDim; iMCChunkX++)
+                for(int iMCChunkX  = 0; iMCChunkX < mcAnvilRegion.XDim; iMCChunkX++)
                 {
                         // Loop through z-axis of chunks in this region.
                         for(int iMCChunkZ = 0; iMCChunkZ < mcAnvilRegion.ZDim; iMCChunkZ++)
