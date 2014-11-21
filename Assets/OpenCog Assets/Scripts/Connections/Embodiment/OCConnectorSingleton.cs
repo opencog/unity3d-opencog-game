@@ -570,69 +570,76 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	public IEnumerator ConnectOAC()
 	{
+		//only do this once. 
+		if(!_firstRun) yield break;
+
 		Debug.Log(OCLogSymbol.CONNECTION + "Attempting to connect OAC...");
-		if(_firstRun)
+		_firstRun = false;
+
+		//FIRST STEP
+		// First step, attempting connecting to the router 5 times which, at ~18 seconds per attempt, should take roughly 100 seconds.
+		int timeout = 5;
+		while(!base._isEstablished && timeout > 0)
 		{
-			_firstRun = false;
-			
-			// First step, attempting connecting to the router 5 times which, at ~18 seconds per attempt, should take roughly 100 seconds.
-			int timeout = 5;
-			while(!base._isEstablished && timeout > 0)
-			{
-				yield return StartCoroutine(base.Connect());
-				timeout--;
-			}
-	
-			if(timeout <= 0)
-			{
-				Debug.LogError(OCLogSymbol.ERROR + "Connection attempt timed out.");
-				yield break;
-			} else
-			{
-				Debug.Log(OCLogSymbol.CLEARED + "Connection established.");
-				yield return 0; //can be used by the caller of this coroutine to sense 'no errors'
-			}
-	
-			// Second step, check if spawner is available to spawn an OAC instance.
-			timeout = 60;
-			do
-			{
-				if(IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID")))
-				{
-					break;
-				}
-
-				Debug.Log(OCLogSymbol.CONNECTION + "Waiting for spawner...");
-				yield return new UnityEngine.WaitForSeconds(1f);
-				timeout--;
-
-			} while(timeout > 0);
-	
-			if(timeout <= 0)
-			{
-				Debug.LogError(OCLogSymbol.ERROR + "Spawner is not available, OAC can not be launched.");
-				yield break;
-			} else
-			{
-				Debug.Log(OCLogSymbol.CLEARED + "Spawner obtained, OAC can be launched.");
-				yield return 0;  //can be used by the caller of this coroutine to sense 'no errors'
-			}
-	
-			// Finally, load the OAC by sending "load agent" command to spawner.
-			LoadOAC();
-
-			timeout = 60;
-
-			//FIXME [RACE]: This looks breakable.
-			// Wait some time for OAC to be ready.
-
-
-			while(!_isInitialized && timeout > 0)
-			{
-				yield return new UnityEngine.WaitForSeconds(1f);
-				timeout--;
-			}
+			yield return StartCoroutine(base.Connect());
+			timeout--;
 		}
+
+		if(timeout <= 0)
+		{
+			Debug.LogError(OCLogSymbol.ERROR + "Connection attempt timed out.");
+			yield break;
+		} else
+		{
+			Debug.Log(OCLogSymbol.CLEARED + "Connection established.");
+			yield return 0; //can be used by the caller of this coroutine to sense 'no errors'
+		}
+
+		//SECOND STEP
+		// Second step, check if spawner is available to spawn an OAC instance.
+		Debug.Log(OCLogSymbol.CONNECTION + "Waiting for spawner...");
+		timeout = 60;
+		do
+		{
+			if(IsElementAvailable(OCConfig.Instance.get("SPAWNER_ID")))
+			{
+				break;
+			}
+			yield return new UnityEngine.WaitForSeconds(1f);
+			timeout--;
+
+		} while(timeout > 0);
+
+		if(timeout <= 0)
+		{
+			Debug.LogError(OCLogSymbol.ERROR + "Spawner is not available, OAC can not be launched.");
+			yield break;
+		} else
+		{
+			Debug.Log(OCLogSymbol.CLEARED + "Spawner obtained, OAC can be launched.");
+			yield return 0;  //can be used by the caller of this coroutine to sense 'no errors'
+		}
+
+		//THIRD STEP
+		// Third step, check if we've initialized (this is new code, and is based off of LoadMethods checking for _connector.IsInitialized)
+		Debug.Log(OCLogSymbol.CONNECTION + "Waiting for OAC...");
+
+		// Load the OAC by sending "load agent" command to spawner (this is not a coroutine)
+		LoadOAC();
+
+		timeout = 60;
+		do
+		{
+			if(_isInitialized)
+			{
+				break;
+			}
+
+			yield return new UnityEngine.WaitForSeconds(1f);
+			timeout--;
+			
+		} while(timeout > 0);
+		
 	}
 
 	/**

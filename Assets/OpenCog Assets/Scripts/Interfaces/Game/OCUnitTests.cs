@@ -363,19 +363,34 @@ namespace OpenCog.Interfaces.Game
 
 
 			//we're going to enumerate manually instead of using a yield return StartCoroutine(); That way, we can check if we timed out each tic.
+			//the purpose of having an exterior counter is in case 
 			IEnumerator i = GameManager.entity.load.AtRunTime(embodimentSpawn, embodimentPrefab, "", masterName, masterId, report);
 			while (i.MoveNext() && System.DateTime.Now.CompareTo(end) < 0)
 			{
 				//add more time if zero was yielded
-				if(i == 0)
-					end = end.AddMinutes((double)0.25);
+				if(i.Current.GetType() != typeof(int)) yield return i;
 
-				yield return i;
+				int j = (int)i.Current;
+				if(j == 0)
+				{
+					Debug.Log (OCLogSymbol.DEBUG + "Zero was yielded");
+					end = end.AddMinutes((double)0.25);
+					yield return j;
+				}
+				else if(j > 0)
+				{
+					end.AddSeconds (j);
+					yield return new WaitForSeconds((float)j);
+				}
+
+
 			}
 
 			//This was the original way I did it until I enumerated manually.
 			//yield return StartCoroutine(GameManager.entity.load.AtRunTime(embodimentSpawn, embodimentPrefab, "", masterName, masterId, report));
 
+			//note, this should handle everything appropriately even if the last yield return i tells the game to wait 20 minutes or what have you for the OAC to connect. 
+			//because it doesn't rely on the end value to determine connection. 
 			if(didConnect)
 			{
 				Debug.Log(OCLogSymbol.PASS + "Testing the Embodiment, Succeeded");
