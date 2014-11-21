@@ -78,7 +78,7 @@ namespace OpenCog.Master
 				//Time.timeScale = 0;  <-- cannot be done from exterior thread
 											
 				//System.Diagnostics.Process.
-				Debug.Log (OCLogSymbol.FAIL + "Exiting with Error Code " + code);
+				Debug.LogError (OCLogSymbol.FAIL + "Exiting with Error Code " + code);
 
 				//TODO [UNTESTED]: This code works for some people and not for others.
 				//It's conditions for operation seem to be largely that it needs to be on
