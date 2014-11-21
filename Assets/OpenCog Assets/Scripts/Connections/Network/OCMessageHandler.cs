@@ -336,7 +336,7 @@ public class OCMessageHandler : OCSingletonMonoBehaviour<OCMessageHandler>
 			// Get unavalable element id.
 			string id = token.Current.ToString();
 
-            System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"onLine: Unavailable element message received for [" + id + "].");
+            System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Unavailable element message received for [" + id + "].");
 			_networkElement.MarkAsUnavailable(id);
 			answer = OCNetworkElement.OK_MESSAGE;
 		}

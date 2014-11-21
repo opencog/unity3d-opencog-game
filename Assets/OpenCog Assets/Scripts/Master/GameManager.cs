@@ -38,7 +38,7 @@ namespace OpenCog.Master
 	/// <summary>
 	/// A top level class and singleton for triggering top-level tasks such as saving and loading the various components of the game. 
 	/// </summary>
-	public class GameManager:OCSingletonMonoBehaviour<GameManager>
+	public partial class GameManager:OCSingletonMonoBehaviour<GameManager>
 	{
 		//---------------------------------------------------------------------------
 		#region 					  Sub-Managers
@@ -48,6 +48,8 @@ namespace OpenCog.Master
 		public static EntityManager entity{get{return Instance._entityManager;}}
 		protected WorldManager _worldManager;
 		public static WorldManager world{get{return Instance._worldManager;}}
+		protected _ControlMethods _controlMethods;
+		public static ControlMethods control{get{return Instance._controlMethods as ControlMethods;}}
 
 
 
