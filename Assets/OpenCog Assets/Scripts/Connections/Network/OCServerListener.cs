@@ -178,7 +178,7 @@ public class OCServerListener : OCSingletonMonoBehaviour<OCServerListener>
 				//try{
             	_sockets.Add(_listener.AcceptSocket());
 
-				UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "Socket accepted...");
+				UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "Listener Socket accepted...");
 
             	OpenCog.Utility.Console.Console console = OpenCog.Utility.Console.Console.Instance;
 

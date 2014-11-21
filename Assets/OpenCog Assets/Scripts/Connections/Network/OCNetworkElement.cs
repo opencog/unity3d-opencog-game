@@ -471,6 +471,11 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			
 				UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Trying to Connect, current time is " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
 			
+
+			//NOTE: This InterNetwork flag is probably why our game and embodiment machines must be
+			//on the same network in order to detect one another.
+			//TODO [Task]: if we checked out our IP address ahead of time we could see if it was on 
+			//the same network as us and throw a message about it. 
 			Socket asyncSocket = new 
 				Socket
 				(AddressFamily.InterNetwork
@@ -579,6 +584,10 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			_connectionState = ConnectionState.Connected;
 
 			UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "Socket connected to router.");
+
+			//TODO [UNTESTED]: Does this resolve hanging? Yes, but it also prevents sending, lol.
+			//Can we embed it in a loop with a wait?
+			//_clientSocket.Blocking = false;
 				
 			// Can't write to the console here, it causes one of these:
 //			CompareBaseObjectsInternal  can only be called from the main thread.
@@ -710,13 +719,25 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 			}
 			//else
 				//UnityEngine.Debug.Log ("Seems we're connected...");
-
+			
+			//TODO: Delete this, I'm using it as a reference
+			/*bool canSend = true;
+			while(canSend)
+			{
+				if(!_clientSocket.Pending())
+				{
+					//UnityEngine.Debug.Log (System.DateTime.Now.ToString ("HH:mm:ss.fff") + ": Nope, not pending...");
+					if (_shouldStop)
+						UnityEngine.Debug.LogError(OCLogSymbol.IMPOSSIBLE_ERROR + "OCServerListener.Listener() has TCPListener.Pending() reporting false. Which is funny, because IT SHOULDN'T BE HERE BECAUSE _shouldStop IS TRUE!!");	
+					// If listener is not pending, sleep for a while to relax the CPU.
+					yield return new UnityEngine.WaitForSeconds(0.5f);
+				}
+			*/
 			
 			try
 			{
 
 				System.IO.Stream s = new System.Net.Sockets.NetworkStream(_clientSocket);
-				System.IO.StreamReader sr = new System.IO.StreamReader(s);
 				System.IO.StreamWriter sw = new System.IO.StreamWriter(s);
 
 				sw.Write(text);
@@ -724,7 +745,7 @@ public class OCNetworkElement : OCSingletonMonoBehaviour<OCNetworkElement>
 				
 				//byte[] byteArr = Encoding.UTF8.GetBytes(message);
 				//this.socket.Send(byteArr);
-				sr.Close();
+
 				sw.Close();
 				s.Close();
 					
