@@ -639,6 +639,16 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			timeout--;
 			
 		} while(timeout > 0);
+
+		if(timeout <= 0)
+		{
+			Debug.LogError(OCLogSymbol.ERROR + "OAC is not available, dying gracefully.");
+			yield break;
+		} else
+		{
+			Debug.Log(OCLogSymbol.CLEARED + "OAC initialized.");
+			yield return 0;  //can be used by the caller of this coroutine to sense 'no errors'
+		}
 		
 	}
 
