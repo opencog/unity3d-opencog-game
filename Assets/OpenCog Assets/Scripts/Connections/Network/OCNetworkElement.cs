@@ -848,8 +848,7 @@ namespace OpenCog.Network
 				_unavailableElements.Add(id);
 
 				//Handle this by going Kablooey and giving up on life!
-				//GameManager.control.QuitWithError(5);
-				GameManager.control.ping ();
+				GameManager.control.QuitWithError(5);
 			}
 
 			if(_routerID != null)

@@ -75,7 +75,7 @@ namespace OpenCog.Master
 			public void QuitWithError(int code)
 			{
 				//do not accidentally update anything while quitting
-				Time.timeScale = 0; 
+				//Time.timeScale = 0;  <-- cannot be done from exterior thread
 											
 				//System.Diagnostics.Process.
 				Debug.Log (OCLogSymbol.FAIL + "Exiting with Error Code " + code);
@@ -89,7 +89,11 @@ namespace OpenCog.Master
 				System.Environment.Exit (code);
 				#endif
 
+				//NOTE: Someone should look at this later XD
 				//Throw this in the editor, and if the System.Environment.Exit(code) failed.
+				//Observation <--- we did not get to this line while running in the editor
+				//which would suggest System.Environment.Exit(code) worked XD
+				//but which also means !UNITY_EDITOR did not stop it from runnings, ha!
 				throw new OCException(OCLogSymbol.FAIL + "System.EnvironmentExit(" + code + ") failed.");  
 
 				#if !UNITY_EDITOR
