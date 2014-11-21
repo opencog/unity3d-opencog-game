@@ -578,10 +578,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 		//FIRST STEP
 		// First step, attempting connecting to the router 5 times which, at ~18 seconds per attempt, should take roughly 100 seconds.
-		int timeout = 5;
+		int timeout = 60;
 		while(!base._isEstablished && timeout > 0)
 		{
-			yield return StartCoroutine(base.Connect());
+			yield return base.Connect().MoveNext();
 			timeout--;
 		}
 

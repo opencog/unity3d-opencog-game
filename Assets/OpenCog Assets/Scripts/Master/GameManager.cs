@@ -45,11 +45,11 @@ namespace OpenCog.Master
 		//---------------------------------------------------------------------------
 
 		protected EntityManager _entityManager; 
-		public static EntityManager entity{get{return Instance._entityManager;}}
+		public static EntityManager entity{get{return _instance._entityManager;}}
 		protected WorldManager _worldManager;
-		public static WorldManager world{get{return Instance._worldManager;}}
+		public static WorldManager world{get{return _instance._worldManager;}}
 		protected _ControlMethods _controlMethods;
-		public static ControlMethods control{get{return Instance._controlMethods as ControlMethods;}}
+		public static ControlMethods control{get{return _instance._controlMethods;}}
 
 
 
@@ -67,15 +67,23 @@ namespace OpenCog.Master
 		/// <summary>This initialization function creates the submanagers, and will be called automatically by the SingletonMonoBehavior's Awake()</summary>
 		protected override void Initialize()
 		{
+			if(this != Instance)
+			{
+				Destroy(this.gameObject);
+				throw new OCException("Game was improperly prepared with more than one GameManager");
+			}
+
 			DontDestroyOnLoad(this);
 
 			//Create the child managers!
 			_entityManager = EntityManager.New ();
 			_worldManager = WorldManager.New ();
+			_controlMethods = _ControlMethods.New ();
 
 			//parenting!
 			_entityManager.gameObject.transform.parent = this.gameObject.transform;
 			_worldManager.gameObject.transform.parent = this.gameObject.transform;
+			_controlMethods.gameObject.transform.parent = this.gameObject.transform;
 
 		}
 

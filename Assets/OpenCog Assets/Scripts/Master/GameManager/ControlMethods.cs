@@ -36,6 +36,7 @@ namespace OpenCog.Master
 		public interface ControlMethods
 		{
 			void QuitWithError(int code);
+			void ping();
 		}
 
 		protected class _ControlMethods:OCSingletonMonoBehaviour<_ControlMethods>, ControlMethods
@@ -71,65 +72,39 @@ namespace OpenCog.Master
 			/// Please Log.Error() messages before calling QuitWithError(), which simply determines
 			/// how best to exit the game based on whether or not unit tests are running. 
 			/// </summary>
-			public void QuitWithError(int code = 1)
+			public void QuitWithError(int code)
 			{
 				//do not accidentally update anything while quitting
 				Time.timeScale = 0; 
+											
+				//System.Diagnostics.Process.
+				Debug.Log (OCLogSymbol.FAIL + "Exiting with Error Code " + code);
 
-				//if the application is the editor, we can't REALLY quit with an error code,
-				//but we can print the error code to screen and terminate the game
-				if( Application.isEditor)
-				{
-					//throw the exception
-					throw new OCException(OCLogSymbol.FAIL + "Exiting with Error Code " + code.ToString());
-
-					//quit application
-					//Debug.Break();  <---- unreachable code detected
-				}
-
-				//this should be the unit tests
-				if(UnityEditorInternal.InternalEditorUtility.inBatchMode || SystemInfo.graphicsDeviceID == 0)
-				{
-					//why do I bother with this? Answer: Unity WANTS to close in batch mode
-					//by throwing a new OCException... IT doesn't want us to use kill
-					//but if we're going to send another error code, we might as well try
-					if(code == 1)
-					{
-						//according to the unity documentation, this will close things
-						throw new OCException(OCLogSymbol.FAIL + "Exiting with Error Code 1");
-
-						//return; <--- unreachable code detected; confirmation this should close
-					}
-					else
-					{
-						//System.Diagnostics.Process.
-						Debug.Log (OCLogSymbol.FAIL + "Exiting with Error Code " + code);
-
-						//TODO [UNTESTED]: This code works for some people and not for others.
-						//It's conditions for operation seem to be largely that it needs to be on
-						//the main thread
-						System.Environment.Exit (code);
-
-						//<Uh oh; the compiler does not consider this to be unreachable code!!
-						//we'll leave it in in case Exit fails, so at least we're returning a failure.
-						throw new OCException(OCLogSymbol.FAIL + "System.EnvironmentExit(" + code + ") failed.");  
-					}
-				}
-
-				//this code should be for if we are just running happily in the player!
-
-				//exceptions shouldn't close things
-				throw new OCException(OCLogSymbol.FAIL + "Exiting! (The error Code would be " + code + " on the command line.)");
+				//TODO [UNTESTED]: This code works for some people and not for others.
+				//It's conditions for operation seem to be largely that it needs to be on
+				//the main thread
 
 				#if !UNITY_EDITOR
-				//this is the unity kosher quit. The internet has not guarenteed me its unnecessary.
-				Application.Quit(); //<-- unreachable code detected; confirmation this should close
+				//try to thow this error code to make the batch people happy!
+				System.Environment.Exit (code);
+				#endif
+
+				//Throw this in the editor, and if the System.Environment.Exit(code) failed.
+				throw new OCException(OCLogSymbol.FAIL + "System.EnvironmentExit(" + code + ") failed.");  
+
+				#if !UNITY_EDITOR
+				//if the exception failed to convince everything to quit, well give it one more shot
+				Application.Quit();
 				#endif
 
 			}
 			public void QuitWithSuccess()
 			{
 
+			}
+
+			public void ping()
+			{
 			}
 
 

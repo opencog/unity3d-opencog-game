@@ -435,7 +435,7 @@ namespace OpenCog.Network
 			OCServerListener.Instance.InitFromNetwork(this);
 			_listener = OCServerListener.Instance;
 
-			StartCoroutine(Connect());
+			//StartCoroutine(Connect());
 			
 			//UnityEngine.Debug.Log ("StartCoroutine(_listener.Listen())");
 				
@@ -470,7 +470,7 @@ namespace OpenCog.Network
 					
 				//UnityEngine.Debug.Log ("_connectionState == Disconnected, connecting...");	
 				
-					UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Trying to Connect, current time is " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
+				UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Trying to Connect, current time is " + System.DateTime.Now.ToString ("HH:mm:ss.fff"));
 				
 
 				//NOTE: This InterNetwork flag is probably why our game and embodiment machines must be
@@ -844,11 +844,12 @@ namespace OpenCog.Network
 			{
 				//NOTE: At the time of writing, this means an error has happened on the opencog side. And
 				//we're doomed, so we might as well crash. 
-				UnityEngine.Debug.LogWarning (OCLogSymbol.WARN + "Adding element '" + id + "' to unavailable elements.\n" + UnityEngine.StackTraceUtility.ExtractStackTrace (), this);
+				UnityEngine.Debug.LogWarning (OCLogSymbol.WARN + "Adding element '" + id + "' to unavailable elements.\n");
 				_unavailableElements.Add(id);
 
 				//Handle this by going Kablooey and giving up on life!
-				GameManager.control.QuitWithError(5);
+				//GameManager.control.QuitWithError(5);
+				GameManager.control.ping ();
 			}
 
 			if(_routerID != null)
@@ -876,7 +877,7 @@ namespace OpenCog.Network
 			if(!IsElementAvailable(id))
 			{
 				UnityEngine.Debug.Log (OCLogSymbol.CONNECTION + "Removing element '" + id + "' from unavailable elements.", this);
-				UnityEngine.Debug.Log(UnityEngine.StackTraceUtility.ExtractStackTrace ());
+				//UnityEngine.Debug.Log(UnityEngine.StackTraceUtility.ExtractStackTrace ());
 				_unavailableElements.Remove(id);
 			}
 		}
