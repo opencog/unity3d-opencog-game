@@ -1758,21 +1758,18 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		//UnityEngine.Debug.Log ("OCConnectorSingleton::ParseDOMDocument");
 		// Handles action-plans
 
-		bool wrotePlan = false;
+
+		System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+		XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+
+		document.WriteTo(xmlTextWriter);
 		
-		if(!wrotePlan)
+		if(stringWriter.ToString().IndexOf("oc:emotional-feeling") == -1)
 		{
-			System.IO.StringWriter stringWriter = new System.IO.StringWriter();
-			XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
-	
-			document.WriteTo(xmlTextWriter);
+			UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "The robot has a plan! " + stringWriter.ToString());	
 			
-			if(stringWriter.ToString().IndexOf("oc:emotional-feeling") == -1)
-			{
-				UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "The robot has a plan! " + stringWriter.ToString());	
-				wrotePlan = true;	
-			}
 		}
+
 		
 		XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
 		for(int i = 0; i < list.Count; i++)
