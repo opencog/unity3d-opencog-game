@@ -47,94 +47,41 @@ namespace OpenCog
 [OCExposePropertyFields]
 [Serializable]
     
-#endregion
-public class OCDestroyBlockEffect : OCMonoBehaviour
-{
-
-    //---------------------------------------------------------------------------
-
-    #region Private Member Data
-
-    //---------------------------------------------------------------------------
-    
-
-            
-    //---------------------------------------------------------------------------
-
-    #endregion
-
-    //---------------------------------------------------------------------------
-
-    #region Accessors and Mutators
-
-    //---------------------------------------------------------------------------
-        
-
-            
-    //---------------------------------------------------------------------------
-
-    #endregion
-
-    //---------------------------------------------------------------------------
-
-    #region Public Member Functions
-
-    //---------------------------------------------------------------------------
-
-    public void DestroyBlock(Vector3i? point)
+	#endregion
+	public class OCDestroyBlockEffect : OCMonoBehaviour
 	{
-		if(point.HasValue)
+		//cheese! I did this so OcUnitTests could see if any blocks had been destoryed XD
+		private int blocksDestroyed = 0;
+		public int BlocksDestroyed{get{return blocksDestroyed;}}
+	    
+			//NOTE: this function pulls the weight of actually destroying blocks for us. It is applied to the OCActions of a character; not to blocks themselves. 
+	    public void DestroyBlock(Vector3i? point)
 		{
-			OCMap map = OCMap.Instance;//(OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
-			
-			OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
-					
-			OCBlock blockType = map.GetBlock(point.Value).block;
-
-			map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
-			
-			foreach(OCGoalController goalController in goalControllers)
+			if(point.HasValue)
 			{
-				if(goalController.GoalBlockType == blockType)
+				OCMap map = OCMap.Instance;//(OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
+				
+				OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+						
+				OCBlock blockType = map.GetBlock(point.Value).block;
+
+				//actually sets the block to null and recomputes the chunk. 
+				map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
+				
+				foreach(OCGoalController goalController in goalControllers)
 				{
-					goalController.FindGoalBlockPositionInChunks(map.GetChunks());
+					if(goalController.GoalBlockType == blockType)
+					{
+						goalController.FindGoalBlockPositionInChunks(map.GetChunks());
+					}
 				}
+
+				blocksDestroyed++;
 			}
-			
 		}
-	}
 
-    //---------------------------------------------------------------------------
-
-    #endregion
-
-    //---------------------------------------------------------------------------
-
-    #region Private Member Functions
-
-    //---------------------------------------------------------------------------
-    
-    
-            
-    //---------------------------------------------------------------------------
-
-    #endregion
-
-    //---------------------------------------------------------------------------
-
-    #region Other Members
-
-    //---------------------------------------------------------------------------        
-
-    
-
-    //---------------------------------------------------------------------------
-
-    #endregion
-
-    //---------------------------------------------------------------------------
-
-}// class OCDestroyBlockEffect
+	    
+	}// class OCDestroyBlockEffect
 
 }// namespace OpenCog
 

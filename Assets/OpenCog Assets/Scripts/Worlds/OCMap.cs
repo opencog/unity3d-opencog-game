@@ -296,8 +296,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		OpenCog.Map.Lighting.OCLightComputer.RecomputeLightAtPosition(this, pos);
 		
 		UpdateMeshColliderAfterBlockChange();
-// TODO [BLOCKED]: uncomment when aspect stuff is in place?
-//		asp.OnExit(null);
+		// TODO [BLOCKED]: uncomment when aspect stuff is in place?
+		//		asp.OnExit(null);
 			
 		OpenCog.Embodiment.OCPerceptionCollector perceptionCollector = OpenCog.Embodiment.OCPerceptionCollector.Instance;
 		
@@ -329,11 +329,13 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			{
 				GameObject.DestroyImmediate(hearth);
 			}
-				
-			if(perceptionCollector != null)
+			
+
+			//TODO [UNTESTED]: Make sure this doesn't break anything. We should not be calling this here; we call it once per update loop anyway
+			/*if(perceptionCollector != null)
 			{
 				perceptionCollector.PerceiveWorld();
-			}
+			}*/
 			
 		} else
 		{

@@ -133,7 +133,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	#endregion
 	#region                                  Dispatch Flags For Listeners
 
-	private const int dispatchNum = 10;
+	private const int dispatchNum = 11;
 	private long[] dispatchTimes = new long[dispatchNum];
 	public long[] DispatchTimes {get {return dispatchTimes;}}
 	public void DispatchTimesClear(int which){if(which >=0 && which < dispatchNum)dispatchTimes[which] = 0;}
@@ -141,7 +141,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	//This list is not exhaustive. Feel free to add onto it as/if additional functionality is needed
 	///<summary>A list of types of messages we may have dispatched to the Opencog side, whose firing times are stored in dispatchTimes/DispatchTimes</summary>
-	public enum DispatchTypes:int //10
+	public enum DispatchTypes:int //11
 	{
 		terrain,
 		mapInfo,

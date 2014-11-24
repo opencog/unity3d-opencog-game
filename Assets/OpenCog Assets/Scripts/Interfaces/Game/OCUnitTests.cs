@@ -507,43 +507,59 @@ namespace OpenCog.Interfaces.Game
 			// STEP TWO!
 			// IS ANYTHING HAPPENING!?
 			// -------------------
+			//we won't bother implementing this just yet
 
-			/*
-			//otherwise keep going!
-			end = end.AddMinutes((double)0.125);
+			//keep going!
+			/*end = end.AddMinutes((double)0.125);
 
-
-			//we need to see if the robot is doing anything at all
-			while(System.DateTime.Now.CompareTo(end) < 0 && checkPlanMade == 0)
-			{
-				//ask it if it makes the plan
-				checkPlanMade = OCConnectorSingleton.Instance.ReceptTimes
-					[(int)OCConnectorSingleton.ReceptTypes.robotHasPlan];
-				yield return 0;
-			}
-
-			yield return 0;
 			*/
 
+			// -------------------
+			// STEP FOUR!
+			// WAS THE BATTERY EATEN?
+			// -------------------
+
+			//We are going to have to get EVERY DAMN OCDestroyBlockEffect there is @.@!
+			//No! Wait! When a block is changed, we should end up sending MapInfo right?
+			//Oh no nevermind, that'll also happen when we're building blocks...
+			OCDestroyBlockEffect[] destructors = UnityEngine.Object.FindObjectsOfType(typeof(OCDestroyBlockEffect)) as OCDestroyBlockEffect[];
+
+			//we want to see if any blocks get destroyed in the meanwhile; so we'll do it by counting up how many destroyed they already have
+			int startDestroyedBlocks = 0;
+			int endDestroyedBlocks = 0;
+			foreach(OCDestroyBlockEffect d in destructors)
+			{
+				startDestroyedBlocks += d.BlocksDestroyed;
+			}
 
 			//otherwise keep going!
 			end = end.AddMinutes((double)planMinutesToSucceed);
-
-			/*
-
-
 			
-			//we need to see if the robot is doing anything at all
-			while(System.DateTime.Now.CompareTo(end) < 0 && checkPlanMade == 0)
+			//we need to poll what OCConnectorSingleton knows about recieved messages 
+			while(System.DateTime.Now.CompareTo(end) < 0)
 			{
-				//ask it if it makes the plan
-				checkPlanMade = OCConnectorSingleton.Instance.ReceptTimes
-					[(int)OCConnectorSingleton.ReceptTypes.robotHasPlan];
+				//first, enumerate all the destroyed blocks
+				foreach(OCDestroyBlockEffect d in destructors)
+				{
+					endDestroyedBlocks += d.BlocksDestroyed;
+				}
+
+				if(startDestroyedBlocks < endDestroyedBlocks)
+					break;
+
+				//iterate once per frame.
 				yield return 0;
 			}
-			
-			yield return 0;
-			*/
+
+			if(startDestroyedBlocks >= endDestroyedBlocks)
+			{
+				Debug.Log(OCLogSymbol.FAIL + "Testing the Plan, Failed");
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Timed out while waiting for blocks to be destroyed.");
+				results[(int)TestTypes.PLAN] = false;
+				result = false;	
+				
+				yield break;
+			}
 
 			// -------------------
 			// STEP FOUR!
@@ -567,7 +583,8 @@ namespace OpenCog.Interfaces.Game
 					[(int)OCConnectorSingleton.DispatchTypes.actionPlanFailed];
 
 				//handle JUST in case something strange happens and Failed is marked right before or right after
-				//succeeded on the same update cycle
+				//succeeded on the same update cycle (Could totally happen if there was a second plan to eat the same exact battery that failed
+				//rapidly in between us originally eating the battery and succeeding and then starting up the second plan. 
 				if(checkPlanSucceeded > 0 && checkPlanSucceeded > checkPlanFailed)
 					break;
 

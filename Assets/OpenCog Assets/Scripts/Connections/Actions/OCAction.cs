@@ -1162,6 +1162,7 @@ public class OCAction : OCMonoBehaviour
 			
 			//NOTE: This actually destroys blocks like the battery
 			dbfx.DestroyBlock(targetPosition);
+
 			
 			if(args.EndTarget) args.EndTarget.transform.position = Vector3.zero;
 			if(args.StartTarget) args.StartTarget.transform.position = Vector3.zero;

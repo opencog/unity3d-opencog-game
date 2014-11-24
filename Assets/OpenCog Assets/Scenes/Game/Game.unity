@@ -11591,6 +11591,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _actionController: {fileID: 0}
   dispatchFlags: 00000000000000000000
+  receptFlags: 00
 --- !u!4 &1683074306
 Transform:
   m_ObjectHideFlags: 0
@@ -12775,6 +12776,7 @@ MonoBehaviour:
   batteryPosition: {x: -132, y: 147, z: -3}
   batteryDirection: {x: 1, y: 0, z: 0}
   batteryBlockOnHUD: {x: 5, y: 3}
+  planMinutesToSucceed: 1
 --- !u!114 &1913997069
 MonoBehaviour:
   m_ObjectHideFlags: 0
