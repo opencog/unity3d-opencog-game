@@ -12776,7 +12776,7 @@ MonoBehaviour:
   batteryPosition: {x: -132, y: 147, z: -3}
   batteryDirection: {x: 1, y: 0, z: 0}
   batteryBlockOnHUD: {x: 5, y: 3}
-  planMinutesToSucceed: 1
+  planMinutesToSucceed: .25
 --- !u!114 &1913997069
 MonoBehaviour:
   m_ObjectHideFlags: 0

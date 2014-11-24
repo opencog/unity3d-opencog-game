@@ -185,6 +185,9 @@ namespace OpenCog.Interfaces.Game
 		//FOR THE SECOND PLANNING TEST
 		//<none>
 
+
+		public bool exitOnComplete = true;
+
 		//TEST THE INITIALIZATION OF THESE VARIABLES
 		public bool TestInitialization()
 		{
@@ -249,12 +252,17 @@ namespace OpenCog.Interfaces.Game
 		protected void SolicitTestData()
 		{
 
+		
 			//ask whether the battery data has been sent (as part of a MapInfo) after the finishTerrain message
 			OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.finishTerrain] = true;
 			OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.mapInfo] = true;
 
-			//ask about the plan
+			//ask about the plan - did we get it?
 			OCConnectorSingleton.Instance.receptFlags[(int)OCConnectorSingleton.ReceptTypes.robotHasPlan] = true;
+
+			//ask if the plan has succeeded
+			OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.actionPlanFailed] = true;
+			OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.actionPlanSucceeded] = true;
 		}
 		
 
@@ -336,10 +344,14 @@ namespace OpenCog.Interfaces.Game
 			if(!result)
 			{
 				Debug.Log(OCLogSymbol.FAIL + "One or more of the Unit Tests Failed.");
+				GameManager.control.QuitWithError(1);
 			}
 			else
 			{
 				Debug.Log(OCLogSymbol.PASS + "The " + numTests + " selected Unit Tests all Passed.");
+
+				if(exitOnComplete)
+					GameManager.control.QuitWithSuccess();
 			}
 
 			this.hasConcluded = true;
@@ -504,6 +516,8 @@ namespace OpenCog.Interfaces.Game
 				yield break;
 			}
 
+			Debug.Log(OCLogSymbol.CLEARED + "Testing the Plan Part 1: The Plan is detected.");
+
 			// -------------------
 			// STEP TWO!
 			// IS ANYTHING HAPPENING!?
@@ -516,7 +530,7 @@ namespace OpenCog.Interfaces.Game
 			*/
 
 			// -------------------
-			// STEP FOUR!
+			// STEP THREE!
 			// WAS THE BATTERY EATEN?
 			// -------------------
 
@@ -561,6 +575,8 @@ namespace OpenCog.Interfaces.Game
 				
 				yield break;
 			}
+
+			Debug.Log(OCLogSymbol.CLEARED + "Testing the Plan Part 3 (2 is not yet implemented): The Battery was eaten!");
 
 			// -------------------
 			// STEP FOUR!
@@ -615,12 +631,14 @@ namespace OpenCog.Interfaces.Game
 			}
 					
 			//we got through the test!
-			Debug.Log(OCLogSymbol.PASS + "Testing the Battery, Succeeded");
+			Debug.Log(OCLogSymbol.CLEARED + "Testing the Plan Part 3: The Plan is marked completed!");
+			Debug.Log(OCLogSymbol.PASS + "Testing the Plan, Succeeded");
 
 		}
 
 		protected IEnumerator TestSecondPlan()
 		{
+			Debug.LogWarning(OCLogSymbol.PASS + "Second Plan Test not Implemented; It is understood the Planner cannot cope with block removal at this time.");
 			yield return 0;
 		}
 

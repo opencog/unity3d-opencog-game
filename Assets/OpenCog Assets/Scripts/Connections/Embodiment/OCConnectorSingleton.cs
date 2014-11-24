@@ -57,7 +57,7 @@ using OpenCog.Utilities.Logging;
 [@Serializable]
 	
 #endregion
-public sealed class OCConnectorSingleton : OCNetworkElement
+public sealed class OCConnectorSingleton  :OCNetworkElement
 {
 	//---------------------------------------------------------------------------
 
@@ -133,7 +133,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	#endregion
 	#region                                  Dispatch Flags For Listeners
 
-	private const int dispatchNum = 11;
+	private const int dispatchNum = 12;
+
 	private long[] dispatchTimes = new long[dispatchNum];
 	public long[] DispatchTimes {get {return dispatchTimes;}}
 	public void DispatchTimesClear(int which){if(which >=0 && which < dispatchNum)dispatchTimes[which] = 0;}
@@ -341,7 +342,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	override protected void Initialize()
 	{
-
+		dispatchFlags = new bool[dispatchNum];
 	}
 
 
@@ -1794,7 +1795,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		}
 		else
 		{
-			UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "The robot formed a strange plan. Attempting to interprit it... " + stringWriter.ToString());	
+			//Debug.LogWarning(OCLogSymbol.WARN + "The robot formed a strange plan. Attempting to interprit it... " + stringWriter.ToString());	
 		}
 
 		

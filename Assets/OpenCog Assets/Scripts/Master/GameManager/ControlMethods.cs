@@ -36,6 +36,7 @@ namespace OpenCog.Master
 		public interface ControlMethods
 		{
 			void QuitWithError(int code);
+			void QuitWithSuccess();
 			void ping();
 		}
 
@@ -84,10 +85,10 @@ namespace OpenCog.Master
 				//It's conditions for operation seem to be largely that it needs to be on
 				//the main thread
 
-				#if !UNITY_EDITOR
+
 				//try to thow this error code to make the batch people happy!
 				System.Environment.Exit (code);
-				#endif
+
 
 				//NOTE: Someone should look at this later XD
 				//Throw this in the editor, and if the System.Environment.Exit(code) failed.
@@ -104,6 +105,19 @@ namespace OpenCog.Master
 			}
 			public void QuitWithSuccess()
 			{
+				//System.Diagnostics.Process.
+				Debug.Log(OCLogSymbol.CLEARED + "Exiting Successfully.");
+
+				#if !UNITY_EDITOR
+				//try to thow this successful code to make the batch people happy!
+				System.Environment.Exit (0);
+				#endif
+
+				Application.Quit();
+
+				#if UNITY_EDITOR
+				UnityEditor.EditorApplication.isPlaying = false;
+				#endif
 
 			}
 
