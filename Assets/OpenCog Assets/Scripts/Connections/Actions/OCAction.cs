@@ -1158,12 +1158,13 @@ public class OCAction : OCMonoBehaviour
 //			dbfx.DestroyBlock(forwardUp2x);
 				
 			Vector3i targetPosition = VectorUtil.Vector3ToVector3i(args.EndTarget.transform.position);
-					OCBlockData targetBlock = _Map.GetBlock(targetPosition);
-
-					dbfx.DestroyBlock(targetPosition);
-					
-					if(args.EndTarget) args.EndTarget.transform.position = Vector3.zero;
-					if(args.StartTarget) args.StartTarget.transform.position = Vector3.zero;
+			OCBlockData targetBlock = _Map.GetBlock(targetPosition);
+			
+			//NOTE: This actually destroys blocks like the battery
+			dbfx.DestroyBlock(targetPosition);
+			
+			if(args.EndTarget) args.EndTarget.transform.position = Vector3.zero;
+			if(args.StartTarget) args.StartTarget.transform.position = Vector3.zero;
 					
 			// This is just some example code for you Lake, that you can use to give energy to the robot after consuming a battery.
 			//if((forwardBlock.block != null && forwardBlock.block.GetName() == "Battery") || (forwardUpBlock.block != null && forwardUpBlock.block.GetName() == "Battery") || (forwardUp2xBlock.block != null && forwardUp2xBlock.block.GetName() == "Battery"))

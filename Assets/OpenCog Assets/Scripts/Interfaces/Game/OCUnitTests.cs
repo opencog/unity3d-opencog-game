@@ -57,7 +57,7 @@ namespace OpenCog.Interfaces.Game
 
 
 
-		public class OCUnitTests : OpenCog.OCSingletonMonoBehaviour<OCUnitTests>
+	public class OCUnitTests : OpenCog.OCSingletonMonoBehaviour<OCUnitTests>
 	{
 
 
@@ -180,7 +180,7 @@ namespace OpenCog.Interfaces.Game
 		private OCBlock batteryBlock;
 
 		//FOR THE PLANNING TEST
-		//<none>
+		public float planMinutesToSucceed = 1.0f;
 
 		//FOR THE SECOND PLANNING TEST
 		//<none>
@@ -481,7 +481,7 @@ namespace OpenCog.Interfaces.Game
 			// STEP ONE!
 			// CHECK IF THE PLAN IS MADE
 			// -------------------
-			long checkPlanMade;
+			long checkPlanMade = 0;
 			
 			//we need to poll what OCConnectorSingleton knows about recieved messages 
 			while(System.DateTime.Now.CompareTo(end) < 0 && checkPlanMade == 0)
@@ -512,8 +512,6 @@ namespace OpenCog.Interfaces.Game
 			//otherwise keep going!
 			end = end.AddMinutes((double)0.125);
 
-			if(dispatchFlags[(int)DispatchTypes.actionPlanStatus])
-				dispatchTimes[(int)DispatchTypes.actionPlanStatus] = System.DateTime.Now.Ticks;
 
 			//we need to see if the robot is doing anything at all
 			while(System.DateTime.Now.CompareTo(end) < 0 && checkPlanMade == 0)
@@ -527,15 +525,13 @@ namespace OpenCog.Interfaces.Game
 			yield return 0;
 			*/
 
-			/*
 
 			//otherwise keep going!
-			end = end.AddMinutes((double)0.125);
-			
-			
-			
-			if(dispatchFlags[(int)DispatchTypes.actionPlanStatus])
-				dispatchTimes[(int)DispatchTypes.actionPlanStatus] = System.DateTime.Now.Ticks;
+			end = end.AddMinutes((double)planMinutesToSucceed);
+
+			/*
+
+
 			
 			//we need to see if the robot is doing anything at all
 			while(System.DateTime.Now.CompareTo(end) < 0 && checkPlanMade == 0)
@@ -547,9 +543,63 @@ namespace OpenCog.Interfaces.Game
 			}
 			
 			yield return 0;
+			*/
+
+			// -------------------
+			// STEP FOUR!
+			// IS THE PLAN MARKED FINISHED?
+			// -------------------
 
 
-}
+			long checkPlanSucceeded = 0;
+			long checkPlanFailed = 0;
+
+			//otherwise keep going!
+			end = end.AddMinutes((double)0.125);
+			
+			//we need to see if the robot is doing anything at all
+			while(System.DateTime.Now.CompareTo(end) < 0)
+			{
+				//ask it if it makes the plan
+				checkPlanSucceeded = OCConnectorSingleton.Instance.DispatchTimes
+					[(int)OCConnectorSingleton.DispatchTypes.actionPlanSucceeded];
+				checkPlanFailed = OCConnectorSingleton.Instance.DispatchTimes
+					[(int)OCConnectorSingleton.DispatchTypes.actionPlanFailed];
+
+				//handle JUST in case something strange happens and Failed is marked right before or right after
+				//succeeded on the same update cycle
+				if(checkPlanSucceeded > 0 && checkPlanSucceeded > checkPlanFailed)
+					break;
+
+				//check if the plan failed.
+				if(checkPlanFailed > 0)
+				{
+					Debug.Log(OCLogSymbol.FAIL + "Testing the Plan, Failed");
+					System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "The plan reported failure to complete.");
+					results[(int)TestTypes.PLAN] = false;
+					result = false;	
+					
+					yield break;
+				}
+
+				yield return 0;
+			}
+	
+			//make sure we didn't time out
+			if(checkPlanSucceeded == 0)
+			{
+				Debug.Log(OCLogSymbol.FAIL + "Testing the Plan, Failed");
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Timed out while waiting for the plan to succeed after "+ planMinutesToSucceed+" minutes.");
+				results[(int)TestTypes.PLAN] = false;
+				result = false;	
+				
+				yield break;
+			}
+					
+			//we got through the test!
+			Debug.Log(OCLogSymbol.PASS + "Testing the Battery, Succeeded");
+
+		}
 
 		protected IEnumerator TestSecondPlan()
 		{

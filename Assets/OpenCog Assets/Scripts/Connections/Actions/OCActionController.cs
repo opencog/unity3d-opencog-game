@@ -862,11 +862,13 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				{
 					_ActionPlanQueue.AddFirst(_step);
 					_step.Retry += 1;
-				} else if(_PlanSucceeded == false && OCActionPlanStep.MaxRetries <= _step.Retry)
+				} 
+				else if(_PlanSucceeded == false && OCActionPlanStep.MaxRetries <= _step.Retry)
 				{
 					_ActionPlanQueue.Clear();
 					_step = null;
-				} else if(_step.Arguments.EndTarget)
+				} 
+				else if(_step.Arguments.EndTarget)
 				{
 					OCFadeOutGameObject fadeOut = _step.Arguments.EndTarget.GetComponent<OCFadeOutGameObject>();
 					
@@ -907,7 +909,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 					if(_LastPlanID != _step.Arguments.ActionPlanID)
 					{
-						Debug.LogError("We've changed plans without reporting back to OpenCog!");
+						Debug.LogError(OCLogSymbol.ERROR + "We've changed plans without reporting back to OpenCog!");
 					}
 				} else
 				{	

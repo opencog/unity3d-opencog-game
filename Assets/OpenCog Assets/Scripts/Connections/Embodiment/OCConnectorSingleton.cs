@@ -151,7 +151,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		speechContent,
 		avatarSignalsAndTick,
 		actionStatus,
-		actionPlanStatus,
+		actionPlanSucceeded,
+		actionPlanFailed,
 		finishTerrain
 	};
 	#endregion
@@ -170,9 +171,6 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		robotHasPlan
 		
 	};
-
-
-
 
 	#endregion
 
@@ -1791,7 +1789,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			//set the flag, if it is requested. 
 			if(this.receptFlags[(int)ReceptTypes.robotHasPlan])
 			{
-				this.receptTimes[(int)ReceptTypes.robotHasPlan] = System.DateTime.Now;
+				this.receptTimes[(int)ReceptTypes.robotHasPlan] = System.DateTime.Now.Ticks;
 			}
 		}
 		else
@@ -2086,7 +2084,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 						} else
 						{
 							// That's silly..we can only eat / grab batteries!
-							UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "Received a grab or eat command, but couldn't find the battery in Unity!");
+							UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Received a grab or eat command, but couldn't find the battery in Unity!");
 						}
 						
 							
@@ -2422,9 +2420,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			_messagesToSend.Add(message);
 		}
 
-		//set a time so we can record it laterz!
-		if(dispatchFlags[(int)DispatchTypes.actionPlanStatus])
-			dispatchTimes[(int)DispatchTypes.actionPlanStatus] = System.DateTime.Now.Ticks;
+		//set a time so we can record it laterz! (success and fialed are seperate XD)
+		if(success && dispatchFlags[(int)DispatchTypes.actionPlanSucceeded])
+			dispatchTimes[(int)DispatchTypes.actionPlanSucceeded] = System.DateTime.Now.Ticks;
+		if(!success && dispatchFlags[(int)DispatchTypes.actionPlanFailed])
+			dispatchTimes[(int)DispatchTypes.actionPlanFailed] = System.DateTime.Now.Ticks;
+
 		
 		UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "Queued message to report '" + ((success ? "done (success)" : "error") + "' on actionPlan " + planId));
 	}
