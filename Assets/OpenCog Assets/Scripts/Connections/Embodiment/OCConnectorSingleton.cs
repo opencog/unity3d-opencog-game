@@ -136,12 +136,11 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 	private const int dispatchNum = 10;
 	private long[] dispatchTimes = new long[dispatchNum];
 	public long[] DispatchTimes {get {return dispatchTimes;}}
-
 	public void DispatchTimesClear(int which){if(which >=0 && which < dispatchNum)dispatchTimes[which] = 0;}
-
-
 	public bool[] dispatchFlags = new bool[dispatchNum];
 
+	//This list is not exhaustive. Feel free to add onto it as/if additional functionality is needed
+	///<summary>A list of types of messages we may have dispatched to the Opencog side, whose firing times are stored in dispatchTimes/DispatchTimes</summary>
 	public enum DispatchTypes:int //10
 	{
 		terrain,
@@ -155,6 +154,25 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		actionPlanStatus,
 		finishTerrain
 	};
+	#endregion
+	#region                                  Reception Flags For Listeners
+
+	private const int receptNum = 1;
+	private long[] receptTimes = new long[receptNum];
+	public long[] ReceptTimes {get {return receptTimes;}}
+	public void ReceptTimesClear(int which){if(which >=0 && which < receptNum)receptTimes[which] = 0;}	
+	public bool[] receptFlags = new bool[receptNum];
+
+	//This list is not exhaustive. Feel free to add onto it as/if additional functionality is needed
+	///<summary>A list of types of messages we may have recieved, whose firing times are stored in receptTimes/ReceptTimes</summary>
+	public enum ReceptTypes:int //10
+	{
+		plan
+		
+	};
+
+
+
 
 	#endregion
 
@@ -276,7 +294,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		if(System.DateTime.Now.Subtract(_lastUpdate).TotalMilliseconds > 1000)
 		{
 			base.Update();	
-			
+
+			//this will only ever happen once. 
 			if(_isInitialized && _actionStatusesUpdated == false)
 			{
 				UpdateActionStatuses();
@@ -669,8 +688,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		{
 			// e.g. we can append the information in the console.
 			Debug.LogError("Feedback " + message.ToString());
-		} else
-		if(message.ToString().StartsWith(SUCCESS_LOAD))
+		} 
+		else if(message.ToString().StartsWith(SUCCESS_LOAD))
 		{
 			// Format: SUCCESS LOAD NetworkElement_id avatar_id
 			char[] separator = { ' ' };
@@ -679,8 +698,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			string neId = tokens[2];
 			Debug.Log(OCLogSymbol.CLEARED + "Successfully loaded '" + neId + "'.");
 			_isInitialized = true;//_isLoaded = true;
-		} else
-		if(message.ToString().StartsWith(SUCCESS_UNLOAD))
+		} 
+		else if(message.ToString().StartsWith(SUCCESS_UNLOAD))
 		{
 			char[] separator = {' '};
 			string[] tokens = message.ToString().Split(separator, System.StringSplitOptions.RemoveEmptyEntries);
@@ -689,7 +708,8 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 			string neId = tokens[2];
 			UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "!!! Successfully unloaded '" + neId + "'.");
 			_isInitialized = false;//_isLoaded = false;
-		} else
+		} 
+		else
 		{
 //			UnityEngine.Debug.Log ("Processing an interesting message type!");
 			// Get the plain text of this message(in XML format) and parse it.
@@ -1767,7 +1787,10 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		if(stringWriter.ToString().IndexOf("oc:emotional-feeling") == -1)
 		{
 			UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "The robot has a plan! " + stringWriter.ToString());	
-			
+		}
+		else
+		{
+			UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "The robot formed a strange plan. Attempting to interprit it... " + stringWriter.ToString());	
 		}
 
 		
