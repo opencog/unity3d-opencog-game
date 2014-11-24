@@ -248,6 +248,7 @@ namespace OpenCog.Interfaces.Game
 		//TO MAKE SURE CERTAIN CLASSES ARE THROWING DATA WE'LL BE SNIFFING FOR
 		protected void SolicitTestData()
 		{
+
 			//ask whether the battery data has been sent (as part of a MapInfo) after the finishTerrain message
 			OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.finishTerrain] = true;
 			OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.mapInfo] = true;
