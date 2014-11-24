@@ -248,8 +248,12 @@ namespace OpenCog.Interfaces.Game
 		//TO MAKE SURE CERTAIN CLASSES ARE THROWING DATA WE'LL BE SNIFFING FOR
 		protected void SolicitTestData()
 		{
+			//ask whether the battery data has been sent (as part of a MapInfo) after the finishTerrain message
 			OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.finishTerrain] = true;
 			OCConnectorSingleton.Instance.dispatchFlags[(int)OCConnectorSingleton.DispatchTypes.mapInfo] = true;
+
+			//ask about the plan
+			OCConnectorSingleton.Instance.receptFlags[(int)OCConnectorSingleton.ReceptTypes.robotHasPlan] = true;
 		}
 		
 
@@ -464,8 +468,88 @@ namespace OpenCog.Interfaces.Game
 
 		protected IEnumerator TestPlan()
 		{
+			//We need to test these things:
+			//1) that the plan was made <---- most important
+			//2) that the plan was carried out at all (the robot performed some action)
+			//3) that the battery was eaten 
+			//4) that the plan was finished <---- most important
+
+			//determine when to time out
+			DateTime end = System.DateTime.Now.AddMinutes((double)0.50);
+
+			// -------------------
+			// STEP ONE!
+			// CHECK IF THE PLAN IS MADE
+			// -------------------
+			long checkPlanMade;
+			
+			//we need to poll what OCConnectorSingleton knows about recieved messages 
+			while(System.DateTime.Now.CompareTo(end) < 0 && checkPlanMade == 0)
+			{
+				//ask it if it makes the plan
+				checkPlanMade = OCConnectorSingleton.Instance.ReceptTimes
+					[(int)OCConnectorSingleton.ReceptTypes.robotHasPlan];
+				yield return 0;
+			}
+
+			//see if we timed out
+			if(checkPlanMade == 0)
+			{
+				Debug.Log(OCLogSymbol.FAIL + "Testing the Plan, Failed");
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Timed out while waiting for the plan to be sent from the OAC.");
+				results[(int)TestTypes.PLAN] = false;
+				result = false;	
+
+				yield break;
+			}
+
+			// -------------------
+			// STEP TWO!
+			// IS ANYTHING HAPPENING!?
+			// -------------------
+
+			/*
+			//otherwise keep going!
+			end = end.AddMinutes((double)0.125);
+
+			if(dispatchFlags[(int)DispatchTypes.actionPlanStatus])
+				dispatchTimes[(int)DispatchTypes.actionPlanStatus] = System.DateTime.Now.Ticks;
+
+			//we need to see if the robot is doing anything at all
+			while(System.DateTime.Now.CompareTo(end) < 0 && checkPlanMade == 0)
+			{
+				//ask it if it makes the plan
+				checkPlanMade = OCConnectorSingleton.Instance.ReceptTimes
+					[(int)OCConnectorSingleton.ReceptTypes.robotHasPlan];
+				yield return 0;
+			}
+
 			yield return 0;
-		}
+			*/
+
+			/*
+
+			//otherwise keep going!
+			end = end.AddMinutes((double)0.125);
+			
+			
+			
+			if(dispatchFlags[(int)DispatchTypes.actionPlanStatus])
+				dispatchTimes[(int)DispatchTypes.actionPlanStatus] = System.DateTime.Now.Ticks;
+			
+			//we need to see if the robot is doing anything at all
+			while(System.DateTime.Now.CompareTo(end) < 0 && checkPlanMade == 0)
+			{
+				//ask it if it makes the plan
+				checkPlanMade = OCConnectorSingleton.Instance.ReceptTimes
+					[(int)OCConnectorSingleton.ReceptTypes.robotHasPlan];
+				yield return 0;
+			}
+			
+			yield return 0;
+
+
+}
 
 		protected IEnumerator TestSecondPlan()
 		{

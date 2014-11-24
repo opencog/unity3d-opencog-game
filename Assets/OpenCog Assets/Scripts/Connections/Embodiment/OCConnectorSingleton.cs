@@ -165,9 +165,9 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 
 	//This list is not exhaustive. Feel free to add onto it as/if additional functionality is needed
 	///<summary>A list of types of messages we may have recieved, whose firing times are stored in receptTimes/ReceptTimes</summary>
-	public enum ReceptTypes:int //10
+	public enum ReceptTypes:int //1
 	{
-		plan
+		robotHasPlan
 		
 	};
 
@@ -1787,6 +1787,12 @@ public sealed class OCConnectorSingleton : OCNetworkElement
 		if(stringWriter.ToString().IndexOf("oc:emotional-feeling") == -1)
 		{
 			UnityEngine.Debug.Log(OCLogSymbol.CLEARED + "The robot has a plan! " + stringWriter.ToString());	
+
+			//set the flag, if it is requested. 
+			if(this.receptFlags[(int)ReceptTypes.robotHasPlan])
+			{
+				this.receptTimes[(int)ReceptTypes.robotHasPlan] = System.DateTime.Now;
+			}
 		}
 		else
 		{
@@ -2388,7 +2394,7 @@ public sealed class OCConnectorSingleton : OCNetworkElement
    * @param planId plan id
    * @param success action result
    */
-	public void SendActionPlanStatus(string planId, bool success)
+	public void SendActionPlanStatus(string planId, bool success/*, long timeCompleted*/)
 	{
 		string timestamp = GetCurrentTimestamp();
 		XmlDocument doc = new XmlDocument();

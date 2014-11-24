@@ -130,8 +130,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		_ActionPlanList;
 			
 	private LinkedList< OCActionPlanStep > _ActionPlanQueue;
-			
+
+	//private long _LastPlanEndedAtTime;
+	//public long LastPlanEndedAtTime{get{return _LastPlanEndedAtTime;}}
 	private bool _PlanSucceeded = true;
+	public bool PlanSucceeded{get{return _PlanSucceeded;}}
 			
 	private string _LastPlanID = null;
 
@@ -751,6 +754,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		} else if(_step == null && _ActionPlanQueue.Count == 0)
 		{
 			_PlanSucceeded = true;
+			//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
+
 			OCActionPlanStep step = OCScriptableObject.CreateInstance<OCActionPlanStep>();
 			step.Behaviour = _TreeTypeDictionary[_TreeType];
 			step.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
@@ -781,6 +786,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					if(_step.Arguments.EndTarget.transform.position != Vector3.zero)
 					{
 						_PlanSucceeded &= result == BehaveResult.Success;
+						//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
 					}
 							
 					//Vector3 startPosition = _step.Arguments.StartTarget.transform.position;
@@ -809,16 +815,19 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						{
 							_PlanSucceeded = false;
 						}
+						//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
 					}
 							
 					if(_step.Behaviour.Name == "Character.Destroy" || _step.Arguments.ActionName == "eat")
 					{
 						_PlanSucceeded = (endPosition == Vector3.zero || _step.Arguments.EndTarget == null);
+						//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
 					}
 
 					if(_step.Arguments.ActionName == "grab")
 					{
 						_PlanSucceeded = OCAction.IsEndTargetCloseForward(null, _step.Arguments);
+						//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
 					}
 							
 //					if(_step.Arguments.ActionName == "grab")
@@ -876,7 +885,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //						if(result == BehaveResult.Failure)
 //							OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);			
 								
-						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded);
+						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded /*, _LastPlanEndedAtTime*/);
 
 						if(_step != null && _step.Arguments.EndTarget != null)
 						{
