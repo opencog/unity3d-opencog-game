@@ -3,7 +3,7 @@
 * Purpose: Top level housing for all OpenCog scripts. Should not internally house exterior libraries. 
 
 * Structure:
-    * Connections: Having to do with networking and opencog elements, such as the planner
+    * Connections: Having to do with networking and Opencog elements, such as the planner
 	* Entities: Display and control in-game characters and the invisible player avatar.
 	* Gameplay: Underpopulated folder that can contain narrative, scripting, and non-open-cog-specific gameplay. 
 	* Interfaces: Editor and GUI interfaces both for extending the functionality of Unity and providing HUDs and UIs in game. 
