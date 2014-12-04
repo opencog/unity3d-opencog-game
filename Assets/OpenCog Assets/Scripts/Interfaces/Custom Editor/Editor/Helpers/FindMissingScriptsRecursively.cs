@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
 public class FindMissingScriptsRecursively : EditorWindow 
 {
@@ -58,3 +60,5 @@ public class FindMissingScriptsRecursively : EditorWindow
 		}
 	}
 }
+
+#endif

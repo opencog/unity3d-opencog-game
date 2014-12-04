@@ -1,8 +1,14 @@
+
+#if UNITY_EDITOR
 using UnityEditor;
+using OpenCog.EditorExtensions;
+
+
+
 using UnityEngine;
 using System.Collections;
 using OpenCog;
-using OpenCog.EditorExtensions;
+
 using OpenCog.Extensions;
 
 [ExecuteInEditMode]
@@ -10,5 +16,8 @@ using OpenCog.Extensions;
 public class OCAnimationEffectEditor : OCEditor<OCAnimationEffect>
 {
 }
+#endif
+
+
 
 

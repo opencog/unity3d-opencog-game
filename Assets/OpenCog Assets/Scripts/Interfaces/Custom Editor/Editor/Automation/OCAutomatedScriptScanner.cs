@@ -1,4 +1,6 @@
 
+#if UNITY_EDITOR
+
 /// Unity3D OpenCog World Embodiment Program
 /// Copyright (C) 2013  Novamente
 ///
@@ -212,5 +214,6 @@ public class OCAutomatedScriptScanner : MonoBehaviour
 
 }// namespace OpenCog
 
+#endif
 
 

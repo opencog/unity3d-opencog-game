@@ -96,6 +96,7 @@ namespace OpenCog.Interfaces.Game
 
 		//the number of types
 		public const uint numTests = 4;
+		protected int selectedTests = 0;
 
 		//the enumerated type which represents all the tests
 		protected enum TestTypes: int
@@ -143,10 +144,14 @@ namespace OpenCog.Interfaces.Game
 			//get the configuration as this handy-dandy variable
 			OCConfig config = OCConfig.Instance;
 
+			selectedTests = 0;
+
 			//iterate through all the configurations and read them in!
 			for(uint i = 0; i < numTests; i++)
 			{
 				configurations[i] = config.getBool(testConfigNames[i]);
+				if(configurations[i] == true)
+					selectedTests++;
 			}
 		}
 
@@ -161,6 +166,8 @@ namespace OpenCog.Interfaces.Game
 			{
 				configurations[i] = true;
 			}
+
+			selectedTests = (int)numTests;
 		}
 
 
@@ -301,7 +308,6 @@ namespace OpenCog.Interfaces.Game
 			//a good place to help us debug connection/initialization errors
 			//yield return new UnityEngine.WaitForSeconds(20.0f);
 
-
 			//INITIALIZE!
 			//-----------------------------------
 			//get our own configurations
@@ -313,6 +319,49 @@ namespace OpenCog.Interfaces.Game
 			{
 				GetConfiguration();
 			}
+
+			if(selectedTests != 0)
+			{
+				Debug.Log (OCLogSymbol.RUNNING + "UnitTests.RunTests() is about to run " + selectedTests + " selected tests.", this);
+			}
+			else
+			{
+				Debug.Log (OCLogSymbol.RUNNING + "UnitTests.RunTests() has no unit tests configured to run.", this);
+			}
+
+			//providing information to batch users
+			//and attempting to minimize errors that can occur when the developer needs different settings from his user and forgets to set them.
+			//note: exitOnComplete is not congruent with batch mode. It may also be very desirable in edit mode by the developer, or for hands-free demo purposes in
+			//player mode.
+
+			//TODO [TASK]: in the future it will be more sensible to let the developer enable/disable different options for batch, player, and editor modes!
+			if(SystemInfo.graphicsDeviceID == 0)
+			{
+				if(!exitOnComplete)
+				{
+					Debug.LogWarning(OCLogSymbol.WARN + "UnitTests is running in Batch Mode but exitOnComplete is false. This is most likely not your intention. Setting exitOnComplete to true, to avoid hanging. You do not have to fix this warning.");
+					exitOnComplete = true;
+				}
+				if(editorSaysToRun)
+				{
+					Debug.LogWarning(OCLogSymbol.WARN + "UnitTests is running in Batch Mode with 'editorSaysToRun' enabled. This will always enable all UnitTests, regardless of configuration files or command line arguments. This may or may not be your intention. Nevertheless, running as ordered.");
+				}
+				if(selectedTests == 0)
+				{
+					Debug.LogWarning (OCLogSymbol.WARN + "UnitTests is running in Batch Mode with no unit tests configured. This is most likely not your intention. Nevertheless, running as ordered.");
+				}
+			}
+
+			//providing similar information to editor users & standalone players
+			else
+			{
+				if(selectedTests == 0 && exitOnComplete)
+				{
+					Debug.LogWarning(OCLogSymbol.WARN + "UnitTests is running outside of Batch Mode with no tests enabled and exitOnComplete set to true. This is most likely not your intention. Setting exitOnComplete to false, to avoid premature shutdown. You do not have to fix this warning.");
+					exitOnComplete = false;
+				}
+			}
+		
 
 			//make sure all the bools are set to true and haasConcluded = false
 			RefreshResults();
@@ -333,6 +382,7 @@ namespace OpenCog.Interfaces.Game
 			//-----------------------------------
 
 			//run the tests in order
+
 			for(int i = 0; i < numTests; i++)
 			{
 				if(configurations[i])
@@ -348,7 +398,10 @@ namespace OpenCog.Interfaces.Game
 			}
 			else
 			{
-				Debug.Log(OCLogSymbol.PASS + "The " + numTests + " selected Unit Tests all Passed.");
+				if(selectedTests != 0)
+					Debug.Log(OCLogSymbol.PASS + "The " + selectedTests + " selected Unit Tests all Passed.");
+				else
+					Debug.Log(OCLogSymbol.PASS + "No Unit Tests were run; None succeeded and none failed.");
 
 				if(exitOnComplete)
 					GameManager.control.QuitWithSuccess();
@@ -648,8 +701,6 @@ namespace OpenCog.Interfaces.Game
 
 		public void Start()
 		{
-			
-			Debug.Log (OCLogSymbol.RUNNING + "Starting Unit Tests", this);
 
 			//RunTests must trickle up a chain of yield StartCoroutine(Function(x))'s up to something
 			//with yieldInstructions like yield return new UnityEngine.WaitForSeconds(3f); or a simple 

@@ -1,4 +1,8 @@
+#if UNITY_EDITOR
+
 using UnityEditor;
+
+
 using UnityEngine;
 using System.Collections;
 using OpenCog;
@@ -9,5 +13,9 @@ using OpenCog.EditorExtensions;
 public class OCDefaultEditor : OCEditor<MonoBehaviour>
 {
 }
+
+#endif
+
+
 
 

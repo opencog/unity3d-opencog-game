@@ -1,5 +1,7 @@
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -13,23 +15,33 @@ public class BlockEditorUtils {
 	}
 	
 	public static void DrawRect(Rect rect, Color color) {
+
+		#if UNITY_EDITOR
 		Vector3 a = new Vector3(rect.xMin, rect.yMin, 0);
 		Vector3 b = new Vector3(rect.xMax, rect.yMin, 0);
 		Vector3 c = new Vector3(rect.xMax, rect.yMax, 0);
 		Vector3 d = new Vector3(rect.xMin, rect.yMax, 0);
-		
+
+
 		Handles.color = color;
 		Handles.DrawLine(a, b);
 		Handles.DrawLine(b, c);
 		Handles.DrawLine(c, d);
 		Handles.DrawLine(d, a);
+
+		#endif
 	}
 	
 	public static void FillRect(Rect rect, Color color) {
+
+		#if UNITY_EDITOR
 		Color oldColor = GUI.color;
 		GUI.color = color;
+
 		GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
 		GUI.color = oldColor;
+
+		#endif
 	}
 	
 	public static int Popup(string label, int selected, object[] items) {
@@ -37,7 +49,11 @@ public class BlockEditorUtils {
 		for(int i=0; i<items.Length; i++) {
 			if(items[i] != null) strings[i] = items[i].ToString();
 		}
+		#if UNITY_EDITOR
 		return EditorGUILayout.Popup(label, selected, strings);
+		#else 
+		return 0;
+		#endif
 	}
 	
 	public static Enum Toolbar(Enum selected) {

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
 public class FindMissingScripts : EditorWindow
 {
@@ -44,3 +46,5 @@ public class FindMissingScripts : EditorWindow
 		Debug.Log(string.Format("Searched {0} GameObjects, {1} components, found {2} missing", go_count, components_count, missing_count));
 	}
 }
+
+#endif

@@ -1,6 +1,10 @@
+
+
 using UnityEngine;
 using System;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +18,10 @@ using OpenCog.Attributes;
 /// Allows for the cross-referencing of missing scripts by public property or
 /// field.
 /// </summary>
+
+#if UNITY_EDITOR
 [ExecuteInEditMode]
+#endif
 public class OCScriptScanner : MonoBehaviour
 {
 	//Holds a scanned script
@@ -26,8 +33,11 @@ public class OCScriptScanner : MonoBehaviour
 		//The instance id
 		public int id;
 
+		#if UNITY_EDITOR
 		//The script itself
 		public MonoScript script;
+
+		#endif
 	}
 
 	//All of the candidate scripts
@@ -49,10 +59,13 @@ public class OCScriptScanner : MonoBehaviour
 	{
 		if( !_willRepaint )
 		{
+			#if UNITY_EDITOR
 			EditorApplication.projectWindowChanged += () => {
 				//@TODO: Repaint only in the Editor?
 				//Repaint();
 			};
+
+			#endif
 			_willRepaint = true;
 		}
 		if( !_initialized )
@@ -66,6 +79,7 @@ public class OCScriptScanner : MonoBehaviour
 	//Scan all of the scripts in resources (not editor scripts)
 	public static void ScanAll()
 	{
+		#if UNITY_EDITOR
 		//Get all of the scripts
 		_scripts = Resources.FindObjectsOfTypeAll( typeof( MonoScript ) )
 			//Make this a collection of MonoScripts
@@ -86,7 +100,10 @@ public class OCScriptScanner : MonoBehaviour
           .ToDictionary( p => p.Name )
       } )
       .ToList();
+		#endif
 	}
 
 }
+
+
 

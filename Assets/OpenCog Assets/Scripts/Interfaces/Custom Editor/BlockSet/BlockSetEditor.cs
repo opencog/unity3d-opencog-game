@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using UnityEngine;
 using UnityEditor;
 using System.Reflection;
@@ -189,3 +191,4 @@ public class BlockSetEditor : Editor {
 	}
 	
 }
+#endif

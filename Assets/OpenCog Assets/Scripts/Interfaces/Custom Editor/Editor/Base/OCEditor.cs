@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 /// Unity3D OpenCog World Embodiment Program
 /// Copyright (C) 2013  Novamente
 ///
@@ -750,3 +752,6 @@ where OCType : MonoBehaviour
 }// namespace EditorExtensions
 
 }// namespace OpenCog
+
+
+#endif
