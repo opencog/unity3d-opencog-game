@@ -77,29 +77,32 @@ namespace OpenCog.Master
 			{
 				//do not accidentally update anything while quitting
 				//Time.timeScale = 0;  <-- cannot be done from exterior thread
-											
+										
 				Debug.LogError (OCLogSymbol.FAIL + "Exiting with Error Code " + code);
 
 				//TODO [UNTESTED]: This code works for some people and not for others.
 				//It's conditions for operation seem to be largely that it needs to be on
 				//the main thread
 
+				#if UNITY_EDITOR
+				
+				//stop the player
+				UnityEditor.EditorApplication.isPlaying = false;
+				throw new OCException(OCLogSymbol.FAIL + "Exiting. Error code was: " + code);
+
+				#else
 
 				//try to thow this error code to make the batch people happy!
-				System.Environment.Exit (code);
+				if(SystemInfo.graphicsDeviceID == 0)
+					System.Environment.Exit (code);
 
+				Application.Quit();
 
-				//NOTE: Someone should look at this later XD
-				//Throw this in the editor, and if the System.Environment.Exit(code) failed.
-				//Observation <--- we did not get to this line while running in the editor
-				//which would suggest System.Environment.Exit(code) worked XD
-				//but which also means !UNITY_EDITOR did not stop it from runnings, ha!
-				throw new OCException(OCLogSymbol.FAIL + "System.Environment.Exit(" + code + ") failed.");  
+				//If that didn't work or we aren't in batch mode, just attempt to throw an exception.
+				throw new OCException(OCLogSymbol.FAIL + "System.Environment.Exit(" + code + ") failed."); 
 
-				//#if !UNITY_EDITOR
-				//if the exception failed to convince everything to quit, well give it one more shot
-				//Application.Quit();
-				//#endif
+				#endif
+
 
 			}
 			public void QuitWithSuccess()
@@ -107,17 +110,23 @@ namespace OpenCog.Master
 				//System.Diagnostics.Process.
 				Debug.Log(OCLogSymbol.CLEARED + "Exiting Successfully.");
 
-				#if !UNITY_EDITOR
-				//try to thow this successful code to make the batch people happy!
-				System.Environment.Exit (0);
-				#endif
+				#if UNITY_EDITOR
 
+				Debug.Log(OCLogSymbol.DEBUG + "Exiting Editor.");
+				UnityEditor.EditorApplication.isPlaying = false;
+
+				#else
+
+				Debug.Log(OCLogSymbol.DEBUG + "Exiting System.");
+
+				//try to thow this successful code to make the batch people happy!
+				if(SystemInfo.graphicsDeviceID == 0)
+					System.Environment.Exit (0);
+
+				//If that didn't work or we aren't in batch mode, just attempt to quit
 				Application.Quit();
 
-				#if UNITY_EDITOR
-				UnityEditor.EditorApplication.isPlaying = false;
 				#endif
-
 			}
 
 

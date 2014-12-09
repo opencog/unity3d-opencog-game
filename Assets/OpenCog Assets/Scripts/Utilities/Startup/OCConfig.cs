@@ -146,11 +146,17 @@ public sealed class OCConfig : OCSingletonScriptableObject< OCConfig >
 		_settings["test"] = "";// will be "internal_XGA" in case of buildbot
 		_settings["quit"] = "false";// should be "true" in case of buildbot 
 
-		_settings["UNITTEST_WORLD"] = "false";
+		//run all tests
+		_settings["UNITTEST_ALL"] = "false";
+
+		//run each test
 		_settings["UNITTEST_EMBODIMENT"] = "false";
-		_settings["UNITTEST_BLOCK"] = "false";
+		_settings["UNITTEST_BATTERY"] = "false";
 		_settings["UNITTEST_PLAN"] = "false";
 		_settings["UNITTEST_SECONDPLAN"] = "false";
+
+		//parse as a string. is it 'neutral?' if not, parse as a bool XD
+		_settings["UNITTEST_EXIT"] = "neutral";
 	}
 		
 	/// <summary>

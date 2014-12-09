@@ -107,6 +107,8 @@ namespace OpenCog.Interfaces.Game
 			SECONDPLAN
 		}
 
+		protected const string testConfigRunAll = "UNITTEST_ALL";
+
 		//the names of the config variables corresponding to the enumerated type
 		protected string[] testConfigNames = 
 			{
@@ -144,30 +146,32 @@ namespace OpenCog.Interfaces.Game
 			//get the configuration as this handy-dandy variable
 			OCConfig config = OCConfig.Instance;
 
+			//is there any configuration information about whether we should exit on completing these tests?
+			if((config.get (exitOnCompleteConfig)).ToString ().CompareTo("neutral") != 0)
+			{
+				Debug.Log (OCLogSymbol.DEBUG + "Configuration says to exit Unit Tests on complete: " + config.get (exitOnCompleteConfig).ToString());
+
+				//then extract it in Boolean form!
+				exitOnComplete = config.getBool(exitOnCompleteConfig);
+			}
+
+			//get the configuration  for UNITTEST_ALL & whether or not the editor box is checked.
+			bool runAll = config.getBool(testConfigRunAll) || this.editorSaysToRun;
+
+			//zero out tests selected
 			selectedTests = 0;
+
+
 
 			//iterate through all the configurations and read them in!
 			for(uint i = 0; i < numTests; i++)
 			{
-				configurations[i] = config.getBool(testConfigNames[i]);
+				configurations[i] = config.getBool(testConfigNames[i]) || runAll;
 				if(configurations[i] == true)
 					selectedTests++;
 			}
-		}
 
-		//set everything to true!
-		protected void FakeConfiguration()
-		{
-			//get the configuration as this handy-dandy variable
-			//OCConfig config = OCConfig.Instance;
-				
-			//iterate through all the configurations and read them in!
-			for(uint i = 0; i < numTests; i++)
-			{
-				configurations[i] = true;
-			}
-
-			selectedTests = (int)numTests;
+		
 		}
 
 
@@ -192,7 +196,7 @@ namespace OpenCog.Interfaces.Game
 		//FOR THE SECOND PLANNING TEST
 		//<none>
 
-
+		protected const string exitOnCompleteConfig = "UNITTEST_EXIT";
 		public bool exitOnComplete = true;
 
 		//TEST THE INITIALIZATION OF THESE VARIABLES
@@ -312,13 +316,7 @@ namespace OpenCog.Interfaces.Game
 			//-----------------------------------
 			//get our own configurations
 
-			if(this.editorSaysToRun)
-			{
-				FakeConfiguration();
-			} else
-			{
-				GetConfiguration();
-			}
+			GetConfiguration();
 
 			if(selectedTests != 0)
 			{
@@ -534,6 +532,15 @@ namespace OpenCog.Interfaces.Game
 
 		protected IEnumerator TestPlan()
 		{
+			//if the first test failed, so did this one.
+			if(results[(int)TestTypes.BATTERY] == false)
+			{
+				Debug.Log(OCLogSymbol.DETAILEDINFO + "Plan Test Not Run.");
+				results[(int)TestTypes.PLAN] = false;
+				yield break;
+			}
+
+
 			//We need to test these things:
 			//1) that the plan was made <---- most important
 			//2) that the plan was carried out at all (the robot performed some action)
@@ -691,6 +698,15 @@ namespace OpenCog.Interfaces.Game
 
 		protected IEnumerator TestSecondPlan()
 		{
+			//if the first test failed, so did this one.
+			if(results[(int)TestTypes.PLAN] == false)
+			{
+				Debug.Log(OCLogSymbol.DETAILEDINFO + "Second Plan Test Not Run.");
+				results[(int)TestTypes.SECONDPLAN] = false;
+				yield break;
+			}
+
+
 			Debug.LogWarning(OCLogSymbol.PASS + "Second Plan Test not Implemented; It is understood the Planner cannot cope with block removal at this time.");
 			yield return 0;
 		}
