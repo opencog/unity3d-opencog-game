@@ -14,6 +14,9 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Master;
+using UnityEngine;
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -47,41 +50,44 @@ namespace OpenCog
 [OCExposePropertyFields]
 [Serializable]
     
-	#endregion
-	public class OCDestroyBlockEffect : OCMonoBehaviour
+#endregion
+public class OCDestroyBlockEffect : OCMonoBehaviour
+{
+	//cheese! I did this so OcUnitTests could see if any blocks had been destoryed XD
+	private int blocksDestroyed = 0;
+
+	public int BlocksDestroyed{ get { return blocksDestroyed; } }
+	    
+	//NOTE: this function pulls the weight of actually destroying blocks for us. It is applied to the OCActions of a character; not to blocks themselves. 
+	public void DestroyBlock(Vector3i? point)
 	{
-		//cheese! I did this so OcUnitTests could see if any blocks had been destoryed XD
-		private int blocksDestroyed = 0;
-		public int BlocksDestroyed{get{return blocksDestroyed;}}
-	    
-			//NOTE: this function pulls the weight of actually destroying blocks for us. It is applied to the OCActions of a character; not to blocks themselves. 
-	    public void DestroyBlock(Vector3i? point)
+		if(point.HasValue)
 		{
-			if(point.HasValue)
+			OCMap map = OCMap.Instance;//(OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
+			
+			//for updating goal controllers after deletion.
+			OCBlock blockType = map.GetBlock(point.Value).block;
+			OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+			
+			//actually sets the block to null and recomputes the chunk. 
+			Debug.Log(OCLogSymbol.DEBUG + "DeleteSelectedVoxel called from CreateBlockEffect");
+			GameManager.world.voxels.DeleteSelectedVoxel(point.Value);
+			
+			//re-update goals concerned with this block type
+			foreach(OCGoalController goalController in goalControllers)
 			{
-				OCMap map = OCMap.Instance;//(OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
-				
-				OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
-						
-				OCBlock blockType = map.GetBlock(point.Value).block;
-
-				//actually sets the block to null and recomputes the chunk. 
-				map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
-				
-				foreach(OCGoalController goalController in goalControllers)
+				if(goalController.GoalBlockType == blockType)
 				{
-					if(goalController.GoalBlockType == blockType)
-					{
-						goalController.FindGoalBlockPositionInChunks(map.GetChunks());
-					}
+					goalController.FindGoalBlockPositionInChunks(map.GetChunks());
 				}
-
-				blocksDestroyed++;
 			}
+
+			blocksDestroyed++;
 		}
+	}
 
 	    
-	}// class OCDestroyBlockEffect
+}// class OCDestroyBlockEffect
 
 }// namespace OpenCog
 

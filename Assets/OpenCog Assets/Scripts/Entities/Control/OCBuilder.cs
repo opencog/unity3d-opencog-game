@@ -14,7 +14,9 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using OpenCog.Utilities.Logging;
+using OpenCog.Master;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -57,7 +59,8 @@ public class OCBuilder : OCMonoBehaviour
 	//---------------------------------------------------------------------------
 		
 	[UnityEngine.SerializeField]
-	private UnityEngine.GameObject _cursor;
+	private UnityEngine.GameObject
+		_cursor;
 
 	private UnityEngine.Transform _cameraTrans;
 
@@ -99,7 +102,7 @@ public class OCBuilder : OCMonoBehaviour
 	public void Awake()
 	{
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is awake.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is awake.");
 	}
 
 	/// <summary>
@@ -107,7 +110,7 @@ public class OCBuilder : OCMonoBehaviour
 	/// </summary>
 	public void Start()
 	{
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is started.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is started.");
 	}
 
 	/// <summary>
@@ -138,7 +141,7 @@ public class OCBuilder : OCMonoBehaviour
 			{
 				byte sun = _map.GetSunLightmap().GetLight(point.Value);
 				byte light = _map.GetLightmap().GetLight(point.Value);
-				Debug.Log(OCLogSymbol.DETAILEDINFO +"Sun " + sun + "  Light " + light);
+				Debug.Log(OCLogSymbol.DETAILEDINFO + "Sun " + sun + "  Light " + light);
 			}
 		}
 		
@@ -157,7 +160,9 @@ public class OCBuilder : OCMonoBehaviour
 //					_map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
 //				}
 //				else
-					_map.SetBlockAndRecompute(OCBlockData.CreateInstance<OCBlockData>().Init(null, point.Value), point.Value);
+
+				Debug.Log(OCLogSymbol.DEBUG + "DeleteSelectedVoxel called from CreateBlockEffect");
+				GameManager.world.voxels.DeleteSelectedVoxel(point.Value);
 			}
 		}
 		
@@ -169,9 +174,9 @@ public class OCBuilder : OCMonoBehaviour
 				bool empty = !BlockCharacterCollision.GetContactBlockCharacter(point.Value, transform.position, gameObject.GetComponent<CharacterController>()).HasValue;
 				if(empty)
 				{
-					OpenCog.Map.OCBlockData block = OCBlockData.CreateInstance<OCBlockData>().Init(_selectedBlock, OpenCog.Utility.VectorUtil.Vector3ToVector3i(point.Value));
-					block.SetDirection(-transform.forward);
-					_map.SetBlockAndRecompute(block, point.Value);
+					Debug.Log(OCLogSymbol.DEBUG + "AddSelectedVoxel called from OCBuilder");
+					GameManager.world.voxels.AddSelectedVoxel(point.Value, -transform.forward, _selectedBlock);
+					
 						
 					OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
 
@@ -209,7 +214,7 @@ public class OCBuilder : OCMonoBehaviour
 	{
 		Uninitialize();
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is reset.");	
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is reset.");	
 	}
 
 	/// <summary>
@@ -217,7 +222,7 @@ public class OCBuilder : OCMonoBehaviour
 	/// </summary>
 	public void OnEnable()
 	{
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is enabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is enabled.");
 	}
 
 	/// <summary>
@@ -225,7 +230,7 @@ public class OCBuilder : OCMonoBehaviour
 	/// </summary>
 	public void OnDisable()
 	{
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is disabled.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is disabled.");
 	}
 
 	/// <summary>
@@ -234,7 +239,7 @@ public class OCBuilder : OCMonoBehaviour
 	public void OnDestroy()
 	{
 		Uninitialize();
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is about to be destroyed.");
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is about to be destroyed.");
 	}
 
 

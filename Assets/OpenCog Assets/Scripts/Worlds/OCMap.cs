@@ -309,7 +309,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 		if(block.IsEmpty() && !oldBlock.IsEmpty())
 		{
-				UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "OCMap.SetBlockAndRecompute(): block.IsEmpty -> inferring destruction.");
+				UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "OCMap.SetBlockAndRecompute(): Null block type sent; destroying block.");
 				
 			if(perceptionCollector != null && oldBlock.block.GetName() != "Battery")
 			{
@@ -329,17 +329,12 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			{
 				GameObject.DestroyImmediate(hearth);
 			}
-			
 
-			//TODO [UNTESTED]: Make sure this doesn't break anything. We should not be calling this here; we call it once per update loop anyway
-			/*if(perceptionCollector != null)
-			{
-				perceptionCollector.PerceiveWorld();
-			}*/
 			
-		} else
+		} 
+		else
 		{
-			UnityEngine.Debug.Log(OCLogSymbol.RUNNING +"OCMap.SetBlockAndRecomput(): Inferring creation because block.IsEmpty == false.");
+				UnityEngine.Debug.Log(OCLogSymbol.RUNNING +"OCMap.SetBlockAndRecompute(): Block type sent; creating block.");
 				
 			// Moved notify down...to AFTER the point where it is actually created...
 		}
@@ -371,7 +366,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			if(hearthPrefab == null)
 			{
 				UnityEngine.Debug.LogWarning(OCLogSymbol.WARN + "OCBuilder::Update, hearthPrefab == null");
-			} else
+			} 
+			else
 			{
 				GameObject newHearth = (GameObject)GameObject.Instantiate(hearthPrefab);
 				newHearth.transform.position = pos;

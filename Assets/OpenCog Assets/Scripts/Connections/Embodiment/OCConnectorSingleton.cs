@@ -490,6 +490,9 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		_type = OCEmbodimentXMLTags.PET_OBJECT_TYPE;
 		_traits = "Princess";
 		_currentDemandName = "";
+
+		//In general, messages are perceived through the router and sent to the OAC.
+		//messages are of the form "Hey router, I'm _ID, tell  me corrspondant (_brainID) that I have this information for him;
     
 		// Load settings from file.
 		if(_settingsFilename.Length > 0)
@@ -1041,8 +1044,12 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		{
 			actionElement.SetAttribute("name", "disappear");
 			actionElement.SetAttribute("action-instance-name", "disappear" + (++_disappearActionCount).ToString());
+
+
+			// 'remove' seems to only get processed for blocks under mapinfo changes;
+			//right now we're pushing an object change owed to battery's dual block-object citizenship. 
 			//if(targetType == OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE)
-			//	actionElement.SetAttribute("remove", "true");
+				//actionElement.SetAttribute("remove", "true");
 		}
 	
 		actionElement.SetAttribute("result-state", "true"); 

@@ -38,6 +38,7 @@ namespace OpenCog.Worlds
 
 			OCBlock selectedBlock {get;set;}
 			void AddSelectedVoxel(Vector3 location, Vector3 direction, OCBlock type);
+			void DeleteSelectedVoxel(Vector3 location);
 			//put classes to expose here
 
 		}
@@ -109,6 +110,11 @@ namespace OpenCog.Worlds
 
 				//and set the block
 				map.SetBlockAndRecompute(block, location3i);
+			}
+
+			public void DeleteSelectedVoxel(Vector3 location)
+			{
+				AddSelectedVoxelPixelland(location, new Vector3(), null);
 			}
 
 			#endregion

@@ -14,6 +14,8 @@
 ///
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using OpenCog.Master;
+using OpenCog.Utilities.Logging;
 
 #region Usings, Namespaces, and Pragmas
 
@@ -49,101 +51,102 @@ namespace OpenCog
 [Serializable]
     
 #endregion
+//NOTE: this class pulls the weight of actually destroying blocks for us. It is applied to the OCActions of a character; not to blocks themselves. 
 public class OCCreateBlockEffect : OCMonoBehaviour
 {
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #region Private Member Data
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
     
 	[SerializeField]
-	string _BlockType = "Ice";
+	string
+		_BlockType = "Ice";
             
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #endregion
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #region Accessors and Mutators
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
         
-		public enum CreationPosition
-		{
-			Target,
-			Forward,
-			ForwardBelow
-		} 
+	public enum CreationPosition
+	{
+		Target,
+		Forward,
+		ForwardBelow
+	} 
 
-		public CreationPosition CreationPos;
+	public CreationPosition CreationPos;
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #endregion
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #region Public Member Functions
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
-    public void CreateBlock(Vector3i? point)
+	public void CreateBlock(Vector3i? point)
+	{
+		if(point.HasValue)
 		{
-				if(point.HasValue)
-				{
-				OCMap map = OCMap.Instance;//(OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
+			OCMap map = OCMap.Instance;//(OCMap)GameObject.FindSceneObjectsOfType(typeof(OCMap)).FirstOrDefault();
 
-					OCBlock block = map.GetBlockSet().GetBlock(_BlockType);
+			OCBlock block = map.GetBlockSet().GetBlock(_BlockType);
 				
-					OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
+			OCGoalController[] goalControllers = (OCGoalController[])GameObject.FindObjectsOfType(typeof(OCGoalController));
 			
-					foreach(OCGoalController goalController in goalControllers)
-					{
-						if(goalController.GoalBlockType == block)
-						{
-							goalController.FindGoalBlockPositionInChunks(map.GetChunks());
-						}
-					}
-				
-					//block.SetDirection(GetDirection(-gameObject.transform.forward));
-				
-					OCBlockData blockData = OCBlockData.CreateInstance<OCBlockData>().Init(block, VectorUtil.Vector3ToVector3i(point.Value));
-					map.SetBlockAndRecompute(blockData, point.Value);
+			foreach(OCGoalController goalController in goalControllers)
+			{
+				if(goalController.GoalBlockType == block)
+				{
+					goalController.FindGoalBlockPositionInChunks(map.GetChunks());
 				}
-		}
+			}
+				
+			Debug.Log(OCLogSymbol.DEBUG + "AddSelectedVoxel called from CreateBlockEffect");
+			GameManager.world.voxels.AddSelectedVoxel(point.Value, -transform.forward, block);
 
-    //---------------------------------------------------------------------------
+		}
+	}
+
+	//---------------------------------------------------------------------------
 
     #endregion
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #region Private Member Functions
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
     
     
             
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #endregion
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #region Other Members
 
-    //---------------------------------------------------------------------------        
+	//---------------------------------------------------------------------------        
 
     
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
     #endregion
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
 }// class OCCreateBlockEffect
 
