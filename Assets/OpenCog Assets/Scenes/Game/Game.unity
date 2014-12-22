@@ -11589,9 +11589,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53de2de2996d9764382e26fabba9ef4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isNEInitialized: 0
+  _ID: 
+  _port: 0
+  _routerID: 
+  _routerPort: 0
+  _listener: {fileID: 0}
+  _unreadMessagesCount: 0
+  _isEstablished: 0
+  _isLoggedIn: 0
+  _isListening: 0
+  _isHandlingMessages: 0
+  _firstSendOfPhysiologicalFactors: 1
+  _verificationGuid: 
+  _connectionState: 0
+  _messageHandler: {fileID: 0}
+  _isInitialized: 0
+  _isLoaded: 0
+  _firstRun: 1
+  _baseID: 
+  _brainID: 
+  _name: 
+  _type: 
+  _traits: 
+  _settingsFilename: 656d626f64696d656e74
+  _masterID: 
+  _masterName: 
+  _mapName: 
+  _map: {fileID: 0}
+  _blockCountX: 0
+  _blockCountY: 0
+  _blockCountZ: 0
+  _globalStartPositionX: 0
+  _globalStartPositionY: 0
+  _globalStartPositionZ: 0
+  _globalFloorHeight: 0
+  _isFirstSentMapInfo: 0
+  _currentPlanId: 
+  _currentDemandName: 
+  _stateChangeActionCount: 0
+  _disappearActionCount: 0
+  _appearActionCount: 0
+  _moveActionCount: 0
+  _actionStatusesUpdated: 0
   _actionController: {fileID: 0}
-  dispatchFlags: 00000000000000000000
-  receptFlags: 00
+  _messagesToSend: []
+  _messageSendingTimer: 0
+  _messageSendingInterval: .100000001
+  _msgCount: 0
+  dispatchFlags:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  receptFlags:
+  - 0
 --- !u!4 &1683074306
 Transform:
   m_ObjectHideFlags: 0

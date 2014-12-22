@@ -412,7 +412,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 				// Anyway, we look up the object based on object id...so we get an objectMapInfo...and remove the visibility tag
 				_mapInfoCache[oid].RemoveProperty("visibility-status");
 				// And we add a 'remove' tag...guess that means removed = true!
-				//_mapInfoCache [oid].AddProperty ("remove", "true", System.Type.GetType ("System.Boolean"));
+				_mapInfoCache [oid].AddProperty ("remove", "true", System.Type.GetType ("System.Boolean"));
 				// Finally we add it's gameobject id to a hashset of disappeared objects...
 				disappearedObjects.Add(oid);
 			}
