@@ -368,7 +368,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 				UnityEngine.Debug.Log("Added Hearth with ID '" + hearthObject.GetInstanceID() + "' to updatedObjects");
 			} else
 			{
-				//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				//UnityEngine.Debug.Log ("Hearth with ID '" + hearthObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
 			}	
 					
 			console.AddConsoleEntry("I can see my home! It's where I feel safe.", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
