@@ -33,7 +33,7 @@ namespace OpenCog
 {
 
 /// <summary>
-/// The OpenCog OCSecureBlock.
+/// The OpenCog OCHearth.
 /// </summary>
 #region Class Attributes
 
@@ -42,7 +42,7 @@ namespace OpenCog
 [Serializable]
 	
 #endregion
-public class OCSecureBlock : OCMonoBehaviour
+public class OCHearth : OCMonoBehaviour
 {
 
 	//---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ public class OCSecureBlock : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 
-}// class OCSecureBlock
+}// class OCHearth
 
 }// namespace OpenCog
 

@@ -1007,10 +1007,10 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 
 		if(isAppear)
 		{
-			UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
+			//UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Reporting appearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		} else
 		{
-			UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
+			//UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Reporting disappearance of object with ID '" + objectID + "' of type '" + objectType + "'.");
 		}
 		
 		string timestamp = GetCurrentTimestamp();

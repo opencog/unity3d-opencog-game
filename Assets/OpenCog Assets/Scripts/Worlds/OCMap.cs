@@ -309,17 +309,18 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 
 		if(block.IsEmpty() && !oldBlock.IsEmpty())
 		{
-				UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "OCMap.SetBlockAndRecompute(): Null block type sent; destroying block.");
-				
-			if(perceptionCollector != null && oldBlock.block.GetName() != "Battery")
+				UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Destroying block.");
+
+			if(perceptionCollector != null)
 			{
-				perceptionCollector.NotifyBlockRemoved(pos);
+				string name = oldBlock.block.GetName();
+				if(name == "Battery")
+					perceptionCollector.NotifySpecialRemoved("OCBattery", pos);
+				else if(name == "Hearth")
+					perceptionCollector.NotifySpecialRemoved("OCHearth", pos);
+				else
+					perceptionCollector.NotifyBlockRemoved(pos);
 			}
-			
-			// I'm going to take a gamble here...since NotifyBatteryRemoved only does its work when it finds a battery at this location...it should be ok...
-				
-			if(perceptionCollector != null && oldBlock.block.GetName() == "Battery")
-				perceptionCollector.NotifyBatteryRemoved(pos);
 				
 			if(battery != default(GameObject) && battery != null)
 			{
@@ -334,7 +335,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 		} 
 		else
 		{
-				UnityEngine.Debug.Log(OCLogSymbol.RUNNING +"OCMap.SetBlockAndRecompute(): Block type sent; creating block.");
+			UnityEngine.Debug.Log(OCLogSymbol.RUNNING +"Creating block.");
 				
 			// Moved notify down...to AFTER the point where it is actually created...
 		}
@@ -354,7 +355,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 					
 				if(perceptionCollector != null)
 				{
-					perceptionCollector.NotifyBatteryAdded(pos);
+					perceptionCollector.NotifySpecialAdded("OCBattery", pos);
 				}	
 			}
 			
@@ -376,7 +377,7 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 					
 				if(perceptionCollector != null)
 				{
-					perceptionCollector.NotifyBlockAdded(pos);
+					perceptionCollector.NotifySpecialAdded("OCHearth", pos);
 				}
 			}
 		}

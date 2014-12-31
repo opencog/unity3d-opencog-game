@@ -446,7 +446,7 @@ public class OCObjectMapInfo
 			}
 
 						
-			if (gameObject.GetComponent<OCSecureBlock>() != null)
+			if (gameObject.GetComponent<OCHearth>() != null)
 			{
 				System.Console.WriteLine(OCLogSymbol.RUNNING + "Adding petHome tag to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
 				this.AddProperty("petHome", "TRUE", System.Type.GetType("System.Boolean"));	

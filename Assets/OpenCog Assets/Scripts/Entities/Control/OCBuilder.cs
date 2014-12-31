@@ -174,7 +174,7 @@ public class OCBuilder : OCMonoBehaviour
 				bool empty = !BlockCharacterCollision.GetContactBlockCharacter(point.Value, transform.position, gameObject.GetComponent<CharacterController>()).HasValue;
 				if(empty)
 				{
-					Debug.Log(OCLogSymbol.DEBUG + "AddSelectedVoxel called from OCBuilder");
+					
 					GameManager.world.voxels.AddSelectedVoxel(point.Value, -transform.forward, _selectedBlock);
 					
 						
