@@ -124,7 +124,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	// Assume that there's just one behaviour we'd like to execute at a given time
 	private Dictionary<TreeType, Tree> _TreeTypeDictionary;
 			
-    // This _ActionPlanList seems useless
+	// This _ActionPlanList seems useless
 	// Our current queue of behaviours
 	[SerializeField]
 	private List< OCActionPlanStep >
@@ -745,25 +745,28 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	
 	public void UpdateAI()
 	{
-        // This _ActionPlanList seems useless
-		_ActionPlanList = _ActionPlanQueue.ToList();		
-				
-		if(_step == null && _ActionPlanQueue.Count != 0)
-		{
-			_step = _ActionPlanQueue.First();
-			_ActionPlanQueue.RemoveFirst();
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
-		} else if(_step == null && _ActionPlanQueue.Count == 0)
-		{
-			_PlanSucceeded = true;
-			//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
+		// This _ActionPlanList seems useless
+		_ActionPlanList = _ActionPlanQueue.ToList();
 
-			OCActionPlanStep step = OCScriptableObject.CreateInstance<OCActionPlanStep>();
-			step.Behaviour = _TreeTypeDictionary[_TreeType];
-			step.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
-			KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
-			step.Arguments.ActionName = keyValuePair.Key;
-			_step = step;
+		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _step = " + _step);
+		
+		if(_step == null)
+		{
+			if(_ActionPlanQueue.Count != 0) {
+				_step = _ActionPlanQueue.First();
+				_ActionPlanQueue.RemoveFirst();
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+            } else {
+				_PlanSucceeded = true;
+				//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
+
+				OCActionPlanStep step = OCScriptableObject.CreateInstance<OCActionPlanStep>();
+				step.Behaviour = _TreeTypeDictionary[_TreeType];
+				step.Arguments = new OCAction.OCActionArgs(_defaultSource, _defaultStartTarget, _defaultEndTarget);
+				KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
+				step.Arguments.ActionName = keyValuePair.Key;
+				_step = step;
+			}
 		}
 				
 		BehaveResult result = _step.Behaviour.Tick();
