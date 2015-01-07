@@ -124,6 +124,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	// Assume that there's just one behaviour we'd like to execute at a given time
 	private Dictionary<TreeType, Tree> _TreeTypeDictionary;
 			
+    // This _ActionPlanList seems useless
 	// Our current queue of behaviours
 	[SerializeField]
 	private List< OCActionPlanStep >
@@ -744,6 +745,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	
 	public void UpdateAI()
 	{
+        // This _ActionPlanList seems useless
 		_ActionPlanList = _ActionPlanQueue.ToList();		
 				
 		if(_step == null && _ActionPlanQueue.Count != 0)
