@@ -862,6 +862,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 				_step.Behaviour.Reset();
 
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _step (after reset) = " + _step);
+
 				// if we failed, retry last step
 				if(_PlanSucceeded == false && OCActionPlanStep.MaxRetries > _step.Retry)
 				{
@@ -882,7 +884,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						fadeOut.enabled = true;
 					}
 				}
-						
+				
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _ActionPlanQueue.Count = " + _ActionPlanQueue.Count);
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _LastPlanID = " + _LastPlanID);
+				
 				if(_ActionPlanQueue.Count == 0)
 				{
 					if(_LastPlanID != null)
