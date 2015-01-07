@@ -399,7 +399,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 					{
 						if(sendResult)
 						{
-							System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Message recieved from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+							System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Message sent from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						} else
 						{
 							UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Error sending message from '" + message.SourceID + "' to '" +
