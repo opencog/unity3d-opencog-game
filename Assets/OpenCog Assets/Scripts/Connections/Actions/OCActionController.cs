@@ -770,6 +770,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		}
 				
 		BehaveResult result = _step.Behaviour.Tick();
+
+        System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, result = " + result);
 				
 //		if((_step.Behaviour.Name == _TreeTypeDictionary[TreeType.Character_IdleShow].Name) && result == BehaveResult.Success)
 //		{
@@ -803,7 +805,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					//Vector3 sourceToEnd = endPosition - sourcePosition;		
 							
 					//float startToEndManDist = Math.Abs(endPosition.x - startPosition.x) + Math.Abs(endPosition.y - startPosition.y) + Math.Abs(endPosition.z - startPosition.z);
-					//float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);		
+					//float sourceToEndManDist = Math.Abs(endPosition.x - sourcePosition.x) + Math.Abs(endPosition.y - sourcePosition.y) + Math.Abs(endPosition.z - sourcePosition.z);
 							
 					if(_step.Behaviour.Name == "Character.Move" || _step.Arguments.ActionName == "walk" || _step.Arguments.ActionName == "jump_toward")
 					{
@@ -929,8 +931,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI(), starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 				}
 			}
-					
-			
+
+
 		}
 		
 	}
