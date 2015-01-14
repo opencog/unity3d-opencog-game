@@ -914,27 +914,25 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						_LastPlanID = null;		
 					}
 					_step = null;	
-				} else if(_LastPlanID != null)
+				} else
 				{
 					_step = _ActionPlanQueue.First();
 					_ActionPlanQueue.RemoveFirst();
-					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
-					if(_LastPlanID != _step.Arguments.ActionPlanID)
+					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, re-starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+
+					if(_LastPlanID != null)
 					{
-						Debug.LogError(OCLogSymbol.ERROR + "We've changed plans without reporting back to OpenCog!");
+						if(_LastPlanID != _step.Arguments.ActionPlanID)
+						{
+							Debug.LogError(OCLogSymbol.ERROR + "We've changed plans without reporting back to OpenCog!");
+						}
+					} else
+					{
+						_LastPlanID = _step.Arguments.ActionPlanID;
 					}
-				} else
-				{	
-					_LastPlanID = _step.Arguments.ActionPlanID;
-					_step = _ActionPlanQueue.First();
-					_ActionPlanQueue.RemoveFirst();
-					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI(), starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 				}
 			}
-
-
 		}
-		
 	}
 
 	public void	 Reset(Tree sender)
