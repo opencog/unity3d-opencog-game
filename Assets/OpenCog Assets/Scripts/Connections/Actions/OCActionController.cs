@@ -131,7 +131,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	private bool _PlanSucceeded = true;
 	public bool PlanSucceeded{get{return _PlanSucceeded;}}
 			
-	private string _CurrentPlanID = null;
+	private string _LastPlanID = null;
 
 	//---------------------------------------------------------------------------
 
@@ -880,18 +880,18 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				}
 				
 				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _ActionPlanQueue.Count = " + _ActionPlanQueue.Count);
-				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _CurrentPlanID = " + _CurrentPlanID);
+				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _LastPlanID = " + _LastPlanID);
 				
 				if(_ActionPlanQueue.Count == 0)
 				{
-					if(_CurrentPlanID != null)
+					if(_LastPlanID != null)
 					{
 							
 								
 //						if(result == BehaveResult.Failure)
 //							OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);			
 								
-						OCConnectorSingleton.Instance.SendActionPlanStatus(_CurrentPlanID, _PlanSucceeded /*, _LastPlanEndedAtTime*/);
+						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded /*, _LastPlanEndedAtTime*/);
 
 						if(_step != null && _step.Arguments.EndTarget != null)
 						{
@@ -903,7 +903,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 							}
 						}
 
-						_CurrentPlanID = null;
+						_LastPlanID = null;
 					}
 					_step = null;	
 				} else
@@ -912,15 +912,15 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					_ActionPlanQueue.RemoveFirst();
 					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, re-starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 
-					if(_CurrentPlanID != null)
+					if(_LastPlanID != null)
 					{
-						if(_CurrentPlanID != _step.Arguments.ActionPlanID)
+						if(_LastPlanID != _step.Arguments.ActionPlanID)
 						{
 							Debug.LogError(OCLogSymbol.ERROR + "We've changed plans without reporting back to OpenCog!");
 						}
 					} else
 					{
-						_CurrentPlanID = _step.Arguments.ActionPlanID;
+						_LastPlanID = _step.Arguments.ActionPlanID;
 					}
 				}
 			}
