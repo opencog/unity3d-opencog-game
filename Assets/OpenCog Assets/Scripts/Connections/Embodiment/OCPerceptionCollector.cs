@@ -212,7 +212,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 		_timer = 0.0f;
 
 					
-		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +gameObject.name + " is updated.");	
+		//UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +gameObject.name + " is updated.");	
 	}
 				
 	/// <summary>
@@ -222,7 +222,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 	{
 		Uninitialize();
 		Initialize();
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is reset.");	
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + gameObject.name + " is reset.");	
 	}
 		
 	/// <summary>
@@ -230,7 +230,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 	/// </summary>
 	public void OnEnable()
 	{
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is enabled.");
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + gameObject.name + " is enabled.");
 	}
 		
 	/// <summary>
@@ -238,7 +238,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 	/// </summary>
 	public void OnDisable()
 	{
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is disabled.");
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + gameObject.name + " is disabled.");
 	}
 		
 	/// <summary>
@@ -247,7 +247,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 	public void OnDestroy()
 	{
 		Uninitialize();
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + gameObject.name + " is about to be destroyed.");
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + gameObject.name + " is about to be destroyed.");
 	}
 				
 	public OCObjectMapInfo GetOCObjectMapInfo(int objId)
@@ -346,7 +346,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 			{
 				updatedObjects.Add(batteryObject.GetInstanceID());
 						
-				System.Console.WriteLine(OCLogSymbol.RUNNING + "Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
+				UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
 			} else
 			{
 				//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
@@ -946,7 +946,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 		Vector3i viChunkPosition = chunk.GetPosition();
 
 		//let the user know about our hard labor!
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Perceiving Chunk at position [" + viChunkPosition.x + ", " + viChunkPosition.y + ", " + viChunkPosition.z + "].");
 			
 		// Maybe do some empty check here...there will be many empty chunks. But it might be
 		// equally expensive without setting new empty flags while creating chunks.
@@ -962,7 +962,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 		Vector3i viChunkStartingCorner = new Vector3i(startX, startY, startZ);
 		Vector3i viChunkEndingCorner = new Vector3i(endX, endY, endZ);
 			
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Processing blocks from chunk [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + " to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Processing blocks from chunk [" + viChunkStartingCorner.x + ", " + viChunkStartingCorner.y + ", " + viChunkStartingCorner.z + " to [" + viChunkEndingCorner.x + ", " + viChunkEndingCorner.y + ", " + viChunkEndingCorner.z + "].");
 			
 		for(int iGlobalX = viChunkStartingCorner.x; iGlobalX <= viChunkEndingCorner.x; iGlobalX++)
 		{
@@ -1000,7 +1000,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 
 			//Print debug messages
 			System.DateTime dtProcessingTick = System.DateTime.Now;
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Sent Terrain Info. Processed " + blocksProcessed + " blocks in " + dtProcessingTick.Subtract(dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
+			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Sent Terrain Info. Processed " + blocksProcessed + " blocks in " + dtProcessingTick.Subtract(dtStartProcessing).TotalMilliseconds + " milliseconds. " + emptyBlocksProcessed + " were empty.");
 			emptyBlocksProcessed = 0;
 			blocksProcessed = 0;
 			dtStartProcessing = dtProcessingTick;
@@ -1035,7 +1035,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 			yield break;
 		} else
 		{
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "PerceiveTerrain() was called with _hasPercievedTerrainForFirstTime set equal to false. This is correct.");
+			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "PerceiveTerrain() was called with _hasPercievedTerrainForFirstTime set equal to false. This is correct.");
 			console.AddConsoleEntry("What a beautiful world! Please give me a few seconds to process it...", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 		}
 
@@ -1064,23 +1064,23 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 		}
 
 		// Check for remaining blocks to report to OpenCog
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Let's check if there are any blocks left to report in our terrainMapinfoList...");
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Let's check if there are any blocks left to report in our terrainMapinfoList...");
 		if(terrainMapinfoList.Count > 0)
 		{
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "   Yep, looks like there are...");
+			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "   Yep, looks like there are...");
 			_connector.SendTerrainInfoMessage(terrainMapinfoList, ! _hasPerceivedTerrainForFirstTime);
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "   Ok, all blocks have been sent now...");
+			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "   Ok, all blocks have been sent now...");
 			terrainMapinfoList.Clear();
 		} else
 		{
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "   Nope, looks like we already sent everything!");	
+			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "   Nope, looks like we already sent everything!");	
 		}
 					
 		// Communicate completion of initial terrain perception
 		if(!_hasPerceivedTerrainForFirstTime)
 		{
 
-			System.Console.WriteLine(OCLogSymbol.RUNNING + "Time to send the 'finished perceiving terrain' message!");
+			UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Time to send the 'finished perceiving terrain' message!");
 			_connector.SendFinishPerceptTerrain();
 			_hasPerceivedTerrainForFirstTime = true;
 		} else

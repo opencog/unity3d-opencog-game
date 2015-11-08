@@ -58,7 +58,7 @@ public class OCObjectMapInfo
 		private int _exampleVar;
 		
 		 #region Constants
-		public static readonly float POSITION_DISTANCE_THRESHOLD = 0.05f;
+		public static readonly float POSITION_DISTANCE_THRESHOLD = 0.5f;
 		private static readonly float ROTATION_DELTA = 0.0001f;
 		private static readonly float DEFAULT_AVATAR_LENGTH = 1f;
 		private static readonly float DEFAULT_AVATAR_WIDTH = 1f;

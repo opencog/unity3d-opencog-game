@@ -80,6 +80,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	private OCActionPlanStep _step = null;
 
 	private Hashtable _idleParams;
+
 	
 	private static Dictionary<string, string> builtinActionMap = new Dictionary<string, string>();
 				
@@ -90,6 +91,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	, { "rotate_right", TreeType.Character_TurnRightMove }
 	, { "grab", TreeType.Character_BothHandsTransfer }
 	, { "eat", TreeType.Character_Destroy }
+	, { "open", TreeType.Character_BothHandsTransfer }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
 	, { "BuildBlockAtPosition", TreeType.Character_TurnAndCreate }
@@ -133,6 +135,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	private string _LastPlanID = null;
 
+	public List<OCAction.OCActionArgs> originalActionPlanQueue;
+
+	
+
 	//---------------------------------------------------------------------------
 
 	#endregion
@@ -168,7 +174,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		get { return this._step;}
 		set { _step = value;}
 	}		
-
+	
+	public bool isRunOnScript = false;
+	public List<GameObject> Inventory;
 			
 	//---------------------------------------------------------------------------
 
@@ -182,6 +190,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	public IEnumerator Start()
 	{
+		Inventory = new List<GameObject> ();
 		_TreeTypeDictionary = new Dictionary<TreeType, Tree>();
 		_ActionPlanQueue = new LinkedList<OCActionPlanStep>();
 				
@@ -244,7 +253,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		KeyValuePair<string, TreeType> keyValuePair = _ActionNameDictionary.First(s => s.Value == _TreeType);
 		firstStep.Arguments.ActionName = keyValuePair.Key;
 
-		_ActionPlanQueue.AddLast(firstStep);		
+		 _ActionPlanQueue.AddLast(firstStep);		
 
 		RunningActions = new List<string>();
 		//RunningActions.Add("StandIdleShow");
@@ -262,6 +271,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //		bool tryParse = true;
 
 		/////////////////////////////////////////////////////////////////////////////////
+				/// 
+				/// 
+
 
 		while(Application.isPlaying)
 		{
@@ -728,9 +740,10 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		actionPlanStep.Behaviour = tree;
 		actionPlanStep.Arguments = arguments;
 		_ActionPlanQueue.AddLast(actionPlanStep);
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Enqueued Action Step: " + actionPlanStep.Arguments.ActionName);
 	}
-			
+
+
 	public void CancelActionPlan()
 	{
 		_step.Behaviour.Reset();
@@ -739,16 +752,26 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	
 	public void UpdateAI()
 	{
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _step = " + _step);
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _step = " + _step);
 		
 		if(_step == null)
 		{
 			if(_ActionPlanQueue.Count != 0) {
 				_step = _ActionPlanQueue.First();
 				_ActionPlanQueue.RemoveFirst();
-				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+				UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
             } else {
 				_PlanSucceeded = true;
+				
+				if (isRunOnScript) // it's a NPC
+				{
+					NPCScript npcScript = GetComponent<NPCScript>();
+					if (npcScript.hasStartNPCScript)
+					{
+						if (npcScript.NPCCurPlanId < 2)
+							npcScript.NPC_FindAndOpenAChest();
+					}
+				}
 				//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
 
 				OCActionPlanStep step = OCScriptableObject.CreateInstance<OCActionPlanStep>();
@@ -762,7 +785,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 		BehaveResult result = _step.Behaviour.Tick();
 
-        System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, result = " + result);
+        UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, result = " + result);
 				
 //		if((_step.Behaviour.Name == _TreeTypeDictionary[TreeType.Character_IdleShow].Name) && result == BehaveResult.Success)
 //		{
@@ -777,7 +800,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //			if((_step.Behaviour.Name != _TreeTypeDictionary[_TreeType].Name) 
 //				|| ((_step.Behaviour.Name == _TreeTypeDictionary[_TreeType].Name) 
 //					&& (GameObject.Find("EndPointStub").transform.position != Vector3.zero)))
-			{
+			
 				// if we have a goal...
 				if(_step.Arguments.EndTarget != null)
 				{
@@ -824,28 +847,39 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 					if(_step.Arguments.ActionName == "grab")
 					{
-						_PlanSucceeded = OCAction.IsEndTargetCloseForward(null, _step.Arguments);
+						_PlanSucceeded = isInInventory(_step.Arguments.EndTarget);
+						// _PlanSucceeded = OCAction.IsEndTargetCloseForward(null, _step.Arguments);
 						//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
+					}
+
+					if (_step.Arguments.ActionName == "open")
+					{
+						_PlanSucceeded = _step.Arguments.EndTarget.GetComponent<Openable>().isOpen;
 					}
 							
 //					if(_step.Arguments.ActionName == "grab")
 //					{
 //						_PlanSucceeded = endPosition != startPosition && endPosition != null;
 //					}
-							
-					if(_step.Arguments.ActionPlanID != null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries))
+						
+					if(isRunOnScript )
+					{
+						if ((_step.Arguments.ActionPlanID != null) && _PlanSucceeded)
+							OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, true);
+					}
+					else if(  _step.Arguments.ActionPlanID != null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries))
 					{
 						OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
 
 						if(_step.Behaviour.Name != "Character.IdleShow" && !_step.Behaviour.Name.Contains("Behaviour"))
 						{
-								System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
+								UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, Result: " + (_PlanSucceeded ? "Success" : "Failure") + " for Action: " + (_step.Arguments.ActionName == null ? _step.Behaviour.Name : (_step.Arguments.ActionName + " & Sequence: " + _step.Arguments.SequenceID)));
 						}		
 					}
-//							else if(_step.Arguments.ActionPlanID == null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries) && OCConnectorSingleton.Instance.IsEstablished )
-//					{
-//								OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, _PlanSucceeded);
-//					}
+					//else if(_step.Arguments.ActionPlanID == null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries) && OCConnectorSingleton.Instance.IsEstablished )
+					//{
+					//			OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, _PlanSucceeded);
+					
 				}
 						
 //				if(!_PlanSucceeded)
@@ -855,8 +889,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				
 				_step.Behaviour.Reset();
 
-				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _step (after reset) = " + _step);
-                System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _PlanSucceeded = " + _PlanSucceeded);
+				UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _step (after reset) = " + _step);
+                UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _PlanSucceeded = " + _PlanSucceeded);
 
 				// if we failed, retry last step
 				if(_PlanSucceeded == false && OCActionPlanStep.MaxRetries > _step.Retry)
@@ -879,8 +913,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					}
 				}
 				
-				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _ActionPlanQueue.Count = " + _ActionPlanQueue.Count);
-				System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _LastPlanID = " + _LastPlanID);
+				UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _ActionPlanQueue.Count = " + _ActionPlanQueue.Count);
+				UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _LastPlanID = " + _LastPlanID);
 				
 				if(_ActionPlanQueue.Count == 0)
 				{
@@ -910,7 +944,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				{
 					_step = _ActionPlanQueue.First();
 					_ActionPlanQueue.RemoveFirst();
-					System.Console.WriteLine(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, re-starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
+					UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "In OCActionController.UpdateAI, re-starting action step: " + _step.Arguments.ActionName + ", retry: " + _step.Retry);
 
 					if(_LastPlanID != null)
 					{
@@ -923,7 +957,6 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						_LastPlanID = _step.Arguments.ActionPlanID;
 					}
 				}
-			}
 		}
 	}
 
@@ -1045,10 +1078,46 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		return new Dictionary<string, OCAction>();
 	}
 
+	public bool PutIntoInventory(GameObject objToGrab)
+	{
+		if (isInInventory (objToGrab))
+			return false; // already in the inventory
+		else 
+		{
+			Inventory.Add (objToGrab);
+
+			objToGrab.transform.parent = transform;
+			objToGrab.transform.localPosition = new Vector3(0f, 2f * Inventory.Count, 0f);
+			return true;
+		}
+	
+	}
+
+	public bool RemoveFromInventory(GameObject objToGrab)
+	{
+		if (isInInventory (objToGrab))
+			return false; // already in the inventory
+		else 
+		{
+			Inventory.Remove (objToGrab);
+			
+			objToGrab.transform.parent = null;
+			
+			return true;
+		}
+		
+	}
+
 	//---------------------------------------------------------------------------
 
-	#endregion
+	
 
+	public bool isInInventory(GameObject obj)
+	{
+		return (Inventory.Contains(obj));
+	}
+
+	#endregion
 	//---------------------------------------------------------------------------
 
 }// class OCRobotAgent

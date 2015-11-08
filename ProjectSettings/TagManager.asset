@@ -3,7 +3,7 @@
 --- !u!78 &1
 TagManager:
   tags:
-  - 
+  - OCObject
   - girlQ_leftHand
   - girlQ_rightHand
   - OCConsole
@@ -14,6 +14,9 @@ TagManager:
   - OCBattery
   - OCAGI
   - OCHearth
+  - key
+  - 
+  - chest
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX

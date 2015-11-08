@@ -150,7 +150,7 @@ public class OCAction : OCMonoBehaviour
 				if(shouldStart == false)
 				{
 							if((this.FullName == "WalkForwardLeftMove" || this.FullName == "HoldBothHandsTransfer") && precondition.Method.Name != "IsNoEndTargetOrNotAnimating" && precondition.Method.Name != "IsSourceNotRunningAction") 
-						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "In OCAction.ShouldStart, Precondition Not Yet True: " + precondition.Method.Name);
+						UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCAction.ShouldStart, Precondition Not Yet True: " + precondition.Method.Name);
 					break;
 				}
 			}
@@ -997,7 +997,7 @@ public class OCAction : OCMonoBehaviour
 						if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
 						{
 							_ActionController.Step.Arguments.ActionName = FullName;
-							OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, false);	
+							// OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, false);	
 						}
 
 			}
@@ -1046,7 +1046,7 @@ public class OCAction : OCMonoBehaviour
 	private ActionStatus StartAction()
 	{
 		//float timeStart =	OCTime.TimeSinceLevelLoad;
-		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Starting the " + FullName + " Action.");
+		//UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"Starting the " + FullName + " Action.");
 		if(_blockOnFail && _blockOnRunning)
 			_ActionController.RunningActions.Add(FullName);
 
@@ -1058,6 +1058,13 @@ public class OCAction : OCMonoBehaviour
 			if(Descriptors.Contains("Jump"))
 				_moveToTarget = true;
 		}
+		
+		if(Descriptors.Contains("Hold"))
+		{
+
+			_Source.transform.LookAt( new Vector3(_EndTarget.transform.position.x, _Source.transform.position.y,_EndTarget.transform.position.z));
+		}
+		
 
 		// Start animation effects
 		if(_blockOnRunning || !_Source.animation.isPlaying)
@@ -1093,14 +1100,14 @@ public class OCAction : OCMonoBehaviour
 		}
 				
 		if(!Descriptors.Contains("Idle"))
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Starting Action: " + FullName);		
+			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Starting Action: " + FullName);		
 			
 		return ActionStatus.RUNNING;
 	}
 			
 	private ActionStatus ContinueAction()
 	{
-		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Continuing the " + FullName + " Action.");
+		//UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"Continuing the " + FullName + " Action.");
 				
 //		if(!Descriptors.Contains("Idle"))
 //			Debug.LogWarning("Continuing Action: " + FullName);		
@@ -1114,7 +1121,7 @@ public class OCAction : OCMonoBehaviour
 			
 	private ActionStatus EndAction()
 	{
-		//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Ending the " + FullName + " Action.");
+		//UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"Ending the " + FullName + " Action.");
 				
 		OCActionArgs args = null;
 				
@@ -1201,15 +1208,48 @@ public class OCAction : OCMonoBehaviour
 			OCCharacterMotor motor = _Source.GetComponent<OCCharacterMotor>();
 			motor.enabled = true;
 		}
+
+		if (args.ActionName == "grab")
+		{
+			//if (IsEndTargetAdjacent(null, args))
+			//{
+				_ActionController.PutIntoInventory(args.EndTarget);
+			//}
+
+		}
+	
+		if (args.ActionName == "open")
+		{
+			// check if have the right key
+			string objColor = _EndTarget.GetComponent<OCColor>().color;
+		
+			foreach (GameObject item in _ActionController.Inventory)
+			{
+				if (item.GetComponent<OCColor>().color == objColor)
+				{
+					
+					_ActionController.Inventory.Remove(item);
+
+					GameObject.DestroyObject(item);
+					// display open chest animation
+					_EndTarget.GetComponent<Animation>().Play("open");
+					_EndTarget.GetComponent<Openable>().isOpen = true;
+					OCConnectorSingleton.Instance.HandleObjectStateChange(_EndTarget, "is_open", "System.Boolean", "false", "true");
+					break;
+				}
+			}
+
+			
+		}
 			
 		if(!Descriptors.Contains("Idle"))
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Ending Action: " + FullName);
+			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Ending Action: " + FullName);
 			
-			if(args.ActionPlanID == null && OCConnectorSingleton.Instance.IsEstablished)
-			{
-				_ActionController.Step.Arguments.ActionName = FullName;
-				OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, true);	
-			}		
+			//if((args.ActionPlanID != null) && (OCConnectorSingleton.Instance.IsEstablished) && (args.Source.GetComponent<OCActionController>().isRunOnScript))
+			//{
+			//	_ActionController.Step.Arguments.ActionName = FullName;
+			//	OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_ActionController.Step, true);	
+			//}		
 			
 		return ActionStatus.SUCCESS;
 	}
@@ -1244,6 +1284,17 @@ public class OCAction : OCMonoBehaviour
 		public OCActionArgs()
 		{
 			
+		}
+
+		public OCActionArgs (OCActionArgs otherArgs)
+		{
+			_Source = otherArgs.Source;
+			_StartTarget = otherArgs.StartTarget;
+			_EndTarget = otherArgs.EndTarget;
+
+			ActionPlanID = otherArgs.ActionPlanID;
+			SequenceID = otherArgs.SequenceID;
+			ActionName = otherArgs.ActionName;
 		}
 				
 		public OCActionArgs(GameObject source, GameObject startTarget, GameObject endTarget)

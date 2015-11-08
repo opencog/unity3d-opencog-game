@@ -387,7 +387,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 					}
 					if(!IsElementAvailable(message.TargetID))
 					{
-						System.Console.WriteLine(OCLogSymbol.DESTROY + "Destination not available. Discarding message to '" +
+						UnityEngine.Debug.Log(OCLogSymbol.DESTROY + "Destination not available. Discarding message to '" +
 						//UnityEngine.Debug.Log(OCLogSymbol.DESTROY + "Destination not available. Discarding message to '" +
 							message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						continue;
@@ -399,7 +399,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 					{
 						if(sendResult)
 						{
-							System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "Message sent from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
+							UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Message sent from '" + message.SourceID + "' to '" + message.TargetID + "' of type '" + message.Type + "': " + message.ToString());
 						} else
 						{
 							UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Error sending message from '" + message.SourceID + "' to '" +
@@ -457,7 +457,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 	
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending block structure signal: \n" + BeautifyXmlText(doc));
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"sending block structure signal: \n" + BeautifyXmlText(doc));
         
 		lock(_messageSendingLock)
 		{
@@ -481,7 +481,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
    */
 	public bool InitAvatar(string agentName, string agentTraits, string agentType, string masterId, string masterName)
 	{
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"OCConnectorSingleton::InitAvatar() has been called on behalf of " + agentName);
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"OCConnectorSingleton::InitAvatar() has been called on behalf of " + agentName);
 		// Initialize basic attributes.
 		_baseID = agentName;//gameObject.GetInstanceID().ToString();
 		_ID = "AVATAR_" + _baseID;
@@ -748,7 +748,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 
 		// Loop through Actions...or clones of them...or data structures for them...
 	
-		System.Console.WriteLine(OCLogSymbol.CONNECTION + "OCConnectorSingleton.UpdateActionStatuses()");
+		UnityEngine.Debug.Log(OCLogSymbol.CONNECTION + "OCConnectorSingleton.UpdateActionStatuses()");
 		string timestamp = GetCurrentTimestamp();
 		// Create a xml document
 		XmlDocument doc = new XmlDocument();
@@ -813,6 +813,8 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 //    }
 
 		// the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
+		OCActionController actionController = step.Arguments.Source.GetComponent<OCActionController>();
+		OCAction.OCActionArgs orginalArgs = actionController.originalActionPlanQueue[0];
 
 		string timestamp = GetCurrentTimestamp();
 		XmlDocument doc = new XmlDocument();
@@ -855,16 +857,16 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 				 
 		XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 
-		if(step.Arguments.EndTarget != null)
+		if(orginalArgs.EndTarget != null)
 		{
-			if(step.Arguments.EndTarget.tag == "OCObject" || step.Arguments.EndTarget.tag == "Player")
+			if(orginalArgs.EndTarget.tag == "OCObject" || orginalArgs.EndTarget.tag == "Player")
 			{
 				param.SetAttribute("type", "entity");
-				param.SetAttribute("name", step.Arguments.EndTarget.name);
+				param.SetAttribute("name", orginalArgs.EndTarget.name);
 				XmlElement entityElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ENTITY_ELEMENT));
-				entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, step.Arguments.EndTarget.GetInstanceID().ToString());
+				entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, orginalArgs.EndTarget.GetInstanceID().ToString());
 
-				if(step.Arguments.EndTarget.tag == "OCObject")
+				if(orginalArgs.EndTarget.tag == "OCObject")
 				{
 					entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 				} else
@@ -873,7 +875,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 				}
 			} else
 			{
-				UnityEngine.Vector3 vec = step.Arguments.EndTarget.transform.position;
+				UnityEngine.Vector3 vec = orginalArgs.EndTarget.transform.position;
 				param.SetAttribute("type", "vector");
 				param.SetAttribute("name", "position");
 				XmlElement vectorElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.VECTOR_ELEMENT));
@@ -883,8 +885,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 			}
 		}
 
-
-
+		actionController.originalActionPlanQueue.RemoveAt(0);
 
 
 //		// we can only process the parameter type defined in class ActionParamType both in opencog and unity
@@ -1059,7 +1060,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 	   	
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"sending state change of " + objectID + "\n" + BeautifyXmlText(doc));
 	   	
 		lock(_messagesToSend)
 		{
@@ -1123,7 +1124,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending move action result: \n" + BeautifyXmlText(doc));
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"sending move action result: \n" + BeautifyXmlText(doc));
         
 		lock(_messagesToSend)
 		{
@@ -1206,7 +1207,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
 		lock(_messagesToSend)
 		{
@@ -1222,10 +1223,10 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 	// it will be processed in opencog the same as handleOtherAgentActionResult
 	public void HandleObjectStateChange(UnityEngine.GameObject obj, string stateName, string valueType, System.Object oldValue, System.Object newValue, string blockId = "")
 	{
-		if(obj == GameObject.FindGameObjectWithTag("OCAGI"))
-		{
-			return;
-		}
+		//if(obj == GameObject.FindGameObjectWithTag("OCAGI"))
+		//{
+		//	return;
+		//}
 		
 		string timestamp = GetCurrentTimestamp();
 		XmlDocument doc = new XmlDocument();
@@ -1349,7 +1350,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
     
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"sending state change of " + obj + "\n" + BeautifyXmlText(doc));
     
 		lock(_messagesToSend)
 		{
@@ -1606,7 +1607,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
         
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"sending finished-first-time-percept-terrian-signal: \n" + BeautifyXmlText(doc));
         
 		lock(_messagesToSend)
 		{
@@ -1646,7 +1647,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 				"' from player but I am not connected to an OAC.");
 			return;
 		}
-		System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "]: Received '" + text + "' from player.");
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "]: Received '" + text + "' from player.");
 
 		// Avoid creating messages if the destination (avatar brain) isn't available 
 		if(!IsElementAvailable(_brainID))
@@ -1740,7 +1741,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 			// group all demands to be updated only once
 			_demandValueMap[demand] = value;
 
-			System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "] -> parsePsiDemandElement: Demand '" + demand + "' value '" + value + "'.");
+			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "] -> parsePsiDemandElement: Demand '" + demand + "' value '" + value + "'.");
 		}
 	}
 
@@ -1760,7 +1761,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 			// group all feelings to be updates only once
 			_feelingValueMap[feeling] = value;
 
-			//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
+			//UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"Avatar[" + _ID + "] -> parseEmotionalFeelingElement: Feeling '" + feeling + "' value '" + value + "'.");
 		}
 
 		// Update feelings of this avatar.
@@ -1809,7 +1810,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		XmlNodeList list = document.GetElementsByTagName(OCEmbodimentXMLTags.ACTION_PLAN_ELEMENT);
 		for(int i = 0; i < list.Count; i++)
 		{
-			System.Console.WriteLine(OCLogSymbol.RUNNING + "OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
+			UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "OCConnectorSingleton::ParseDOMDocument: ParseActionPlanElement");
 			ParseActionPlanElement((XmlElement)list.Item(i));
 		}
 
@@ -2020,7 +2021,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 
 					if(actionName == "walk" || actionName == "jump_toward")
 					{
-						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
+						UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]");
 						//console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to go to [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 					
 						actionArguments.EndTarget = vectorGameObject;
@@ -2034,7 +2035,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 					
 					} else if(actionName == "destroy" || actionName == "build_block")
 					{
-						System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy/create block at [" + x + ", " + z + ", " + y + "]");
+						UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy/create block at [" + x + ", " + z + ", " + y + "]");
 						//console.AddConsoleEntry("A '" + actionName + "' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to destroy/create block at [" + x + ", " + z + ", " + y + "]", "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 						
 						actionArguments.EndTarget = vectorGameObject;
@@ -2075,12 +2076,12 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 							// Then we can grab it, eat it, whatever...since it's a battery
 							if(actionName == "grab")
 							{
-								System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
+								UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
 								
 								//console.AddConsoleEntry("A 'grab' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 							} else if(actionName == "eat")
 							{
-								System.Console.WriteLine(OCLogSymbol.DETAILEDINFO + "An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
+								UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
 								
 								//console.AddConsoleEntry("An 'eat' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
 								
@@ -2282,7 +2283,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 	        
 	        
 			string xmlText = BeautifyXmlText(doc);
-			//System.Console.WriteLine(OCLogSymbol.DETAILEDINFO +"OCConnector - sendAvatarSignalsAndTick: " + xmlText);
+			//UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"OCConnector - sendAvatarSignalsAndTick: " + xmlText);
 	            
 			// Construct a string message.
 			OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, xmlText);

@@ -24,6 +24,7 @@ using ImplicitFields = ProtoBuf.ImplicitFields;
 using ProtoContract = ProtoBuf.ProtoContractAttribute;
 using Serializable = System.SerializableAttribute;
 using UnityEngine;
+using OpenCog.Actions;
 
 //The private field is assigned but its value is never used
 #pragma warning disable 0414
@@ -92,9 +93,27 @@ public class OCGameGUI : OCMonoBehaviour
 		Rect rect = new Rect(0, 0, size.x, size.y);
 		rect.center = new Vector2(Screen.width, Screen.height)/2f;
 		GUI.Label( rect, "+" );
-	}
 
-	//---------------------------------------------------------------------------
+			if (Input.GetKeyUp(KeyCode.R))
+			{
+				// run all the script agents
+				NPCScript[] npcs = GameObject.Find("Characters").GetComponentsInChildren<NPCScript>();
+				foreach(NPCScript npc in npcs)
+				{
+					npc.startNPCScript();
+				}
+			}
+
+			if (Input.GetKeyUp(KeyCode.O))
+			{
+				Animation ani = GameObject.FindWithTag("chest").GetComponent<Animation>();
+				ani.Play("open");
+			}
+
+
+		}
+		
+		//---------------------------------------------------------------------------
 
 	#endregion
 

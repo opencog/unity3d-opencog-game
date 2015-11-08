@@ -1709,7 +1709,7 @@ GameObject:
   - 114: {fileID: 11400030}
   m_Layer: 8
   m_Name: Robot_Prefab
-  m_TagString: Untagged
+  m_TagString: OCNPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2196,7 +2196,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100286
 GameObject:
   m_ObjectHideFlags: 1
@@ -3706,7 +3706,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100224}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3}
+  m_LocalPosition: {x: 1, y: -16.4199982, z: 1}
   m_LocalScale: {x: .699999988, y: .699999988, z: .699999988}
   m_Children:
   - {fileID: 400222}
@@ -4852,8 +4852,8 @@ MonoBehaviour:
   _defaultStartTarget: {fileID: 0}
   _defaultEndTarget: {fileID: 0}
   _TreeType: 2
-  _ActionPlanList: []
   RunningActions: []
+  isRunOnScript: 1
 --- !u!114 &11400050
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5929,13 +5929,13 @@ CharacterController:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100224}
   serializedVersion: 2
-  m_Height: 2.5250001
+  m_Height: 3
   m_Radius: .5
   m_SlopeLimit: 45
   m_StepOffset: .300000012
   m_SkinWidth: .0799999982
   m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
