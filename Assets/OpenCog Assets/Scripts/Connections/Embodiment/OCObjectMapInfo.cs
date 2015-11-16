@@ -466,6 +466,9 @@ public class OCObjectMapInfo
 				this.AddProperty ("holder", "none", System.Type.GetType ("System.String"));
 			}
 
+			if (gameObject.GetComponent<OCColor>() != null)
+				this.AddProperty ("color", gameObject.GetComponent<OCColor>().color, System.Type.GetType ("System.String"));
+
 			// Get a property manager instance
 			// TODO [BLOCKED]: may need to re-enable this for other object types.
 //			OCPropertyManager manager = gameObject.GetComponent<OCPropertyManager> () as OCPropertyManager;

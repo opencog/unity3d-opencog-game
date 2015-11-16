@@ -34584,7 +34584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _blockSet: {fileID: 11400000, guid: ca0099266270eec49b07367d37c209f2, type: 2}
-  _floorHeight: 0
+  _floorHeight: 143
   _BatteryPrefab: {fileID: 100000, guid: 7bf39f7182877fe44a1cd1f6dca12884, type: 2}
   _BatteriesSceneObject: {fileID: 1765427238}
   _HearthPrefab: {fileID: 100000, guid: e34af36af01600d43aed2ad161db7402, type: 2}
@@ -38633,6 +38633,10 @@ Prefab:
     - target: {fileID: 400000, guid: 13a75b0e4ac000741ac7ab22b8651f2b, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 13a75b0e4ac000741ac7ab22b8651f2b, type: 2}
+      propertyPath: _floorHeight
+      value: 143
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 13a75b0e4ac000741ac7ab22b8651f2b, type: 2}

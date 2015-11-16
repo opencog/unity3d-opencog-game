@@ -335,25 +335,45 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 		//				if (this.BuildMapInfo(batteryObject))
 		//					updatedObjects.Add (batteryObject.GetInstanceID());
 		//			}
-				
-		UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
-				
-		for(int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
-		{
-			UnityEngine.GameObject batteryObject = batteryArray[iBattery];
-					
-			if(this.BuildMapInfo(batteryObject))
+
+			UnityEngine.GameObject[] ocobjectArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCObject");
+			
+			for(int iobj = 0; iobj < ocobjectArray.Length; iobj++)
 			{
-				updatedObjects.Add(batteryObject.GetInstanceID());
-						
-				UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
-			} else
-			{
-				//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
-			}	
+				UnityEngine.GameObject ocobject = ocobjectArray[iobj];
+				
+				if(this.BuildMapInfo(ocobject))
+				{
+					updatedObjects.Add(ocobject.GetInstanceID());
 					
-			console.AddConsoleEntry("I can see a battery! Its ID is " + batteryObject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
-		}
+					UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Added object with ID '" + ocobject.GetInstanceID() + "' to updatedObjects");
+				} else
+				{
+					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
+				
+				console.AddConsoleEntry("I can see an object! Its ID is " + ocobject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+			}
+				
+		/*	UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
+			
+			for(int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
+			{
+				UnityEngine.GameObject batteryObject = batteryArray[iBattery];
+				
+				if(this.BuildMapInfo(batteryObject))
+				{
+					updatedObjects.Add(batteryObject.GetInstanceID());
+					
+					UnityEngine.Debug.Log(OCLogSymbol.RUNNING + "Added Battery with ID '" + batteryObject.GetInstanceID() + "' to updatedObjects");
+				} else
+				{
+					//UnityEngine.Debug.Log ("Battery with ID '" + batteryObject.GetInstanceID() + "' has not changed, so will not be added to updatedObjects");
+				}	
+				
+				console.AddConsoleEntry("I can see a battery! Its ID is " + batteryObject.GetInstanceID(), "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
+			}
+		*/
 				
 		UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
 				
@@ -1162,7 +1182,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 					// Now this is kind of strange...the first if checks if the cached (old) behaviour is the same as the new behaviour...
 					// ... oh I see...if it's perceiving the states for the first time then of course they will always be different...or not exist in the cache...
 					// ... or something...
-					else if(_isPerceivingStateChangesForTheFirstTime)
+			else if(_isPerceivingStateChangesForTheFirstTime)
 			{
 				// send this existing state to the opencog first time
 				if(type == "Enum")

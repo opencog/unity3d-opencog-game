@@ -1088,6 +1088,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 			objToGrab.transform.parent = transform;
 			objToGrab.transform.localPosition = new Vector3(0f, 2f * Inventory.Count, 0f);
+			objToGrab.GetComponent<Pickupable>().holder = this.gameObject;
 			return true;
 		}
 	

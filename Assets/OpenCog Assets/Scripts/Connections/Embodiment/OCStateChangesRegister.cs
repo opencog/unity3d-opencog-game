@@ -92,7 +92,7 @@ public class OCStateChangesRegister : OCMonoBehaviour
 			
 		_stateList.Add(aInfo);
 			
-		OCPerceptionCollector.Instance.AddNewState(aInfo);
+		//OCPerceptionCollector.Instance.AddNewState(aInfo);
 			 
 //		// I'm guessing the perception collector is owned by the AI controlled agent. So we're telling it here that is has perceived a state change...
 //		// ...so that it can tell OpenCog...i.e. the agent in the cogserver...
