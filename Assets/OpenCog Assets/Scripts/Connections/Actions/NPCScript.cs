@@ -33,7 +33,13 @@ public class NPCScript : MonoBehaviour
 	{
 		
 		// walk to the key
-		GameObject keyObj = GameObject.Find ("key_" + colorToFind);
+		GameObject keyObjs = GameObject.Find ("keys");
+		GameObject keyObj = null;
+		foreach (Transform key in keyObjs.transform)
+		{
+			if (key.GetComponent<OCColor>().color == colorToFind)
+				keyObj = key.gameObject;
+		}
 		
 		if (keyObj == null)
 			return;
@@ -96,7 +102,13 @@ public class NPCScript : MonoBehaviour
 	public void NPC_FindAndOpenAChest()
 	{
 		// walk to the chest
-		GameObject chestObj = GameObject.Find ("chest_" + colorToFind);
+		GameObject chestObjs = GameObject.Find ("chests");
+		GameObject chestObj = null;
+		foreach (Transform chest in chestObjs.transform)
+		{
+			if (chest.GetComponent<OCColor>().color == colorToFind)
+				chestObj = chest.gameObject;
+		}
 		
 		if (chestObj == null)
 			return;
