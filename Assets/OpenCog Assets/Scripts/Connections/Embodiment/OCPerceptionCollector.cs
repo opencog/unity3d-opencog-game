@@ -461,7 +461,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 			foreach(int oid in disappearedObjects)
 			{
 				// Report disappearance to the OCConnector...
-				_connector.HandleObjectAppearOrDisappear(_mapInfoCache[oid].ID, _mapInfoCache[oid].Type, false);
+				_connector.HandleObjectAppearOrDisappear(_mapInfoCache[oid].name + _mapInfoCache[oid].ID, _mapInfoCache[oid].Type, false);
 						
 				// AND add it to latestMapInfoSeq? That's weird...seems redundant to me now...
 				latestMapInfoSeq.Add(this._mapInfoCache[oid]);
@@ -822,7 +822,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 			// dynamical data of this game object has been obtained.
 			return true;
 		}
-				
+		/*		
 		// Position
 		UnityEngine.Vector3 currentPos = Utility.VectorUtil.ConvertToOpenCogCoord(go.transform.position);
 
@@ -877,7 +877,7 @@ public class OCPerceptionCollector : OCSingletonMonoBehaviour<OCPerceptionCollec
 			isUpdated = true;
 			mapInfo.rotation = currentRot;
 		}
-		
+		*/
 		return isUpdated;
 	}
 
