@@ -822,7 +822,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		XmlElement root = MakeXMLElementRoot(doc);
 		
 		XmlElement agentSignal = (XmlElement)root.AppendChild(doc.CreateElement("agent-signal"));
-		agentSignal.SetAttribute("id", gameObject.name + gameObject.GetInstanceID().ToString());
+		agentSignal.SetAttribute("id", step.Arguments.Source.name + step.Arguments.Source.GetInstanceID().ToString());
 		agentSignal.SetAttribute("type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
 		agentSignal.SetAttribute("timestamp", timestamp);
 		XmlElement actionElement = (XmlElement)agentSignal.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ACTION_ELEMENT));
