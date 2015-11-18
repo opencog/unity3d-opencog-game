@@ -1153,7 +1153,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		XmlElement StateSignal = (XmlElement)root.AppendChild(doc.CreateElement("state-info"));
 		StateSignal.SetAttribute("object-id", id);
 
-		if(obj.tag == "OCA" || obj.tag == "Player")
+		if(obj.tag == "OCNPC" || obj.tag == "Player")
 		{// it's an avatar
 			StateSignal.SetAttribute("object-type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
 		} else
@@ -1267,7 +1267,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		actionElement.SetAttribute("target", id);
 		
 		
-		if(targetType == "OCA" || targetType == "Player")// it's an avatar
+		if(targetType == "OCNPC" || targetType == "Player")// it's an avatar
 		{
 			agentSignal.SetAttribute("type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
 			actionElement.SetAttribute("target-type", OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
@@ -1470,14 +1470,6 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 			}
 		} // foreach
 
-		foreach(OCObjectMapInfo objMapInfo in localMapInfo)
-		{
-			if(! objMapInfo.ID.Equals(_brainID))
-			{
-				objMapInfo.ID = objMapInfo.name + objMapInfo.ID;
-				
-			}
-		}
       
 		if(!foundAvatarId && _isFirstSentMapInfo)
 		{
@@ -2332,12 +2324,12 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		} else
 		{
 			string targetType = obj.tag;
-			if(targetType == "OCA")// it's an avatar
+			if(targetType == "OCAGI")// it's an avatar
 			{
 				entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, _brainID);
 				entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
 			} 
-			else if (targetType == "Player")
+			else if ((targetType == "Player") || (targetType == "OCNPC"))
 			{
 				entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, obj.name + obj.GetInstanceID().ToString());
 				entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, OCEmbodimentXMLTags.AVATAR_OBJECT_TYPE);
