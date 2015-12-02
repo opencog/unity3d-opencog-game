@@ -924,8 +924,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 								
 //						if(result == BehaveResult.Failure)
 //							OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, true);			
-								
-						OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded /*, _LastPlanEndedAtTime*/);
+						
+						if (this.gameObject.tag == "OCAGI")
+							OCConnectorSingleton.Instance.SendActionPlanStatus(_LastPlanID, _PlanSucceeded /*, _LastPlanEndedAtTime*/);
 
 						if(_step != null && _step.Arguments.EndTarget != null)
 						{

@@ -869,7 +869,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 			if(orginalArgs.EndTarget.tag == "OCObject" || orginalArgs.EndTarget.tag == "Player")
 			{
 				param.SetAttribute("type", "entity");
-				param.SetAttribute("name", orginalArgs.EndTarget.name);
+				param.SetAttribute("name", "target");
 				XmlElement entityElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ENTITY_ELEMENT));
 				entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, orginalArgs.EndTarget.name + orginalArgs.EndTarget.GetInstanceID().ToString());
 				
@@ -2419,6 +2419,9 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
    */
 	public void SendActionPlanStatus(string planId, bool success/*, long timeCompleted*/)
 	{
+		// only send the plan status of the oac itself, ignored other agents
+
+
 		string timestamp = GetCurrentTimestamp();
 		XmlDocument doc = new XmlDocument();
 		XmlElement root = MakeXMLElementRoot(doc);
