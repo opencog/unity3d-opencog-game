@@ -12780,7 +12780,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &557958430
 Transform:
   m_ObjectHideFlags: 0
@@ -13462,7 +13462,7 @@ Prefab:
       objectReference: {fileID: 1116928595}
     - target: {fileID: 182378, guid: e8ea720c1afc9d7449aa82662a898ee3, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e8ea720c1afc9d7449aa82662a898ee3, type: 2}
@@ -14903,7 +14903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fd22cad2f0f9d2468e3f6fc9634ce64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOpen: 0
+  is_open: 0
 --- !u!111 &679920178
 Animation:
   m_ObjectHideFlags: 0
@@ -16091,7 +16091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fd22cad2f0f9d2468e3f6fc9634ce64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOpen: 0
+  is_open: 0
 --- !u!65 &740769341
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -18446,7 +18446,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &822197866
 Transform:
   m_ObjectHideFlags: 0
@@ -37305,7 +37305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fd22cad2f0f9d2468e3f6fc9634ce64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOpen: 0
+  is_open: 0
 --- !u!65 &1630322060
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -41261,7 +41261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fd22cad2f0f9d2468e3f6fc9634ce64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOpen: 0
+  is_open: 0
 --- !u!65 &1907514630
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -42727,7 +42727,7 @@ Prefab:
       objectReference: {fileID: 439397702}
     - target: {fileID: 182378, guid: e8ea720c1afc9d7449aa82662a898ee3, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e8ea720c1afc9d7449aa82662a898ee3, type: 2}

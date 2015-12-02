@@ -4,11 +4,11 @@ using OpenCog.Embodiment;
 
 public class Openable : MonoBehaviour {
 
-	public bool isOpen = false;
+	public bool is_open = false;
 
 	void Start()
 	{
-		OCStateChangesRegister.RegisterState(gameObject, this, "isOpen");
+		OCStateChangesRegister.RegisterState(gameObject, this, "is_open");
 	}
 
 }

@@ -1233,8 +1233,8 @@ public class OCAction : OCMonoBehaviour
 					GameObject.DestroyObject(item);
 					// display open chest animation
 					_EndTarget.GetComponent<Animation>().Play("open");
-					_EndTarget.GetComponent<Openable>().isOpen = true;
-					OCConnectorSingleton.Instance.HandleObjectStateChange(_EndTarget, "is_open", "System.Boolean", "false", "true");
+					_EndTarget.GetComponent<Openable>().is_open = true;
+					// OCConnectorSingleton.Instance.HandleObjectStateChange(_EndTarget, "is_open", "System.Boolean", "false", "true");
 					break;
 				}
 			}

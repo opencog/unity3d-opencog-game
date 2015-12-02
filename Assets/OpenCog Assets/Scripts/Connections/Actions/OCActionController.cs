@@ -854,7 +854,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 					if (_step.Arguments.ActionName == "open")
 					{
-						_PlanSucceeded = _step.Arguments.EndTarget.GetComponent<Openable>().isOpen;
+						_PlanSucceeded = _step.Arguments.EndTarget.GetComponent<Openable>().is_open;
 					}
 							
 //					if(_step.Arguments.ActionName == "grab")

@@ -831,6 +831,12 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		// ie: name = kick , while action-instance-name = kick2342
 		actionElement.SetAttribute("name", step.Arguments.ActionName);
 		actionElement.SetAttribute("action-instance-name", step.Arguments.ActionName + "_" + _normalActionCount ++);
+
+		if (step.Arguments.ActionName == "open")
+		{
+			int x = 0;
+			x ++;
+		}
 		
 		//bool result = (status == ActionResult.Status.SUCCESS ? true : false);
 		actionElement.SetAttribute("result-state", status.ToString().ToLower()); //successful or failed
@@ -1228,6 +1234,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		//{
 		//	return;
 		//}
+
 		
 		string timestamp = GetCurrentTimestamp();
 		XmlDocument doc = new XmlDocument();
