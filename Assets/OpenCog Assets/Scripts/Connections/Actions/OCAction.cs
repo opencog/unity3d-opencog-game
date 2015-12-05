@@ -1228,9 +1228,9 @@ public class OCAction : OCMonoBehaviour
 				if (item.GetComponent<OCColor>().color == objColor)
 				{
 					
-					_ActionController.Inventory.Remove(item);
+					//_ActionController.Inventory.Remove(item);
 
-					GameObject.DestroyObject(item);
+					//GameObject.DestroyObject(item);
 					// display open chest animation
 					_EndTarget.GetComponent<Animation>().Play("open");
 					_EndTarget.GetComponent<Openable>().is_open = true;

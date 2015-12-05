@@ -462,8 +462,13 @@ public class OCObjectMapInfo
 			{
 				System.Console.WriteLine(OCLogSymbol.RUNNING + "Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
 				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
+
+			}
+
+			if (gameObject.GetComponent<Pickupable>() != null)
+			{
 				this.AddProperty ("pickupable", "TRUE", System.Type.GetType ("System.Boolean"));
-				this.AddProperty ("holder", "none", System.Type.GetType ("System.String"));
+				// this.AddProperty ("holder", "none", System.Type.GetType ("System.String"));
 			}
 
 			if (gameObject.GetComponent<OCColor>() != null)
