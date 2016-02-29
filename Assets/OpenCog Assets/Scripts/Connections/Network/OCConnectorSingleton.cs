@@ -802,7 +802,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 
 	}
   
-	public void HandleOtherAgentActionResult(OCActionPlanStep step, bool status)
+	public void HandleOtherAgentActionResult(OCActionPlanStep step, bool status, GameObject with = null)
 	{
 		// don't report actions that came from us.
 		// don't report actions without an action summary (these are from trying
@@ -861,11 +861,10 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		{
 			Debug.LogWarning("Error target type: " + targetType + " in action: " + step.Arguments.ActionName);
 		}
-		
-		XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
-		
+
 		if(orginalArgs.EndTarget != null)
 		{
+			XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
 			if(orginalArgs.EndTarget.tag == "OCObject" || orginalArgs.EndTarget.tag == "Player")
 			{
 				param.SetAttribute("type", "entity");
@@ -890,6 +889,17 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 				vectorElement.SetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE, vec.y.ToString());
 				vectorElement.SetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE, vec.z.ToString());
 			}
+		}
+
+		if(with != null)
+		{
+			XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
+			param.SetAttribute("type", "entity");
+			param.SetAttribute("name", "with");
+			XmlElement entityElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ENTITY_ELEMENT));
+			entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, with.name + with.GetInstanceID().ToString());	
+			entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
+
 		}
 		
 		actionController.originalActionPlanQueue.RemoveAt(0);

@@ -865,7 +865,18 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					if(isRunOnScript )
 					{
 						if ((_step.Arguments.ActionPlanID != null) && _PlanSucceeded)
-							OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, true);
+						{
+							if (_step.Arguments.ActionName == "open")
+							{
+								if (this.Inventory.Count > 0)
+									OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, true, this.Inventory[0]);
+								else
+									OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, true);
+							}
+							else
+								OCConnectorSingleton.Instance.HandleOtherAgentActionResult(_step, true);
+
+						}
 					}
 					else if(  _step.Arguments.ActionPlanID != null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries))
 					{

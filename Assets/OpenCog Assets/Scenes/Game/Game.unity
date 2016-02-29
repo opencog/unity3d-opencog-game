@@ -4483,6 +4483,10 @@ Prefab:
       propertyPath: m_Name
       value: key
       objectReference: {fileID: 0}
+    - target: {fileID: 145232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
   m_RootGameObject: {fileID: 502557176}
