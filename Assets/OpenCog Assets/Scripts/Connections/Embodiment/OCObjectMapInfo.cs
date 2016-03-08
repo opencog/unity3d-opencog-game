@@ -457,13 +457,15 @@ public class OCObjectMapInfo
 			} else {
 				_weight = 0.0f;
 			}
-			
-			if (gameObject.GetComponent<OpenCog.Extensions.OCConsumableData>() != null)
+
+			// test mine patterns on query
+/*			if (gameObject.GetComponent<OpenCog.Extensions.OCConsumableData>() != null)
 			{
 				System.Console.WriteLine(OCLogSymbol.RUNNING + "Adding edible and foodbowl tags to '" + gameObject.name + "' with ID " + gameObject.GetInstanceID());
 				this.AddProperty ("edible", "TRUE", System.Type.GetType ("System.Boolean"));
 
 			}
+*/
 
 			if (gameObject.GetComponent<Pickupable>() != null)
 			{

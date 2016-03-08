@@ -104,10 +104,9 @@ public class OCGameGUI : OCMonoBehaviour
 				}
 			}
 
-			if (Input.GetKeyUp(KeyCode.O))
+			if (Input.GetKeyUp(KeyCode.P))
 			{
-				Animation ani = GameObject.FindWithTag("chest").GetComponent<Animation>();
-				ani.Play("open");
+				OCConnectorSingleton.Instance.SendStartPlanningFromClientSignal();
 			}
 
 

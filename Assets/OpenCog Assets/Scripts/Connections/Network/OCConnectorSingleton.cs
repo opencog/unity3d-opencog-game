@@ -155,7 +155,8 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		actionStatus,
 		actionPlanSucceeded,
 		actionPlanFailed,
-		finishTerrain
+		finishTerrain,
+		startPlanning
 	};
 	#endregion
 	#region                                  Reception Flags For Listeners
@@ -1611,6 +1612,31 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		return OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
 		
 		//return new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
+	}
+
+
+	public void SendStartPlanningFromClientSignal()
+	{
+		XmlDocument doc = new XmlDocument();
+		XmlElement root = MakeXMLElementRoot(doc);
+		string timestamp = GetCurrentTimestamp();
+		
+		XmlElement signal = (XmlElement)root.AppendChild(doc.CreateElement("start-planning-from-client-signal"));
+		signal.SetAttribute("timestamp", timestamp);
+		
+		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
+		
+		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"sending start-planning-from-client-signal: \n" + BeautifyXmlText(doc));
+		
+		lock(_messagesToSend)
+		{
+			_messagesToSend.Add(message);
+		}
+		
+		//set a time so we can record it laterz!
+		if(dispatchFlags[(int)DispatchTypes.startPlanning])
+			dispatchTimes[(int)DispatchTypes.startPlanning] = System.DateTime.Now.Ticks;
+
 	}
 	
 	public void SendFinishPerceptTerrain()
