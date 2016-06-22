@@ -15,6 +15,7 @@
 /// You should have received a copy of the GNU Affero General Public License
 /// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Text.RegularExpressions;
 
 
 #region Usings, Namespaces, and Pragmas
@@ -1614,14 +1615,32 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		//return new OCStringMessage(_ID, _brainID, BeautifyXmlText(doc));
 	}
 
-
+	bool alreadyStartPlanning = false;
 	public void SendStartPlanningFromClientSignal()
 	{
+		if (alreadyStartPlanning)
+			return;
+	    
+		GameObject chestObjs = GameObject.Find ("chests");
+		GameObject blackChestObj = null;
+		foreach (Transform chest in chestObjs.transform)
+		{
+			if (chest.GetComponent<OCColor>().color == "black")
+				blackChestObj = chest.gameObject;
+		}
+		
+		if (blackChestObj == null)
+			return;
+
+		string blockChestNameId = "id_chest" + blackChestObj.GetInstanceID().ToString();
+
 		XmlDocument doc = new XmlDocument();
 		XmlElement root = MakeXMLElementRoot(doc);
 		string timestamp = GetCurrentTimestamp();
 		
 		XmlElement signal = (XmlElement)root.AppendChild(doc.CreateElement("start-planning-from-client-signal"));
+
+		signal.SetAttribute("object-id", blockChestNameId);
 		signal.SetAttribute("timestamp", timestamp);
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));
@@ -1632,7 +1651,8 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		{
 			_messagesToSend.Add(message);
 		}
-		
+		alreadyStartPlanning = true;
+
 		//set a time so we can record it laterz!
 		if(dispatchFlags[(int)DispatchTypes.startPlanning])
 			dispatchTimes[(int)DispatchTypes.startPlanning] = System.DateTime.Now.Ticks;
@@ -2019,8 +2039,15 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 			}
 			
 			// 'action' elements contain 'params'
+			int paramCount = 0;
 			foreach(XmlNode actionParameterNode in actionParameters)
 			{
+				paramCount ++;
+				if (actionName == "open")
+				{
+					if (paramCount > 1)
+						break;
+				}
 				// Cast actionParameterNode to an actionParameterElement (XmlElement)
 				XmlElement actionParameterElement = (XmlElement)actionParameterNode;
 				
@@ -2039,14 +2066,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 					float x = float.Parse(vectorElement.GetAttribute(OCEmbodimentXMLTags.X_ATTRIBUTE), System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 					float y = float.Parse(vectorElement.GetAttribute(OCEmbodimentXMLTags.Y_ATTRIBUTE), System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 					float z = float.Parse(vectorElement.GetAttribute(OCEmbodimentXMLTags.Z_ATTRIBUTE), System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-					
-//						if (adjustCoordinate)
-//						{
-//							x += 0.5f;
-//							y += 0.5f;
-//							z += 0.5f;
-//						}
-					
+
 					string gameObjectString = "PLAN" + _currentPlanId.ToString().PadLeft(3, '0') + "_SEQ" + sequence.ToString().PadLeft(3, '0') + "_VECTOR";
 							
 					UnityEngine.GameObject vectorGameObject = (UnityEngine.GameObject)UnityEngine.GameObject.Instantiate(_map.WaypointPrefab);
@@ -2094,75 +2114,51 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 				case "entity":
 					XmlNodeList entityParameterChildren = actionParameterElement.GetElementsByTagName(OCEmbodimentXMLTags.ENTITY_ELEMENT);
 					XmlElement entityElement = (XmlElement)entityParameterChildren.Item(0);
+					string entityIDstr = entityElement.GetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE);
+					entityIDstr = Regex.Replace(entityIDstr, "[^.0-9]", "");
+					int entityID = System.Int32.Parse(entityIDstr);
+
+					UnityEngine.GameObject[] ocobjectArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCObject");
+
+					for(int iObj = 0; iObj < ocobjectArray.Length; iObj++)
+					{
+						UnityEngine.GameObject ocobj = ocobjectArray[iObj];
 						
-					int entityID = System.Int32.Parse(entityElement.GetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE));
+						if(entityID == ocobj.GetInstanceID())
+						{
+							endPointStub.transform.position = ocobj.transform.position;
+							
+							// This is the one!	
+							actionArguments.EndTarget = ocobj;
+							
+							break;
+						}
+					}
+
+					if (actionArguments.EndTarget == null)
+					{
+						UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Cannot find the action target " + entityIDstr + " for action " + actionName);
+						return;
+					}
+
 					//string entityType = entityElement.GetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE);
 					
-					if(actionName == "grab" || actionName == "eat")
-					{
-						UnityEngine.GameObject[] batteryArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCBattery");
-					
-						for(int iBattery = 0; iBattery < batteryArray.Length; iBattery++)
-						{
-							UnityEngine.GameObject batteryObject = batteryArray[iBattery];
-								
-							if(entityID == batteryObject.GetInstanceID())
-							{
-								endPointStub.transform.position = batteryObject.transform.position;
-								
-								// This is the one!	
-								actionArguments.EndTarget = batteryObject;
-									
-								break;
-							}
-						}
-						
-						if(actionArguments.EndTarget != null)
-						{
-							// Then we can grab it, eat it, whatever...since it's a battery
-							if(actionName == "grab")
-							{
-								UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "A 'grab' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID);
-								
-								//console.AddConsoleEntry("A 'grab' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to grab an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
-							} else if(actionName == "eat")
-							{
-								UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID);
-								
-								//console.AddConsoleEntry("An 'eat' command (planID = " + _currentPlanId + ", sequence = " + sequence + " told me to eat an object with ID " + entityID, "AGI Robot", OpenCog.Utility.Console.Console.ConsoleEntry.Type.SAY);
-								
-							}	
+					UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "An 'eat' command (planID = " +  _currentPlanId + ", sequence = " + sequence 
+					                      + " told me to" + actionName + " an object with ID " + entityID);
 
+					if(actionArguments.EndTarget != null)
+					{
+						if ( (actionArguments.EndTarget.tag == "Battery") || (actionArguments.EndTarget.tag == "battery"))
+						{
 							OCGoalController goalController = _actionController.gameObject.GetComponent<OCGoalController>();
 							goalController.BlockType = "Battery";
 							goalController.FindGoalBlockPositionInChunks(_map.Chunks);
-						} else
-						{
-							// That's silly..we can only eat / grab batteries!
-							UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Received a grab or eat command, but couldn't find the battery in Unity!");
 						}
-						
-							
-					} 
-					// if (actionName == "grab" || actionName == "eat"
-//						else
-//						{
-//							// I'll bet the section below does nothing. Go home 
-////							UnityEngine.GameObject[] hearthArray = UnityEngine.GameObject.FindGameObjectsWithTag("OCHearth");
-////					
-////							for (int iHearth = 0; iHearth < hearthArray.Length; iHearth++)
-////							{
-////								UnityEngine.GameObject hearthObject = hearthArray[iHearth];
-////								
-////								if (entityID == hearthObject.GetInstanceID())
-////								{
-////									// This is the one!	
-////									actionArguments.EndTarget = hearthObject;
-////									
-////									break;
-////								}
-////							}	
-//						}
+					} else
+					{
+						// That's silly..we can only eat / grab batteries!
+						UnityEngine.Debug.LogError(OCLogSymbol.ERROR + "Received a grab or eat command, but couldn't find the battery in Unity!");
+					}
 
 					break;
 				case "string":
