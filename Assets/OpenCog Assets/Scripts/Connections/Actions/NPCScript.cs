@@ -26,7 +26,28 @@ public class NPCScript : MonoBehaviour
 		NPC_FindAKey();
 		
 	}
-	
+
+	Vector3 getNearestAjacentLocation(Vector3 from, Vector3 to) // consider 8 directions
+	{
+		Vector3 nearestPos = Vector3.zero;
+		float minD = 9999999.999f;
+
+		for (int x = -1; x <= 1; x ++)
+			for (int z = -1; z <= 1; z ++)
+		{
+			Vector3 ajacentPos = to + new Vector3(x,0.0f,z);
+			float d = Vector3.Distance(from,ajacentPos);
+			if (d < minD)
+			{
+				minD = d;
+				nearestPos = ajacentPos;
+			}
+		}
+
+		return nearestPos;
+
+	}
+
 
 	
 	public void NPC_FindAKey()
@@ -57,8 +78,9 @@ public class NPCScript : MonoBehaviour
 		
 		actionArguments1.EndTarget = actionController.DefaultEndTarget;
 		//actionArguments.EndTarget = GameObject.Find("EndPointStub");
-		
-		Vector3 walkToKeyPos = keyPos + new Vector3(1, 0, 0);
+
+
+		Vector3 walkToKeyPos = getNearestAjacentLocation(gameObject.transform.position, keyPos);
 		
 		actionArguments1.EndTarget.transform.position = walkToKeyPos;
 		
@@ -126,7 +148,7 @@ public class NPCScript : MonoBehaviour
 		
 		actionArguments3.EndTarget = actionController.DefaultEndTarget;
 		
-		Vector3 walkToChectPos = chestPos + new Vector3(1, 0, 0);
+		Vector3 walkToChectPos = getNearestAjacentLocation(gameObject.transform.position, chestPos); 
 		
 		actionArguments3.EndTarget.transform.position = walkToChectPos;
 		
