@@ -8,6 +8,11 @@ public class NPCScript : MonoBehaviour
 	public string colorToFind;
 	public int NPCCurPlanId = 0;
 	public bool hasStartNPCScript =false;
+	Vector3 moveToKeyPos;
+	Vector3 walkToChectPos;
+	GameObject keyObj;
+	GameObject chestObj;
+
 
 	OCActionController actionController;
 
@@ -23,8 +28,7 @@ public class NPCScript : MonoBehaviour
 			return;
 		
 		hasStartNPCScript = true;
-		NPC_FindAKey();
-		
+		NPC_WalkToKey();
 	}
 
 	Vector3 getNearestAjacentLocation(Vector3 from, Vector3 to) // consider 8 directions
@@ -35,7 +39,7 @@ public class NPCScript : MonoBehaviour
 		for (int x = -1; x <= 1; x ++)
 			for (int z = -1; z <= 1; z ++)
 		{
-			Vector3 ajacentPos = to + new Vector3(x,0.0f,z);
+			Vector3 ajacentPos = to + new Vector3(x*0.5f,0.0f,z*0.5f);
 			float d = Vector3.Distance(from,ajacentPos);
 			if (d < minD)
 			{
@@ -48,14 +52,11 @@ public class NPCScript : MonoBehaviour
 
 	}
 
-
-	
-	public void NPC_FindAKey()
+	public void NPC_WalkToKey()
 	{
-		
 		// walk to the key
 		GameObject keyObjs = GameObject.Find ("keys");
-		GameObject keyObj = null;
+		keyObj = null;
 		foreach (Transform key in keyObjs.transform)
 		{
 			if (key.GetComponent<OCColor>().color == colorToFind)
@@ -78,11 +79,11 @@ public class NPCScript : MonoBehaviour
 		
 		actionArguments1.EndTarget = actionController.DefaultEndTarget;
 		//actionArguments.EndTarget = GameObject.Find("EndPointStub");
-
-
-		Vector3 walkToKeyPos = getNearestAjacentLocation(gameObject.transform.position, keyPos);
 		
-		actionArguments1.EndTarget.transform.position = walkToKeyPos;
+		
+		moveToKeyPos = getNearestAjacentLocation(gameObject.transform.position, keyPos);
+
+		actionArguments1.EndTarget.transform.position = moveToKeyPos;
 		
 		actionArguments1.ActionName = "walk";
 		actionArguments1.ActionPlanID = NPCCurPlanId.ToString();
@@ -91,18 +92,21 @@ public class NPCScript : MonoBehaviour
 		
 		
 		actionController.LoadActionPlanStep("walk", actionArguments1);
-
+		
 		OCAction.OCActionArgs originalArgs1 =  new OCAction.OCActionArgs(actionArguments1);
 		originalArgs1.EndTarget = keyObj;
-
+		
 		actionController.originalActionPlanQueue.Add(originalArgs1);
-		
+	}
+	
+	public void NPC_GrabTheKey()
+	{
 		// grap the key
-		
+		NPCCurPlanId ++;
 		OCAction.OCActionArgs actionArguments2 = new OCAction.OCActionArgs();
 		
 		actionArguments2.StartTarget = actionController.DefaultStartTarget;
-		actionArguments2.StartTarget.transform.position = walkToKeyPos;		
+		actionArguments2.StartTarget.transform.position = moveToKeyPos;		
 		
 		
 		actionArguments2.EndTarget = keyObj;
@@ -121,11 +125,11 @@ public class NPCScript : MonoBehaviour
 		
 	}
 	
-	public void NPC_FindAndOpenAChest()
+	public void NPC_WalkToChest()
 	{
 		// walk to the chest
 		GameObject chestObjs = GameObject.Find ("chests");
-		GameObject chestObj = null;
+		chestObj = null;
 		foreach (Transform chest in chestObjs.transform)
 		{
 			if (chest.GetComponent<OCColor>().color == colorToFind)
@@ -148,7 +152,7 @@ public class NPCScript : MonoBehaviour
 		
 		actionArguments3.EndTarget = actionController.DefaultEndTarget;
 		
-		Vector3 walkToChectPos = getNearestAjacentLocation(gameObject.transform.position, chestPos); 
+		walkToChectPos = getNearestAjacentLocation(moveToKeyPos, chestPos); 
 		
 		actionArguments3.EndTarget.transform.position = walkToChectPos;
 		
@@ -160,11 +164,16 @@ public class NPCScript : MonoBehaviour
 		actionController.LoadActionPlanStep("walk", actionArguments3);
 		OCAction.OCActionArgs originalArgs3 =  new OCAction.OCActionArgs(actionArguments3);
 		originalArgs3.EndTarget = chestObj;
+
 		actionController.originalActionPlanQueue.Add(originalArgs3);
 
-		
+
+	}
+
+	public void NPC_OpenTheChest()
+	{
 		// open the chest
-		
+		NPCCurPlanId ++;
 		OCAction.OCActionArgs actionArguments2 = new OCAction.OCActionArgs();
 		
 		actionArguments2.StartTarget = actionController.DefaultStartTarget;

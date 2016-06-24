@@ -752,7 +752,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	
 	public void UpdateAI()
 	{
-		UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _step = " + _step);
+		//UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, _step = " + _step);
 		
 		if(_step == null)
 		{
@@ -768,8 +768,19 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					NPCScript npcScript = GetComponent<NPCScript>();
 					if (npcScript.hasStartNPCScript)
 					{
-						if (npcScript.NPCCurPlanId < 2)
-							npcScript.NPC_FindAndOpenAChest();
+						switch (npcScript.NPCCurPlanId)
+						{
+						case 1:
+							npcScript.NPC_GrabTheKey();
+							break;
+						case 2:
+							npcScript.NPC_WalkToChest();
+							break;
+						case 3:
+							npcScript.NPC_OpenTheChest();
+							break;
+						}
+					    
 					}
 				}
 				//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
@@ -862,7 +873,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 //						_PlanSucceeded = endPosition != startPosition && endPosition != null;
 //					}
 						
-					if(isRunOnScript )
+					if(isRunOnScript && OCConnectorSingleton.Instance.IsEstablished )
 					{
 						if ((_step.Arguments.ActionPlanID != null) && _PlanSucceeded)
 						{
@@ -880,7 +891,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					}
 					else if(  _step.Arguments.ActionPlanID != null && (_PlanSucceeded || _step.Retry > OCActionPlanStep.MaxRetries))
 					{
-						OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
+						if (OCConnectorSingleton.Instance.IsEstablished)
+							OCConnectorSingleton.Instance.SendActionStatus(args.ActionPlanID, args.SequenceID, args.ActionName, _PlanSucceeded);
 
 						if(_step.Behaviour.Name != "Character.IdleShow" && !_step.Behaviour.Name.Contains("Behaviour"))
 						{

@@ -1142,6 +1142,39 @@ public class OCAction : OCMonoBehaviour
 			//afx.Stop();
 		}
 
+		if (args.ActionName == "grab")
+		{
+			//if (IsEndTargetAdjacent(null, args))
+			//{
+			_ActionController.PutIntoInventory(args.EndTarget);
+			//}
+			
+		}
+		
+		if (args.ActionName == "open")
+		{
+			// check if have the right key
+			string objColor = _EndTarget.GetComponent<OCColor>().color;
+			
+			foreach (GameObject item in _ActionController.Inventory)
+			{
+				if (item.GetComponent<OCColor>().color == objColor)
+				{
+					
+					//_ActionController.Inventory.Remove(item);
+					
+					//GameObject.DestroyObject(item);
+					// display open chest animation
+					_EndTarget.GetComponent<Animation>().Play("open");
+					_EndTarget.GetComponent<Openable>().is_open = true;
+					// OCConnectorSingleton.Instance.HandleObjectStateChange(_EndTarget, "is_open", "System.Boolean", "false", "true");
+					break;
+				}
+			}
+			
+			
+		}
+
 		foreach(OCTransferBlockEffect tbfx in _TransferBlockEffects)
 		{
 			Vector3i targetOrigin = VectorUtil.Vector3ToVector3i(args.EndTarget.transform.position);
@@ -1209,38 +1242,7 @@ public class OCAction : OCMonoBehaviour
 			motor.enabled = true;
 		}
 
-		if (args.ActionName == "grab")
-		{
-			//if (IsEndTargetAdjacent(null, args))
-			//{
-				_ActionController.PutIntoInventory(args.EndTarget);
-			//}
 
-		}
-	
-		if (args.ActionName == "open")
-		{
-			// check if have the right key
-			string objColor = _EndTarget.GetComponent<OCColor>().color;
-		
-			foreach (GameObject item in _ActionController.Inventory)
-			{
-				if (item.GetComponent<OCColor>().color == objColor)
-				{
-					
-					//_ActionController.Inventory.Remove(item);
-
-					//GameObject.DestroyObject(item);
-					// display open chest animation
-					_EndTarget.GetComponent<Animation>().Play("open");
-					_EndTarget.GetComponent<Openable>().is_open = true;
-					// OCConnectorSingleton.Instance.HandleObjectStateChange(_EndTarget, "is_open", "System.Boolean", "false", "true");
-					break;
-				}
-			}
-
-			
-		}
 			
 		if(!Descriptors.Contains("Idle"))
 			UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "Ending Action: " + FullName);
