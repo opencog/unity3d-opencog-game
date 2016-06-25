@@ -739,8 +739,8 @@ public class OCMap : OCSingletonMonoBehaviour<OCMap>
 			_minChunkZ = Mathf.Min(chunkPosition.z, _minChunkZ);
 
 			_maxChunkX = Mathf.Max(chunkPosition.x, _maxChunkX);
-			_maxChunkY = Mathf.Max(chunkPosition.x, _maxChunkY);
-			_maxChunkZ = Mathf.Max(chunkPosition.x, _maxChunkZ);
+			_maxChunkY = Mathf.Max(chunkPosition.y, _maxChunkY);
+			_maxChunkZ = Mathf.Max(chunkPosition.z, _maxChunkZ);
 		} else
 		{
 			_minChunkX = chunkPosition.x;

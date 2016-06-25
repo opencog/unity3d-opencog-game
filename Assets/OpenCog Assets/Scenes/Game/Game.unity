@@ -34689,7 +34689,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c6d251409f6d334699017982872dd18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MapName: demo
+  MapName: demo_map
 --- !u!1 &1480309516
 GameObject:
   m_ObjectHideFlags: 0
@@ -38741,7 +38741,7 @@ Prefab:
       objectReference: {fileID: 1070826536}
     - target: {fileID: 11400004, guid: 13a75b0e4ac000741ac7ab22b8651f2b, type: 2}
       propertyPath: MapName
-      value: demo
+      value: demo_map
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 13a75b0e4ac000741ac7ab22b8651f2b, type: 2}
       propertyPath: _blockSet
