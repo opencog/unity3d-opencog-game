@@ -150,13 +150,16 @@ public class OCAction : OCMonoBehaviour
 				if(shouldStart == false)
 				{
 							if((this.FullName == "WalkForwardLeftMove" || this.FullName == "HoldBothHandsTransfer") && precondition.Method.Name != "IsNoEndTargetOrNotAnimating" && precondition.Method.Name != "IsSourceNotRunningAction") 
-						UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCAction.ShouldStart, Precondition Not Yet True: " + precondition.Method.Name);
+						UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCAction.ShouldStart for action " +  this.name + ", Precondition Not Yet True: " + precondition.Method.Name);
 							UnityEngine.Debug.Log("End target:" + _EndTarget);
 					break;
 				}
 			}
 			return shouldStart;
+
 		}
+
+		
 	}
 			
 	public bool ShouldContinue

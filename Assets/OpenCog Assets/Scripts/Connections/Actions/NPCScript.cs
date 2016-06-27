@@ -8,6 +8,7 @@ public class NPCScript : MonoBehaviour
 	public string colorToFind;
 	public int NPCCurPlanId = 0;
 	public bool hasStartNPCScript =false;
+	public GameObject animalToSave;
 	Vector3 moveToKeyPos;
 	Vector3 walkToChectPos;
 	GameObject keyObj;
@@ -39,7 +40,7 @@ public class NPCScript : MonoBehaviour
 		for (int x = -1; x <= 1; x ++)
 			for (int z = -1; z <= 1; z ++)
 		{
-			Vector3 ajacentPos = to + new Vector3(x*0.5f,0.0f,z*0.5f);
+			Vector3 ajacentPos = to + new Vector3(x*0.6f,0.0f,z*0.6f);
 			float d = Vector3.Distance(from,ajacentPos);
 			if (d < minD)
 			{
@@ -169,19 +170,6 @@ public class NPCScript : MonoBehaviour
 
 	public void NPC_SaveAnAnimal()
 	{
-		// find a animal that need to be saved
-		GameObject allAnimals = GameObject.Find("animals");
-		GameObject animalToSave = null;
-		foreach (Transform animalTran in allAnimals.transform)
-		{
-			if (! animalTran.GetComponent<BackToLife>().is_alive)
-				animalToSave = animalTran.gameObject;
-		}
-		if (animalToSave == null)
-		{
-			Debug.LogWarning("There is no animals need to be saved right now.");
-			return;
-		}
 		
 		NPCCurPlanId ++;
 		
