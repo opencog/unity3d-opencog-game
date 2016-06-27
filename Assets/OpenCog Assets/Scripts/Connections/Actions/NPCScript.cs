@@ -28,7 +28,7 @@ public class NPCScript : MonoBehaviour
 			return;
 		
 		hasStartNPCScript = true;
-		NPC_WalkToKey();
+		NPC_FindAndWalkToKey();
 	}
 
 	Vector3 getNearestAjacentLocation(Vector3 from, Vector3 to) // consider 8 directions
@@ -52,7 +52,7 @@ public class NPCScript : MonoBehaviour
 
 	}
 
-	public void NPC_WalkToKey()
+	public void NPC_FindAndWalkToKey()
 	{
 		// walk to the key
 		GameObject keyObjs = GameObject.Find ("keys");
@@ -75,12 +75,9 @@ public class NPCScript : MonoBehaviour
 		
 		actionArguments1.StartTarget = actionController.DefaultStartTarget;
 		actionArguments1.StartTarget.transform.position = transform.position;		
-		
-		
+
 		actionArguments1.EndTarget = actionController.DefaultEndTarget;
-		//actionArguments.EndTarget = GameObject.Find("EndPointStub");
-		
-		
+
 		moveToKeyPos = getNearestAjacentLocation(gameObject.transform.position, keyPos);
 
 		actionArguments1.EndTarget.transform.position = moveToKeyPos;
@@ -89,43 +86,30 @@ public class NPCScript : MonoBehaviour
 		actionArguments1.ActionPlanID = NPCCurPlanId.ToString();
 		actionArguments1.SequenceID = 1;
 		actionArguments1.Source = gameObject;
-		
-		
+		actionArguments1.EndTargetObject = keyObj;
+
 		actionController.LoadActionPlanStep("walk", actionArguments1);
-		
-		OCAction.OCActionArgs originalArgs1 =  new OCAction.OCActionArgs(actionArguments1);
-		originalArgs1.EndTarget = keyObj;
-		
-		actionController.originalActionPlanQueue.Add(originalArgs1);
-	}
-	
-	public void NPC_GrabTheKey()
-	{
+
 		// grap the key
-		NPCCurPlanId ++;
 		OCAction.OCActionArgs actionArguments2 = new OCAction.OCActionArgs();
 		
 		actionArguments2.StartTarget = actionController.DefaultStartTarget;
 		actionArguments2.StartTarget.transform.position = moveToKeyPos;		
-		
-		
+
 		actionArguments2.EndTarget = keyObj;
-		//actionArguments.EndTarget = GameObject.Find("EndPointStub");
-		
-		
+
 		actionArguments2.ActionName = "grab";
 		actionArguments2.ActionPlanID = NPCCurPlanId.ToString();
 		actionArguments2.SequenceID = 2;
 		actionArguments2.Source = gameObject;
-		
-		
+
 		actionController.LoadActionPlanStep("grab", actionArguments2);
-		actionController.originalActionPlanQueue.Add(actionArguments2);
-		
-		
+
+
 	}
+
 	
-	public void NPC_WalkToChest()
+	public void NPC_FindAndOpenTheChest()
 	{
 		// walk to the chest
 		GameObject chestObjs = GameObject.Find ("chests");
@@ -160,38 +144,88 @@ public class NPCScript : MonoBehaviour
 		actionArguments3.ActionPlanID = NPCCurPlanId.ToString();
 		actionArguments3.SequenceID = 1;
 		actionArguments3.Source = gameObject;
+		actionArguments3.EndTargetObject = chestObj;
 		
 		actionController.LoadActionPlanStep("walk", actionArguments3);
-		OCAction.OCActionArgs originalArgs3 =  new OCAction.OCActionArgs(actionArguments3);
-		originalArgs3.EndTarget = chestObj;
 
-		actionController.originalActionPlanQueue.Add(originalArgs3);
-
-
-	}
-
-	public void NPC_OpenTheChest()
-	{
 		// open the chest
-		NPCCurPlanId ++;
 		OCAction.OCActionArgs actionArguments2 = new OCAction.OCActionArgs();
 		
 		actionArguments2.StartTarget = actionController.DefaultStartTarget;
 		actionArguments2.StartTarget.transform.position = walkToChectPos;		
 		
 		
-		actionArguments2.EndTarget = chestObj;
-		//actionArguments.EndTarget = GameObject.Find("EndPointStub");
-		
+		actionArguments2.EndTarget = chestObj;		
 		
 		actionArguments2.ActionName = "open";
 		actionArguments2.ActionPlanID = NPCCurPlanId.ToString();
 		actionArguments2.SequenceID = 2;
 		actionArguments2.Source = gameObject;
-		
-		
+
 		actionController.LoadActionPlanStep("open", actionArguments2);
-		actionController.originalActionPlanQueue.Add(actionArguments2);
+
 	}
+
+
+	public void NPC_SaveAnAnimal()
+	{
+		// find a animal that need to be saved
+		GameObject allAnimals = GameObject.Find("animals");
+		GameObject animalToSave = null;
+		foreach (Transform animalTran in allAnimals.transform)
+		{
+			if (! animalTran.GetComponent<BackToLife>().is_alive)
+				animalToSave = animalTran.gameObject;
+		}
+		if (animalToSave == null)
+		{
+			Debug.LogWarning("There is no animals need to be saved right now.");
+			return;
+		}
+		
+		NPCCurPlanId ++;
+		
+		Vector3 animalPos = animalToSave.transform.position;
+
+		OCAction.OCActionArgs actionArguments3 = new OCAction.OCActionArgs();
+		
+		actionArguments3.StartTarget = actionController.DefaultStartTarget;
+		actionArguments3.StartTarget.transform.position = transform.position;;		
+
+		actionArguments3.EndTarget = actionController.DefaultEndTarget;
+		
+		Vector3 walkToPos = getNearestAjacentLocation(moveToKeyPos, animalPos); 
+		
+		actionArguments3.EndTarget.transform.position = walkToPos;
+		
+		actionArguments3.ActionName = "walk";
+		actionArguments3.ActionPlanID = NPCCurPlanId.ToString();
+		actionArguments3.SequenceID = 1;
+		actionArguments3.Source = gameObject;
+		actionArguments3.EndTargetObject = animalToSave;
+		
+		actionController.LoadActionPlanStep("walk", actionArguments3);
+
+		// heal the animal
+		OCAction.OCActionArgs actionArguments2 = new OCAction.OCActionArgs();
+		
+		actionArguments2.StartTarget = actionController.DefaultStartTarget;
+		actionArguments2.StartTarget.transform.position = walkToPos;		
+
+		actionArguments2.EndTarget = animalToSave;
+
+
+		actionArguments2.ActionName = "heal";
+		actionArguments2.ActionPlanID = NPCCurPlanId.ToString();
+		actionArguments2.SequenceID = 2;
+		actionArguments2.Source = gameObject;	
+		
+		actionController.LoadActionPlanStep("heal", actionArguments2);
+
+
+	}
+
+
+
 
 }
