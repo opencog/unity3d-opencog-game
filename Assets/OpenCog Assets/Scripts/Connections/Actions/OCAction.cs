@@ -151,6 +151,7 @@ public class OCAction : OCMonoBehaviour
 				{
 							if((this.FullName == "WalkForwardLeftMove" || this.FullName == "HoldBothHandsTransfer") && precondition.Method.Name != "IsNoEndTargetOrNotAnimating" && precondition.Method.Name != "IsSourceNotRunningAction") 
 						UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCAction.ShouldStart, Precondition Not Yet True: " + precondition.Method.Name);
+							UnityEngine.Debug.Log("End target:" + _EndTarget);
 					break;
 				}
 			}
@@ -1175,6 +1176,11 @@ public class OCAction : OCMonoBehaviour
 			
 		}
 
+		if (args.ActionName == "heal")
+		{
+			_EndTarget.GetComponent<BackToLife>().bringBackToLife();
+		}
+
 		foreach(OCTransferBlockEffect tbfx in _TransferBlockEffects)
 		{
 			Vector3i targetOrigin = VectorUtil.Vector3ToVector3i(args.EndTarget.transform.position);
@@ -1278,6 +1284,7 @@ public class OCAction : OCMonoBehaviour
 		private GameObject _Source;
 		private GameObject _StartTarget;
 		private GameObject _EndTarget;
+		private GameObject _EndTargetObject; // when walk to an object, the _EndTarget is a postion near it, _EndTargetObject is this object
 				
 		public string ActionPlanID;
 		public int SequenceID;
@@ -1310,6 +1317,12 @@ public class OCAction : OCMonoBehaviour
 		{
 			get { return _EndTarget; }
 			set { _EndTarget = value; }
+		}
+
+		public GameObject EndTargetObject
+		{
+			get { return _EndTargetObject; }
+			set { _EndTargetObject = value; }
 		}
 
 	

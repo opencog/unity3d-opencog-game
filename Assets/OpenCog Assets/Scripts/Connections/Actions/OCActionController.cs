@@ -92,6 +92,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	, { "grab", TreeType.Character_BothHandsTransfer }
 	, { "eat", TreeType.Character_Destroy }
 	, { "open", TreeType.Character_BothHandsTransfer }
+	, { "heal", TreeType.Character_BothHandsTransfer }
 	, { "say", TreeType.Character_Tell }
 	, { "jump_toward", TreeType.Character_Move }
 	, { "BuildBlockAtPosition", TreeType.Character_TurnAndCreate }
@@ -135,9 +136,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 			
 	private string _LastPlanID = null;
 
-	public List<OCAction.OCActionArgs> originalActionPlanQueue;
 
-	
 
 	//---------------------------------------------------------------------------
 
@@ -771,13 +770,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						switch (npcScript.NPCCurPlanId)
 						{
 						case 1:
-							npcScript.NPC_GrabTheKey();
+							npcScript.NPC_FindAndOpenTheChest();
 							break;
+
 						case 2:
-							npcScript.NPC_WalkToChest();
-							break;
-						case 3:
-							npcScript.NPC_OpenTheChest();
+							npcScript.NPC_SaveAnAnimal();
 							break;
 						}
 					    
@@ -795,8 +792,9 @@ public class OCActionController : OCMonoBehaviour, IAgent
 		}
 				
 		BehaveResult result = _step.Behaviour.Tick();
-
-        UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, result = " + result);
+		
+		if (! _step.Behaviour.Name.Contains("Idle"))
+        	UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO + "In OCActionController.UpdateAI, result = " + result);
 				
 //		if((_step.Behaviour.Name == _TreeTypeDictionary[TreeType.Character_IdleShow].Name) && result == BehaveResult.Success)
 //		{
@@ -866,6 +864,11 @@ public class OCActionController : OCMonoBehaviour, IAgent
 					if (_step.Arguments.ActionName == "open")
 					{
 						_PlanSucceeded = _step.Arguments.EndTarget.GetComponent<Openable>().is_open;
+					}
+
+					if (_step.Arguments.ActionName == "heal")
+					{
+						_PlanSucceeded = _step.Arguments.EndTarget.GetComponent<BackToLife>().is_alive;
 					}
 							
 //					if(_step.Arguments.ActionName == "grab")

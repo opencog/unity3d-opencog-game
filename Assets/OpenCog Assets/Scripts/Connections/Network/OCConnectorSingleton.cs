@@ -816,8 +816,6 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		//    }
 		
 		// the corresponding process within OpenCog's embodiment system is in PAI::processAgentActionWithParameters
-		OCActionController actionController = step.Arguments.Source.GetComponent<OCActionController>();
-		OCAction.OCActionArgs orginalArgs = actionController.originalActionPlanQueue[0];
 		
 		string timestamp = GetCurrentTimestamp();
 		XmlDocument doc = new XmlDocument();
@@ -864,17 +862,22 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 			Debug.LogWarning("Error target type: " + targetType + " in action: " + step.Arguments.ActionName);
 		}
 
-		if(orginalArgs.EndTarget != null)
+		if (step.Arguments.EndTargetObject != null)
+		{
+			step.Arguments.EndTarget = step.Arguments.EndTargetObject;
+		}
+
+		if(step.Arguments.EndTarget != null)
 		{
 			XmlElement param = (XmlElement)actionElement.AppendChild(doc.CreateElement("param"));
-			if(orginalArgs.EndTarget.tag == "OCObject" || orginalArgs.EndTarget.tag == "Player")
+			if(step.Arguments.EndTarget.tag == "OCObject" || step.Arguments.EndTarget.tag == "Player")
 			{
 				param.SetAttribute("type", "entity");
 				param.SetAttribute("name", "target");
 				XmlElement entityElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.ENTITY_ELEMENT));
-				entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, orginalArgs.EndTarget.name + orginalArgs.EndTarget.GetInstanceID().ToString());
+				entityElement.SetAttribute(OCEmbodimentXMLTags.ID_ATTRIBUTE, step.Arguments.EndTarget.name + step.Arguments.EndTarget.GetInstanceID().ToString());
 				
-				if(orginalArgs.EndTarget.tag == "OCObject")
+				if(step.Arguments.EndTarget.tag == "OCObject")
 				{
 					entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 				} else
@@ -883,7 +886,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 				}
 			} else
 			{
-				UnityEngine.Vector3 vec = orginalArgs.EndTarget.transform.position;
+				UnityEngine.Vector3 vec = step.Arguments.EndTarget.transform.position;
 				param.SetAttribute("type", "vector");
 				param.SetAttribute("name", "position");
 				XmlElement vectorElement = (XmlElement)param.AppendChild(doc.CreateElement(OCEmbodimentXMLTags.VECTOR_ELEMENT));
@@ -903,8 +906,7 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 			entityElement.SetAttribute(OCEmbodimentXMLTags.TYPE_ATTRIBUTE, OCEmbodimentXMLTags.ORDINARY_OBJECT_TYPE);
 
 		}
-		
-		actionController.originalActionPlanQueue.RemoveAt(0);
+
 		
 		
 		//		// we can only process the parameter type defined in class ActionParamType both in opencog and unity
