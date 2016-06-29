@@ -1,6 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using OpenCog.Actions;
+using OpenCog.Map;
+using OpenCog.Utility;
+
+public enum NPCScriptPlanCode
+{
+	PickUpAKey,
+	FindAndOpenTheChest,
+	PickUpAnFruit,
+	DropTheFruitAtARandomPlace,
+	SaveAnAnimal
+}
 
 public class NPCScript : MonoBehaviour 
 {
@@ -9,11 +21,15 @@ public class NPCScript : MonoBehaviour
 	public int NPCCurPlanId = 0;
 	public bool hasStartNPCScript =false;
 	public GameObject animalToSave;
+	public GameObject fruitToEat;
+	public Vector3 locationToDropFruit;
 	Vector3 moveToKeyPos;
 	Vector3 walkToChectPos;
 	GameObject keyObj;
 	GameObject chestObj;
-
+	public List<NPCScriptPlanCode> scriptPlanList; // assign this in unity editor
+		 
+	OCMap _Map;
 
 	OCActionController actionController;
 
@@ -21,15 +37,49 @@ public class NPCScript : MonoBehaviour
 	void Start () 
 	{
 		actionController = GetComponent<OCActionController>();
+
 	}
-	
+
 	public void startNPCScript()
 	{
 		if (hasStartNPCScript)
 			return;
 		
 		hasStartNPCScript = true;
-		NPC_FindAndWalkToKey();
+		generateNextScriptedPlan();
+
+	}
+
+	public void generateNextScriptedPlan()
+	{
+		if (! hasStartNPCScript)
+			return;
+
+		if (scriptPlanList.Count == 0)
+			return;
+
+		NPCScriptPlanCode curPlanCode = scriptPlanList[0];
+		scriptPlanList.RemoveAt(0);
+
+		switch (curPlanCode)
+		{
+		case NPCScriptPlanCode.PickUpAKey:
+			NPC_PickUpAKey();
+			break;
+		case NPCScriptPlanCode.FindAndOpenTheChest:
+			NPC_FindAndOpenTheChest();
+			break;
+		case NPCScriptPlanCode.PickUpAnFruit:
+			NPC_PickUpAnFruit();
+			break;
+		case NPCScriptPlanCode.DropTheFruitAtARandomPlace:
+			NPC_DropTheFruitAtARandomPlace();
+			break;
+		case NPCScriptPlanCode.SaveAnAnimal:
+			NPC_SaveAnAnimal();
+			break;
+		}
+
 	}
 
 	Vector3 getNearestAjacentLocation(Vector3 from, Vector3 to) // consider 8 directions
@@ -53,7 +103,7 @@ public class NPCScript : MonoBehaviour
 
 	}
 
-	public void NPC_FindAndWalkToKey()
+	public void NPC_PickUpAKey()
 	{
 		// walk to the key
 		GameObject keyObjs = GameObject.Find ("keys");
@@ -69,8 +119,7 @@ public class NPCScript : MonoBehaviour
 		
 		NPCCurPlanId ++;
 		
-		Vector3 keyPos = keyObj.transform.position;
-		
+		Vector3 keyPos = keyObj.transform.position;	
 		
 		OCAction.OCActionArgs actionArguments1 = new OCAction.OCActionArgs();
 		
@@ -127,8 +176,7 @@ public class NPCScript : MonoBehaviour
 		NPCCurPlanId ++;
 		
 		Vector3 chestPos = chestObj.transform.position;
-		
-		
+
 		OCAction.OCActionArgs actionArguments3 = new OCAction.OCActionArgs();
 		
 		actionArguments3.StartTarget = actionController.DefaultStartTarget;
@@ -137,7 +185,7 @@ public class NPCScript : MonoBehaviour
 		
 		actionArguments3.EndTarget = actionController.DefaultEndTarget;
 		
-		walkToChectPos = getNearestAjacentLocation(moveToKeyPos, chestPos); 
+		walkToChectPos = getNearestAjacentLocation(transform.position, chestPos); 
 		
 		actionArguments3.EndTarget.transform.position = walkToChectPos;
 		
@@ -154,8 +202,7 @@ public class NPCScript : MonoBehaviour
 		
 		actionArguments2.StartTarget = actionController.DefaultStartTarget;
 		actionArguments2.StartTarget.transform.position = walkToChectPos;		
-		
-		
+
 		actionArguments2.EndTarget = chestObj;		
 		
 		actionArguments2.ActionName = "open";
@@ -167,6 +214,104 @@ public class NPCScript : MonoBehaviour
 
 	}
 
+	public void NPC_PickUpAnFruit()
+	{
+		
+		NPCCurPlanId ++;
+		
+		Vector3 fruitPos = fruitToEat.transform.position;
+		
+		OCAction.OCActionArgs actionArguments1 = new OCAction.OCActionArgs();
+		
+		actionArguments1.StartTarget = actionController.DefaultStartTarget;
+		actionArguments1.StartTarget.transform.position = transform.position;;		
+		
+		actionArguments1.EndTarget = actionController.DefaultEndTarget;
+		
+		Vector3 walkToPos = getNearestAjacentLocation(transform.position, fruitPos); 
+		
+		actionArguments1.EndTarget.transform.position = walkToPos;
+		
+		actionArguments1.ActionName = "walk";
+		actionArguments1.ActionPlanID = NPCCurPlanId.ToString();
+		actionArguments1.SequenceID = 1;
+		actionArguments1.Source = gameObject;
+		actionArguments1.EndTargetObject = fruitToEat;
+		
+		actionController.LoadActionPlanStep("walk", actionArguments1);
+		
+		// pick up the fruit
+		OCAction.OCActionArgs actionArguments2 = new OCAction.OCActionArgs();
+		
+		actionArguments2.StartTarget = actionController.DefaultStartTarget;
+		actionArguments2.StartTarget.transform.position = walkToPos;		
+		
+		actionArguments2.EndTarget = fruitToEat;
+		
+		
+		actionArguments2.ActionName = "grab";
+		actionArguments2.ActionPlanID = NPCCurPlanId.ToString();
+		actionArguments2.SequenceID = 2;
+		actionArguments2.Source = gameObject;	
+		
+		actionController.LoadActionPlanStep("grab", actionArguments2);
+
+	}
+
+	public void NPC_DropTheFruitAtARandomPlace()
+	{
+		NPCCurPlanId ++;
+//		_Map = OCMap.Instance;
+//		// Find a free random loaction
+//		Vector3 walkToPos;
+//		while (true)
+//		{
+//			int x,z;
+//			x = Random.Range(-5,5);
+//			z = Random.Range(-5,5);
+//
+//			walkToPos = new Vector3(transform.position.x + x, transform.position.y ,transform.position.z);
+//			Vector3i blockPos = VectorUtil.Vector3ToVector3i(walkToPos);
+//			Vector3i blockBelowPos = new Vector3i(blockPos.x, blockPos.y - 1, blockPos.z);
+//
+//			if ((_Map.GetBlock(blockPos).block == null) && (_Map.GetBlock(blockBelowPos).block != null))
+//			{
+//				break;
+//			}
+//
+//		}
+
+		Vector3 walkToPos = new Vector3(locationToDropFruit.x, transform.position.y ,locationToDropFruit.z);
+		OCAction.OCActionArgs actionArguments1 = new OCAction.OCActionArgs();
+		
+		actionArguments1.StartTarget = actionController.DefaultStartTarget;
+		actionArguments1.StartTarget.transform.position = transform.position;;		
+		
+		actionArguments1.EndTarget = actionController.DefaultEndTarget;
+		actionArguments1.EndTarget.transform.position = walkToPos;
+		
+		actionArguments1.ActionName = "walk";
+		actionArguments1.ActionPlanID = NPCCurPlanId.ToString();
+		actionArguments1.SequenceID = 1;
+		actionArguments1.Source = gameObject;
+		actionArguments1.EndTargetObject = fruitToEat;
+		
+		actionController.LoadActionPlanStep("walk", actionArguments1);
+
+		OCAction.OCActionArgs actionArguments3 = new OCAction.OCActionArgs();
+		
+		actionArguments3.StartTarget = actionController.DefaultStartTarget;
+		actionArguments3.StartTarget.transform.position = walkToPos;		
+		
+		actionArguments3.EndTarget = fruitToEat;
+
+		actionArguments3.ActionName = "drop";
+		actionArguments3.ActionPlanID = NPCCurPlanId.ToString();
+		actionArguments3.SequenceID = 2;
+		actionArguments3.Source = gameObject;	
+		
+		actionController.LoadActionPlanStep("drop", actionArguments3);
+	}
 
 	public void NPC_SaveAnAnimal()
 	{
@@ -182,7 +327,7 @@ public class NPCScript : MonoBehaviour
 
 		actionArguments3.EndTarget = actionController.DefaultEndTarget;
 		
-		Vector3 walkToPos = getNearestAjacentLocation(moveToKeyPos, animalPos); 
+		Vector3 walkToPos = getNearestAjacentLocation(transform.position, animalPos); 
 		
 		actionArguments3.EndTarget.transform.position = walkToPos;
 		

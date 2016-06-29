@@ -538,7 +538,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400000, guid: c339471c3f6ab6e4d9832447601a641f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -99.6399994
+      value: -92
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c339471c3f6ab6e4d9832447601a641f, type: 3}
       propertyPath: m_LocalPosition.y
@@ -546,7 +546,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c339471c3f6ab6e4d9832447601a641f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -14.6999998
+      value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c339471c3f6ab6e4d9832447601a641f, type: 3}
       propertyPath: m_LocalRotation.x
@@ -2251,6 +2251,7 @@ GameObject:
   - 4: {fileID: 73857938}
   - 33: {fileID: 73857937}
   - 23: {fileID: 73857936}
+  - 114: {fileID: 73857939}
   m_Layer: 0
   m_Name: banana
   m_TagString: OCObject
@@ -2294,11 +2295,23 @@ Transform:
   m_PrefabInternal: {fileID: 38130088}
   m_GameObject: {fileID: 73857935}
   m_LocalRotation: {x: -.42392689, y: -.565938115, z: .565938056, w: .423927039}
-  m_LocalPosition: {x: -99.6399994, y: 143, z: -14.6999998}
+  m_LocalPosition: {x: -92, y: 143, z: -8}
   m_LocalScale: {x: .0199999996, y: .0199999996, z: .0199999996}
   m_Children: []
   m_Father: {fileID: 1033171054}
   m_RootOrder: 1
+--- !u!114 &73857939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 73857935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aad142a50400644c905c6d062c43d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holder: {fileID: 0}
 --- !u!1 &73936439
 GameObject:
   m_ObjectHideFlags: 0
@@ -4264,7 +4277,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &217192668
 Transform:
   m_ObjectHideFlags: 0
@@ -4298,6 +4311,9 @@ MonoBehaviour:
   NPCCurPlanId: 0
   hasStartNPCScript: 0
   animalToSave: {fileID: 726808809}
+  fruitToEat: {fileID: 727512498}
+  locationToDropFruit: {x: 0, y: 0, z: 0}
+  scriptPlanList: 
 --- !u!114 &217192673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4487,7 +4503,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 445232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -96.7099991
+      value: -96.7600021
       objectReference: {fileID: 0}
     - target: {fileID: 445232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
       propertyPath: m_LocalPosition.y
@@ -4495,7 +4511,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 445232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -17.5699997
+      value: -15.3199997
       objectReference: {fileID: 0}
     - target: {fileID: 445232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
       propertyPath: m_LocalRotation.x
@@ -13210,6 +13226,9 @@ MonoBehaviour:
   NPCCurPlanId: 0
   hasStartNPCScript: 0
   animalToSave: {fileID: 1954126561}
+  fruitToEat: {fileID: 671266742}
+  locationToDropFruit: {x: -93, y: 143, z: -14}
+  scriptPlanList: 0200000003000000000000000400000001000000
 --- !u!1 &558919480
 GameObject:
   m_ObjectHideFlags: 0
@@ -15161,6 +15180,7 @@ GameObject:
   - 4: {fileID: 671266745}
   - 33: {fileID: 671266744}
   - 23: {fileID: 671266743}
+  - 114: {fileID: 671266746}
   m_Layer: 0
   m_Name: orange
   m_TagString: OCObject
@@ -15209,6 +15229,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1033171054}
   m_RootOrder: 2
+--- !u!114 &671266746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 671266742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aad142a50400644c905c6d062c43d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holder: {fileID: 0}
 --- !u!1 &675515286
 GameObject:
   m_ObjectHideFlags: 0
@@ -16407,6 +16439,7 @@ GameObject:
   - 4: {fileID: 727512501}
   - 33: {fileID: 727512500}
   - 23: {fileID: 727512499}
+  - 114: {fileID: 727512502}
   m_Layer: 0
   m_Name: apple
   m_TagString: OCObject
@@ -16455,6 +16488,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1033171054}
   m_RootOrder: 0
+--- !u!114 &727512502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 727512498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aad142a50400644c905c6d062c43d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holder: {fileID: 0}
 --- !u!1 &731591005
 GameObject:
   m_ObjectHideFlags: 0
@@ -19197,6 +19242,9 @@ MonoBehaviour:
   NPCCurPlanId: 0
   hasStartNPCScript: 0
   animalToSave: {fileID: 1349770104}
+  fruitToEat: {fileID: 73857935}
+  locationToDropFruit: {x: -89, y: 143, z: -8}
+  scriptPlanList: 0000000001000000040000000200000003000000
 --- !u!1 &828051861
 GameObject:
   m_ObjectHideFlags: 0
@@ -38274,7 +38322,7 @@ Transform:
   m_PrefabInternal: {fileID: 1929759810}
   m_GameObject: {fileID: 1630322057}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
-  m_LocalPosition: {x: -93, y: 143, z: -19}
+  m_LocalPosition: {x: -92, y: 143, z: -18.5}
   m_LocalScale: {x: .300000012, y: .300000012, z: .300000012}
   m_Children:
   - {fileID: 932111275}
@@ -39009,7 +39057,7 @@ Transform:
   m_PrefabInternal: {fileID: 221375650}
   m_GameObject: {fileID: 1677330856}
   m_LocalRotation: {x: .315251231, y: .0609965697, z: .179887444, w: .929804623}
-  m_LocalPosition: {x: -96.7099991, y: 143, z: -17.5699997}
+  m_LocalPosition: {x: -96.7600021, y: 143, z: -15.3199997}
   m_LocalScale: {x: 24, y: 24, z: 24}
   m_Children: []
   m_Father: {fileID: 828915264}
@@ -40092,7 +40140,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 182378, guid: e8ea720c1afc9d7449aa82662a898ee3, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e8ea720c1afc9d7449aa82662a898ee3, type: 2}
@@ -42938,7 +42986,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 408498, guid: 31e5608c00a334246b3132af8541e7a3, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -93
+      value: -92
       objectReference: {fileID: 0}
     - target: {fileID: 408498, guid: 31e5608c00a334246b3132af8541e7a3, type: 2}
       propertyPath: m_LocalPosition.y
@@ -42946,7 +42994,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 408498, guid: 31e5608c00a334246b3132af8541e7a3, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -19
+      value: -18.5
       objectReference: {fileID: 0}
     - target: {fileID: 408498, guid: 31e5608c00a334246b3132af8541e7a3, type: 2}
       propertyPath: m_LocalRotation.x

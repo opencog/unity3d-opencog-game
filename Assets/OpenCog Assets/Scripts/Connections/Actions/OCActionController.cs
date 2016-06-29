@@ -90,6 +90,7 @@ public class OCActionController : OCMonoBehaviour, IAgent
 	, { "rotate_left", TreeType.Character_TurnLeftMove }
 	, { "rotate_right", TreeType.Character_TurnRightMove }
 	, { "grab", TreeType.Character_BothHandsTransfer }
+	, { "drop", TreeType.Character_BothHandsTransfer }
 	, { "eat", TreeType.Character_Destroy }
 	, { "open", TreeType.Character_BothHandsTransfer }
 	, { "heal", TreeType.Character_BothHandsTransfer }
@@ -765,20 +766,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 				if (isRunOnScript) // it's a NPC
 				{
 					NPCScript npcScript = GetComponent<NPCScript>();
-					if (npcScript.hasStartNPCScript)
-					{
-						switch (npcScript.NPCCurPlanId)
-						{
-						case 1:
-							npcScript.NPC_FindAndOpenTheChest();
-							break;
-
-						case 2:
-							npcScript.NPC_SaveAnAnimal();
-							break;
-						}
-					    
-					}
+					if (npcScript.hasStartNPCScript && (npcScript.scriptPlanList.Count > 0))
+						npcScript.generateNextScriptedPlan();
 				}
 				//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
 
@@ -860,6 +849,13 @@ public class OCActionController : OCMonoBehaviour, IAgent
 						// _PlanSucceeded = OCAction.IsEndTargetCloseForward(null, _step.Arguments);
 						//_LastPlanEndedAtTime = System.DateTime.Now.Ticks;
 					}
+
+					if(_step.Arguments.ActionName == "drop")
+					{
+						_PlanSucceeded = ! isInInventory(_step.Arguments.EndTarget);
+
+					}
+
 
 					if (_step.Arguments.ActionName == "open")
 					{
@@ -1123,8 +1119,8 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	public bool RemoveFromInventory(GameObject objToGrab)
 	{
-		if (isInInventory (objToGrab))
-			return false; // already in the inventory
+		if (! isInInventory (objToGrab))
+			return false; // not in the inventory
 		else 
 		{
 			Inventory.Remove (objToGrab);
@@ -1138,7 +1134,6 @@ public class OCActionController : OCMonoBehaviour, IAgent
 
 	//---------------------------------------------------------------------------
 
-	
 
 	public bool isInInventory(GameObject obj)
 	{

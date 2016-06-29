@@ -1069,6 +1069,21 @@ public class OCAction : OCMonoBehaviour
 			_Source.transform.LookAt( new Vector3(_EndTarget.transform.position.x, _Source.transform.position.y,_EndTarget.transform.position.z));
 		}
 		
+		
+		if(_ActionController.Step != null)
+		{
+			OCActionArgs args = _ActionController.Step.Arguments;	
+
+			if (args.ActionName == "drop")
+			{
+				_ActionController.RemoveFromInventory(args.EndTarget);
+				args.EndTarget.AddComponent<SphereCollider>();
+				Rigidbody rd = args.EndTarget.AddComponent<Rigidbody>();
+				rd.AddForce(UnityEngine.Random.Range(-1f,1f),0f,UnityEngine.Random.Range(-1f,1f));
+				
+			}
+		}
+		
 
 		// Start animation effects
 		if(_blockOnRunning || !_Source.animation.isPlaying)
@@ -1154,6 +1169,7 @@ public class OCAction : OCMonoBehaviour
 			//}
 			
 		}
+
 		
 		if (args.ActionName == "open")
 		{
@@ -1162,21 +1178,30 @@ public class OCAction : OCMonoBehaviour
 			
 			foreach (GameObject item in _ActionController.Inventory)
 			{
-				if (item.GetComponent<OCColor>().color == objColor)
+				if (item.name == "key")
 				{
-					
-					//_ActionController.Inventory.Remove(item);
-					
-					//GameObject.DestroyObject(item);
-					// display open chest animation
-					_EndTarget.GetComponent<Animation>().Play("open");
-					_EndTarget.GetComponent<Openable>().is_open = true;
-					// OCConnectorSingleton.Instance.HandleObjectStateChange(_EndTarget, "is_open", "System.Boolean", "false", "true");
-					break;
+					if (item.GetComponent<OCColor>().color == objColor)
+					{
+						
+						//_ActionController.Inventory.Remove(item);
+						
+						//GameObject.DestroyObject(item);
+						// display open chest animation
+						_EndTarget.GetComponent<Animation>().Play("open");
+						_EndTarget.GetComponent<Openable>().is_open = true;
+						// OCConnectorSingleton.Instance.HandleObjectStateChange(_EndTarget, "is_open", "System.Boolean", "false", "true");
+						break;
+					}
 				}
 			}
 			
 			
+		}
+
+		if (args.ActionName == "eat")
+		{
+			if (_ActionController.isInInventory(_EndTarget))
+				GameObject.DestroyObject(_EndTarget);
 		}
 
 		if (args.ActionName == "heal")
