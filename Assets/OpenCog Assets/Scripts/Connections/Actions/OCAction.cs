@@ -1076,10 +1076,13 @@ public class OCAction : OCMonoBehaviour
 
 			if (args.ActionName == "drop")
 			{
-				_ActionController.RemoveFromInventory(args.EndTarget);
-				args.EndTarget.AddComponent<SphereCollider>();
-				Rigidbody rd = args.EndTarget.AddComponent<Rigidbody>();
-				rd.AddForce(UnityEngine.Random.Range(-1f,1f),0f,UnityEngine.Random.Range(-1f,1f));
+				if (_ActionController.isInInventory(args.EndTarget))
+				{
+					_ActionController.RemoveFromInventory(args.EndTarget);
+					args.EndTarget.AddComponent<BoxCollider>();
+					Rigidbody rd = args.EndTarget.AddComponent<Rigidbody>();
+					rd.AddTorque(-5f,3f,5f);
+				}
 				
 			}
 		}
@@ -1129,7 +1132,24 @@ public class OCAction : OCMonoBehaviour
 		//UnityEngine.Debug.Log(OCLogSymbol.DETAILEDINFO +"Continuing the " + FullName + " Action.");
 				
 //		if(!Descriptors.Contains("Idle"))
-//			Debug.LogWarning("Continuing Action: " + FullName);		
+//			Debug.LogWarning("Continuing Action: " + FullName);	
+				
+		if(_ActionController.Step != null)
+		{
+			OCActionArgs args = _ActionController.Step.Arguments;	
+			
+			if (args.ActionName == "drop")
+			{
+				if (_ActionController.isInInventory(args.EndTarget))
+				{
+					_ActionController.RemoveFromInventory(args.EndTarget);
+					args.EndTarget.AddComponent<BoxCollider>();
+					Rigidbody rd = args.EndTarget.AddComponent<Rigidbody>();
+					rd.AddTorque(-5f,3f,5f);
+				}
+				
+			}
+		}
 
 		// Animation effects continue automatically
 		if(_blockOnRunning)
@@ -1159,7 +1179,8 @@ public class OCAction : OCMonoBehaviour
 				_moveToTarget = false;
 			}
 			//afx.Stop();
-		}
+		}	
+			
 
 		if (args.ActionName == "grab")
 		{
@@ -1169,6 +1190,20 @@ public class OCAction : OCMonoBehaviour
 			//}
 			
 		}
+
+
+		if (args.ActionName == "drop")
+		{
+			if (_ActionController.isInInventory(args.EndTarget))
+			{
+				_ActionController.RemoveFromInventory(args.EndTarget);
+				args.EndTarget.AddComponent<BoxCollider>();
+				Rigidbody rd = args.EndTarget.AddComponent<Rigidbody>();
+				rd.AddTorque(-5f,3f,5f);
+			}
+			
+		}
+
 
 		
 		if (args.ActionName == "open")
