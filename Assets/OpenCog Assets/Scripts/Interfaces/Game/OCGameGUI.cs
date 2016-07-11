@@ -94,21 +94,6 @@ public class OCGameGUI : OCMonoBehaviour
 		rect.center = new Vector2(Screen.width, Screen.height)/2f;
 		GUI.Label( rect, "+" );
 
-			if (Input.GetKeyUp(KeyCode.R))
-			{
-				// run all the script agents
-				NPCScript[] npcs = GameObject.Find("Characters").GetComponentsInChildren<NPCScript>();
-				foreach(NPCScript npc in npcs)
-				{
-					npc.startNPCScript();
-				}
-			}
-
-			if (Input.GetKeyUp(KeyCode.P))
-			{
-				OCConnectorSingleton.Instance.SendStartPlanningFromClientSignal();
-			}
-
 
 		}
 		

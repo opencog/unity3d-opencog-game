@@ -51,7 +51,7 @@ public class OCPauseGUI : OCMonoBehaviour
 	#region Private Member Data
 
 	//---------------------------------------------------------------------------
-	
+	bool showGoals = false;
 
 			
 	//---------------------------------------------------------------------------
@@ -111,7 +111,8 @@ public class OCPauseGUI : OCMonoBehaviour
 
 	//---------------------------------------------------------------------------
 	
-	private void DrawMenu() {
+	private void DrawMenu() 
+	{
 		if( GUILayout.Button("Resume", GUILayout.ExpandWidth(false)) ) {
 			OCGameStateManager.IsPlaying = true;
 		}
@@ -125,6 +126,65 @@ public class OCPauseGUI : OCMonoBehaviour
 		if( GUILayout.Button("Quit", GUILayout.ExpandWidth(false)) ) {
 			Application.Quit();
 		}
+
+			
+
+		if(GUI.Button(new Rect(10, 10, 200, 30), "Start scripted NPCs"))
+		{
+			// run all the script agents
+			NPCScript[] npcs = GameObject.Find("Characters").GetComponentsInChildren<NPCScript>();
+			foreach(NPCScript npc in npcs)
+			{
+				npc.startNPCScript();
+			}
+			OCGameStateManager.IsPlaying = true;
+		}
+		
+		if(GUI.Button(new Rect(10, 50, 200, 30), "Assign a goal to AI agent"))
+		{
+			showGoals = true;
+		}
+
+		if (showGoals)
+		{
+			if(GUI.Button(new Rect(215, 30, 200, 30), "Open the black chest"))
+			{
+				GameObject chestObjs = GameObject.Find ("chests");
+				GameObject blackChestObj = null;
+				foreach (Transform chest in chestObjs.transform)
+				{
+					if (chest.GetComponent<OCColor>().color == "black")
+						blackChestObj = chest.gameObject;
+				}
+				
+				if (blackChestObj == null)
+					return;
+				
+				string blackChestNameId = "id_chest" + blackChestObj.GetInstanceID().ToString();
+				
+				OCConnectorSingleton.Instance.SendStartPlanningFromClientSignal(blackChestNameId, "is_open", "true");
+				showGoals = false;
+				OCGameStateManager.IsPlaying = true;
+
+			}
+			
+			if(GUI.Button(new Rect(215, 70, 200, 30), "Heal the cat"))
+			{
+				GameObject catObj = GameObject.Find ("cat");
+				
+				if (catObj == null)
+					return;
+				
+				string catNameId = "id_cat" + catObj.GetInstanceID().ToString();
+				
+				OCConnectorSingleton.Instance.SendStartPlanningFromClientSignal(catNameId, "is_alive", "true");
+				showGoals = false;
+				OCGameStateManager.IsPlaying = true;
+
+			}
+
+		}
+
 	}
 	
 	
