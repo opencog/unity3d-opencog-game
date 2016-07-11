@@ -11353,7 +11353,7 @@ GameObject:
   - 114: {fileID: 518360426}
   m_Layer: 0
   m_Name: cat
-  m_TagString: Untagged
+  m_TagString: OCObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13440,6 +13440,10 @@ Prefab:
       propertyPath: m_LocalPosition.z
       value: -.0659999996
       objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: e37447c39486ece4ca79ebc215f8d773, type: 3}
+      propertyPath: m_TagString
+      value: OCObject
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e37447c39486ece4ca79ebc215f8d773, type: 3}
   m_RootGameObject: {fileID: 1954126561}
@@ -14354,6 +14358,10 @@ Prefab:
       propertyPath: m_LocalPosition.z
       value: .0879999995
       objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 79a1d23e7f3f6d2488ec4b26b41b3cb7, type: 3}
+      propertyPath: m_TagString
+      value: OCObject
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 79a1d23e7f3f6d2488ec4b26b41b3cb7, type: 3}
   m_RootGameObject: {fileID: 726808809}
@@ -14466,7 +14474,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 445232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -92.7300034
+      value: -108.790001
       objectReference: {fileID: 0}
     - target: {fileID: 445232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
       propertyPath: m_LocalPosition.y
@@ -14474,7 +14482,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 445232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -26.5499992
+      value: -21.9899998
       objectReference: {fileID: 0}
     - target: {fileID: 445232, guid: d0c7cdcb16aa72b4294d8618d9b09994, type: 2}
       propertyPath: m_LocalRotation.x
@@ -16351,7 +16359,7 @@ GameObject:
   - 114: {fileID: 726808812}
   m_Layer: 0
   m_Name: deer
-  m_TagString: Untagged
+  m_TagString: OCObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26367,7 +26375,7 @@ Transform:
   m_PrefabInternal: {fileID: 639693536}
   m_GameObject: {fileID: 1082728553}
   m_LocalRotation: {x: .315251231, y: .0609965697, z: .179887444, w: .929804623}
-  m_LocalPosition: {x: -92.7300034, y: 143, z: -26.5499992}
+  m_LocalPosition: {x: -108.790001, y: 143, z: -21.9899998}
   m_LocalScale: {x: 24, y: 24, z: 24}
   m_Children: []
   m_Father: {fileID: 828915264}
@@ -33023,7 +33031,7 @@ GameObject:
   - 114: {fileID: 1349770107}
   m_Layer: 0
   m_Name: horse
-  m_TagString: Untagged
+  m_TagString: OCObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -35406,6 +35414,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 6333f42709fee884cb6e83a4669b3fb5, type: 2}
+    - target: {fileID: 100000, guid: 0756977d7cec0264fbf6447646e55921, type: 3}
+      propertyPath: m_TagString
+      value: OCObject
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0756977d7cec0264fbf6447646e55921, type: 3}
   m_RootGameObject: {fileID: 518360423}
@@ -36997,6 +37009,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 6333f42709fee884cb6e83a4669b3fb5, type: 2}
+    - target: {fileID: 100002, guid: e36fda533449d464daa65064d8516b33, type: 3}
+      propertyPath: m_TagString
+      value: OCObject
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e36fda533449d464daa65064d8516b33, type: 3}
   m_RootGameObject: {fileID: 1349770104}
@@ -43496,7 +43512,7 @@ GameObject:
   - 114: {fileID: 1954126564}
   m_Layer: 0
   m_Name: rabbit
-  m_TagString: Untagged
+  m_TagString: OCObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

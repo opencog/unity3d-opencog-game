@@ -1146,7 +1146,7 @@ public class OCAction : OCMonoBehaviour
 					args.EndTarget.AddComponent<BoxCollider>();
 					Rigidbody rd = args.EndTarget.AddComponent<Rigidbody>();
 					rd.AddTorque(-5f,3f,5f);
-				}
+				}	
 				
 			}
 		}

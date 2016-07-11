@@ -1618,23 +1618,11 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 	}
 
 	bool alreadyStartPlanning = false;
-	public void SendStartPlanningFromClientSignal()
+	public void SendStartPlanningFromClientSignal(string goal_entityID, string goal_state, string goal_state_value)
 	{
 		if (alreadyStartPlanning)
 			return;
 	    
-		GameObject chestObjs = GameObject.Find ("chests");
-		GameObject blackChestObj = null;
-		foreach (Transform chest in chestObjs.transform)
-		{
-			if (chest.GetComponent<OCColor>().color == "black")
-				blackChestObj = chest.gameObject;
-		}
-		
-		if (blackChestObj == null)
-			return;
-
-		string blockChestNameId = "id_chest" + blackChestObj.GetInstanceID().ToString();
 
 		XmlDocument doc = new XmlDocument();
 		XmlElement root = MakeXMLElementRoot(doc);
@@ -1642,7 +1630,10 @@ public sealed class OCConnectorSingleton  :OCNetworkElement
 		
 		XmlElement signal = (XmlElement)root.AppendChild(doc.CreateElement("start-planning-from-client-signal"));
 
-		signal.SetAttribute("object-id", blockChestNameId);
+		signal.SetAttribute("object-id", goal_entityID);
+		signal.SetAttribute("state-name", goal_state);
+		signal.SetAttribute("value", goal_state_value);
+
 		signal.SetAttribute("timestamp", timestamp);
 		
 		OCMessage message = OCMessage.CreateMessage(_ID, _brainID, OCMessage.MessageType.STRING, BeautifyXmlText(doc));

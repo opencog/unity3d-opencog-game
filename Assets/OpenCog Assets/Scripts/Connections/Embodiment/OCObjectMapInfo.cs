@@ -494,13 +494,13 @@ public class OCObjectMapInfo
 				gameObjectName = gameObjectName.Remove (gameObjectName.IndexOf ('('));
 
 
-
-			// For Einstein puzzle
 			if (gameObject.name.Contains("_man"))
 			{
 				_id = _name;
 				this.AddProperty ("class", "people", System.Type.GetType("System.String"));
 			}
+			else if (gameObject.GetComponent<BackToLife>() != null)
+				this.AddProperty ("class", "animal", System.Type.GetType("System.String"));
 			else
 			    this.AddProperty ("class", gameObjectName, System.Type.GetType("System.String"));
 		}
